@@ -868,35 +868,6 @@ function resetForm() {
 
 </div><!-- end mainContent -->
 
-<!-- Script independiente para modulos — funciona aunque haya errores en el script principal -->
-<script>
-(function() {
-  function initModulos() {
-    var btns = document.querySelectorAll('.mod-toggle[onclick]');
-    btns.forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var match = this.getAttribute('onclick').match(/'(mod\d+)'/);
-        if (!match) return;
-        var secId = match[1];
-        var section = document.getElementById(secId);
-        if (!section) return;
-        if (section.style.display === 'none') {
-          section.style.display = '';
-          this.classList.add('active');
-        } else {
-          section.style.display = 'none';
-          this.classList.remove('active');
-        }
-      });
-    });
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initModulos);
-  } else {
-    initModulos();
-  }
-})();
-</script>
 
 </body>
 </html>
