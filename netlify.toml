@@ -1,5 +1,0 @@
-[[redirects]]
-  from = "/api/sheet"
-  to = "https://script.google.com/macros/s/AKfycbxoewKQJIkrD7cD682FlPHleXeBicnaA-L7YVgDbx4qhouLJZoKMnV8sbi9V7BUtpUR/exec"
-  status = 200
-  force = true
