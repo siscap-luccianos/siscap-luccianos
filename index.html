@@ -403,7 +403,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
-const SHEET_URL = '/api/sheet';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxoewKQJIkrD7cD682FlPHleXeBicnaA-L7YVgDbx4qhouLJZoKMnV8sbi9V7BUtpUR/exec';
 
 function enviarEvaluacion() {
   const evaluado  = document.getElementById('f-evaluado')?.value?.trim()  || '';
@@ -499,16 +499,15 @@ function enviarEvaluacion() {
   btn.textContent = 'Enviando...'; btn.disabled = true;
 
   const params = new URLSearchParams({payload: JSON.stringify(payload)});
-  fetch(`${SHEET_URL}?${params}`, {
-    method: 'GET',
-    mode:   'no-cors'
-  }).then(() => {
+  const url = `${SHEET_URL}?${params}`;
+
+  // Usar imagen para evitar bloqueos de CORS en iOS Safari
+  const img = new Image();
+  img.onload = img.onerror = function() {
     showToast('Evaluacion enviada a la planilla ✓');
     btn.textContent = '↑ Enviar a Planilla'; btn.disabled = false;
-  }).catch(() => {
-    alert('Error al enviar. Verificá tu conexion a internet.');
-    btn.textContent = '↑ Enviar a Planilla'; btn.disabled = false;
-  });
+  };
+  img.src = url;
 }
 
 const MODS = [
