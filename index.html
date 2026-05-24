@@ -35,16 +35,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .mod-selector h2{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
 .mod-selector p{font-size:12px;color:var(--muted);margin-bottom:14px}
 .mod-toggle-wrap{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.mod-toggle{padding:12px 18px;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .2s;border:2px solid var(--border);background:white;color:var(--muted);display:inline-block;user-select:none;-webkit-user-select:none}
+.mod-toggle{padding:12px 18px;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .2s;border:2px solid var(--border);background:white;color:var(--muted);display:inline-block;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
 .mod-toggle.active{background:var(--accent);color:white;border-color:var(--accent)}
-/* CSS puro — oculta secciones cuando checkbox no está marcado */
-#tog1:not(:checked) ~ #mod1,
-#tog2:not(:checked) ~ #mod2,
-#tog3:not(:checked) ~ #mod3,
-#tog4:not(:checked) ~ #mod4,
-#tog5:not(:checked) ~ #mod5,
-#tog6:not(:checked) ~ #mod6,
-#tog7:not(:checked) ~ #mod7 { display:none !important; }
 @media(max-width:600px){
   .mod-toggle{padding:14px 16px;font-size:14px;flex:1 1 calc(50% - 5px);text-align:center;min-height:48px;display:flex;align-items:center;justify-content:center}
 }
@@ -153,24 +145,15 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   <h2>Modulos a Evaluar</h2>
   <p>Selecciona solo los modulos que aplican a esta sesion. Los modulos desactivados no se evaluan ni se incluyen en el puntaje.</p>
   <div class="mod-toggle-wrap" id="modToggles">
-    <label for="tog1" class="mod-toggle active">01 &middot; Equipamiento</label>
-    <label for="tog2" class="mod-toggle active">02 &middot; Cafeteria</label>
-    <label for="tog3" class="mod-toggle active">03 &middot; Heladeria</label>
-    <label for="tog4" class="mod-toggle active">04 &middot; Icepops</label>
-    <label for="tog5" class="mod-toggle active">05 &middot; Chocolateria</label>
-    <label for="tog6" class="mod-toggle active">06 &middot; Sistema y Caja</label>
-    <label for="tog7" class="mod-toggle active">07 &middot; Atencion al Cliente</label>
+    <button class="mod-toggle active" data-sec="mod1">01 &middot; Equipamiento</button>
+    <button class="mod-toggle active" data-sec="mod2">02 &middot; Cafeteria</button>
+    <button class="mod-toggle active" data-sec="mod3">03 &middot; Heladeria</button>
+    <button class="mod-toggle active" data-sec="mod4">04 &middot; Icepops</button>
+    <button class="mod-toggle active" data-sec="mod5">05 &middot; Chocolateria</button>
+    <button class="mod-toggle active" data-sec="mod6">06 &middot; Sistema y Caja</button>
+    <button class="mod-toggle active" data-sec="mod7">07 &middot; Atencion al Cliente</button>
   </div>
 </div>
-
-<!-- Checkboxes como hermanos directos de las secciones -->
-<input type="checkbox" id="tog1" data-sec="mod1" checked style="position:absolute;opacity:0;width:0;height:0;pointer-events:none">
-<input type="checkbox" id="tog2" data-sec="mod2" checked style="position:absolute;opacity:0;width:0;height:0;pointer-events:none">
-<input type="checkbox" id="tog3" data-sec="mod3" checked style="position:absolute;opacity:0;width:0;height:0;pointer-events:none">
-<input type="checkbox" id="tog4" data-sec="mod4" checked style="position:absolute;opacity:0;width:0;height:0;pointer-events:none">
-<input type="checkbox" id="tog5" data-sec="mod5" checked style="position:absolute;opacity:0;width:0;height:0;pointer-events:none">
-<input type="checkbox" id="tog6" data-sec="mod6" checked style="position:absolute;opacity:0;width:0;height:0;pointer-events:none">
-<input type="checkbox" id="tog7" data-sec="mod7" checked style="position:absolute;opacity:0;width:0;height:0;pointer-events:none">
 
 <div class="legend">
   <span><span class="lbadge" style="background:var(--r1)">1</span> <strong>Inicial</strong> &mdash; no lo conoce o no puede hacerlo solo</span>
@@ -517,18 +500,31 @@ function toggleModule(secId, isActive) {
   }
 }
 
-// Escucha cambios en checkboxes de módulos
-document.querySelectorAll('input[data-sec]').forEach(function(cb) {
-  cb.addEventListener('change', function() {
-    const label = document.querySelector('label[for="' + this.id + '"]');
-    if (this.checked) {
-      activeSet.add(this.getAttribute('data-sec'));
-      if (label) label.classList.add('active');
+// Modulos — funciona en PC y celular
+document.querySelectorAll('.mod-toggle[data-sec]').forEach(function(btn) {
+  function toggle(e) {
+    e.preventDefault();
+    var secId = btn.getAttribute('data-sec');
+    var section = document.getElementById(secId);
+    if (!section) return;
+    if (activeSet.has(secId)) {
+      activeSet.delete(secId);
+      section.style.display = 'none';
+      btn.classList.remove('active');
     } else {
-      activeSet.delete(this.getAttribute('data-sec'));
-      if (label) label.classList.remove('active');
+      activeSet.add(secId);
+      section.style.display = '';
+      btn.classList.add('active');
     }
+  }
+  btn.addEventListener('touchend', toggle, {passive: false});
+  btn.addEventListener('click', function(e) {
+    // Solo ejecutar si no fue un touchend
+    if (!e._fromTouch) toggle(e);
   });
+  btn.addEventListener('touchend', function(e) {
+    e._fromTouch = true;
+  }, {passive: true});
 });
 
 function calcScore() {
@@ -862,13 +858,12 @@ function resetForm() {
   if (reforzarEl)   reforzarEl.innerHTML   = '<em style="color:#aaa">Se generan al calcular puntaje...</em>';
   if (obsEval)      obsEval.value = '';
 
-  // Resetear checkboxes de módulos — activar todos
-  document.querySelectorAll('input[data-sec]').forEach(cb => {
-    cb.checked = true;
-    const label = document.querySelector(`label[for="${cb.id}"]`);
-    if (label) label.classList.add('active');
-    activeSet.add(cb.getAttribute('data-sec'));
-    const section = document.getElementById(cb.getAttribute('data-sec'));
+  // Resetear botones de módulos — activar todos
+  document.querySelectorAll('.mod-toggle[data-sec]').forEach(function(btn) {
+    var secId = btn.getAttribute('data-sec');
+    btn.classList.add('active');
+    activeSet.add(secId);
+    var section = document.getElementById(secId);
     if (section) section.style.display = '';
   });
 
