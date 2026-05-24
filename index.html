@@ -128,9 +128,15 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
     <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#6B6B6B;margin-bottom:12px">Luccianos</div>
     <div style="font-family:'DM Serif Display',serif;font-size:24px;color:#1C1C1C;margin-bottom:6px">Sistema de Capacitacion</div>
     <div style="font-size:13px;color:#6B6B6B;margin-bottom:28px">Ingresa tu clave de acceso</div>
-    <input id="loginInput" type="password" placeholder="Clave de acceso" 
-      style="width:100%;border:2px solid #E2E2DC;border-radius:8px;padding:12px 16px;font-family:'DM Sans',sans-serif;font-size:16px;color:#1C1C1C;outline:none;text-align:center;margin-bottom:12px;transition:border-color .2s"
-      onkeydown="if(event.key==='Enter') verificarClave()">
+    <div style="position:relative;margin-bottom:12px">
+      <input id="loginInput" type="password" placeholder="Clave de acceso" 
+        style="width:100%;border:2px solid #E2E2DC;border-radius:8px;padding:12px 44px 12px 16px;font-family:'DM Sans',sans-serif;font-size:16px;color:#1C1C1C;outline:none;text-align:center;transition:border-color .2s"
+        onkeydown="if(event.key==='Enter') verificarClave()">
+      <button onclick="togglePass()" type="button"
+        style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#6B6B6B;font-size:13px;padding:4px">
+        👁
+      </button>
+    </div>
     <button onclick="verificarClave()" 
       style="width:100%;background:#1C1C1C;color:white;border:none;border-radius:8px;padding:13px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;margin-bottom:10px">
       Ingresar
@@ -899,7 +905,12 @@ function resetForm() {
 </div><!-- end mainContent -->
 
 <script>
-const CLAVE_ACCESO = 'luccap2026';
+const CLAVE_ACCESO = 'siscap';
+
+function togglePass() {
+  const input = document.getElementById('loginInput');
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
 
 function verificarClave() {
   const input = document.getElementById('loginInput');
