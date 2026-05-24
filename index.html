@@ -145,13 +145,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   <h2>Modulos a Evaluar</h2>
   <p>Selecciona solo los modulos que aplican a esta sesion. Los modulos desactivados no se evaluan ni se incluyen en el puntaje.</p>
   <div class="mod-toggle-wrap" id="modToggles">
-    <button class="mod-toggle active" data-sec="mod1">01 &middot; Equipamiento</button>
-    <button class="mod-toggle active" data-sec="mod2">02 &middot; Cafeteria</button>
-    <button class="mod-toggle active" data-sec="mod3">03 &middot; Heladeria</button>
-    <button class="mod-toggle active" data-sec="mod4">04 &middot; Icepops</button>
-    <button class="mod-toggle active" data-sec="mod5">05 &middot; Chocolateria</button>
-    <button class="mod-toggle active" data-sec="mod6">06 &middot; Sistema y Caja</button>
-    <button class="mod-toggle active" data-sec="mod7">07 &middot; Atencion al Cliente</button>
+    <button class="mod-toggle active" onclick="toggleMod(this,'mod1')">01 &middot; Equipamiento</button>
+    <button class="mod-toggle active" onclick="toggleMod(this,'mod2')">02 &middot; Cafeteria</button>
+    <button class="mod-toggle active" onclick="toggleMod(this,'mod3')">03 &middot; Heladeria</button>
+    <button class="mod-toggle active" onclick="toggleMod(this,'mod4')">04 &middot; Icepops</button>
+    <button class="mod-toggle active" onclick="toggleMod(this,'mod5')">05 &middot; Chocolateria</button>
+    <button class="mod-toggle active" onclick="toggleMod(this,'mod6')">06 &middot; Sistema y Caja</button>
+    <button class="mod-toggle active" onclick="toggleMod(this,'mod7')">07 &middot; Atencion al Cliente</button>
   </div>
 </div>
 
@@ -500,32 +500,20 @@ function toggleModule(secId, isActive) {
   }
 }
 
-// Modulos — funciona en PC y celular
-document.querySelectorAll('.mod-toggle[data-sec]').forEach(function(btn) {
-  function toggle(e) {
-    e.preventDefault();
-    var secId = btn.getAttribute('data-sec');
-    var section = document.getElementById(secId);
-    if (!section) return;
-    if (activeSet.has(secId)) {
-      activeSet.delete(secId);
-      section.style.display = 'none';
-      btn.classList.remove('active');
-    } else {
-      activeSet.add(secId);
-      section.style.display = '';
-      btn.classList.add('active');
-    }
+// Modulos — simple y universal
+function toggleMod(btn, secId) {
+  var section = document.getElementById(secId);
+  if (!section) return;
+  if (activeSet.has(secId)) {
+    activeSet.delete(secId);
+    section.style.display = 'none';
+    btn.classList.remove('active');
+  } else {
+    activeSet.add(secId);
+    section.style.display = '';
+    btn.classList.add('active');
   }
-  btn.addEventListener('touchend', toggle, {passive: false});
-  btn.addEventListener('click', function(e) {
-    // Solo ejecutar si no fue un touchend
-    if (!e._fromTouch) toggle(e);
-  });
-  btn.addEventListener('touchend', function(e) {
-    e._fromTouch = true;
-  }, {passive: true});
-});
+}
 
 function calcScore() {
   let grand = 0, grandMax = 0, grandAnswered = 0, grandTotal = 0;
@@ -859,8 +847,10 @@ function resetForm() {
   if (obsEval)      obsEval.value = '';
 
   // Resetear botones de módulos — activar todos
-  document.querySelectorAll('.mod-toggle[data-sec]').forEach(function(btn) {
-    var secId = btn.getAttribute('data-sec');
+  document.querySelectorAll('.mod-toggle[onclick]').forEach(function(btn) {
+    var match = btn.getAttribute('onclick').match(/'(mod\d+)'/);
+    if (!match) return;
+    var secId = match[1];
     btn.classList.add('active');
     activeSet.add(secId);
     var section = document.getElementById(secId);
@@ -874,7 +864,39 @@ function resetForm() {
   });
 }
 
+</script>
+
 </div><!-- end mainContent -->
+
+<!-- Script independiente para modulos — funciona aunque haya errores en el script principal -->
+<script>
+(function() {
+  function initModulos() {
+    var btns = document.querySelectorAll('.mod-toggle[onclick]');
+    btns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var match = this.getAttribute('onclick').match(/'(mod\d+)'/);
+        if (!match) return;
+        var secId = match[1];
+        var section = document.getElementById(secId);
+        if (!section) return;
+        if (section.style.display === 'none') {
+          section.style.display = '';
+          this.classList.add('active');
+        } else {
+          section.style.display = 'none';
+          this.classList.remove('active');
+        }
+      });
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initModulos);
+  } else {
+    initModulos();
+  }
+})();
+</script>
 
 </body>
 </html>
