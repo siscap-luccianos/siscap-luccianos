@@ -130,6 +130,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
     <div style="font-size:13px;color:#6B6B6B;margin-bottom:28px">Ingresa tu clave de acceso</div>
     <div style="position:relative;margin-bottom:12px">
       <input id="loginInput" type="password" placeholder="Clave de acceso" 
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
         style="width:100%;border:2px solid #E2E2DC;border-radius:8px;padding:12px 44px 12px 16px;font-family:'DM Sans',sans-serif;font-size:16px;color:#1C1C1C;outline:none;text-align:center;transition:border-color .2s"
         onkeydown="if(event.key==='Enter') verificarClave()">
       <button onclick="togglePass()" type="button"
