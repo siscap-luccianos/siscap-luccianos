@@ -768,10 +768,11 @@ function calcScore() {
         if (sinCalificar > 0) detalles.push(`• ${m.name}: ${sinCalificar} item${sinCalificar > 1 ? 's' : ''} pendiente${sinCalificar > 1 ? 's' : ''}`);
       });
       alert(`Faltan items por calificar:\n\n${detalles.join('\n')}\n\nTotal: ${pending} item${pending > 1 ? 's' : ''}`);
+      return; // No generar fortalezas si no está completo
     }
   }
 
-  // Generar comentarios automaticos siempre
+  // Generar comentarios solo si todo está completo
   generarComentarios();
 }
 
