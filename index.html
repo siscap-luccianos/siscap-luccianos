@@ -556,7 +556,7 @@ function enviarEvaluacion() {
 
   // Verificar que se haya calculado el puntaje después de la última calificación
   const totalScore = document.getElementById('totalScore').textContent;
-  if (totalScore === '--') {
+  if (totalScore === '--' || !puntajeCalculado) {
     alert('Primero presioná "Calcular Puntaje" antes de enviar.');
     return;
   }
@@ -653,6 +653,7 @@ const MODS = [
 ];
 
 let activeSet = new Set(['mod1','mod2','mod3','mod4','mod5','mod6','mod7']);
+let puntajeCalculado = false; // Se activa solo cuando calcScore completa exitosamente
 
 function toggleModule(secId, isActive) {
   const section = document.getElementById(secId);
@@ -679,7 +680,15 @@ function toggleMod(btn, secId) {
     section.style.display = '';
     btn.classList.add('active');
   }
+  puntajeCalculado = false; // Resetear al cambiar módulos
 }
+
+// Resetear puntajeCalculado si cambia cualquier calificacion
+document.addEventListener('change', function(e) {
+  if (e.target && e.target.type === 'radio') {
+    puntajeCalculado = false;
+  }
+});
 
 function calcScore() {
   // Validar campos obligatorios primero
@@ -774,6 +783,7 @@ function calcScore() {
 
   // Generar comentarios solo si todo está completo
   generarComentarios();
+  puntajeCalculado = true; // Marcar que el puntaje fue calculado correctamente
 }
 
 function generarComentarios() {
