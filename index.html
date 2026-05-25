@@ -254,7 +254,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 
 <!-- MODULO 03 -->
 <div class="section-block">
-  <div class="sec-title-bar"><span class="sec-num">03</span><h2>Heladería</h2><span class="sec-badge">9 ítems</span></div>
+  <div class="sec-title-bar"><span class="sec-num">03</span><h2>Heladería</h2><span class="sec-badge">10 ítems</span></div>
   <div class="item-row"><span class="item-num">12</span><span class="item-text">Prepara <strong>cucuruchos, vasos y potes</strong> con gramajes correctos</span><div class="rating"><input type="radio" name="q12" id="q12v1" value="1"><label class="rating-btn" for="q12v1">1</label><input type="radio" name="q12" id="q12v2" value="2"><label class="rating-btn" for="q12v2">2</label><input type="radio" name="q12" id="q12v3" value="3"><label class="rating-btn" for="q12v3">3</label><input type="radio" name="q12" id="q12v4" value="4"><label class="rating-btn" for="q12v4">4</label><input type="radio" name="q12" id="q12v5" value="5"><label class="rating-btn na-btn" for="q12v5">NA</label></div></div>
   <div class="item-row"><span class="item-num">13</span><span class="item-text">Conoce y prepara <strong>batidos, smoothies, milkshakes y gelato shakes</strong></span><div class="rating"><input type="radio" name="q13" id="q13v1" value="1"><label class="rating-btn" for="q13v1">1</label><input type="radio" name="q13" id="q13v2" value="2"><label class="rating-btn" for="q13v2">2</label><input type="radio" name="q13" id="q13v3" value="3"><label class="rating-btn" for="q13v3">3</label><input type="radio" name="q13" id="q13v4" value="4"><label class="rating-btn" for="q13v4">4</label><input type="radio" name="q13" id="q13v5" value="5"><label class="rating-btn na-btn" for="q13v5">NA</label></div></div>
   <div class="item-row"><span class="item-num">14</span><span class="item-text">Conoce y aplica el <strong>proceso de pase de helado</strong></span><div class="rating"><input type="radio" name="q14" id="q14v1" value="1"><label class="rating-btn" for="q14v1">1</label><input type="radio" name="q14" id="q14v2" value="2"><label class="rating-btn" for="q14v2">2</label><input type="radio" name="q14" id="q14v3" value="3"><label class="rating-btn" for="q14v3">3</label><input type="radio" name="q14" id="q14v4" value="4"><label class="rating-btn" for="q14v4">4</label><input type="radio" name="q14" id="q14v5" value="5"><label class="rating-btn na-btn" for="q14v5">NA</label></div></div>
@@ -964,24 +964,19 @@ function showToast(msg) {
 }
 
 function generarPDF() {
-  const evaluado = document.querySelectorAll('.meta-card input')[0]?.value || 'evaluacion';
-  const fecha    = document.querySelectorAll('.meta-card input')[3]?.value || '';
+  const evaluado = document.getElementById('f-evaluado')?.value || 'evaluacion';
+  const fecha    = document.getElementById('f-fecha')?.value || '';
   const nombre   = `Evaluacion_${evaluado.replace(/\s+/g,'_')}${fecha ? '_'+fecha : ''}.pdf`;
-
-  // Hide no-print elements temporarily
-  const noPrint = document.querySelectorAll('.no-print');
-  noPrint.forEach(el => el.style.display = 'none');
 
   const opt = {
     margin:      [8, 8, 8, 8],
     filename:    nombre,
     image:       {type:'jpeg', quality:0.97},
-    html2canvas: {scale:2, useCORS:true, scrollY:0},
+    html2canvas: {scale:2, useCORS:true, scrollY:0, ignoreElements: el => el.classList.contains('no-print')},
     jsPDF:       {unit:'mm', format:'a4', orientation:'portrait'}
   };
 
-  html2pdf().set(opt).from(document.body).save().then(() => {
-    noPrint.forEach(el => el.style.display = '');
+  html2pdf().set(opt).from(document.getElementById('mainContent')).save().then(() => {
     showToast('PDF descargado ✓');
   });
 }
