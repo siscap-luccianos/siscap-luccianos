@@ -377,8 +377,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 <div class="actions no-print">
   <button class="btn btn-dark" onclick="calcScore()">Calcular Puntaje</button>
   <button class="btn btn-send" onclick="enviarEvaluacion()">&#8679; Enviar a Planilla</button>
-  <button class="btn btn-green" onclick="copiarResumen()">Copiar Resumen</button>
-  <button class="btn btn-outline" onclick="generarPDF()">Descargar PDF</button>
+  <button class="btn btn-outline" onclick="generarPDFyEnviar()">Descargar PDF</button>
   <button class="btn btn-outline" onclick="resetForm()">Reiniciar</button>
 </div>
 
@@ -964,29 +963,133 @@ function showToast(msg, duration) {
   setTimeout(() => { t.style.opacity = '0'; }, duration);
 }
 
-function generarPDF() {
-  showToast('⚠ Recordá: primero Enviar a Planilla, luego descargar PDF', 4000);
-  
-  setTimeout(function() {
-    const evaluado = document.getElementById('f-evaluado')?.value || 'evaluacion';
-    const fecha    = document.getElementById('f-fecha')?.value || '';
-    const nombre   = `Evaluacion_${evaluado.replace(/\s+/g,'_')}${fecha ? '_'+fecha : ''}.pdf`;
+function generarPDFyEnviar() {
+  // Primero validar que todo esté completo
+  const evaluado  = document.getElementById('f-evaluado')?.value?.trim()  || '';
+  const local     = document.getElementById('f-local')?.value?.trim()     || '';
+  const evaluador = document.getElementById('f-evaluador')?.value?.trim() || '';
+  const fecha     = document.getElementById('f-fecha')?.value             || '';
 
-    const noPrint = document.querySelectorAll('.no-print');
-    noPrint.forEach(el => el.style.display = 'none');
+  if (!evaluado || !local || !evaluador || !fecha) {
+    let faltantes = [];
+    if (!evaluado)  faltantes.push('Nombre del evaluado');
+    if (!local)     faltantes.push('Local / Sucursal');
+    if (!evaluador) faltantes.push('Evaluador');
+    if (!fecha)     faltantes.push('Fecha');
+    alert('Completá los siguientes campos antes de continuar:\n\n• ' + faltantes.join('\n• '));
+    return;
+  }
 
-    const opt = {
-      margin:      [8, 8, 8, 8],
-      filename:    nombre,
-      image:       {type:'jpeg', quality:0.97},
-      html2canvas: {scale:2, useCORS:true, scrollY:0},
-      jsPDF:       {unit:'mm', format:'a4', orientation:'portrait'}
-    };
+  const itemsFaltantes = [];
+  MODS.forEach(function(m) {
+    if (!activeSet.has(m.secId)) return;
+    var sinCalificar = 0;
+    for (var i = m.start; i <= m.end; i++) {
+      if (!document.querySelector('input[name="q' + i + '"]:checked')) sinCalificar++;
+    }
+    if (sinCalificar > 0) itemsFaltantes.push({mod: m.name, count: sinCalificar});
+  });
 
-    html2pdf().set(opt).from(document.getElementById('mainContent')).save().then(() => {
-      noPrint.forEach(el => el.style.display = '');
-    });
-  }, 2000);
+  if (itemsFaltantes.length > 0) {
+    var detalle = itemsFaltantes.map(function(f) { return '• ' + f.mod + ': ' + f.count + ' item' + (f.count > 1 ? 's' : '') + ' sin calificar'; }).join('\n');
+    alert('Faltan items por calificar:\n\n' + detalle);
+    return;
+  }
+
+  if (!puntajeCalculado) {
+    alert('Primero presioná "Calcular Puntaje" antes de continuar.');
+    return;
+  }
+
+  // Enviar a planilla silenciosamente
+  enviarSilencioso();
+
+  // Generar PDF
+  var nombre = 'Evaluacion_' + evaluado.replace(/\s+/g,'_') + (fecha ? '_' + fecha : '') + '.pdf';
+  var noPrint = document.querySelectorAll('.no-print');
+  noPrint.forEach(function(el) { el.style.display = 'none'; });
+
+  var opt = {
+    margin:      [8, 8, 8, 8],
+    filename:    nombre,
+    image:       {type:'jpeg', quality:0.97},
+    html2canvas: {scale:2, useCORS:true, scrollY:0},
+    jsPDF:       {unit:'mm', format:'a4', orientation:'portrait'}
+  };
+
+  html2pdf().set(opt).from(document.getElementById('mainContent')).save().then(function() {
+    noPrint.forEach(function(el) { el.style.display = ''; });
+    showToast('PDF descargado y evaluacion enviada ✓');
+  });
+}
+
+function enviarSilencioso() {
+  const evaluado  = document.getElementById('f-evaluado')?.value?.trim()  || '';
+  const local     = document.getElementById('f-local')?.value?.trim()     || '';
+  const evaluador = document.getElementById('f-evaluador')?.value?.trim() || '';
+  const fecha     = document.getElementById('f-fecha')?.value             || '';
+  const tipo      = document.getElementById('f-tipo')?.value              || '';
+  const rol       = document.getElementById('f-rol')?.value               || '';
+
+  const modData = {};
+  MODS.forEach(function(m, idx) {
+    var n = idx + 1;
+    if (!activeSet.has(m.secId)) {
+      modData['s'+n] = 'No evaluado'; modData['s'+n+'max'] = '-'; modData['obs'+n] = ''; return;
+    }
+    var score = 0, naCount = 0, answered = 0;
+    var itemCount = m.end - m.start + 1;
+    for (var i = m.start; i <= m.end; i++) {
+      var s = document.querySelector('input[name="q'+i+'"]:checked');
+      if (s) { answered++; var v = +s.value; if (v === 5) naCount++; else score += v; }
+    }
+    var modMax = (itemCount - naCount) * 4;
+    modData['s'+n] = answered > 0 ? score : '--';
+    modData['s'+n+'max'] = modMax;
+    var section = document.getElementById(m.secId);
+    modData['obs'+n] = section?.querySelector('.obs-row textarea')?.value?.trim() || '';
+  });
+
+  const totalScore = document.getElementById('totalScore').textContent;
+  const totalMax   = document.getElementById('totalDenom').textContent.replace('/ ','').trim();
+  const band       = document.getElementById('perfBand');
+  const resultado  = band?.style.display !== 'none' ? band?.textContent : 'Sin calcular';
+  const pct        = totalScore !== '--' && totalMax ? Math.round((+totalScore / +totalMax) * 100) + '%' : '--';
+
+  const fortalezasArr = [], reforzarArr = [];
+  MODS.forEach(function(m) {
+    if (!activeSet.has(m.secId)) return;
+    var section = document.getElementById(m.secId);
+    if (!section) return;
+    for (var i = m.start; i <= m.end; i++) {
+      var selected = document.querySelector('input[name="q'+i+'"]:checked');
+      if (!selected) continue;
+      var val = parseInt(selected.value);
+      if (val === 5) continue;
+      var rows = section.querySelectorAll('.item-row');
+      var itemText = '';
+      rows.forEach(function(row) {
+        var numEl = row.querySelector('.item-num');
+        if (numEl && numEl.textContent.trim() === String(i)) itemText = row.querySelector('.item-text')?.innerText?.trim() || '';
+      });
+      if (!itemText) return;
+      var label = val === 4 ? 'Destacado' : val === 3 ? 'Logrado' : val === 2 ? 'En proceso' : 'Inicial';
+      if (val >= 3) fortalezasArr.push('['+m.name+'] '+itemText+' ('+label+')');
+      else reforzarArr.push('['+m.name+'] '+itemText+' ('+label+')');
+    }
+  });
+
+  const obsEval = document.getElementById('obs-evaluador')?.value?.trim() || '';
+  const payload = Object.assign({fecha, evaluado, local, evaluador, tipo, rol}, modData, {
+    total: totalScore, totalMax, porcentaje: pct, resultado,
+    fortalezas: fortalezasArr.join(' | '),
+    reforzar: reforzarArr.join(' | '),
+    observaciones: obsEval
+  });
+
+  const params = new URLSearchParams({payload: JSON.stringify(payload)});
+  const img = new Image();
+  img.src = SHEET_URL + '?' + params;
 }
 
 function resetForm() {
