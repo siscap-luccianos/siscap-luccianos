@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Evaluacion de Capacitacion 7 Modulos - Luccianos v2</title>
+<title>Evaluacion de Capacitacion - SisCap Luccianos</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -27,7 +27,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .login-msg.error{color:#D93025}
 .login-msg.ok{color:#3A8A3A}
 .login-msg.warn{color:#E8670A}
-</style>
 @media print{
   .no-print{display:none!important}
   body{background:white;font-size:12px}
@@ -501,7 +500,7 @@ function doRegister() {
 }
 
 // Auto-login si ya habia sesion
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
   var u = sessionStorage.getItem('sc_user');
   var n = sessionStorage.getItem('sc_nombre');
   if (u && n) {
@@ -510,7 +509,7 @@ function doRegister() {
     var evEl = document.getElementById('f-evaluador');
     if (evEl) { evEl.value = n; evEl.readOnly = true; evEl.style.color = '#6B6B6B'; }
   }
-})();
+});
 
 function enviarEvaluacion() {
   const evaluado  = document.getElementById('f-evaluado')?.value?.trim()  || '';
