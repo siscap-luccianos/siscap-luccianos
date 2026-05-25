@@ -964,6 +964,7 @@ function showToast(msg) {
 }
 
 function generarPDF() {
+  if (!confirm('¿Ya enviaste la evaluación a la planilla?\n\nSi no lo hiciste, cancelá y apretá "Enviar a Planilla" primero.\n\nSi ya enviaste, continúa para descargar el PDF.')) return;
   window.print();
 }
 
