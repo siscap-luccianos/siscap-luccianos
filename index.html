@@ -690,6 +690,21 @@ document.addEventListener('change', function(e) {
   }
 });
 
+// Limitar fecha: hoy como máximo, 5 días atrás como mínimo
+(function() {
+  var fechaInput = document.getElementById('f-fecha');
+  if (!fechaInput) return;
+  var hoy = new Date();
+  var minDate = new Date(hoy);
+  minDate.setDate(hoy.getDate() - 5);
+  var toISO = function(d) {
+    return d.toISOString().split('T')[0];
+  };
+  fechaInput.max = toISO(hoy);
+  fechaInput.min = toISO(minDate);
+  fechaInput.value = toISO(hoy); // Pone hoy por defecto
+})();
+
 function calcScore() {
   // Validar campos obligatorios primero
   const evaluado  = document.getElementById('f-evaluado')?.value?.trim() || '';
