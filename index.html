@@ -682,6 +682,22 @@ function toggleMod(btn, secId) {
 }
 
 function calcScore() {
+  // Validar campos obligatorios primero
+  const evaluado  = document.getElementById('f-evaluado')?.value?.trim() || '';
+  const local     = document.getElementById('f-local')?.value?.trim()    || '';
+  const evaluador = document.getElementById('f-evaluador')?.value?.trim()|| '';
+  const fecha     = document.getElementById('f-fecha')?.value            || '';
+
+  if (!evaluado || !local || !evaluador || !fecha) {
+    let faltantes = [];
+    if (!evaluado)  faltantes.push('Nombre del evaluado');
+    if (!local)     faltantes.push('Local / Sucursal');
+    if (!evaluador) faltantes.push('Evaluador');
+    if (!fecha)     faltantes.push('Fecha');
+    alert('Completá los siguientes campos antes de calcular:\n\n• ' + faltantes.join('\n• '));
+    return;
+  }
+
   let grand = 0, grandMax = 0, grandAnswered = 0, grandTotal = 0;
   let html = '';
 
