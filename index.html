@@ -964,31 +964,7 @@ function showToast(msg) {
 }
 
 function generarPDF() {
-  const evaluado = document.getElementById('f-evaluado')?.value || 'evaluacion';
-  const fecha    = document.getElementById('f-fecha')?.value || '';
-  const nombre   = `Evaluacion_${evaluado.replace(/\s+/g,'_')}${fecha ? '_'+fecha : ''}.pdf`;
-
-  // Guardar estado del puntajeCalculado antes del PDF
-  const estadoPuntaje = puntajeCalculado;
-
-  const opt = {
-    margin:      [8, 8, 8, 8],
-    filename:    nombre,
-    image:       {type:'jpeg', quality:0.97},
-    html2canvas: {
-      scale:2,
-      useCORS:true,
-      scrollY: -window.scrollY,
-      ignoreElements: function(el) { return el.classList.contains('no-print') || el.id === 'loginWrap'; }
-    },
-    jsPDF: {unit:'mm', format:'a4', orientation:'portrait'}
-  };
-
-  html2pdf().set(opt).from(document.getElementById('mainContent')).save().then(() => {
-    // Restaurar estado del puntaje calculado
-    puntajeCalculado = estadoPuntaje;
-    showToast('PDF descargado ✓');
-  });
+  window.print();
 }
 
 function resetForm() {
