@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Evaluacion de Capacitacion - SisCap Luccianos</title>
+<title>SisCap - Evaluacion de Capacitacion Luccianos</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -526,6 +526,21 @@ function enviarEvaluacion() {
     if (!evaluador) faltantes.push('Evaluador');
     if (!fecha)     faltantes.push('Fecha');
     alert('Completá los siguientes campos antes de enviar:\n\n• ' + faltantes.join('\n• '));
+    return;
+  }
+
+  // Verificar que todos los items activos estén calificados
+  const itemsFaltantes = [];
+  MODS.forEach(m => {
+    if (!activeSet.has(m.secId)) return;
+    let sinCalificar = 0;
+    for (let i = m.start; i <= m.end; i++) {
+      if (!document.querySelector(`input[name="q${i}"]:checked`)) sinCalificar++;
+    }
+    if (sinCalificar > 0) itemsFaltantes.push(`• ${m.name}: ${sinCalificar} item${sinCalificar > 1 ? 's' : ''} sin calificar`);
+  });
+  if (itemsFaltantes.length > 0) {
+    alert('Faltan items por calificar antes de enviar:\n\n' + itemsFaltantes.join('\n') + '\n\nCalificá todos los items y presioná "Calcular Puntaje" primero.');
     return;
   }
 
