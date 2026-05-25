@@ -952,39 +952,41 @@ function copiarResumen() {
   });
 }
 
-function showToast(msg) {
+function showToast(msg, duration) {
+  duration = duration || 2800;
   let t = document.getElementById('_toast');
   if (!t) {
     t = document.createElement('div'); t.id = '_toast';
-    t.style.cssText = 'position:fixed;bottom:36px;left:50%;transform:translateX(-50%);background:#1C1C1C;color:white;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999;pointer-events:none;transition:opacity .4s';
+    t.style.cssText = 'position:fixed;bottom:36px;left:50%;transform:translateX(-50%);background:#1C1C1C;color:white;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999;pointer-events:none;transition:opacity .4s;max-width:90%;text-align:center';
     document.body.appendChild(t);
   }
   t.textContent = msg; t.style.opacity = '1';
-  setTimeout(() => { t.style.opacity = '0'; }, 2800);
+  setTimeout(() => { t.style.opacity = '0'; }, duration);
 }
 
 function generarPDF() {
-  if (!confirm('¿Ya enviaste la evaluación a la planilla?\n\nSi no lo hiciste, cancelá y apretá "Enviar a Planilla" primero.\n\nSi ya enviaste, continuá para descargar el PDF.')) return;
+  showToast('⚠ Recordá: primero Enviar a Planilla, luego descargar PDF', 4000);
+  
+  setTimeout(function() {
+    const evaluado = document.getElementById('f-evaluado')?.value || 'evaluacion';
+    const fecha    = document.getElementById('f-fecha')?.value || '';
+    const nombre   = `Evaluacion_${evaluado.replace(/\s+/g,'_')}${fecha ? '_'+fecha : ''}.pdf`;
 
-  const evaluado = document.getElementById('f-evaluado')?.value || 'evaluacion';
-  const fecha    = document.getElementById('f-fecha')?.value || '';
-  const nombre   = `Evaluacion_${evaluado.replace(/\s+/g,'_')}${fecha ? '_'+fecha : ''}.pdf`;
+    const noPrint = document.querySelectorAll('.no-print');
+    noPrint.forEach(el => el.style.display = 'none');
 
-  const noPrint = document.querySelectorAll('.no-print');
-  noPrint.forEach(el => el.style.display = 'none');
+    const opt = {
+      margin:      [8, 8, 8, 8],
+      filename:    nombre,
+      image:       {type:'jpeg', quality:0.97},
+      html2canvas: {scale:2, useCORS:true, scrollY:0},
+      jsPDF:       {unit:'mm', format:'a4', orientation:'portrait'}
+    };
 
-  const opt = {
-    margin:      [8, 8, 8, 8],
-    filename:    nombre,
-    image:       {type:'jpeg', quality:0.97},
-    html2canvas: {scale:2, useCORS:true, scrollY:0},
-    jsPDF:       {unit:'mm', format:'a4', orientation:'portrait'}
-  };
-
-  html2pdf().set(opt).from(document.getElementById('mainContent')).save().then(() => {
-    noPrint.forEach(el => el.style.display = '');
-    showToast('PDF descargado ✓');
-  });
+    html2pdf().set(opt).from(document.getElementById('mainContent')).save().then(() => {
+      noPrint.forEach(el => el.style.display = '');
+    });
+  }, 2000);
 }
 
 function resetForm() {
