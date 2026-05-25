@@ -531,22 +531,33 @@ function enviarEvaluacion() {
 
   // Verificar que todos los items activos estén calificados
   const itemsFaltantes = [];
+  let totalItemsActivos = 0;
+  let totalRespondidos = 0;
   MODS.forEach(m => {
     if (!activeSet.has(m.secId)) return;
-    let sinCalificar = 0;
     for (let i = m.start; i <= m.end; i++) {
-      if (!document.querySelector(`input[name="q${i}"]:checked`)) sinCalificar++;
+      totalItemsActivos++;
+      if (document.querySelector(`input[name="q${i}"]:checked`)) {
+        totalRespondidos++;
+      } else {
+        // Agrupa por módulo
+        const yaAgregado = itemsFaltantes.find(f => f.mod === m.name);
+        if (yaAgregado) yaAgregado.count++;
+        else itemsFaltantes.push({mod: m.name, count: 1});
+      }
     }
-    if (sinCalificar > 0) itemsFaltantes.push(`• ${m.name}: ${sinCalificar} item${sinCalificar > 1 ? 's' : ''} sin calificar`);
   });
+
   if (itemsFaltantes.length > 0) {
-    alert('Faltan items por calificar antes de enviar:\n\n' + itemsFaltantes.join('\n') + '\n\nCalificá todos los items y presioná "Calcular Puntaje" primero.');
+    const detalle = itemsFaltantes.map(f => `• ${f.mod}: ${f.count} item${f.count > 1 ? 's' : ''} sin calificar`).join('\n');
+    alert('No podés enviar todavía. Faltan items por calificar:\n\n' + detalle + '\n\nCalificá todos los items y presioná "Calcular Puntaje" antes de enviar.');
     return;
   }
 
+  // Verificar que se haya calculado el puntaje después de la última calificación
   const totalScore = document.getElementById('totalScore').textContent;
   if (totalScore === '--') {
-    alert('Primero presiona "Calcular Puntaje" antes de enviar.');
+    alert('Primero presioná "Calcular Puntaje" antes de enviar.');
     return;
   }
 
