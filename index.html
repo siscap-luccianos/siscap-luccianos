@@ -44,9 +44,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 /* ─── PRINT ──────────────────────────────────────────── */
 @media print{
   .no-print{display:none!important}
-  html,body{background:white;font-size:11px;margin:0;padding:0;width:100%}
-  #mainContent{margin:0;padding:0;width:100%}
-  .page-wrap{padding:0 8px;margin:0;max-width:100%}
+  html,body{background:white;font-size:11px;margin:0;padding:0;width:100%;overflow-x:hidden}
+  #mainContent{margin:0;padding:0;width:100%;overflow-x:hidden}
+  .page-wrap{padding:0 8px;margin:0 auto;max-width:100%;width:100%}
   .item-row{flex-wrap:nowrap}
   .rating{flex-shrink:0}
   .section-block{break-inside:avoid;margin-bottom:14px;box-shadow:none;border:1px solid #ddd}
@@ -766,13 +766,18 @@ function enviarYDescargarPDF() {
     var nombre = 'Evaluacion_' + evaluado.replace(/\s+/g,'_') + (fecha ? '_' + fecha : '') + '.pdf';
     var noPrint = document.querySelectorAll('.no-print');
     noPrint.forEach(function(el) { el.style.display = 'none'; });
+    var mc = document.getElementById('mainContent');
+    var prevStyle = mc.getAttribute('style') || '';
+    mc.style.width = '860px';
+    mc.style.maxWidth = '860px';
     var opt = {
       margin: [8,8,8,8], filename: nombre,
       image: {type:'jpeg', quality:0.95},
-      html2canvas: {scale:2, useCORS:true, scrollY:0, scrollX:0, windowWidth:1200, width:1200},
+      html2canvas: {scale:2, useCORS:true, scrollY:0, scrollX:0, windowWidth:900, width:900},
       jsPDF: {unit:'mm', format:'a4', orientation:'portrait'}
     };
-    html2pdf().set(opt).from(document.getElementById('mainContent')).save().then(function() {
+    html2pdf().set(opt).from(mc).save().then(function() {
+      mc.setAttribute('style', prevStyle);
       noPrint.forEach(function(el) { el.style.display = ''; });
     });
   }, yaEnviado ? 300 : 1500);
