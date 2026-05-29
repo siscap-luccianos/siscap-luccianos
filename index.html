@@ -7,26 +7,41 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#F5F5F0;--white:#FFFFFF;--text:#1C1C1C;--muted:#6B6B6B;--border:#E2E2DC;--accent:#1C1C1C;--r1:#D93025;--r2:#E8670A;--r3:#D4A017;--r4:#3A8A3A;--r5:#8A8A8A;--stripe:#FAFAF7}
+:root{
+  --bg:#F5F5F0;
+  --white:#FFFFFF;
+  --text:#1C1C1C;
+  --muted:#6B6B6B;
+  --border:#E2E2DC;
+  --accent:#1a1a1a;
+  --stripe:#F7F7F3;
+  --r1:#c0392b;
+  --r2:#d35400;
+  --r3:#f39c12;
+  --r4:#27ae60;
+  --r5:#7f8c8d;
+}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.5}
 
-/* LOGIN */
+/* ─── LOGIN ─────────────────────────────────────────── */
 #loginWrap{position:fixed;top:0;left:0;width:100%;height:100%;background:#F5F5F0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
-.login-card{background:white;border:1px solid #E2E2DC;border-radius:12px;padding:36px 28px;max-width:360px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,0.07)}
-.login-org{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#6B6B6B;text-align:center;margin-bottom:8px}
-.login-title{font-family:'DM Serif Display',serif;font-size:22px;text-align:center;color:#1C1C1C;margin-bottom:24px}
-.login-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#6B6B6B;display:block;margin-bottom:5px}
+.login-card{background:white;border:1px solid var(--border);border-radius:12px;padding:36px 28px;max-width:360px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,0.07)}
+.login-org{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px}
+.login-title{font-family:'DM Serif Display',serif;font-size:22px;text-align:center;color:var(--text);margin-bottom:24px}
+.login-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);display:block;margin-bottom:5px}
 .login-field{margin-bottom:14px}
-.login-input{width:100%;border:2px solid #E2E2DC;border-radius:8px;padding:11px 40px 11px 14px;font-family:'DM Sans',sans-serif;font-size:15px;color:#1C1C1C;outline:none;transition:border-color .2s;background:white}
-.login-input:focus{border-color:#1C1C1C}
+.login-input{width:100%;border:2px solid var(--border);border-radius:8px;padding:11px 40px 11px 14px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none;transition:border-color .2s;background:white}
+.login-input:focus{border-color:var(--accent)}
 .pass-wrap{position:relative}
-.eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#6B6B6B;font-size:20px;padding:0;line-height:1}
-.login-btn{width:100%;background:#1C1C1C;color:white;border:none;border-radius:8px;padding:13px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;margin-top:4px}
+.eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:20px;padding:0;line-height:1}
+.login-btn{width:100%;background:var(--accent);color:white;border:none;border-radius:8px;padding:13px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;margin-top:4px}
 .login-link{font-size:12px;color:#1A5FA8;text-align:right;cursor:pointer;margin-bottom:14px;display:block}
 .login-msg{font-size:12px;text-align:center;margin-top:8px;min-height:18px}
-.login-msg.error{color:#D93025}
-.login-msg.ok{color:#3A8A3A}
-.login-msg.warn{color:#E8670A}
+.login-msg.error{color:var(--r1)}
+.login-msg.ok{color:var(--r4)}
+.login-msg.warn{color:var(--r2)}
+
+/* ─── PRINT ──────────────────────────────────────────── */
 @media print{
   .no-print{display:none!important}
   html,body{background:white;font-size:11px;margin:0;padding:0;width:100%}
@@ -35,117 +50,171 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   .item-row{flex-wrap:nowrap}
   .rating{flex-shrink:0}
   .section-block{break-inside:avoid;margin-bottom:14px;box-shadow:none;border:1px solid #ddd}
-  .top-header,.score-footer{background:#1C1C1C!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .sec-title-bar{background:#E8E8E0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .top-header,.score-footer{background:#1a1a1a!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .sec-title-bar{background:#EBEBEB!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .rating-btn{border:1.5px solid #bbb!important;width:28px!important;height:28px!important;font-size:11px!important}
 }
+
+/* ─── HEADER ─────────────────────────────────────────── */
 .top-header{background:var(--accent);color:white;padding:32px 40px 28px}
-.top-header .org{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#B0B0A0;margin-bottom:8px}
-.top-header h1{font-family:'DM Serif Display',serif;font-size:clamp(22px,3.5vw,36px);font-weight:400;line-height:1.15}
+.top-header .org{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#909088;margin-bottom:8px}
+.top-header h1{font-family:'DM Serif Display',serif;font-size:clamp(22px,3.5vw,34px);font-weight:400;line-height:1.2;color:#fff}
 .top-header .sub{margin-top:6px;font-size:13px;color:#909088}
-.page-wrap{max-width:860px;margin:0 auto;padding:32px 20px 80px}
-.meta-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:20px}
-.meta-card h2{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
-.meta-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:20px}
-.field{display:flex;flex-direction:column;gap:5px}
-.field label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
-.field input,.field select{border:none;border-bottom:2px solid var(--border);background:transparent;padding:6px 0;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none;width:100%;transition:border-color .2s}
-.field input:focus,.field select:focus{border-color:var(--accent)}
-/* Module selector */
-.mod-selector{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:20px 24px;margin-bottom:20px}
-.mod-selector h2{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-.mod-selector p{font-size:12px;color:var(--muted);margin-bottom:14px}
-.mod-toggle-wrap{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.mod-toggle{padding:12px 18px;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .2s;border:2px solid var(--border);background:white;color:var(--muted);display:inline-block;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+
+/* ─── PAGE WRAP ──────────────────────────────────────── */
+.page-wrap{max-width:860px;margin:0 auto;padding:28px 20px 80px}
+
+/* ─── META CARD ──────────────────────────────────────── */
+.meta-card{background:var(--white);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:20px}
+.meta-card-head{background:var(--stripe);border-bottom:1px solid var(--border);padding:12px 20px}
+.meta-card-head h2{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:600}
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:0;border-top:none}
+.field{display:flex;flex-direction:column;gap:4px;padding:14px 20px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.field:last-child{border-right:none}
+.field label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.field input,.field select{border:none;background:transparent;padding:2px 0;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--text);outline:none;width:100%}
+.field input::placeholder{color:#C0C0B8;font-weight:400}
+
+/* ─── MODULE SELECTOR ────────────────────────────────── */
+.mod-selector{background:var(--white);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:20px}
+.mod-selector-head{background:var(--stripe);border-bottom:1px solid var(--border);padding:12px 20px}
+.mod-selector-head h2{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:2px}
+.mod-selector-head p{font-size:12px;color:var(--muted)}
+.mod-toggle-wrap{display:flex;flex-wrap:wrap;gap:8px;padding:14px 20px}
+.mod-toggle{padding:8px 16px;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:all .2s;border:1.5px solid var(--border);background:white;color:var(--muted);display:inline-flex;align-items:center;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
 .mod-toggle.active{background:var(--accent);color:white;border-color:var(--accent)}
 @media(max-width:600px){
-  .mod-toggle{padding:14px 16px;font-size:14px;flex:1 1 calc(50% - 5px);text-align:center;min-height:48px;display:flex;align-items:center;justify-content:center}
+  .mod-toggle{padding:12px 14px;font-size:13px;flex:1 1 calc(50% - 4px);text-align:center;min-height:44px;justify-content:center}
 }
 
-/* Item comment */
-.item-comment-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;padding:0 4px;flex-shrink:0;opacity:0.6;transition:opacity .2s}
-.item-comment-btn:hover{opacity:1;color:var(--accent)}
-.item-comment-wrap{display:none;padding:6px 20px 10px 60px;background:#FAFAF7;border-bottom:1px solid var(--border)}
-.item-comment-wrap.open{display:block}
-.item-comment-wrap textarea{width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);resize:vertical;min-height:52px;background:white;outline:none;transition:border-color .2s}
-.item-comment-wrap textarea:focus{border-color:var(--accent)}
-.item-comment-wrap textarea::placeholder{color:#bbb}
-
-/* Legend */
-.legend{display:flex;flex-wrap:wrap;gap:10px 20px;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:24px;font-size:12px;color:var(--muted);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.08)}
+/* ─── LEGEND ─────────────────────────────────────────── */
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:14px 20px;margin-bottom:20px;font-size:12px;color:var(--muted);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
 .legend span{display:flex;align-items:center;gap:7px;font-weight:500}
-.lbadge{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:11px;font-weight:700;color:white;flex-shrink:0}
-/* Sections */
-.section-block{background:var(--white);border:1px solid var(--border);border-radius:8px;margin-bottom:20px;overflow:hidden}
-.sec-title-bar{background:var(--stripe);border-bottom:2px solid var(--border);padding:14px 20px;display:flex;align-items:center;gap:12px}
-.sec-num{background:var(--accent);color:white;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:1px}
-.sec-title-bar h2{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text)}
-.item-row{display:flex;align-items:center;gap:16px;padding:13px 20px;border-bottom:1px solid var(--border)}
+.lbadge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-size:11px;font-weight:700;color:white;flex-shrink:0}
+
+/* ─── SECTION BLOCKS ─────────────────────────────────── */
+.section-block{background:var(--white);border:1px solid var(--border);border-radius:8px;margin-bottom:16px;overflow:hidden}
+.sec-title-bar{background:var(--stripe);border-bottom:1.5px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:10px}
+.sec-num{background:var(--accent);color:white;font-size:11px;font-weight:700;width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:0}
+.sec-title-bar h2{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text);flex:1}
+.sec-badge{font-size:11px;color:var(--muted);font-weight:500}
+
+/* ─── ITEM ROWS ──────────────────────────────────────── */
+.item-row{display:flex;align-items:center;gap:14px;padding:11px 20px;border-bottom:1px solid var(--border)}
 .item-row:nth-child(even){background:#FCFCFA}
-.item-num{font-size:11px;font-weight:700;color:#BBBBB0;flex-shrink:0;width:26px;text-align:right}
-.item-text{flex:1;font-size:14px;line-height:1.5;color:var(--text)}
-.rating{display:flex;gap:5px;flex-shrink:0}
+.item-row:last-of-type{border-bottom:none}
+.item-num{font-size:11px;font-weight:700;color:#C0C0B8;flex-shrink:0;width:22px;text-align:right}
+.item-text{flex:1;font-size:13px;line-height:1.5;color:var(--text)}
+.item-text strong{font-weight:600}
+
+/* ─── RATING BUTTONS ─────────────────────────────────── */
+.rating{display:flex;gap:5px;flex-shrink:0;align-items:center}
 .rating input[type="radio"]{display:none}
-.rating-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:2px solid var(--border);font-size:13px;font-weight:700;cursor:pointer;color:#BBBBB0;transition:all .15s;user-select:none}
+.rating-btn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;border:1.5px solid var(--border);font-size:13px;font-weight:700;cursor:pointer;color:#C0C0B8;transition:all .15s;user-select:none;background:white}
 .rating-btn:hover{border-color:var(--accent);color:var(--accent)}
-.na-btn{border-style:dashed;font-size:10px;letter-spacing:.5px;width:36px}
+.na-btn{font-size:10px;letter-spacing:.5px;border-style:dashed}
+/* Selected states */
 .rating input[value="1"]:checked+label{background:var(--r1);border-color:var(--r1);color:white}
 .rating input[value="2"]:checked+label{background:var(--r2);border-color:var(--r2);color:white}
 .rating input[value="3"]:checked+label{background:var(--r3);border-color:var(--r3);color:white}
 .rating input[value="4"]:checked+label{background:var(--r4);border-color:var(--r4);color:white}
 .rating input[value="5"]:checked+label{background:var(--r5);border-color:var(--r5);color:white;border-style:solid}
-.obs-row{padding:14px 20px;background:#F8F8F5;border-top:1px dashed var(--border)}
-.obs-row label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-.obs-row textarea{width:100%;border:1px solid var(--border);border-radius:6px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);resize:vertical;min-height:64px;background:white;outline:none;transition:border-color .2s}
+
+/* ─── ITEM COMMENT ───────────────────────────────────── */
+.item-comment-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;padding:0 2px;flex-shrink:0;opacity:0.5;transition:opacity .2s;line-height:1}
+.item-comment-btn:hover{opacity:1;color:var(--accent)}
+.item-comment-wrap{display:none;padding:6px 20px 10px 56px;background:#F8F8F4;border-bottom:1px solid var(--border)}
+.item-comment-wrap.open{display:block}
+.item-comment-wrap textarea{width:100%;border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);resize:vertical;min-height:44px;background:white;outline:none;transition:border-color .2s}
+.item-comment-wrap textarea:focus{border-color:var(--accent)}
+.item-comment-wrap textarea::placeholder{color:#C0C0B8}
+
+/* ─── SECTION SUMMARY ────────────────────────────────── */
+.sec-summary{background:var(--stripe);border-top:1px solid var(--border);padding:9px 20px;font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+
+/* ─── DEVOLUCION ─────────────────────────────────────── */
+.devolucion-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px 20px}
+.dev-box{border-radius:8px;padding:16px;border:1px solid}
+.dev-box.green{background:#f0faf0;border-color:#a9dfbf}
+.dev-box.orange{background:#fff8f0;border-color:#f9ca78}
+.dev-box-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.dev-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dev-box.green .dev-dot{background:var(--r4)}
+.dev-box.orange .dev-dot{background:var(--r2)}
+.dev-box-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px}
+.dev-box.green .dev-box-label{color:var(--r4)}
+.dev-box.orange .dev-box-label{color:var(--r2)}
+.dev-content{font-size:12px;line-height:1.7}
+.dev-group-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:8px 0 4px;padding:0}
+.dev-box.green .dev-group-title{color:#1e8449}
+.dev-box.orange .dev-group-title{color:#b7770d}
+.dev-item{display:flex;align-items:flex-start;gap:7px;margin-bottom:3px}
+.dev-item-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.dev-item-text{font-size:12px;color:var(--text);flex:1}
+.dev-tag{display:inline-block;font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px;margin-left:4px;vertical-align:middle}
+.tag-dest{background:#d5f5e3;color:#1e8449}
+.tag-log{background:#d6eaf8;color:#1a5276}
+.tag-proc{background:#fdebd0;color:#b7770d}
+.tag-inic{background:#fadbd8;color:#922b21}
+
+/* ─── OBS ROW ────────────────────────────────────────── */
+.obs-row{padding:14px 20px;background:#F8F8F4;border-top:1px dashed var(--border)}
+.obs-row label{display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.obs-row textarea{width:100%;border:1px solid var(--border);border-radius:6px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);resize:vertical;min-height:60px;background:white;outline:none;transition:border-color .2s}
 .obs-row textarea:focus{border-color:var(--accent)}
-.sec-summary{background:#F0F0EA;border-top:2px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted);font-weight:600}
-.sec-summary span{color:var(--text)}
-.score-footer{background:#2a2a2a;color:white;border-radius:8px;padding:24px 28px;margin-top:28px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.score-footer h3{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;margin-bottom:4px}
-.score-footer p{font-size:13px;color:#909088}
-.score-box{text-align:center;background:white;color:var(--accent);border-radius:8px;padding:14px 24px;min-width:130px;flex-shrink:0}
-.score-box .num{font-family:'DM Serif Display',serif;font-size:40px;line-height:1}
-.score-box .denom{font-size:13px;color:var(--muted);margin-top:2px;font-weight:600}
-.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-top:14px}
-.mod-card{background:#3a3a3a;border-radius:6px;padding:10px 14px}
-.mod-card .mn{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#aaa;margin-bottom:3px}
-.mod-card .mv{font-size:18px;font-weight:700;color:#ffffff}
-.mod-card .mm{font-size:11px;color:#aaa}
-.perf-band{display:none;margin-top:10px;padding:10px 14px;border-radius:6px;font-size:14px;font-weight:600}
+
+/* ─── SCORE FOOTER ───────────────────────────────────── */
+.score-footer{background:#1a1a1a;color:white;border-radius:8px;padding:24px 28px;margin-top:20px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.score-footer-left{flex:1}
+.score-footer h3{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;margin-bottom:4px;color:white}
+.score-footer p{font-size:12px;color:#909088}
+.score-box{text-align:center;background:white;color:var(--text);border-radius:8px;padding:16px 24px;min-width:130px;flex-shrink:0}
+.score-box .num{font-family:'DM Serif Display',serif;font-size:44px;line-height:1;color:var(--text)}
+.score-box .denom{font-size:12px;color:var(--muted);margin-top:4px;font-weight:600}
+.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:14px}
+.mod-card{background:#2d2d2d;border-radius:6px;padding:10px 14px}
+.mod-card .mn{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#888;margin-bottom:4px}
+.mod-card .mv{font-size:20px;font-weight:700;color:white}
+.mod-card .mm{font-size:11px;color:#888}
+.mod-card .mpct{font-size:10px;color:#666;margin-top:2px}
+.mod-card .mna{font-size:10px;color:#555;font-style:italic}
+.perf-band{display:none;margin-top:12px;padding:10px 14px;border-radius:6px;font-size:14px;font-weight:700;letter-spacing:.3px}
+
+/* ─── ACTIONS ────────────────────────────────────────── */
 .sig-row{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:32px}
-.sig-line{border-top:2px solid var(--border);padding-top:10px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--muted)}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
-.btn{padding:12px 28px;border-radius:6px;border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .18s}
+.sig-line{border-top:1.5px solid var(--border);padding-top:10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.btn{padding:12px 24px;border-radius:6px;border:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .18s}
 .btn-dark{background:var(--accent);color:white}
 .btn-dark:hover{background:#333}
-.btn-outline{background:white;color:var(--accent);border:2px solid var(--border)}
+.btn-outline{background:white;color:var(--text);border:1.5px solid var(--border)}
 .btn-outline:hover{border-color:var(--accent)}
 .btn-send{background:#1a5fa8;color:white}
 .btn-send:hover{background:#154d8a}
 .btn-send:disabled{background:#999;cursor:not-allowed}
-.btn-green{background:#3A8A3A;color:white}
-.btn-green:hover{background:#2d6e2d}
+
+/* ─── RESPONSIVE ─────────────────────────────────────── */
 @media(max-width:600px){
-  .page-wrap{padding:16px 12px 60px}
+  .page-wrap{padding:14px 12px 60px}
   .top-header{padding:20px 16px}
   .top-header h1{font-size:22px}
   .meta-grid{grid-template-columns:1fr}
-  .item-row{flex-wrap:wrap;gap:8px;padding:12px 14px}
+  .field{border-right:none}
+  .item-row{flex-wrap:wrap;gap:8px;padding:11px 14px}
   .item-text{font-size:13px;width:100%}
   .item-num{display:none}
   .rating{width:100%;justify-content:space-between}
-  .rating-btn{width:44px;height:44px;font-size:15px}
-  .na-btn{font-size:11px}
+  .rating-btn{width:42px;height:42px;font-size:14px}
+  .na-btn{font-size:10px}
   .actions{flex-direction:column}
   .btn{width:100%;text-align:center;padding:14px}
-  .mod-selector p{font-size:12px}
-  #devolucion-grid{grid-template-columns:1fr!important}
+  .devolucion-grid{grid-template-columns:1fr!important}
 }
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- ════════════════════ LOGIN ════════════════════ -->
 <div id="loginWrap">
   <div class="login-card">
     <div class="login-org">Luccianos</div>
@@ -189,7 +258,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   </div>
 </div>
 
-<!-- CONTENIDO PRINCIPAL -->
+<!-- ════════════════════ MAIN ════════════════════ -->
 <div id="mainContent" style="display:none">
 
 <div class="top-header">
@@ -200,8 +269,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 
 <div class="page-wrap">
 
+<!-- META -->
 <div class="meta-card">
-  <h2>Datos de la Evaluacion</h2>
+  <div class="meta-card-head"><h2>Datos de la Evaluacion</h2></div>
   <div class="meta-grid">
     <div class="field"><label>Nombre del Evaluado</label><input id="f-evaluado" type="text" placeholder="Nombre completo"></div>
     <div class="field"><label>Local / Sucursal</label><input id="f-local" type="text" placeholder="Ej: Arcos"></div>
@@ -216,9 +286,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   </div>
 </div>
 
+<!-- MODULE SELECTOR -->
 <div class="mod-selector no-print">
-  <h2>Modulos a Evaluar</h2>
-  <p>Selecciona solo los modulos que aplican a esta sesion. Los modulos desactivados no se evaluan ni se incluyen en el puntaje.</p>
+  <div class="mod-selector-head">
+    <h2>Modulos a Evaluar</h2>
+    <p>Selecciona los modulos que aplican a esta sesion. Los desactivados no se incluyen en el puntaje.</p>
+  </div>
   <div class="mod-toggle-wrap" id="modToggles">
     <button type="button" class="mod-toggle active" onclick="toggleMod(this,'mod1')">01 &middot; Equipamiento</button>
     <button type="button" class="mod-toggle active" onclick="toggleMod(this,'mod2')">02 &middot; Cafeteria</button>
@@ -230,15 +303,16 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   </div>
 </div>
 
+<!-- LEGEND -->
 <div class="legend">
   <span><span class="lbadge" style="background:var(--r1)">1</span> <strong>Inicial</strong> &mdash; no lo conoce o no puede hacerlo solo</span>
   <span><span class="lbadge" style="background:var(--r2)">2</span> <strong>En proceso</strong> &mdash; lo entiende pero necesita acompañamiento</span>
   <span><span class="lbadge" style="background:var(--r3)">3</span> <strong>Logrado</strong> &mdash; lo hace correctamente de forma autonoma</span>
   <span><span class="lbadge" style="background:var(--r4)">4</span> <strong>Destacado</strong> &mdash; lo domina y puede ensenarselo a otros</span>
-  <span><span class="lbadge" style="background:var(--r5)">NA</span> <strong>No aplica</strong> &mdash; el item no corresponde al formato de este local</span>
+  <span><span class="lbadge" style="background:var(--r5);font-size:9px">NA</span> <strong>No aplica</strong> &mdash; el item no corresponde al formato de este local</span>
 </div>
 
-<!-- MODULO 01 -->
+<!-- ── MOD 01 ── -->
 <div class="section-block" id="mod1">
   <div class="sec-title-bar"><span class="sec-num">01</span><h2>Equipamiento</h2><span class="sec-badge">4 ítems</span></div>
   <div class="item-row"><span class="item-num">1</span><span class="item-text">Identifica y opera correctamente las <strong>máquinas del sector</strong></span><div class="rating"><input type="radio" name="q1" id="q1v1" value="1"><label class="rating-btn" for="q1v1">1</label><input type="radio" name="q1" id="q1v2" value="2"><label class="rating-btn" for="q1v2">2</label><input type="radio" name="q1" id="q1v3" value="3"><label class="rating-btn" for="q1v3">3</label><input type="radio" name="q1" id="q1v4" value="4"><label class="rating-btn" for="q1v4">4</label><input type="radio" name="q1" id="q1v5" value="5"><label class="rating-btn na-btn" for="q1v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(1)" title="Agregar comentario">💬</button></div></div>
@@ -249,11 +323,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   <div class="item-comment-wrap" id="ic3"><textarea placeholder="Comentario sobre este ítem..." id="ict3"></textarea></div>
   <div class="item-row"><span class="item-num">4</span><span class="item-text">Conoce y aplica las <strong>normas de cuidado y seguridad</strong></span><div class="rating"><input type="radio" name="q4" id="q4v1" value="1"><label class="rating-btn" for="q4v1">1</label><input type="radio" name="q4" id="q4v2" value="2"><label class="rating-btn" for="q4v2">2</label><input type="radio" name="q4" id="q4v3" value="3"><label class="rating-btn" for="q4v3">3</label><input type="radio" name="q4" id="q4v4" value="4"><label class="rating-btn" for="q4v4">4</label><input type="radio" name="q4" id="q4v5" value="5"><label class="rating-btn na-btn" for="q4v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(4)" title="Agregar comentario">💬</button></div></div>
   <div class="item-comment-wrap" id="ic4"><textarea placeholder="Comentario sobre este ítem..." id="ict4"></textarea></div>
-  <div class="sec-summary">Modulo 01 · 4 criterios</div>
-
+  <div class="sec-summary">Modulo 01 &middot; 4 criterios</div>
 </div>
 
-<!-- MODULO 02 -->
+<!-- ── MOD 02 ── -->
 <div class="section-block" id="mod2">
   <div class="sec-title-bar"><span class="sec-num">02</span><h2>Cafetería</h2><span class="sec-badge">7 ítems</span></div>
   <div class="item-row"><span class="item-num">5</span><span class="item-text">Conoce y describe la <strong>carta completa del sector</strong></span><div class="rating"><input type="radio" name="q5" id="q5v1" value="1"><label class="rating-btn" for="q5v1">1</label><input type="radio" name="q5" id="q5v2" value="2"><label class="rating-btn" for="q5v2">2</label><input type="radio" name="q5" id="q5v3" value="3"><label class="rating-btn" for="q5v3">3</label><input type="radio" name="q5" id="q5v4" value="4"><label class="rating-btn" for="q5v4">4</label><input type="radio" name="q5" id="q5v5" value="5"><label class="rating-btn na-btn" for="q5v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(5)" title="Agregar comentario">💬</button></div></div>
@@ -270,11 +343,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   <div class="item-comment-wrap" id="ic10"><textarea placeholder="Comentario sobre este ítem..." id="ict10"></textarea></div>
   <div class="item-row"><span class="item-num">11</span><span class="item-text">Limpia correctamente la <strong>cafetera y el sector</strong> al finalizar</span><div class="rating"><input type="radio" name="q11" id="q11v1" value="1"><label class="rating-btn" for="q11v1">1</label><input type="radio" name="q11" id="q11v2" value="2"><label class="rating-btn" for="q11v2">2</label><input type="radio" name="q11" id="q11v3" value="3"><label class="rating-btn" for="q11v3">3</label><input type="radio" name="q11" id="q11v4" value="4"><label class="rating-btn" for="q11v4">4</label><input type="radio" name="q11" id="q11v5" value="5"><label class="rating-btn na-btn" for="q11v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(11)" title="Agregar comentario">💬</button></div></div>
   <div class="item-comment-wrap" id="ic11"><textarea placeholder="Comentario sobre este ítem..." id="ict11"></textarea></div>
-  <div class="sec-summary">Modulo 02 · 7 criterios</div>
-
+  <div class="sec-summary">Modulo 02 &middot; 7 criterios</div>
 </div>
 
-<!-- MODULO 03 -->
+<!-- ── MOD 03 ── -->
 <div class="section-block" id="mod3">
   <div class="sec-title-bar"><span class="sec-num">03</span><h2>Heladería</h2><span class="sec-badge">10 ítems</span></div>
   <div class="item-row"><span class="item-num">12</span><span class="item-text">Prepara <strong>cucuruchos, vasos y potes</strong> con gramajes correctos</span><div class="rating"><input type="radio" name="q12" id="q12v1" value="1"><label class="rating-btn" for="q12v1">1</label><input type="radio" name="q12" id="q12v2" value="2"><label class="rating-btn" for="q12v2">2</label><input type="radio" name="q12" id="q12v3" value="3"><label class="rating-btn" for="q12v3">3</label><input type="radio" name="q12" id="q12v4" value="4"><label class="rating-btn" for="q12v4">4</label><input type="radio" name="q12" id="q12v5" value="5"><label class="rating-btn na-btn" for="q12v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(12)" title="Agregar comentario">💬</button></div></div>
@@ -297,11 +369,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   <div class="item-comment-wrap" id="ic20"><textarea placeholder="Comentario sobre este ítem..." id="ict20"></textarea></div>
   <div class="item-row"><span class="item-num">21</span><span class="item-text">Conoce los sabores <strong>Kosher: Dayri/Crema y Parve/Vegano</strong></span><div class="rating"><input type="radio" name="q21" id="q21v1" value="1"><label class="rating-btn" for="q21v1">1</label><input type="radio" name="q21" id="q21v2" value="2"><label class="rating-btn" for="q21v2">2</label><input type="radio" name="q21" id="q21v3" value="3"><label class="rating-btn" for="q21v3">3</label><input type="radio" name="q21" id="q21v4" value="4"><label class="rating-btn" for="q21v4">4</label><input type="radio" name="q21" id="q21v5" value="5"><label class="rating-btn na-btn" for="q21v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(21)" title="Agregar comentario">💬</button></div></div>
   <div class="item-comment-wrap" id="ic21"><textarea placeholder="Comentario sobre este ítem..." id="ict21"></textarea></div>
-  <div class="sec-summary">Modulo 03 · 10 criterios</div>
-
+  <div class="sec-summary">Modulo 03 &middot; 10 criterios</div>
 </div>
 
-<!-- MODULO 04 -->
+<!-- ── MOD 04 ── -->
 <div class="section-block" id="mod4">
   <div class="sec-title-bar"><span class="sec-num">04</span><h2>Icepops</h2><span class="sec-badge">6 ítems</span></div>
   <div class="item-row"><span class="item-num">22</span><span class="item-text">Identifica variedad de <strong>icepops, cannolis y geladots</strong></span><div class="rating"><input type="radio" name="q22" id="q22v1" value="1"><label class="rating-btn" for="q22v1">1</label><input type="radio" name="q22" id="q22v2" value="2"><label class="rating-btn" for="q22v2">2</label><input type="radio" name="q22" id="q22v3" value="3"><label class="rating-btn" for="q22v3">3</label><input type="radio" name="q22" id="q22v4" value="4"><label class="rating-btn" for="q22v4">4</label><input type="radio" name="q22" id="q22v5" value="5"><label class="rating-btn na-btn" for="q22v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(22)" title="Agregar comentario">💬</button></div></div>
@@ -316,11 +387,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   <div class="item-comment-wrap" id="ic26"><textarea placeholder="Comentario sobre este ítem..." id="ict26"></textarea></div>
   <div class="item-row"><span class="item-num">27</span><span class="item-text">Reconoce e identifica los <strong>productos Kosher</strong> y su importancia</span><div class="rating"><input type="radio" name="q27" id="q27v1" value="1"><label class="rating-btn" for="q27v1">1</label><input type="radio" name="q27" id="q27v2" value="2"><label class="rating-btn" for="q27v2">2</label><input type="radio" name="q27" id="q27v3" value="3"><label class="rating-btn" for="q27v3">3</label><input type="radio" name="q27" id="q27v4" value="4"><label class="rating-btn" for="q27v4">4</label><input type="radio" name="q27" id="q27v5" value="5"><label class="rating-btn na-btn" for="q27v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(27)" title="Agregar comentario">💬</button></div></div>
   <div class="item-comment-wrap" id="ic27"><textarea placeholder="Comentario sobre este ítem..." id="ict27"></textarea></div>
-  <div class="sec-summary">Modulo 04 · 6 criterios</div>
-
+  <div class="sec-summary">Modulo 04 &middot; 6 criterios</div>
 </div>
 
-<!-- MODULO 05 -->
+<!-- ── MOD 05 ── -->
 <div class="section-block" id="mod5">
   <div class="sec-title-bar"><span class="sec-num">05</span><h2>Chocolatería</h2><span class="sec-badge">6 ítems</span></div>
   <div class="item-row"><span class="item-num">28</span><span class="item-text">Identifica variedad de <strong>alfajores, conitos y vieneses</strong></span><div class="rating"><input type="radio" name="q28" id="q28v1" value="1"><label class="rating-btn" for="q28v1">1</label><input type="radio" name="q28" id="q28v2" value="2"><label class="rating-btn" for="q28v2">2</label><input type="radio" name="q28" id="q28v3" value="3"><label class="rating-btn" for="q28v3">3</label><input type="radio" name="q28" id="q28v4" value="4"><label class="rating-btn" for="q28v4">4</label><input type="radio" name="q28" id="q28v5" value="5"><label class="rating-btn na-btn" for="q28v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(28)" title="Agregar comentario">💬</button></div></div>
@@ -335,11 +405,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   <div class="item-comment-wrap" id="ic32"><textarea placeholder="Comentario sobre este ítem..." id="ict32"></textarea></div>
   <div class="item-row"><span class="item-num">33</span><span class="item-text">Conoce la <strong>lata corazón con bombones y lata carrusel</strong></span><div class="rating"><input type="radio" name="q33" id="q33v1" value="1"><label class="rating-btn" for="q33v1">1</label><input type="radio" name="q33" id="q33v2" value="2"><label class="rating-btn" for="q33v2">2</label><input type="radio" name="q33" id="q33v3" value="3"><label class="rating-btn" for="q33v3">3</label><input type="radio" name="q33" id="q33v4" value="4"><label class="rating-btn" for="q33v4">4</label><input type="radio" name="q33" id="q33v5" value="5"><label class="rating-btn na-btn" for="q33v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(33)" title="Agregar comentario">💬</button></div></div>
   <div class="item-comment-wrap" id="ic33"><textarea placeholder="Comentario sobre este ítem..." id="ict33"></textarea></div>
-  <div class="sec-summary">Modulo 05 · 6 criterios</div>
-
+  <div class="sec-summary">Modulo 05 &middot; 6 criterios</div>
 </div>
 
-<!-- MODULO 06 -->
+<!-- ── MOD 06 ── -->
 <div class="section-block" id="mod6">
   <div class="sec-title-bar"><span class="sec-num">06</span><h2>Sistema y Caja</h2><span class="sec-badge">8 ítems</span></div>
   <div class="item-row"><span class="item-num">34</span><span class="item-text">Navega y <strong>busca productos en el sistema</strong> correctamente</span><div class="rating"><input type="radio" name="q34" id="q34v1" value="1"><label class="rating-btn" for="q34v1">1</label><input type="radio" name="q34" id="q34v2" value="2"><label class="rating-btn" for="q34v2">2</label><input type="radio" name="q34" id="q34v3" value="3"><label class="rating-btn" for="q34v3">3</label><input type="radio" name="q34" id="q34v4" value="4"><label class="rating-btn" for="q34v4">4</label><input type="radio" name="q34" id="q34v5" value="5"><label class="rating-btn na-btn" for="q34v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(34)" title="Agregar comentario">💬</button></div></div>
@@ -358,11 +427,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   <div class="item-comment-wrap" id="ic40"><textarea placeholder="Comentario sobre este ítem..." id="ict40"></textarea></div>
   <div class="item-row"><span class="item-num">41</span><span class="item-text">Comprende integración con <strong>PedidosYa</strong></span><div class="rating"><input type="radio" name="q41" id="q41v1" value="1"><label class="rating-btn" for="q41v1">1</label><input type="radio" name="q41" id="q41v2" value="2"><label class="rating-btn" for="q41v2">2</label><input type="radio" name="q41" id="q41v3" value="3"><label class="rating-btn" for="q41v3">3</label><input type="radio" name="q41" id="q41v4" value="4"><label class="rating-btn" for="q41v4">4</label><input type="radio" name="q41" id="q41v5" value="5"><label class="rating-btn na-btn" for="q41v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(41)" title="Agregar comentario">💬</button></div></div>
   <div class="item-comment-wrap" id="ic41"><textarea placeholder="Comentario sobre este ítem..." id="ict41"></textarea></div>
-  <div class="sec-summary">Modulo 06 · 8 criterios</div>
-
+  <div class="sec-summary">Modulo 06 &middot; 8 criterios</div>
 </div>
 
-<!-- MODULO 07 -->
+<!-- ── MOD 07 ── -->
 <div class="section-block" id="mod7">
   <div class="sec-title-bar"><span class="sec-num">07</span><h2>Atención al Cliente</h2><span class="sec-badge">6 ítems</span></div>
   <div class="item-row"><span class="item-num">42</span><span class="item-text">Recibe al cliente con <strong>actitud cordial y contacto visual</strong></span><div class="rating"><input type="radio" name="q42" id="q42v1" value="1"><label class="rating-btn" for="q42v1">1</label><input type="radio" name="q42" id="q42v2" value="2"><label class="rating-btn" for="q42v2">2</label><input type="radio" name="q42" id="q42v3" value="3"><label class="rating-btn" for="q42v3">3</label><input type="radio" name="q42" id="q42v4" value="4"><label class="rating-btn" for="q42v4">4</label><input type="radio" name="q42" id="q42v5" value="5"><label class="rating-btn na-btn" for="q42v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(42)" title="Agregar comentario">💬</button></div></div>
@@ -377,43 +445,33 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   <div class="item-comment-wrap" id="ic46"><textarea placeholder="Comentario sobre este ítem..." id="ict46"></textarea></div>
   <div class="item-row"><span class="item-num">47</span><span class="item-text">Agradece y <strong>solicita reseña</strong> al finalizar</span><div class="rating"><input type="radio" name="q47" id="q47v1" value="1"><label class="rating-btn" for="q47v1">1</label><input type="radio" name="q47" id="q47v2" value="2"><label class="rating-btn" for="q47v2">2</label><input type="radio" name="q47" id="q47v3" value="3"><label class="rating-btn" for="q47v3">3</label><input type="radio" name="q47" id="q47v4" value="4"><label class="rating-btn" for="q47v4">4</label><input type="radio" name="q47" id="q47v5" value="5"><label class="rating-btn na-btn" for="q47v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(47)" title="Agregar comentario">💬</button></div></div>
   <div class="item-comment-wrap" id="ic47"><textarea placeholder="Comentario sobre este ítem..." id="ict47"></textarea></div>
-  <div class="sec-summary">Modulo 07 · 6 criterios</div>
-
+  <div class="sec-summary">Modulo 07 &middot; 6 criterios</div>
 </div>
 
-<!-- DEVOLUCION -->
+<!-- ── DEVOLUCION ── -->
 <div class="section-block" id="finalComments">
   <div class="sec-title-bar"><span class="sec-num">08</span><h2>Devolucion al Evaluado</h2></div>
-  <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:16px" id="devolucion-grid">
-    <div style="background:#f0faf0;border:1.5px solid #3A8A3A;border-radius:10px;padding:18px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-        <span style="width:12px;height:12px;border-radius:50%;background:#3A8A3A;display:inline-block"></span>
-        <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#3A8A3A">Fortalezas</span>
-      </div>
-      <div id="fortalezas-lista" style="font-size:13px;color:#2a5a2a;line-height:1.8">
-        <em style="color:#aaa">Se generan al calcular puntaje...</em>
-      </div>
+  <div class="devolucion-grid">
+    <div class="dev-box green">
+      <div class="dev-box-head"><span class="dev-dot"></span><span class="dev-box-label">Fortalezas</span></div>
+      <div class="dev-content" id="fortalezas-lista"><em style="color:#aaa;font-size:12px">Se generan al calcular puntaje...</em></div>
     </div>
-    <div style="background:#fff8f0;border:1.5px solid #E8670A;border-radius:10px;padding:18px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-        <span style="width:12px;height:12px;border-radius:50%;background:#E8670A;display:inline-block"></span>
-        <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#E8670A">Aspectos a Reforzar</span>
-      </div>
-      <div id="reforzar-lista" style="font-size:13px;color:#7a3a0a;line-height:1.8">
-        <em style="color:#aaa">Se generan al calcular puntaje...</em>
-      </div>
+    <div class="dev-box orange">
+      <div class="dev-box-head"><span class="dev-dot"></span><span class="dev-box-label">Aspectos a Reforzar</span></div>
+      <div class="dev-content" id="reforzar-lista"><em style="color:#aaa;font-size:12px">Se generan al calcular puntaje...</em></div>
     </div>
   </div>
-  <div style="padding:0 20px 20px">
-    <div style="background:#f5f5f0;border:1px solid #E2E2DC;border-radius:8px;padding:14px;margin-top:4px">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#6B6B6B;margin-bottom:8px">Observaciones del Evaluador</div>
-      <textarea id="obs-evaluador" style="width:100%;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;color:#1C1C1C;resize:vertical;min-height:70px;outline:none" placeholder="Comentarios adicionales, acuerdos y proximos pasos..."></textarea>
+  <div style="padding:0 20px 18px">
+    <div class="obs-row" style="border-radius:6px;border:1px solid var(--border)">
+      <label>Observaciones del Evaluador</label>
+      <textarea id="obs-evaluador" placeholder="Comentarios adicionales, acuerdos y proximos pasos..."></textarea>
     </div>
   </div>
 </div>
 
+<!-- ── SCORE FOOTER ── -->
 <div class="score-footer">
-  <div style="flex:1">
+  <div class="score-footer-left">
     <h3>Puntaje Total</h3>
     <p>Items aplicables evaluados &middot; Escala maxima 4 (Destacado) por criterio</p>
     <div class="mod-grid" id="modGrid"></div>
@@ -424,8 +482,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
     <div class="denom" id="totalDenom">/ 188</div>
   </div>
 </div>
-
-
 
 <div class="actions no-print">
   <button class="btn btn-dark" onclick="calcScore()">Calcular Puntaje</button>
@@ -505,7 +561,6 @@ function doRegister() {
   });
 }
 
-// Auto-login si ya habia sesion
 document.addEventListener('DOMContentLoaded', function() {
   var u = sessionStorage.getItem('sc_user');
   var n = sessionStorage.getItem('sc_nombre');
@@ -516,137 +571,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (evEl) { evEl.value = n; evEl.readOnly = true; evEl.style.color = '#6B6B6B'; }
   }
 });
-
-function enviarEvaluacion() {
-  const evaluado  = document.getElementById('f-evaluado')?.value?.trim()  || '';
-  const local     = document.getElementById('f-local')?.value?.trim()     || '';
-  const evaluador = document.getElementById('f-evaluador')?.value?.trim() || '';
-  const fecha     = document.getElementById('f-fecha')?.value             || '';
-  const tipo      = document.getElementById('f-tipo')?.value              || '';
-  const rol       = document.getElementById('f-rol')?.value               || '';
-
-  if (!evaluado || !local || !evaluador || !fecha) {
-    let faltantes = [];
-    if (!evaluado)  faltantes.push('Nombre del evaluado');
-    if (!local)     faltantes.push('Local / Sucursal');
-    if (!evaluador) faltantes.push('Evaluador');
-    if (!fecha)     faltantes.push('Fecha');
-    alert('Completá los siguientes campos antes de enviar:\n\n• ' + faltantes.join('\n• '));
-    return;
-  }
-
-  // Verificar que todos los items activos estén calificados
-  const itemsFaltantes = [];
-  let totalItemsActivos = 0;
-  let totalRespondidos = 0;
-  MODS.forEach(m => {
-    if (!activeSet.has(m.secId)) return;
-    for (let i = m.start; i <= m.end; i++) {
-      totalItemsActivos++;
-      if (document.querySelector(`input[name="q${i}"]:checked`)) {
-        totalRespondidos++;
-      } else {
-        // Agrupa por módulo
-        const yaAgregado = itemsFaltantes.find(f => f.mod === m.name);
-        if (yaAgregado) yaAgregado.count++;
-        else itemsFaltantes.push({mod: m.name, count: 1});
-      }
-    }
-  });
-
-  if (itemsFaltantes.length > 0) {
-    const detalle = itemsFaltantes.map(f => `• ${f.mod}: ${f.count} item${f.count > 1 ? 's' : ''} sin calificar`).join('\n');
-    alert('No podés enviar todavía. Faltan items por calificar:\n\n' + detalle + '\n\nCalificá todos los items y presioná "Calcular Puntaje" antes de enviar.');
-    return;
-  }
-
-  // Verificar que se haya calculado el puntaje después de la última calificación
-  const totalScore = document.getElementById('totalScore').textContent;
-  if (totalScore === '--' || !puntajeCalculado) {
-    alert('Primero presioná "Calcular Puntaje" antes de enviar.');
-    return;
-  }
-
-  const modData = {};
-  MODS.forEach((m, idx) => {
-    const n = idx + 1;
-    if (!activeSet.has(m.secId)) {
-      modData[`s${n}`] = 'No evaluado'; modData[`s${n}max`] = '-';
-      modData[`obs${n}`] = ''; return;
-    }
-    let score = 0, naCount = 0, answered = 0;
-    const itemCount = m.end - m.start + 1;
-    for (let i = m.start; i <= m.end; i++) {
-      const s = document.querySelector(`input[name="q${i}"]:checked`);
-      if (s) { answered++; const v = +s.value; if (v === 5) naCount++; else score += v; }
-    }
-    const modMax = (itemCount - naCount) * 4;
-    modData[`s${n}`]    = answered > 0 ? score : '--';
-    modData[`s${n}max`] = modMax;
-    const section = document.getElementById(m.secId);
-    modData[`obs${n}`]  = section?.querySelector('.obs-row textarea')?.value?.trim() || '';
-  });
-
-  const totalMax  = document.getElementById('totalDenom').textContent.replace('/ ','').trim();
-  const band      = document.getElementById('perfBand');
-  const resultado = band?.style.display !== 'none' ? band?.textContent : 'Sin calcular';
-  const pct       = totalScore !== '--' && totalMax && totalMax !== '--'
-    ? Math.round((+totalScore / +totalMax) * 100) + '%' : '--';
-
-  // Leer fortalezas y reforzar item por item
-  const fortalezasArr = [];
-  const reforzarArr   = [];
-  MODS.forEach(m => {
-    if (!activeSet.has(m.secId)) return;
-    const section = document.getElementById(m.secId);
-    if (!section) return;
-    for (let i = m.start; i <= m.end; i++) {
-      const selected = document.querySelector(`input[name="q${i}"]:checked`);
-      if (!selected) continue;
-      const val = parseInt(selected.value);
-      if (val === 5) continue;
-      const rows = section.querySelectorAll('.item-row');
-      let itemText = '';
-      rows.forEach(row => {
-        const numEl = row.querySelector('.item-num');
-        if (numEl && numEl.textContent.trim() === String(i)) {
-          itemText = row.querySelector('.item-text')?.innerText?.trim() || '';
-        }
-      });
-      if (!itemText) return;
-      const label = val === 4 ? 'Destacado' : val === 3 ? 'Logrado' : val === 2 ? 'En proceso' : 'Inicial';
-      if (val >= 3) fortalezasArr.push(`[${m.name}] ${itemText} (${label})`);
-      else          reforzarArr.push(`[${m.name}] ${itemText} (${label})`);
-    }
-  });
-
-  const obsEvalEnvio = document.getElementById('obs-evaluador')?.value?.trim() || '';
-
-  const finalTas = document.querySelectorAll('#finalComments textarea');
-
-  const payload = {
-    fecha, evaluado, local, evaluador, tipo, rol,
-    ...modData,
-    total: totalScore, totalMax, porcentaje: pct, resultado,
-    fortalezas:  fortalezasArr.join(' | '),
-    reforzar:    reforzarArr.join(' | '),
-    observaciones: obsEvalEnvio
-  };
-
-  const btn = document.querySelector('.btn-send');
-  btn.textContent = 'Enviando...'; btn.disabled = true;
-
-  const params = new URLSearchParams({payload: JSON.stringify(payload)});
-  const url = `${SHEET_URL}?${params}`;
-
-  // Usar imagen para evitar bloqueos de CORS en iOS Safari
-  const img = new Image();
-  img.onload = img.onerror = function() {
-    showToast('Evaluacion enviada a la planilla ✓');
-    btn.textContent = '↑ Enviar a Planilla'; btn.disabled = false;
-  };
-  img.src = url;
-}
 
 const MODS = [
   {id:'s1sc', midx:'s1max', secId:'mod1', name:'Equipamiento',        start:1,  end:4},
@@ -659,217 +583,88 @@ const MODS = [
 ];
 
 let activeSet = new Set(['mod1','mod2','mod3','mod4','mod5','mod6','mod7']);
-let puntajeCalculado = false; // Se activa solo cuando calcScore completa exitosamente
-let yaEnviado = false; // Se activa al enviar por primera vez
+let puntajeCalculado = false;
+let yaEnviado = false;
 
 function toggleComment(n) {
   var wrap = document.getElementById('ic' + n);
   if (!wrap) return;
   wrap.classList.toggle('open');
-  if (wrap.classList.contains('open')) {
-    wrap.querySelector('textarea').focus();
-  }
+  if (wrap.classList.contains('open')) wrap.querySelector('textarea').focus();
 }
 
-function enviarYDescargarPDF() {
-  // Validar campos obligatorios
-  const evaluado  = document.getElementById('f-evaluado')?.value?.trim()  || '';
-  const local     = document.getElementById('f-local')?.value?.trim()     || '';
-  const evaluador = document.getElementById('f-evaluador')?.value?.trim() || '';
-  const fecha     = document.getElementById('f-fecha')?.value             || '';
-
-  if (!evaluado || !local || !evaluador || !fecha) {
-    let faltantes = [];
-    if (!evaluado)  faltantes.push('Nombre del evaluado');
-    if (!local)     faltantes.push('Local / Sucursal');
-    if (!evaluador) faltantes.push('Evaluador');
-    if (!fecha)     faltantes.push('Fecha');
-    alert('Completá los siguientes campos antes de continuar:\n\n• ' + faltantes.join('\n• '));
-    return;
-  }
-
-  // Verificar ítems completos
-  const itemsFaltantes = [];
-  MODS.forEach(function(m) {
-    if (!activeSet.has(m.secId)) return;
-    var sinCalificar = 0;
-    for (var i = m.start; i <= m.end; i++) {
-      if (!document.querySelector('input[name="q' + i + '"]:checked')) sinCalificar++;
-    }
-    if (sinCalificar > 0) itemsFaltantes.push({mod: m.name, count: sinCalificar});
-  });
-
-  if (itemsFaltantes.length > 0) {
-    var detalle = itemsFaltantes.map(function(f) { return '• ' + f.mod + ': ' + f.count + ' item' + (f.count > 1 ? 's' : '') + ' sin calificar'; }).join('\n');
-    alert('Faltan items por calificar:\n\n' + detalle);
-    return;
-  }
-
-  if (!puntajeCalculado) {
-    alert('Primero presioná "Calcular Puntaje" antes de continuar.');
-    return;
-  }
-
-  // Enviar a planilla solo si es la primera vez
-  if (!yaEnviado) {
-    enviarSilencioso();
-    yaEnviado = true;
-    // Cambiar texto del botón
-    var btn = document.getElementById('btnEnviarPDF');
-    if (btn) btn.textContent = '↓ Descargar PDF';
-    showToast('Evaluacion enviada a la planilla ✓');
-  }
-
-  // Siempre generar PDF
-  setTimeout(function() {
-    var nombre = 'Evaluacion_' + evaluado.replace(/\s+/g,'_') + (fecha ? '_' + fecha : '') + '.pdf';
-    var noPrint = document.querySelectorAll('.no-print');
-    noPrint.forEach(function(el) { el.style.display = 'none'; });
-
-    var opt = {
-      margin:      [8, 8, 8, 8],
-      filename:    nombre,
-      image:       {type:'jpeg', quality:0.95},
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        scrollY: 0,
-        scrollX: 0,
-        windowWidth: 1200,
-        width: 1200
-      },
-      jsPDF: {unit:'mm', format:'a4', orientation:'portrait'}
-    };
-
-    var element = document.getElementById('mainContent');
-    html2pdf().set(opt).from(element).save().then(function() {
-      noPrint.forEach(function(el) { el.style.display = ''; });
-    });
-  }, yaEnviado ? 300 : 1500);
-}
-
-function toggleModule(secId, isActive) {
-  const section = document.getElementById(secId);
-  if (!section) return;
-  if (isActive) {
-    activeSet.add(secId);
-    section.style.display = '';
-  } else {
-    activeSet.delete(secId);
-    section.style.display = 'none';
-  }
-}
-
-// Modulos — simple y universal
 function toggleMod(btn, secId) {
   var section = document.getElementById(secId);
   if (!section) return;
   if (activeSet.has(secId)) {
-    activeSet.delete(secId);
-    section.style.display = 'none';
-    btn.classList.remove('active');
+    activeSet.delete(secId); section.style.display = 'none'; btn.classList.remove('active');
   } else {
-    activeSet.add(secId);
-    section.style.display = '';
-    btn.classList.add('active');
+    activeSet.add(secId); section.style.display = ''; btn.classList.add('active');
   }
-  puntajeCalculado = false; // Resetear al cambiar módulos
+  puntajeCalculado = false;
 }
 
-// Resetear puntajeCalculado si cambia cualquier calificacion
 document.addEventListener('change', function(e) {
-  if (e.target && e.target.type === 'radio') {
-    puntajeCalculado = false;
-  }
+  if (e.target && e.target.type === 'radio') puntajeCalculado = false;
 });
 
-// Limitar fecha: hoy como máximo, 5 días atrás como mínimo
 (function() {
   var fechaInput = document.getElementById('f-fecha');
   if (!fechaInput) return;
   var hoy = new Date();
-  var minDate = new Date(hoy);
-  minDate.setDate(hoy.getDate() - 5);
-  var toISO = function(d) {
-    return d.toISOString().split('T')[0];
-  };
-  fechaInput.max = toISO(hoy);
-  fechaInput.min = toISO(minDate);
-  fechaInput.value = toISO(hoy); // Pone hoy por defecto
+  var minDate = new Date(hoy); minDate.setDate(hoy.getDate() - 5);
+  var toISO = function(d) { return d.toISOString().split('T')[0]; };
+  fechaInput.max = toISO(hoy); fechaInput.min = toISO(minDate); fechaInput.value = toISO(hoy);
 })();
 
 function calcScore() {
-  // Validar campos obligatorios primero
   const evaluado  = document.getElementById('f-evaluado')?.value?.trim() || '';
   const local     = document.getElementById('f-local')?.value?.trim()    || '';
   const evaluador = document.getElementById('f-evaluador')?.value?.trim()|| '';
   const fecha     = document.getElementById('f-fecha')?.value            || '';
-
   if (!evaluado || !local || !evaluador || !fecha) {
-    let faltantes = [];
-    if (!evaluado)  faltantes.push('Nombre del evaluado');
-    if (!local)     faltantes.push('Local / Sucursal');
-    if (!evaluador) faltantes.push('Evaluador');
-    if (!fecha)     faltantes.push('Fecha');
-    alert('Completá los siguientes campos antes de calcular:\n\n• ' + faltantes.join('\n• '));
-    return;
+    let f = [];
+    if (!evaluado)  f.push('Nombre del evaluado');
+    if (!local)     f.push('Local / Sucursal');
+    if (!evaluador) f.push('Evaluador');
+    if (!fecha)     f.push('Fecha');
+    alert('Completá los siguientes campos antes de calcular:\n\n• ' + f.join('\n• ')); return;
   }
-
-  let grand = 0, grandMax = 0, grandAnswered = 0, grandTotal = 0;
-  let html = '';
-
+  let grand = 0, grandMax = 0, grandAnswered = 0, grandTotal = 0, html = '';
   MODS.forEach(m => {
     const isActive = activeSet.has(m.secId);
     const itemCount = m.end - m.start + 1;
-
     if (!isActive) {
-      html += `<div class="mod-card" style="opacity:0.35"><div class="mn">${m.name}</div><div class="mv" style="font-size:12px;font-weight:400;color:#888;margin-top:4px">No evaluado</div></div>`;
+      html += `<div class="mod-card" style="opacity:0.3"><div class="mn">${m.name}</div><div class="mv" style="font-size:11px;font-weight:400;color:#666">No evaluado</div></div>`;
       return;
     }
-
     let score = 0, naCount = 0, answered = 0;
     for (let i = m.start; i <= m.end; i++) {
       const s = document.querySelector(`input[name="q${i}"]:checked`);
       if (s) { answered++; const v = +s.value; if (v === 5) naCount++; else score += v; }
     }
-
     const modMax = (itemCount - naCount) * 4;
-    grand += score; grandMax += modMax;
-    grandAnswered += answered; grandTotal += itemCount;
-
-    const scEl = document.getElementById(m.id);
-    if (scEl) scEl.textContent = answered > 0 ? score : '--';
-    const mxEl = document.getElementById(m.midx);
-    if (mxEl) mxEl.textContent = modMax > 0 ? modMax : itemCount * 4;
-
-    const naNote = naCount > 0 ? `<div style="font-size:10px;color:#888;margin-top:3px">${naCount} No Aplica${naCount>1?'n':''}</div>` : '';
-    const pctTxt = modMax > 0 && answered > 0 ? ` (${Math.round((score/modMax)*100)}%)` : '';
-    html += `<div class="mod-card"><div class="mn">${m.name}</div><div class="mv">${answered > 0 ? score : '--'}<span class="mm"> / ${modMax > 0 ? modMax : itemCount*4}</span></div><div style="font-size:10px;color:#666;margin-top:2px">${pctTxt}</div>${naNote}</div>`;
+    grand += score; grandMax += modMax; grandAnswered += answered; grandTotal += itemCount;
+    const naNote = naCount > 0 ? `<div class="mna">${naCount} No Aplica${naCount>1?'n':''}</div>` : '';
+    const pctTxt = modMax > 0 && answered > 0 ? `<div class="mpct">${Math.round((score/modMax)*100)}%</div>` : '';
+    html += `<div class="mod-card"><div class="mn">${m.name}</div><div class="mv">${answered > 0 ? score : '--'}<span class="mm"> / ${modMax > 0 ? modMax : itemCount*4}</span></div>${pctTxt}${naNote}</div>`;
   });
-
   document.getElementById('modGrid').innerHTML = html;
-
   const scoreEl = document.getElementById('totalScore');
   const denomEl = document.getElementById('totalDenom');
-  if (grandAnswered > 0) {
-    scoreEl.textContent = grand;
-    denomEl.textContent = `/ ${grandMax}`;
-  } else {
-    scoreEl.textContent = '--';
-    denomEl.textContent = '/ --';
-  }
-
+  if (grandAnswered > 0) { scoreEl.textContent = grand; denomEl.textContent = `/ ${grandMax}`; }
+  else { scoreEl.textContent = '--'; denomEl.textContent = '/ --'; }
   const band = document.getElementById('perfBand');
   if (grandAnswered >= grandTotal && grandTotal > 0) {
     if (grandMax === 0) { band.style.display = 'none'; return; }
     const pct = (grand / grandMax) * 100;
     let msg, bg, fg;
-    if (pct >= 90)      { msg='Desempeno Excepcional';       bg='#1A6B1A'; fg='white'; }
-    else if (pct >= 75) { msg='Desempeno Solido';            bg='#3A8A3A'; fg='white'; }
-    else if (pct >= 60) { msg='Desempeno Aceptable';         bg='#D4A017'; fg='#1C1C1C'; }
-    else if (pct >= 40) { msg='Por Debajo del Estandar';     bg='#E8670A'; fg='white'; }
-    else                { msg='Desempeno Critico';           bg='#D93025'; fg='white'; }
-    band.style.cssText = `display:block;background:${bg};color:${fg};padding:10px 14px;border-radius:6px;margin-top:10px;font-size:14px;font-weight:600;`;
+    if (pct >= 90)      { msg='Desempeno Excepcional';   bg='#1A6B1A'; fg='white'; }
+    else if (pct >= 75) { msg='Desempeno Solido';        bg='#27ae60'; fg='white'; }
+    else if (pct >= 60) { msg='Desempeno Aceptable';     bg='#f39c12'; fg='#1C1C1C'; }
+    else if (pct >= 40) { msg='Por Debajo del Estandar'; bg='#d35400'; fg='white'; }
+    else                { msg='Desempeno Critico';       bg='#c0392b'; fg='white'; }
+    band.style.cssText = `display:block;background:${bg};color:${fg};padding:10px 14px;border-radius:6px;margin-top:12px;font-size:14px;font-weight:700;`;
     band.textContent = `${msg} — ${Math.round(pct)}%`;
   } else {
     band.style.display = 'none';
@@ -878,164 +673,22 @@ function calcScore() {
       const detalles = [];
       MODS.forEach(m => {
         if (!activeSet.has(m.secId)) return;
-        let sinCalificar = 0;
-        for (let i = m.start; i <= m.end; i++) {
-          if (!document.querySelector(`input[name="q${i}"]:checked`)) sinCalificar++;
-        }
-        if (sinCalificar > 0) detalles.push(`• ${m.name}: ${sinCalificar} item${sinCalificar > 1 ? 's' : ''} pendiente${sinCalificar > 1 ? 's' : ''}`);
+        let sin = 0;
+        for (let i = m.start; i <= m.end; i++) { if (!document.querySelector(`input[name="q${i}"]:checked`)) sin++; }
+        if (sin > 0) detalles.push(`• ${m.name}: ${sin} item${sin > 1 ? 's' : ''} pendiente${sin > 1 ? 's' : ''}`);
       });
       alert(`Faltan items por calificar:\n\n${detalles.join('\n')}\n\nTotal: ${pending} item${pending > 1 ? 's' : ''}`);
-      return; // No generar fortalezas si no está completo
+      return;
     }
   }
-
-  // Generar comentarios solo si todo está completo
   generarComentarios();
-  puntajeCalculado = true; // Marcar que el puntaje fue calculado correctamente
+  puntajeCalculado = true;
 }
 
 function generarComentarios() {
   const fortalezasEl = document.getElementById('fortalezas-lista');
   const reforzarEl   = document.getElementById('reforzar-lista');
-
-  const fortalezas = []; // score 3-4
-  const reforzar   = []; // score 1-2
-
-  MODS.forEach(m => {
-    if (!activeSet.has(m.secId)) return;
-    const section = document.getElementById(m.secId);
-    if (!section) return;
-
-    for (let i = m.start; i <= m.end; i++) {
-      const selected = document.querySelector(`input[name="q${i}"]:checked`);
-      if (!selected) continue;
-      const val = parseInt(selected.value);
-      if (val === 5) continue; // NA
-
-      // Get item text from DOM — strip HTML tags
-      const rows = section.querySelectorAll('.item-row');
-      let itemText = '';
-      rows.forEach(row => {
-        const numEl = row.querySelector('.item-num');
-        if (numEl && numEl.textContent.trim() === String(i)) {
-          itemText = row.querySelector('.item-text')?.innerText?.trim() || '';
-        }
-      });
-      if (!itemText) continue;
-
-      const entry = {mod: m.name, text: itemText, val};
-      if (val >= 3)      fortalezas.push(entry);
-      else if (val <= 2) reforzar.push(entry);
-    }
-  });
-
-  // Render fortalezas
-  if (fortalezas.length) {
-    // Group by module
-    const grouped = {};
-    fortalezas.forEach(e => {
-      if (!grouped[e.mod]) grouped[e.mod] = [];
-      grouped[e.mod].push(e);
-    });
-    fortalezasEl.innerHTML = Object.entries(grouped).map(([mod, items]) =>
-      `<div style="margin-bottom:10px">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#3A8A3A;margin-bottom:4px">${mod}</div>
-        ${items.map(e => {
-          const dot = e.val === 4 ? '#1A6B1A' : '#3A8A3A';
-          const label = e.val === 4 ? '★ Destacado' : '✓ Logrado';
-          return `<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:4px">
-            <span style="width:7px;height:7px;border-radius:50%;background:${dot};flex-shrink:0;margin-top:5px"></span>
-            <span style="font-size:12px;color:#1C1C1C">${e.text} <span style="font-size:10px;color:${dot};font-weight:600">${label}</span></span>
-          </div>`;
-        }).join('')}
-      </div>`
-    ).join('');
-  } else {
-    fortalezasEl.innerHTML = '<span style="color:#aaa;font-size:12px">Sin items destacados en esta evaluacion.</span>';
-  }
-
-  // Render reforzar
-  if (reforzar.length) {
-    const grouped = {};
-    reforzar.forEach(e => {
-      if (!grouped[e.mod]) grouped[e.mod] = [];
-      grouped[e.mod].push(e);
-    });
-    reforzarEl.innerHTML = Object.entries(grouped).map(([mod, items]) =>
-      `<div style="margin-bottom:10px">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#E8670A;margin-bottom:4px">${mod}</div>
-        ${items.map(e => {
-          const dot = e.val === 1 ? '#D93025' : '#E8670A';
-          const label = e.val === 1 ? '✗ Inicial' : '⚠ En proceso';
-          return `<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:4px">
-            <span style="width:7px;height:7px;border-radius:50%;background:${dot};flex-shrink:0;margin-top:5px"></span>
-            <span style="font-size:12px;color:#1C1C1C">${e.text} <span style="font-size:10px;color:${dot};font-weight:600">${label}</span></span>
-          </div>`;
-        }).join('')}
-      </div>`
-    ).join('');
-  } else {
-    reforzarEl.innerHTML = '<span style="color:#3A8A3A;font-size:12px">✓ Todos los items evaluados dentro del estandar.</span>';
-  }
-}
-
-function copiarResumen() {
-  const evaluado  = document.getElementById('f-evaluado')?.value  || '---';
-  const local     = document.getElementById('f-local')?.value     || '---';
-  const evaluador = document.getElementById('f-evaluador')?.value || '---';
-  const fecha     = document.getElementById('f-fecha')?.value     || '---';
-  const tipo      = document.getElementById('f-tipo')?.value      || '---';
-  const rol       = document.getElementById('f-rol')?.value       || '---';
-
-  const SEP = '='.repeat(46);
-  const SEP2 = '-'.repeat(46);
-  let L = [];
-  L.push('EVALUACION DE CAPACITACION — LUCCIANOS');
-  L.push(SEP);
-  L.push(`Evaluado:  ${evaluado}`);
-  L.push(`Local:     ${local}`);
-  L.push(`Evaluador: ${evaluador}`);
-  L.push(`Fecha:     ${fecha}`);
-  L.push(`Tipo:      ${tipo}  |  Rol: ${rol}`);
-  L.push('');
-  L.push('RESULTADOS POR MODULO');
-  L.push(SEP2);
-
-  MODS.forEach(m => {
-    if (!activeSet.has(m.secId)) { L.push(`[No evaluado]  ${m.name}`); return; }
-    let score = 0, naCount = 0, answered = 0;
-    const itemCount = m.end - m.start + 1;
-    for (let i = m.start; i <= m.end; i++) {
-      const s = document.querySelector(`input[name="q${i}"]:checked`);
-      if (s) { answered++; const v = +s.value; if (v === 5) naCount++; else score += v; }
-    }
-    const modMax = (itemCount - naCount) * 4;
-    const pct = modMax > 0 && answered > 0 ? `${Math.round((score/modMax)*100)}%` : 'sin calificar';
-    const naStr = naCount > 0 ? `  (${naCount} No Aplica${naCount>1?'n':''})` : '';
-    L.push(`${m.name}: ${answered > 0 ? score : '--'} / ${modMax > 0 ? modMax : itemCount*4} pts  —  ${pct}${naStr}`);
-
-    const section = document.getElementById(m.secId);
-    const obs = section?.querySelector('.obs-row textarea')?.value?.trim();
-    if (obs) L.push(`  Obs: ${obs}`);
-  });
-
-  const scoreVal = document.getElementById('totalScore').textContent;
-  const denomVal = document.getElementById('totalDenom').textContent;
-  const band = document.getElementById('perfBand');
-  L.push('');
-  L.push(SEP);
-  L.push(`PUNTAJE TOTAL: ${scoreVal} ${denomVal} pts`);
-  if (band && band.style.display !== 'none') L.push(`Resultado: ${band.textContent}`);
-
-  // Devolucion
-  L.push('');
-  L.push('DEVOLUCION AL EVALUADO');
-  L.push(SEP2);
-
-  // Leer items directamente de los radios — igual que generarComentarios
-  const fortalezasCopy = [];
-  const reforzarCopy   = [];
-
+  const fortalezas = [], reforzar = [];
   MODS.forEach(m => {
     if (!activeSet.has(m.secId)) return;
     const section = document.getElementById(m.secId);
@@ -1049,117 +702,85 @@ function copiarResumen() {
       let itemText = '';
       rows.forEach(row => {
         const numEl = row.querySelector('.item-num');
-        if (numEl && numEl.textContent.trim() === String(i)) {
-          itemText = row.querySelector('.item-text')?.innerText?.trim() || '';
-        }
+        if (numEl && numEl.textContent.trim() === String(i)) itemText = row.querySelector('.item-text')?.innerText?.trim() || '';
       });
-      if (!itemText) return;
-      const label = val === 4 ? '★ Destacado' : val === 3 ? '✓ Logrado' : val === 2 ? '⚠ En proceso' : '✗ Inicial';
-      if (val >= 3) fortalezasCopy.push(`[${m.name}] ${itemText} — ${label}`);
-      else          reforzarCopy.push(`[${m.name}] ${itemText} — ${label}`);
+      if (!itemText) continue;
+      if (val >= 3) fortalezas.push({mod: m.name, text: itemText, val});
+      else          reforzar.push({mod: m.name, text: itemText, val});
     }
   });
 
-  L.push('FORTALEZAS:');
-  if (fortalezasCopy.length) fortalezasCopy.forEach(t => L.push('  + ' + t));
-  else L.push('  Sin items destacados en esta evaluacion.');
+  const renderGroup = (items, colorTitle, tagFn) => {
+    if (!items.length) return '';
+    const grouped = {};
+    items.forEach(e => { if (!grouped[e.mod]) grouped[e.mod] = []; grouped[e.mod].push(e); });
+    return Object.entries(grouped).map(([mod, its]) =>
+      `<div style="margin-bottom:10px">
+        <div class="dev-group-title">${mod}</div>
+        ${its.map(e => {
+          const {bg, label} = tagFn(e.val);
+          return `<div class="dev-item">
+            <span class="dev-item-dot" style="background:${bg}"></span>
+            <span class="dev-item-text">${e.text} <span class="dev-tag" style="background:${bg}22;color:${bg}">${label}</span></span>
+          </div>`;
+        }).join('')}
+      </div>`
+    ).join('');
+  };
 
-  L.push('');
-  L.push('ASPECTOS A REFORZAR:');
-  if (reforzarCopy.length) reforzarCopy.forEach(t => L.push('  ! ' + t));
-  else L.push('  Todos los items evaluados dentro del estandar.');
+  fortalezasEl.innerHTML = renderGroup(fortalezas, '#27ae60', v => (
+    v === 4 ? {bg:'#1e8449', label:'★ Destacado'} : {bg:'#1a5276', label:'✓ Logrado'}
+  )) || '<span style="color:#aaa;font-size:12px">Sin items destacados en esta evaluacion.</span>';
 
-  const obsEvalCopy = document.getElementById('obs-evaluador');
-  if (obsEvalCopy && obsEvalCopy.value.trim()) {
-    L.push('');
-    L.push('OBSERVACIONES: ' + obsEvalCopy.value.trim());
-  }
-
-  L.push('');
-  L.push(SEP2);
-
-  const text = L.join('\n');
-  navigator.clipboard.writeText(text).then(() => {
-    showToast('Resumen copiado al portapapeles ✓');
-  }).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
-    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
-    document.body.removeChild(ta);
-    showToast('Resumen copiado al portapapeles ✓');
-  });
+  reforzarEl.innerHTML = renderGroup(reforzar, '#d35400', v => (
+    v === 1 ? {bg:'#c0392b', label:'✗ Inicial'} : {bg:'#d35400', label:'⚠ En proceso'}
+  )) || '<span style="color:#27ae60;font-size:12px">✓ Todos los items evaluados dentro del estandar.</span>';
 }
 
-function showToast(msg, duration) {
-  duration = duration || 2800;
-  let t = document.getElementById('_toast');
-  if (!t) {
-    t = document.createElement('div'); t.id = '_toast';
-    t.style.cssText = 'position:fixed;bottom:36px;left:50%;transform:translateX(-50%);background:#1C1C1C;color:white;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999;pointer-events:none;transition:opacity .4s;max-width:90%;text-align:center';
-    document.body.appendChild(t);
-  }
-  t.textContent = msg; t.style.opacity = '1';
-  setTimeout(() => { t.style.opacity = '0'; }, duration);
-}
-
-function generarPDFyEnviar() {
-  // Primero validar que todo esté completo
+function enviarYDescargarPDF() {
   const evaluado  = document.getElementById('f-evaluado')?.value?.trim()  || '';
   const local     = document.getElementById('f-local')?.value?.trim()     || '';
   const evaluador = document.getElementById('f-evaluador')?.value?.trim() || '';
   const fecha     = document.getElementById('f-fecha')?.value             || '';
-
   if (!evaluado || !local || !evaluador || !fecha) {
-    let faltantes = [];
-    if (!evaluado)  faltantes.push('Nombre del evaluado');
-    if (!local)     faltantes.push('Local / Sucursal');
-    if (!evaluador) faltantes.push('Evaluador');
-    if (!fecha)     faltantes.push('Fecha');
-    alert('Completá los siguientes campos antes de continuar:\n\n• ' + faltantes.join('\n• '));
-    return;
+    let f = [];
+    if (!evaluado)  f.push('Nombre del evaluado');
+    if (!local)     f.push('Local / Sucursal');
+    if (!evaluador) f.push('Evaluador');
+    if (!fecha)     f.push('Fecha');
+    alert('Completá los siguientes campos antes de continuar:\n\n• ' + f.join('\n• ')); return;
   }
-
   const itemsFaltantes = [];
   MODS.forEach(function(m) {
     if (!activeSet.has(m.secId)) return;
-    var sinCalificar = 0;
-    for (var i = m.start; i <= m.end; i++) {
-      if (!document.querySelector('input[name="q' + i + '"]:checked')) sinCalificar++;
-    }
-    if (sinCalificar > 0) itemsFaltantes.push({mod: m.name, count: sinCalificar});
+    var sin = 0;
+    for (var i = m.start; i <= m.end; i++) { if (!document.querySelector('input[name="q' + i + '"]:checked')) sin++; }
+    if (sin > 0) itemsFaltantes.push({mod: m.name, count: sin});
   });
-
   if (itemsFaltantes.length > 0) {
-    var detalle = itemsFaltantes.map(function(f) { return '• ' + f.mod + ': ' + f.count + ' item' + (f.count > 1 ? 's' : '') + ' sin calificar'; }).join('\n');
-    alert('Faltan items por calificar:\n\n' + detalle);
-    return;
+    alert('Faltan items por calificar:\n\n' + itemsFaltantes.map(f => '• ' + f.mod + ': ' + f.count + ' item' + (f.count > 1 ? 's' : '') + ' sin calificar').join('\n')); return;
   }
-
-  if (!puntajeCalculado) {
-    alert('Primero presioná "Calcular Puntaje" antes de continuar.');
-    return;
+  if (!puntajeCalculado) { alert('Primero presioná "Calcular Puntaje" antes de continuar.'); return; }
+  if (!yaEnviado) {
+    enviarSilencioso(); yaEnviado = true;
+    var btn = document.getElementById('btnEnviarPDF');
+    if (btn) btn.textContent = '↓ Descargar PDF';
+    showToast('Evaluacion enviada a la planilla ✓');
   }
-
-  // Enviar a planilla silenciosamente
-  enviarSilencioso();
-
-  // Generar PDF
-  var nombre = 'Evaluacion_' + evaluado.replace(/\s+/g,'_') + (fecha ? '_' + fecha : '') + '.pdf';
-  var noPrint = document.querySelectorAll('.no-print');
-  noPrint.forEach(function(el) { el.style.display = 'none'; });
-
-  var opt = {
-    margin:      [8, 8, 8, 8],
-    filename:    nombre,
-    image:       {type:'jpeg', quality:0.97},
-    html2canvas: {scale:2, useCORS:true, scrollY:-window.scrollY, windowHeight:document.getElementById('mainContent').scrollHeight},
-    jsPDF:       {unit:'mm', format:'a4', orientation:'portrait'}
-  };
-
-  html2pdf().set(opt).from(document.getElementById('mainContent')).save().then(function() {
-    noPrint.forEach(function(el) { el.style.display = ''; });
-    showToast('PDF descargado y evaluacion enviada ✓');
-  });
+  setTimeout(function() {
+    var nombre = 'Evaluacion_' + evaluado.replace(/\s+/g,'_') + (fecha ? '_' + fecha : '') + '.pdf';
+    var noPrint = document.querySelectorAll('.no-print');
+    noPrint.forEach(function(el) { el.style.display = 'none'; });
+    var opt = {
+      margin: [8,8,8,8], filename: nombre,
+      image: {type:'jpeg', quality:0.95},
+      html2canvas: {scale:2, useCORS:true, scrollY:0, scrollX:0, windowWidth:1200, width:1200},
+      jsPDF: {unit:'mm', format:'a4', orientation:'portrait'}
+    };
+    html2pdf().set(opt).from(document.getElementById('mainContent')).save().then(function() {
+      noPrint.forEach(function(el) { el.style.display = ''; });
+    });
+  }, yaEnviado ? 300 : 1500);
 }
 
 function enviarSilencioso() {
@@ -1169,127 +790,83 @@ function enviarSilencioso() {
   const fecha     = document.getElementById('f-fecha')?.value             || '';
   const tipo      = document.getElementById('f-tipo')?.value              || '';
   const rol       = document.getElementById('f-rol')?.value               || '';
-
   const modData = {};
   MODS.forEach(function(m, idx) {
     var n = idx + 1;
-    if (!activeSet.has(m.secId)) {
-      modData['s'+n] = 'No evaluado'; modData['s'+n+'max'] = '-'; modData['obs'+n] = ''; return;
+    if (!activeSet.has(m.secId)) { modData['s'+n]='No evaluado'; modData['s'+n+'max']='-'; modData['obs'+n]=''; return; }
+    var score=0, naCount=0, answered=0, itemCount=m.end-m.start+1;
+    for (var i=m.start; i<=m.end; i++) {
+      var s=document.querySelector('input[name="q'+i+'"]:checked');
+      if (s) { answered++; var v=+s.value; if(v===5) naCount++; else score+=v; }
     }
-    var score = 0, naCount = 0, answered = 0;
-    var itemCount = m.end - m.start + 1;
-    for (var i = m.start; i <= m.end; i++) {
-      var s = document.querySelector('input[name="q'+i+'"]:checked');
-      if (s) { answered++; var v = +s.value; if (v === 5) naCount++; else score += v; }
-    }
-    var modMax = (itemCount - naCount) * 4;
-    modData['s'+n] = answered > 0 ? score : '--';
-    modData['s'+n+'max'] = modMax;
-    var section = document.getElementById(m.secId);
-    modData['obs'+n] = section?.querySelector('.obs-row textarea')?.value?.trim() || '';
+    modData['s'+n]=answered>0?score:'--'; modData['s'+n+'max']=(itemCount-naCount)*4;
+    modData['obs'+n]=document.getElementById(m.secId)?.querySelector('.obs-row textarea')?.value?.trim()||'';
   });
-
-  const totalScore = document.getElementById('totalScore').textContent;
-  const totalMax   = document.getElementById('totalDenom').textContent.replace('/ ','').trim();
-  const band       = document.getElementById('perfBand');
-  const resultado  = band?.style.display !== 'none' ? band?.textContent : 'Sin calcular';
-  const pct        = totalScore !== '--' && totalMax ? Math.round((+totalScore / +totalMax) * 100) + '%' : '--';
-
-  const fortalezasArr = [], reforzarArr = [];
+  const totalScore=document.getElementById('totalScore').textContent;
+  const totalMax=document.getElementById('totalDenom').textContent.replace('/ ','').trim();
+  const band=document.getElementById('perfBand');
+  const resultado=band?.style.display!=='none'?band?.textContent:'Sin calcular';
+  const pct=totalScore!=='--'&&totalMax?Math.round((+totalScore/+totalMax)*100)+'%':'--';
+  const fortalezasArr=[], reforzarArr=[];
   MODS.forEach(function(m) {
     if (!activeSet.has(m.secId)) return;
-    var section = document.getElementById(m.secId);
-    if (!section) return;
-    for (var i = m.start; i <= m.end; i++) {
-      var selected = document.querySelector('input[name="q'+i+'"]:checked');
-      if (!selected) continue;
-      var val = parseInt(selected.value);
-      if (val === 5) continue;
-      var rows = section.querySelectorAll('.item-row');
-      var itemText = '';
-      rows.forEach(function(row) {
-        var numEl = row.querySelector('.item-num');
-        if (numEl && numEl.textContent.trim() === String(i)) itemText = row.querySelector('.item-text')?.innerText?.trim() || '';
-      });
+    var section=document.getElementById(m.secId); if (!section) return;
+    for (var i=m.start; i<=m.end; i++) {
+      var sel=document.querySelector('input[name="q'+i+'"]:checked'); if (!sel) continue;
+      var val=parseInt(sel.value); if (val===5) continue;
+      var rows=section.querySelectorAll('.item-row'), itemText='';
+      rows.forEach(function(row) { var n=row.querySelector('.item-num'); if(n&&n.textContent.trim()===String(i)) itemText=row.querySelector('.item-text')?.innerText?.trim()||''; });
       if (!itemText) return;
-      var label = val === 4 ? 'Destacado' : val === 3 ? 'Logrado' : val === 2 ? 'En proceso' : 'Inicial';
-      if (val >= 3) fortalezasArr.push('['+m.name+'] '+itemText+' ('+label+')');
-      else reforzarArr.push('['+m.name+'] '+itemText+' ('+label+')');
+      var label=val===4?'Destacado':val===3?'Logrado':val===2?'En proceso':'Inicial';
+      if (val>=3) fortalezasArr.push('['+m.name+'] '+itemText+' ('+label+')');
+      else        reforzarArr.push('['+m.name+'] '+itemText+' ('+label+')');
     }
   });
-
-  const obsEval = document.getElementById('obs-evaluador')?.value?.trim() || '';
-  const payload = Object.assign({fecha, evaluado, local, evaluador, tipo, rol}, modData, {
-    total: totalScore, totalMax, porcentaje: pct, resultado,
-    fortalezas: fortalezasArr.join(' | '),
-    reforzar: reforzarArr.join(' | '),
-    observaciones: obsEval
+  const obsEval=document.getElementById('obs-evaluador')?.value?.trim()||'';
+  const payload=Object.assign({fecha,evaluado,local,evaluador,tipo,rol},modData,{
+    total:totalScore, totalMax, porcentaje:pct, resultado,
+    fortalezas:fortalezasArr.join(' | '), reforzar:reforzarArr.join(' | '), observaciones:obsEval
   });
-
-  const params = new URLSearchParams({payload: JSON.stringify(payload)});
-  const img = new Image();
-  img.src = SHEET_URL + '?' + params;
+  const img=new Image();
+  img.src=SHEET_URL+'?'+new URLSearchParams({payload:JSON.stringify(payload)});
 }
 
 function resetForm() {
   if (!confirm('Reiniciar toda la evaluacion?')) return;
   document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
-  ['f-evaluado','f-local','f-evaluador','f-fecha'].forEach(id => {
-    const el = document.getElementById(id); if (el) el.value = '';
-  });
-  ['f-tipo','f-rol'].forEach(id => {
-    const el = document.getElementById(id); if (el) el.selectedIndex = 0;
-  });
+  ['f-evaluado','f-local','f-evaluador','f-fecha'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  ['f-tipo','f-rol'].forEach(id => { const el=document.getElementById(id); if(el) el.selectedIndex=0; });
   document.querySelectorAll('textarea').forEach(t => t.value = '');
-  document.getElementById('totalScore').textContent = '--';
-  document.getElementById('totalDenom').textContent = '/ 188';
-  document.getElementById('perfBand').style.display = 'none';
-  document.getElementById('modGrid').innerHTML = '';
-
-  // Limpiar fortalezas y aspectos a reforzar
-  const fortalezasEl = document.getElementById('fortalezas-lista');
-  const reforzarEl   = document.getElementById('reforzar-lista');
-  const obsEval      = document.getElementById('obs-evaluador');
-  if (fortalezasEl) fortalezasEl.innerHTML = '<em style="color:#aaa">Se generan al calcular puntaje...</em>';
-  if (reforzarEl)   reforzarEl.innerHTML   = '<em style="color:#aaa">Se generan al calcular puntaje...</em>';
-  if (obsEval)      obsEval.value = '';
-
-  // Resetear botones de módulos — activar todos
+  document.getElementById('totalScore').textContent='--';
+  document.getElementById('totalDenom').textContent='/ 188';
+  document.getElementById('perfBand').style.display='none';
+  document.getElementById('modGrid').innerHTML='';
+  const f=document.getElementById('fortalezas-lista'), r=document.getElementById('reforzar-lista');
+  if(f) f.innerHTML='<em style="color:#aaa;font-size:12px">Se generan al calcular puntaje...</em>';
+  if(r) r.innerHTML='<em style="color:#aaa;font-size:12px">Se generan al calcular puntaje...</em>';
   document.querySelectorAll('.mod-toggle[onclick]').forEach(function(btn) {
-    var match = btn.getAttribute('onclick').match(/'(mod\d+)'/);
-    if (!match) return;
-    var secId = match[1];
-    btn.classList.add('active');
-    activeSet.add(secId);
-    var section = document.getElementById(secId);
-    if (section) section.style.display = '';
+    var match=btn.getAttribute('onclick').match(/'(mod\d+)'/); if(!match) return;
+    btn.classList.add('active'); activeSet.add(match[1]);
+    var s=document.getElementById(match[1]); if(s) s.style.display='';
   });
-
-  MODS.forEach(m => {
-    const sc = document.getElementById(m.id); if (sc) sc.textContent = '--';
-    const mx = document.getElementById(m.midx);
-    if (mx) mx.textContent = (m.end - m.start + 1) * 4;
-  });
-
-  // Resetear estado de envío
-  yaEnviado = false;
-  puntajeCalculado = false;
-  var btn = document.getElementById('btnEnviarPDF');
-  if (btn) btn.textContent = '↑ Enviar y Descargar PDF';
-
-  // Cerrar todos los comentarios por ítem
-  document.querySelectorAll('.item-comment-wrap').forEach(function(el) {
-    el.classList.remove('open');
-  });
-  document.querySelectorAll('.item-comment-wrap textarea').forEach(function(el) {
-    el.value = '';
-  });
+  yaEnviado=false; puntajeCalculado=false;
+  var btn=document.getElementById('btnEnviarPDF'); if(btn) btn.textContent='↑ Enviar y Descargar PDF';
+  document.querySelectorAll('.item-comment-wrap').forEach(el => el.classList.remove('open'));
 }
 
+function showToast(msg, duration) {
+  duration=duration||2800;
+  let t=document.getElementById('_toast');
+  if (!t) {
+    t=document.createElement('div'); t.id='_toast';
+    t.style.cssText='position:fixed;bottom:36px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:white;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999;pointer-events:none;transition:opacity .4s;max-width:90%;text-align:center';
+    document.body.appendChild(t);
+  }
+  t.textContent=msg; t.style.opacity='1';
+  setTimeout(()=>{ t.style.opacity='0'; }, duration);
+}
 </script>
 
 </div><!-- end mainContent -->
-
-
 </body>
 </html>
