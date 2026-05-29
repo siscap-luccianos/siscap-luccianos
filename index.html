@@ -43,6 +43,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 
 /* ─── PRINT ──────────────────────────────────────────── */
 @media print{
+  .sc-version,.sc-overlay,.sc-modal{display:none!important}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;box-sizing:border-box!important}
   .no-print{display:none!important}
   #loginWrap{display:none!important}
@@ -228,6 +229,31 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   .btn{width:100%;text-align:center;padding:14px}
   .devolucion-grid{grid-template-columns:1fr!important}
 }
+
+/* ─── CONTROL DE VERSION ─────────────────────────────── */
+.top-header{position:relative}
+.sc-version{position:absolute;top:16px;right:20px;display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:.5px;color:#cfcfc9;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);padding:5px 11px;border-radius:20px;cursor:pointer;transition:background .2s}
+.sc-version:hover{background:rgba(255,255,255,.16)}
+.sc-version::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--r4)}
+.sc-overlay{position:fixed;inset:0;z-index:10000;background:rgba(28,28,28,.78);display:flex;align-items:center;justify-content:center;padding:20px}
+.sc-card{background:#fff;border-radius:12px;max-width:420px;width:100%;padding:32px 28px;text-align:center;box-shadow:0 12px 48px rgba(0,0,0,.25)}
+.sc-card h3{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;margin-bottom:8px;color:var(--text)}
+.sc-card p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.sc-card .btn{width:100%}
+.sc-mini{font-size:12px;color:var(--muted);margin-top:12px}
+.sc-modal{background:#fff;border-radius:12px;max-width:540px;width:100%;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 12px 48px rgba(0,0,0,.25);text-align:left}
+.sc-modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border)}
+.sc-modal-head h3{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400}
+.sc-modal-close{background:none;border:none;font-size:26px;line-height:1;color:var(--muted);cursor:pointer}
+.sc-modal-body{padding:8px 22px 20px;overflow-y:auto}
+.sc-nov{padding:14px 0;border-bottom:1px solid var(--border)}
+.sc-nov:last-child{border-bottom:none}
+.sc-nov-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:5px}
+.sc-nov-ver{font-weight:700;font-size:14px}
+.sc-nov-fecha{font-size:12px;color:var(--muted)}
+.sc-nov-desc{font-size:13px;color:var(--text);line-height:1.5}
+.sc-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 9px;border-radius:20px;color:#fff}
+.sc-tag.lanz{background:#1a5fa8}.sc-tag.corr{background:var(--r2)}.sc-tag.nueva{background:var(--r4)}.sc-tag.otro{background:var(--r5)}
 </style>
 </head>
 <body>
@@ -280,6 +306,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 <div id="mainContent" style="display:none">
 
 <div class="top-header">
+  <button type="button" class="sc-version no-print" onclick="abrirNovedades()" title="Ver novedades">v<span id="scVerNum">1.1.0</span></button>
   <div class="org">Luccianos &mdash; Formulario de Capacitacion</div>
   <h1>Evaluacion de Capacitacion<br>7 Modulos Operativos</h1>
   <div class="sub">Escala 1 a 4 &middot; Valor 5 = No aplica &middot; 47 criterios &middot; Puntaje sobre items aplicables</div>
@@ -504,6 +531,22 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 
 </div><!-- end page-wrap -->
 
+<!-- ════════════════════ CONTROL DE VERSION ════════════════════ -->
+<div class="sc-overlay no-print" id="scUpdate" style="display:none">
+  <div class="sc-card">
+    <h3>Nueva version disponible</h3>
+    <p>Estas usando una version anterior de SisCap. Para continuar necesitas actualizar a la version <strong id="scVerNueva">—</strong>.</p>
+    <button class="btn btn-dark" onclick="forzarActualizacion()">Actualizar ahora</button>
+    <div class="sc-mini">Se actualiza solo en <span id="scCuenta">10</span> s…</div>
+  </div>
+</div>
+<div class="sc-overlay no-print" id="scNovedades" style="display:none">
+  <div class="sc-modal">
+    <div class="sc-modal-head"><h3>Novedades de actualizacion</h3><button class="sc-modal-close" onclick="cerrarNovedades()">&times;</button></div>
+    <div class="sc-modal-body" id="scNovLista"></div>
+  </div>
+</div>
+
 <script>
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxTJufEbKPscwlSSs12F_4VimELOQ0nd3JBNvHJm8mVwR_mtC9Wv3Y9i7_91ZE4foszZA/exec';
 
@@ -513,6 +556,51 @@ function callScript(params) {
     fetch(url).then(function(r){ return r.json(); }).then(resolve).catch(function(){ resolve({status:'error'}); });
   });
 }
+
+/* ===== CONTROL DE VERSION ===== */
+const APP_VERSION = '1.1.0';   // <-- SUBI este numero cada vez que publiques en GitHub
+let _scCuenta = null;
+
+function scEsMayor(a, b){
+  var pa=String(a).split('.').map(Number), pb=String(b).split('.').map(Number);
+  for(var i=0;i<Math.max(pa.length,pb.length);i++){var x=pa[i]||0,y=pb[i]||0;if(x>y)return true;if(x<y)return false;}
+  return false;
+}
+function checkVersion(){
+  var n=document.getElementById('scVerNum'); if(n) n.textContent=APP_VERSION;
+  callScript({action:'version'}).then(function(res){
+    if(res && res.status==='ok' && res.version && scEsMayor(res.version, APP_VERSION)) mostrarActualizacion(res.version);
+  });
+}
+function mostrarActualizacion(v){
+  var ov=document.getElementById('scUpdate'); if(!ov || ov.style.display==='flex') return;
+  document.getElementById('scVerNueva').textContent='v'+v;
+  ov.style.display='flex';
+  var n=10; document.getElementById('scCuenta').textContent=n;
+  _scCuenta=setInterval(function(){n--;document.getElementById('scCuenta').textContent=n;if(n<=0){clearInterval(_scCuenta);forzarActualizacion();}},1000);
+}
+function forzarActualizacion(){
+  if(_scCuenta) clearInterval(_scCuenta);
+  var base=location.href.split('?')[0].split('#')[0];
+  location.replace(base+'?v='+Date.now());
+}
+function abrirNovedades(){
+  var ov=document.getElementById('scNovedades'); if(!ov) return;
+  ov.style.display='flex';
+  var cont=document.getElementById('scNovLista');
+  cont.innerHTML='<p style="color:var(--muted);font-size:13px">Cargando…</p>';
+  function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  callScript({action:'novedades'}).then(function(res){
+    var items=(res&&res.items)?res.items:[];
+    if(!items.length){cont.innerHTML='<p style="color:var(--muted);font-size:13px">Sin novedades cargadas.</p>';return;}
+    cont.innerHTML=items.map(function(it){
+      var t=(it.tipo||'').toLowerCase(),cls='otro';
+      if(t.indexOf('lanz')>-1)cls='lanz';else if(t.indexOf('corr')>-1)cls='corr';else if(t.indexOf('nueva')>-1||t.indexOf('func')>-1)cls='nueva';
+      return '<div class="sc-nov"><div class="sc-nov-top"><span class="sc-nov-ver">v'+esc(it.version)+'</span><span class="sc-tag '+cls+'">'+esc(it.tipo)+'</span><span class="sc-nov-fecha">'+esc(it.fecha)+'</span></div><div class="sc-nov-desc">'+esc(it.descripcion)+'</div></div>';
+    }).join('');
+  });
+}
+function cerrarNovedades(){var ov=document.getElementById('scNovedades');if(ov)ov.style.display='none';}
 
 function toggleEye(inputId, btn) {
   var inp = document.getElementById(inputId);
@@ -582,6 +670,9 @@ document.addEventListener('DOMContentLoaded', function() {
     var evEl = document.getElementById('f-evaluador');
     if (evEl) { evEl.value = n; evEl.readOnly = true; evEl.style.color = '#6B6B6B'; }
   }
+  checkVersion();
+  setInterval(checkVersion, 5*60*1000);
+  window.addEventListener('focus', checkVersion);
 });
 
 const MODS = [
