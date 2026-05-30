@@ -306,7 +306,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 <div id="mainContent" style="display:none">
 
 <div class="top-header">
-  <button type="button" class="sc-version no-print" onclick="abrirNovedades()" title="Ver novedades">v<span id="scVerNum">1.1.0</span></button>
+  <button type="button" class="sc-version no-print" onclick="abrirNovedades()" title="Ver novedades">v<span id="scVerNum">1.1.3</span></button>
   <div class="org">Luccianos &mdash; Formulario de Capacitacion</div>
   <h1>Evaluacion de Capacitacion<br>7 Modulos Operativos</h1>
   <div class="sub">Escala 1 a 4 &middot; Valor 5 = No aplica &middot; 47 criterios &middot; Puntaje sobre items aplicables</div>
@@ -559,7 +559,7 @@ function callScript(params) {
 }
 
 /* ===== CONTROL DE VERSION ===== */
-const APP_VERSION = '1.1.1';   // <-- SUBI este numero cada vez que publiques en GitHub
+const APP_VERSION = '1.1.3';   // <-- SUBI este numero cada vez que publiques en GitHub
 let _scCuenta = null;
 
 function scEsMayor(a, b){
@@ -885,31 +885,33 @@ function imprimirPDF() {
   if (!yaEnviado) { alert('Primero enviá la planilla antes de imprimir.'); return; }
 
   var evaluado = (document.getElementById('f-evaluado')?.value?.trim() || 'Evaluacion').replace(/\s+/g, '_');
-  var fecha    = document.getElementById('f-fecha')?.value || '';
+  var fecha    = (document.getElementById('f-fecha')?.value || '').replace(/-/g, '-');
   var archivo  = 'Evaluacion_' + evaluado + '_' + fecha;
 
-  // Cambiar título para que el browser lo use como nombre del archivo
   var tituloOriginal = document.title;
-  document.title = archivo;
-
-  // Viewport fijo para layout correcto en el PDF
-  var vp = document.querySelector('meta[name="viewport"]');
+  var vp    = document.querySelector('meta[name="viewport"]');
   var prevVp = vp ? vp.getAttribute('content') : '';
-  if (vp) vp.setAttribute('content', 'width=900, initial-scale=1.0');
 
-  // Restaurar título y viewport después de imprimir
   function restaurar() {
     document.title = tituloOriginal;
     if (vp) vp.setAttribute('content', prevVp || 'width=device-width, initial-scale=1.0');
     window.removeEventListener('afterprint', restaurar);
+    window.removeEventListener('beforeprint', setTitulo);
   }
+
+  // beforeprint: dispara justo antes del diálogo → nombre siempre correcto
+  function setTitulo() { document.title = archivo; }
+  window.addEventListener('beforeprint', setTitulo);
   window.addEventListener('afterprint', restaurar);
+
+  // Cambiar título y viewport ya, antes del delay
+  document.title = archivo;
+  if (vp) vp.setAttribute('content', 'width=900, initial-scale=1.0');
 
   setTimeout(function() {
     window.print();
-    // Fallback por si afterprint no dispara (algunos browsers)
-    setTimeout(restaurar, 3000);
-  }, 400);
+    setTimeout(restaurar, 3000); // fallback si afterprint no dispara
+  }, 500);
 }
 
 
