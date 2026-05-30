@@ -903,7 +903,16 @@ function recopilarDatosParaPDF_() {
     modulos: []
   };
   MODS.forEach(function(m) {
-    var mod = { nombre: m.name, activo: activeSet.has(m.secId), score: 0, max: 0, vals: [] };
+    var section = document.getElementById(m.secId);
+    var mod = {
+      nombre:  m.name,
+      activo:  activeSet.has(m.secId),
+      score:   0,
+      max:     0,
+      vals:    [],
+      comentarios: [],
+      obs: ''
+    };
     if (mod.activo) {
       var naCount = 0;
       for (var i = m.start; i <= m.end; i++) {
@@ -911,8 +920,30 @@ function recopilarDatosParaPDF_() {
         var v   = sel ? parseInt(sel.value) : 0;
         mod.vals.push(v);
         if (v === 5) naCount++; else mod.score += v;
+        // Comentario por ítem (solo si tiene texto)
+        var cmt = (document.getElementById('ict'+i)?.value||'').trim();
+        if (cmt) {
+          // Buscar texto del ítem
+          var txt = '';
+          if (section) {
+            var rows = section.querySelectorAll('.item-row');
+            for (var r = 0; r < rows.length; r++) {
+              var ne = rows[r].querySelector('.item-num');
+              if (ne && ne.textContent.trim() === String(i)) {
+                txt = (rows[r].querySelector('.item-text')?.innerText||'').trim();
+                break;
+              }
+            }
+          }
+          mod.comentarios.push({ num: i, texto: txt, comentario: cmt });
+        }
       }
       mod.max = (m.end - m.start + 1 - naCount) * 4;
+      // Observación del módulo
+      if (section) {
+        var obsTA = section.querySelector('.obs-row textarea');
+        mod.obs = obsTA ? (obsTA.value||'').trim() : '';
+      }
     }
     data.modulos.push(mod);
   });
