@@ -909,22 +909,34 @@ function imprimirPDF() {
       el.style.display = 'none';
     });
 
-    html2pdf().set({
-      margin:      [8, 8, 8, 8],
-      filename:    archivo + '.pdf',
-      image:       { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: -window.scrollY },
-      jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak:   { mode: ['css', 'legacy'] }
-    }).from(document.getElementById('mainContent')).save().then(function() {
-      ocultos.forEach(function(o) { o.el.style.display = o.vis; });
-      if (btnP) { btnP.textContent = '↓ Imprimir PDF'; btnP.disabled = false; }
-      showToast('PDF descargado ✓');
-    }).catch(function() {
-      ocultos.forEach(function(o) { o.el.style.display = o.vis; });
-      if (btnP) { btnP.textContent = '↓ Imprimir PDF'; btnP.disabled = false; }
-      alert('No se pudo generar el PDF. Intentá de nuevo.');
-    });
+    // Subir al tope para que html2pdf capture desde el principio
+    window.scrollTo(0, 0);
+
+    setTimeout(function() {
+      html2pdf().set({
+        margin:      [8, 8, 8, 8],
+        filename:    archivo + '.pdf',
+        image:       { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+          scale:       2,
+          useCORS:     true,
+          logging:     false,
+          scrollX:     0,
+          scrollY:     0,
+          windowWidth: 900
+        },
+        jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak:   { mode: ['css', 'legacy'] }
+      }).from(document.getElementById('mainContent')).save().then(function() {
+        ocultos.forEach(function(o) { o.el.style.display = o.vis; });
+        if (btnP) { btnP.textContent = '↓ Imprimir PDF'; btnP.disabled = false; }
+        showToast('PDF descargado ✓');
+      }).catch(function() {
+        ocultos.forEach(function(o) { o.el.style.display = o.vis; });
+        if (btnP) { btnP.textContent = '↓ Imprimir PDF'; btnP.disabled = false; }
+        alert('No se pudo generar el PDF. Intentá de nuevo.');
+      });
+    }, 300);
   }
 }
 
