@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SisCap Luccianos v3</title>
+<title>Evaluacion de Capacitacion - SisCap</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -887,37 +887,86 @@ function enviarPlanilla() {
   showToast('Evaluacion enviada a la planilla');
 }
 
+function recopilarDatosParaPDF_() {
+  var data = {
+    evaluado:  (document.getElementById('f-evaluado')?.value||'').trim(),
+    local:     (document.getElementById('f-local')?.value||'').trim(),
+    evaluador: (document.getElementById('f-evaluador')?.value||'').trim(),
+    fecha:     document.getElementById('f-fecha')?.value||'',
+    tipo:      document.getElementById('f-tipo')?.value||'',
+    rol:       document.getElementById('f-rol')?.value||'',
+    total:     document.getElementById('totalScore')?.textContent||'',
+    totalMax:  (document.getElementById('totalDenom')?.textContent||'').replace('/ ','').trim(),
+    resultado: document.getElementById('perfBand')?.textContent||'',
+    fortalezas: (document.getElementById('fortalezas-lista')?.innerText||'').trim(),
+    reforzar:   (document.getElementById('reforzar-lista')?.innerText||'').trim(),
+    modulos: []
+  };
+  MODS.forEach(function(m) {
+    var mod = { nombre: m.name, activo: activeSet.has(m.secId), score: 0, max: 0, items: [] };
+    if (mod.activo) {
+      var section = document.getElementById(m.secId);
+      var naCount = 0;
+      for (var i = m.start; i <= m.end; i++) {
+        var sel = document.querySelector('input[name="q'+i+'"]:checked');
+        var v   = sel ? parseInt(sel.value) : null;
+        var txt = '';
+        if (section) {
+          var rows = section.querySelectorAll('.item-row');
+          for (var r = 0; r < rows.length; r++) {
+            var ne = rows[r].querySelector('.item-num');
+            if (ne && ne.textContent.trim() === String(i)) {
+              txt = (rows[r].querySelector('.item-text')?.innerText||'').trim(); break;
+            }
+          }
+        }
+        if (v !== null && v !== 5) mod.score += v; else if (v === 5) naCount++;
+        mod.items.push({ num: i, texto: txt, valor: v });
+      }
+      mod.max = (m.end - m.start + 1 - naCount) * 4;
+    }
+    data.modulos.push(mod);
+  });
+  return data;
+}
+
+function base64ToBlob_(b64, mime) {
+  var bin = atob(b64), arr = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], { type: mime || 'application/pdf' });
+}
+
 function imprimirPDF() {
   if (!yaEnviado) { alert('Primero enviá la planilla antes de imprimir.'); return; }
 
-  var evaluado = (document.getElementById('f-evaluado')?.value?.trim() || 'Evaluacion').replace(/\s+/g, '_');
-  var fecha    = (document.getElementById('f-fecha')?.value || '').replace(/-/g, '-');
-  var archivo  = 'Evaluacion_' + evaluado + '_' + fecha;
+  var btnP = document.getElementById('btnPDF');
+  if (btnP) { btnP.textContent = 'Generando...'; btnP.disabled = true; }
+  showToast('Generando PDF, un momento...');
 
-  var tituloOriginal = document.title;
-  var vp    = document.querySelector('meta[name="viewport"]');
-  var prevVp = vp ? vp.getAttribute('content') : '';
+  var payload = recopilarDatosParaPDF_();
 
-  function restaurar() {
-    document.title = tituloOriginal;
-    if (vp) vp.setAttribute('content', prevVp || 'width=device-width, initial-scale=1.0');
-    window.removeEventListener('afterprint', restaurar);
-    window.removeEventListener('beforeprint', setTitulo);
-  }
-
-  // beforeprint: dispara justo antes del diálogo → nombre siempre correcto
-  function setTitulo() { document.title = archivo; }
-  window.addEventListener('beforeprint', setTitulo);
-  window.addEventListener('afterprint', restaurar);
-
-  // Cambiar título y viewport ya, antes del delay
-  document.title = archivo;
-  if (vp) vp.setAttribute('content', 'width=900, initial-scale=1.0');
-
-  setTimeout(function() {
-    window.print();
-    setTimeout(restaurar, 3000); // fallback si afterprint no dispara
-  }, 500);
+  callScript({ action: 'pdf', payload: JSON.stringify(payload) })
+    .then(function(res) {
+      if (btnP) { btnP.textContent = '↓ Imprimir PDF'; btnP.disabled = false; }
+      if (!res || res.status === 'error') {
+        alert('No se pudo generar el PDF. Intentá de nuevo.');
+        return;
+      }
+      var blob = base64ToBlob_(res.base64, res.mime);
+      var url  = URL.createObjectURL(blob);
+      var a    = document.createElement('a');
+      a.href     = url;
+      a.download = res.nombre;
+      a.target   = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function() { URL.revokeObjectURL(url); a.remove(); }, 4000);
+      showToast('PDF descargado ✓');
+    })
+    .catch(function() {
+      if (btnP) { btnP.textContent = '↓ Imprimir PDF'; btnP.disabled = false; }
+      alert('No se pudo generar el PDF. Intentá de nuevo.');
+    });
 }
 
 
