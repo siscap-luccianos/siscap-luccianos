@@ -874,6 +874,12 @@ function enviarPlanilla() {
   if (yaEnviado) { showToast('Esta evaluacion ya fue enviada.'); return; }
   enviarSilencioso();
   yaEnviado = true;
+
+  // Cambiar el título YA, para que iOS lo tenga listo cuando se imprima
+  var evNom = (document.getElementById('f-evaluado')?.value?.trim() || 'Evaluacion').replace(/\s+/g, '_');
+  var evFec = document.getElementById('f-fecha')?.value || '';
+  document.title = 'Evaluacion_' + evNom + '_' + evFec;
+
   var btnE = document.getElementById('btnEnviar');
   if (btnE) { btnE.textContent = '✓ Enviado'; btnE.disabled = true; btnE.style.background = '#27ae60'; }
   var btnP = document.getElementById('btnPDF');
