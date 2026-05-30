@@ -726,12 +726,16 @@ function calcScore() {
   const local     = document.getElementById('f-local')?.value?.trim()    || '';
   const evaluador = document.getElementById('f-evaluador')?.value?.trim()|| '';
   const fecha     = document.getElementById('f-fecha')?.value            || '';
-  if (!evaluado || !local || !evaluador || !fecha) {
+  const tipo      = document.getElementById('f-tipo')?.value             || '';
+  const rol       = document.getElementById('f-rol')?.value              || '';
+  if (!evaluado || !local || !evaluador || !fecha || !tipo || !rol) {
     let f = [];
     if (!evaluado)  f.push('Nombre del evaluado');
     if (!local)     f.push('Local / Sucursal');
     if (!evaluador) f.push('Evaluador');
     if (!fecha)     f.push('Fecha');
+    if (!tipo)      f.push('Tipo de Capacitación');
+    if (!rol)       f.push('Rol');
     alert('Completá los siguientes campos antes de calcular:\n\n• ' + f.join('\n• ')); return;
   }
   let grand = 0, grandMax = 0, grandAnswered = 0, grandTotal = 0, html = '';
@@ -846,12 +850,16 @@ function enviarPlanilla() {
   var local     = document.getElementById('f-local')?.value?.trim()     || '';
   var evaluador = document.getElementById('f-evaluador')?.value?.trim() || '';
   var fecha     = document.getElementById('f-fecha')?.value             || '';
-  if (!evaluado || !local || !evaluador || !fecha) {
+  var tipo      = document.getElementById('f-tipo')?.value              || '';
+  var rol       = document.getElementById('f-rol')?.value               || '';
+  if (!evaluado || !local || !evaluador || !fecha || !tipo || !rol) {
     var f = [];
     if (!evaluado)  f.push('Nombre del evaluado');
     if (!local)     f.push('Local / Sucursal');
     if (!evaluador) f.push('Evaluador');
     if (!fecha)     f.push('Fecha');
+    if (!tipo)      f.push('Tipo de Capacitación');
+    if (!rol)       f.push('Rol');
     alert('Completá los siguientes campos:\n\n• ' + f.join('\n• ')); return;
   }
   var itemsFaltantes = [];
@@ -880,64 +888,28 @@ function imprimirPDF() {
   var fecha    = document.getElementById('f-fecha')?.value || '';
   var archivo  = 'Evaluacion_' + evaluado + '_' + fecha;
 
-  var esMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  // Cambiar título para que el browser lo use como nombre del archivo
+  var tituloOriginal = document.title;
+  document.title = archivo;
 
-  if (esMobile) {
-    // CELULAR: window.print() — abre el menú compartir/imprimir del dispositivo
-    var tituloOrig = document.title;
-    document.title = archivo;
-    var vp = document.querySelector('meta[name="viewport"]');
-    var prevVp = vp ? vp.getAttribute('content') : '';
-    if (vp) vp.setAttribute('content', 'width=900, initial-scale=1.0');
-    setTimeout(function() {
-      window.print();
-      setTimeout(function() {
-        document.title = tituloOrig;
-        if (vp) vp.setAttribute('content', prevVp || 'width=device-width, initial-scale=1.0');
-      }, 1500);
-    }, 400);
+  // Viewport fijo para layout correcto en el PDF
+  var vp = document.querySelector('meta[name="viewport"]');
+  var prevVp = vp ? vp.getAttribute('content') : '';
+  if (vp) vp.setAttribute('content', 'width=900, initial-scale=1.0');
 
-  } else {
-    // PC: descarga automática con nombre correcto
-    var btnP = document.getElementById('btnPDF');
-    if (btnP) { btnP.textContent = 'Generando...'; btnP.disabled = true; }
-    showToast('Generando PDF, un momento...');
-
-    var ocultos = [];
-    document.querySelectorAll('.no-print, .item-comment-wrap:not(.open), #loginWrap, #_toast').forEach(function(el) {
-      ocultos.push({ el: el, vis: el.style.display });
-      el.style.display = 'none';
-    });
-
-    // Subir al tope para que html2pdf capture desde el principio
-    window.scrollTo(0, 0);
-
-    setTimeout(function() {
-      html2pdf().set({
-        margin:      [8, 8, 8, 8],
-        filename:    archivo + '.pdf',
-        image:       { type: 'jpeg', quality: 0.98 },
-        html2canvas: {
-          scale:       2,
-          useCORS:     true,
-          logging:     false,
-          scrollX:     0,
-          scrollY:     0,
-          windowWidth: 900
-        },
-        jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak:   { mode: ['css', 'legacy'] }
-      }).from(document.getElementById('mainContent')).save().then(function() {
-        ocultos.forEach(function(o) { o.el.style.display = o.vis; });
-        if (btnP) { btnP.textContent = '↓ Imprimir PDF'; btnP.disabled = false; }
-        showToast('PDF descargado ✓');
-      }).catch(function() {
-        ocultos.forEach(function(o) { o.el.style.display = o.vis; });
-        if (btnP) { btnP.textContent = '↓ Imprimir PDF'; btnP.disabled = false; }
-        alert('No se pudo generar el PDF. Intentá de nuevo.');
-      });
-    }, 300);
+  // Restaurar título y viewport después de imprimir
+  function restaurar() {
+    document.title = tituloOriginal;
+    if (vp) vp.setAttribute('content', prevVp || 'width=device-width, initial-scale=1.0');
+    window.removeEventListener('afterprint', restaurar);
   }
+  window.addEventListener('afterprint', restaurar);
+
+  setTimeout(function() {
+    window.print();
+    // Fallback por si afterprint no dispara (algunos browsers)
+    setTimeout(restaurar, 3000);
+  }, 400);
 }
 
 
@@ -1026,7 +998,7 @@ function showToast(msg, duration) {
   setTimeout(()=>{ t.style.opacity='0'; }, duration);
 }
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 </div><!-- end mainContent -->
 </body>
 </html>
