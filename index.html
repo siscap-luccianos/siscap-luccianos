@@ -43,7 +43,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 
 /* ─── PRINT ──────────────────────────────────────────── */
 @media print{
-  .sc-version,.sc-overlay,.sc-modal{display:none!important}
+  .sc-version,.sc-overlay,.sc-modal,#_toast{display:none!important}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;box-sizing:border-box!important}
   .no-print{display:none!important}
   #loginWrap{display:none!important}
@@ -525,7 +525,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 
 <div class="actions no-print">
   <button class="btn btn-dark" onclick="calcScore()">Calcular Puntaje</button>
-  <button class="btn btn-send" id="btnEnviarPDF" onclick="enviarYDescargarPDF()">&#8679; Enviar y Descargar PDF</button>
+  <button class="btn btn-send" id="btnEnviar" onclick="enviarPlanilla()">&#8679; Enviar a planilla</button>
+  <button class="btn btn-outline" id="btnPDF" onclick="imprimirPDF()" disabled style="opacity:0.35;cursor:not-allowed" title="Primero enviá la planilla">&#8595; Imprimir PDF</button>
   <button class="btn btn-outline" onclick="resetForm()">Reiniciar</button>
 </div>
 
@@ -840,51 +841,44 @@ function generarComentarios() {
   )) || '<span style="color:#27ae60;font-size:12px">✓ Todos los items evaluados dentro del estandar.</span>';
 }
 
-function enviarYDescargarPDF() {
-  const evaluado  = document.getElementById('f-evaluado')?.value?.trim()  || '';
-  const local     = document.getElementById('f-local')?.value?.trim()     || '';
-  const evaluador = document.getElementById('f-evaluador')?.value?.trim() || '';
-  const fecha     = document.getElementById('f-fecha')?.value             || '';
+function enviarPlanilla() {
+  var evaluado  = document.getElementById('f-evaluado')?.value?.trim()  || '';
+  var local     = document.getElementById('f-local')?.value?.trim()     || '';
+  var evaluador = document.getElementById('f-evaluador')?.value?.trim() || '';
+  var fecha     = document.getElementById('f-fecha')?.value             || '';
   if (!evaluado || !local || !evaluador || !fecha) {
-    let f = [];
+    var f = [];
     if (!evaluado)  f.push('Nombre del evaluado');
     if (!local)     f.push('Local / Sucursal');
     if (!evaluador) f.push('Evaluador');
     if (!fecha)     f.push('Fecha');
-    alert('Completá los siguientes campos antes de continuar:\n\n• ' + f.join('\n• ')); return;
+    alert('Completá los siguientes campos:\n\n• ' + f.join('\n• ')); return;
   }
-  const itemsFaltantes = [];
+  var itemsFaltantes = [];
   MODS.forEach(function(m) {
     if (!activeSet.has(m.secId)) return;
     var sin = 0;
     for (var i = m.start; i <= m.end; i++) { if (!document.querySelector('input[name="q' + i + '"]:checked')) sin++; }
-    if (sin > 0) itemsFaltantes.push({mod: m.name, count: sin});
+    if (sin > 0) itemsFaltantes.push('- ' + m.name + ': ' + sin + ' item' + (sin > 1 ? 's' : '') + ' sin calificar');
   });
-  if (itemsFaltantes.length > 0) {
-    alert('Faltan items por calificar:\n\n' + itemsFaltantes.map(f => '• ' + f.mod + ': ' + f.count + ' item' + (f.count > 1 ? 's' : '') + ' sin calificar').join('\n')); return;
-  }
-  if (!puntajeCalculado) { alert('Primero presioná "Calcular Puntaje" antes de continuar.'); return; }
-  if (!yaEnviado) {
-    enviarSilencioso(); yaEnviado = true;
-    var btn = document.getElementById('btnEnviarPDF');
-    if (btn) btn.textContent = '↓ Descargar PDF';
-    showToast('Evaluacion enviada a la planilla ✓');
-  }
-  setTimeout(function() {
-    // Cambiar viewport a ancho fijo para forzar layout correcto al imprimir
-    var vp = document.querySelector('meta[name="viewport"]');
-    var prevVp = vp ? vp.getAttribute('content') : '';
-    if (vp) vp.setAttribute('content', 'width=900, initial-scale=1.0');
-    // Pequeño delay para que el browser aplique el nuevo viewport
-    setTimeout(function() {
-      window.print();
-      // Restaurar viewport original después de imprimir
-      setTimeout(function() {
-        if (vp) vp.setAttribute('content', prevVp || 'width=device-width, initial-scale=1.0');
-      }, 1000);
-    }, 300);
-  }, 600);
+  if (itemsFaltantes.length > 0) { alert('Faltan items por calificar:\n\n' + itemsFaltantes.join('\n')); return; }
+  if (!puntajeCalculado) { alert('Primero presiona Calcular Puntaje.'); return; }
+  if (yaEnviado) { showToast('Esta evaluacion ya fue enviada.'); return; }
+  enviarSilencioso();
+  yaEnviado = true;
+  var btnE = document.getElementById('btnEnviar');
+  if (btnE) { btnE.textContent = '✓ Enviado'; btnE.disabled = true; btnE.style.background = '#27ae60'; }
+  var btnP = document.getElementById('btnPDF');
+  if (btnP) { btnP.disabled = false; btnP.style.opacity = '1'; btnP.style.cursor = 'pointer'; btnP.removeAttribute('title'); }
+  showToast('Evaluacion enviada a la planilla');
 }
+
+function imprimirPDF() {
+  if (!yaEnviado) { alert('Primero enviá la planilla antes de imprimir.'); return; }
+  window.print();
+}
+
+
 
 function enviarSilencioso() {
   const evaluado  = document.getElementById('f-evaluado')?.value?.trim()  || '';
@@ -953,7 +947,8 @@ function resetForm() {
     var s=document.getElementById(match[1]); if(s) s.style.display='';
   });
   yaEnviado=false; puntajeCalculado=false;
-  var btn=document.getElementById('btnEnviarPDF'); if(btn) btn.textContent='↑ Enviar y Descargar PDF';
+  var btnE=document.getElementById('btnEnviar'); if(btnE){btnE.textContent='↑ Enviar a planilla';btnE.disabled=false;btnE.style.background='';}
+  var btnP=document.getElementById('btnPDF'); if(btnP){btnP.disabled=true;btnP.style.opacity='0.35';btnP.style.cursor='not-allowed';btnP.setAttribute('title','Primero enviá la planilla');}
   document.querySelectorAll('.item-comment-wrap').forEach(el => el.classList.remove('open'));
 }
 
