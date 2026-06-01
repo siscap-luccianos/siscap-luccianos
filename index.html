@@ -7,23 +7,8 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#F5F5F0;
-  --white:#FFFFFF;
-  --text:#1C1C1C;
-  --muted:#6B6B6B;
-  --border:#E2E2DC;
-  --accent:#1a1a1a;
-  --stripe:#F7F7F3;
-  --r1:#c0392b;
-  --r2:#d35400;
-  --r3:#f39c12;
-  --r4:#27ae60;
-  --r5:#7f8c8d;
-}
+:root{--bg:#F5F5F0;--white:#FFFFFF;--text:#1C1C1C;--muted:#6B6B6B;--border:#E2E2DC;--accent:#1a1a1a;--stripe:#F7F7F3;--r1:#c0392b;--r2:#d35400;--r3:#f39c12;--r4:#27ae60;--r5:#7f8c8d;--guide-bg:#F0FAF5;--guide-border:#5DCAA5;--guide-title:#0F6E56;--guide-text:#1D9E75;}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.5}
-
-/* ─── LOGIN ─────────────────────────────────────────── */
 #loginWrap{position:fixed;top:0;left:0;width:100%;height:100%;background:#F5F5F0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
 .login-card{background:white;border:1px solid var(--border);border-radius:12px;padding:36px 28px;max-width:360px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,0.07)}
 .login-org{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px}
@@ -37,13 +22,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .login-btn{width:100%;background:var(--accent);color:white;border:none;border-radius:8px;padding:13px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;margin-top:4px}
 .login-link{font-size:12px;color:#1A5FA8;text-align:right;cursor:pointer;margin-bottom:14px;display:block}
 .login-msg{font-size:12px;text-align:center;margin-top:8px;min-height:18px}
-.login-msg.error{color:var(--r1)}
-.login-msg.ok{color:var(--r4)}
-.login-msg.warn{color:var(--r2)}
-
-/* ─── PRINT ──────────────────────────────────────────── */
+.login-msg.error{color:var(--r1)}.login-msg.ok{color:var(--r4)}.login-msg.warn{color:var(--r2)}
 @media print{
-  .sc-version,.sc-overlay,.sc-modal,#_toast{display:none!important}
+  .sc-version,.sc-overlay,.sc-modal,#_toast,.guide-wrap{display:none!important}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;box-sizing:border-box!important}
   .no-print{display:none!important}
   #loginWrap{display:none!important}
@@ -51,18 +32,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   body{margin:0;padding:0;background:white!important;width:210mm;overflow:hidden}
   #mainContent{display:block!important;width:210mm!important;max-width:210mm!important;margin:0!important;padding:0!important;overflow:hidden!important}
   .top-header{padding:14px 16px 12px!important;width:100%!important;max-width:100%!important}
-  .top-header h1{font-size:20px!important}
-  .top-header .org{font-size:9px!important}
-  .top-header .sub{font-size:10px!important}
+  .top-header h1{font-size:20px!important}.top-header .org{font-size:9px!important}.top-header .sub{font-size:10px!important}
   .page-wrap{padding:8px 12px 16px!important;margin:0!important;max-width:100%!important;width:100%!important}
   .meta-card,.mod-selector,.legend,.section-block,.score-footer{max-width:100%!important;width:100%!important;overflow:hidden!important}
   .item-row{flex-wrap:nowrap!important;padding:8px 12px!important;gap:8px!important}
-  .item-text{font-size:11px!important}
-  .rating{flex-shrink:0!important}
+  .item-text{font-size:11px!important}.rating{flex-shrink:0!important}
   .rating-btn{width:24px!important;height:24px!important;font-size:9px!important;border:1.5px solid #bbb!important}
   .section-block{break-inside:avoid;margin-bottom:10px!important;box-shadow:none!important;border:1px solid #ddd!important}
-  .top-header,.score-footer{background:#1a1a1a!important}
-  .sec-title-bar{background:#EBEBEB!important}
+  .top-header,.score-footer{background:#1a1a1a!important}.sec-title-bar{background:#EBEBEB!important}
   .legend{position:static!important;box-shadow:none!important;font-size:10px!important}
   .lbadge{width:18px!important;height:18px!important;font-size:9px!important}
   .devolucion-grid{grid-template-columns:1fr 1fr!important;padding:10px 12px!important}
@@ -73,17 +50,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   .item-comment-btn{display:none!important}
   .obs-row textarea{min-height:30px!important}
 }
-
-/* ─── HEADER ─────────────────────────────────────────── */
-.top-header{background:var(--accent);color:white;padding:32px 40px 28px}
+.top-header{background:var(--accent);color:white;padding:32px 40px 28px;position:relative}
 .top-header .org{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#909088;margin-bottom:8px}
 .top-header h1{font-family:'DM Serif Display',serif;font-size:clamp(22px,3.5vw,34px);font-weight:400;line-height:1.2;color:#fff}
 .top-header .sub{margin-top:6px;font-size:13px;color:#909088}
-
-/* ─── PAGE WRAP ──────────────────────────────────────── */
 .page-wrap{max-width:860px;margin:0 auto;padding:28px 20px 80px}
-
-/* ─── META CARD ──────────────────────────────────────── */
 .meta-card{background:var(--white);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:20px}
 .meta-card-head{background:var(--stripe);border-bottom:1px solid var(--border);padding:12px 20px}
 .meta-card-head h2{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:600}
@@ -93,8 +64,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .field label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
 .field input,.field select{border:none;background:transparent;padding:2px 0;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--text);outline:none;width:100%}
 .field input::placeholder{color:#C0C0B8;font-weight:400}
-
-/* ─── MODULE SELECTOR ────────────────────────────────── */
 .mod-selector{background:var(--white);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:20px}
 .mod-selector-head{background:var(--stripe);border-bottom:1px solid var(--border);padding:12px 20px}
 .mod-selector-head h2{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:2px}
@@ -102,44 +71,30 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .mod-toggle-wrap{display:flex;flex-wrap:wrap;gap:8px;padding:14px 20px}
 .mod-toggle{padding:8px 16px;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:all .2s;border:1.5px solid var(--border);background:white;color:var(--muted);display:inline-flex;align-items:center;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
 .mod-toggle.active{background:var(--accent);color:white;border-color:var(--accent)}
-@media(max-width:600px){
-  .mod-toggle{padding:12px 14px;font-size:13px;flex:1 1 calc(50% - 4px);text-align:center;min-height:44px;justify-content:center}
-}
-
-/* ─── LEGEND ─────────────────────────────────────────── */
+@media(max-width:600px){.mod-toggle{padding:12px 14px;font-size:13px;flex:1 1 calc(50% - 4px);text-align:center;min-height:44px;justify-content:center}}
 .legend{display:flex;flex-wrap:wrap;gap:8px 20px;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:14px 20px;margin-bottom:20px;font-size:12px;color:var(--muted);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
 .legend span{display:flex;align-items:center;gap:7px;font-weight:500}
 .lbadge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-size:11px;font-weight:700;color:white;flex-shrink:0}
-
-/* ─── SECTION BLOCKS ─────────────────────────────────── */
 .section-block{background:var(--white);border:1px solid var(--border);border-radius:8px;margin-bottom:16px;overflow:hidden}
 .sec-title-bar{background:var(--stripe);border-bottom:1.5px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:10px}
 .sec-num{background:var(--accent);color:white;font-size:11px;font-weight:700;width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:0}
 .sec-title-bar h2{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text);flex:1}
 .sec-badge{font-size:11px;color:var(--muted);font-weight:500}
-
-/* ─── ITEM ROWS ──────────────────────────────────────── */
 .item-row{display:flex;align-items:center;gap:14px;padding:11px 20px;border-bottom:1px solid var(--border)}
 .item-row:nth-child(even){background:#FCFCFA}
-.item-row:last-of-type{border-bottom:none}
 .item-num{font-size:11px;font-weight:700;color:#C0C0B8;flex-shrink:0;width:22px;text-align:right}
 .item-text{flex:1;font-size:13px;line-height:1.5;color:var(--text)}
 .item-text strong{font-weight:600}
-
-/* ─── RATING BUTTONS ─────────────────────────────────── */
 .rating{display:flex;gap:5px;flex-shrink:0;align-items:center}
 .rating input[type="radio"]{display:none}
 .rating-btn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;border:1.5px solid var(--border);font-size:13px;font-weight:700;cursor:pointer;color:#C0C0B8;transition:all .15s;user-select:none;background:white}
 .rating-btn:hover{border-color:var(--accent);color:var(--accent)}
 .na-btn{font-size:10px;letter-spacing:.5px;border-style:dashed}
-/* Selected states */
 .rating input[value="1"]:checked+label{background:var(--r1);border-color:var(--r1);color:white}
 .rating input[value="2"]:checked+label{background:var(--r2);border-color:var(--r2);color:white}
 .rating input[value="3"]:checked+label{background:var(--r3);border-color:var(--r3);color:white}
 .rating input[value="4"]:checked+label{background:var(--r4);border-color:var(--r4);color:white}
 .rating input[value="5"]:checked+label{background:var(--r5);border-color:var(--r5);color:white;border-style:solid}
-
-/* ─── ITEM COMMENT ───────────────────────────────────── */
 .item-comment-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;padding:0 2px;flex-shrink:0;opacity:0.5;transition:opacity .2s;line-height:1}
 .item-comment-btn:hover{opacity:1;color:var(--accent)}
 .item-comment-wrap{display:none;padding:6px 20px 10px 56px;background:#F8F8F4;border-bottom:1px solid var(--border)}
@@ -147,42 +102,39 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .item-comment-wrap textarea{width:100%;border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);resize:vertical;min-height:44px;background:white;outline:none;transition:border-color .2s}
 .item-comment-wrap textarea:focus{border-color:var(--accent)}
 .item-comment-wrap textarea::placeholder{color:#C0C0B8}
-
-/* ─── SECTION SUMMARY ────────────────────────────────── */
+.guide-wrap{border-bottom:1px solid var(--border);background:#FAFAF7}
+.guide-toggle-btn{display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;color:var(--guide-text);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;padding:6px 20px 6px 56px;width:100%;text-align:left;letter-spacing:.3px}
+.guide-toggle-btn:hover{color:var(--guide-title)}
+.guide-toggle-btn .g-chev{font-size:10px;transition:transform .2s;display:inline-block}
+.guide-toggle-btn.open .g-chev{transform:rotate(180deg)}
+.guide-panel{display:none;padding:8px 20px 12px 56px;background:var(--guide-bg);border-top:1px solid #D5EEE6}
+.guide-panel.open{display:block}
+.guide-panel-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--guide-title);margin-bottom:8px}
+.guide-list{list-style:none}
+.guide-list li{font-size:12px;color:var(--muted);padding:4px 0;border-bottom:1px solid #D5EEE6;display:flex;flex-direction:column;gap:2px;line-height:1.5}
+.guide-list li:last-child{border-bottom:none}
+.guide-list li::before{content:"\2192";color:var(--guide-text);font-size:11px}
+.guide-resp{font-size:11px;color:var(--guide-title);font-style:italic;padding-left:14px}
 .sec-summary{background:var(--stripe);border-top:1px solid var(--border);padding:9px 20px;font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.5px;text-transform:uppercase}
-
-/* ─── DEVOLUCION ─────────────────────────────────────── */
 .devolucion-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px 20px}
 .dev-box{border-radius:8px;padding:16px;border:1px solid}
 .dev-box.green{background:#f0faf0;border-color:#a9dfbf}
 .dev-box.orange{background:#fff8f0;border-color:#f9ca78}
 .dev-box-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .dev-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.dev-box.green .dev-dot{background:var(--r4)}
-.dev-box.orange .dev-dot{background:var(--r2)}
+.dev-box.green .dev-dot{background:var(--r4)}.dev-box.orange .dev-dot{background:var(--r2)}
 .dev-box-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px}
-.dev-box.green .dev-box-label{color:var(--r4)}
-.dev-box.orange .dev-box-label{color:var(--r2)}
+.dev-box.green .dev-box-label{color:var(--r4)}.dev-box.orange .dev-box-label{color:var(--r2)}
 .dev-content{font-size:12px;line-height:1.7}
-.dev-group-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:8px 0 4px;padding:0}
-.dev-box.green .dev-group-title{color:#1e8449}
-.dev-box.orange .dev-group-title{color:#b7770d}
+.dev-group-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:8px 0 4px}
+.dev-box.green .dev-group-title{color:#1e8449}.dev-box.orange .dev-group-title{color:#b7770d}
 .dev-item{display:flex;align-items:flex-start;gap:7px;margin-bottom:3px}
 .dev-item-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
 .dev-item-text{font-size:12px;color:var(--text);flex:1}
 .dev-tag{display:inline-block;font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px;margin-left:4px;vertical-align:middle}
-.tag-dest{background:#d5f5e3;color:#1e8449}
-.tag-log{background:#d6eaf8;color:#1a5276}
-.tag-proc{background:#fdebd0;color:#b7770d}
-.tag-inic{background:#fadbd8;color:#922b21}
-
-/* ─── OBS ROW ────────────────────────────────────────── */
 .obs-row{padding:14px 20px;background:#F8F8F4;border-top:1px dashed var(--border)}
 .obs-row label{display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
 .obs-row textarea{width:100%;border:1px solid var(--border);border-radius:6px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);resize:vertical;min-height:60px;background:white;outline:none;transition:border-color .2s}
-.obs-row textarea:focus{border-color:var(--accent)}
-
-/* ─── SCORE FOOTER ───────────────────────────────────── */
 .score-footer{background:#1a1a1a;color:white;border-radius:8px;padding:24px 28px;margin-top:20px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
 .score-footer-left{flex:1}
 .score-footer h3{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;margin-bottom:4px;color:white}
@@ -194,44 +146,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .mod-card{background:#2d2d2d;border-radius:6px;padding:10px 14px}
 .mod-card .mn{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#888;margin-bottom:4px}
 .mod-card .mv{font-size:20px;font-weight:700;color:white}
-.mod-card .mm{font-size:11px;color:#888}
-.mod-card .mpct{font-size:10px;color:#666;margin-top:2px}
+.mod-card .mm{font-size:11px;color:#888}.mod-card .mpct{font-size:10px;color:#666;margin-top:2px}
 .mod-card .mna{font-size:10px;color:#555;font-style:italic}
 .perf-band{display:none;margin-top:12px;padding:10px 14px;border-radius:6px;font-size:14px;font-weight:700;letter-spacing:.3px}
-
-/* ─── ACTIONS ────────────────────────────────────────── */
-.sig-row{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:32px}
-.sig-line{border-top:1.5px solid var(--border);padding-top:10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted)}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
 .btn{padding:12px 24px;border-radius:6px;border:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .18s}
-.btn-dark{background:var(--accent);color:white}
-.btn-dark:hover{background:#333}
-.btn-outline{background:white;color:var(--text);border:1.5px solid var(--border)}
-.btn-outline:hover{border-color:var(--accent)}
-.btn-send{background:#1a5fa8;color:white}
-.btn-send:hover{background:#154d8a}
-.btn-send:disabled{background:#999;cursor:not-allowed}
-
-/* ─── RESPONSIVE ─────────────────────────────────────── */
-@media(max-width:600px){
-  .page-wrap{padding:14px 12px 60px}
-  .top-header{padding:20px 16px}
-  .top-header h1{font-size:22px}
-  .meta-grid{grid-template-columns:1fr}
-  .field{border-right:none}
-  .item-row{flex-wrap:wrap;gap:8px;padding:11px 14px}
-  .item-text{font-size:13px;width:100%}
-  .item-num{display:none}
-  .rating{width:100%;justify-content:space-between}
-  .rating-btn{width:42px;height:42px;font-size:14px}
-  .na-btn{font-size:10px}
-  .actions{flex-direction:column}
-  .btn{width:100%;text-align:center;padding:14px}
-  .devolucion-grid{grid-template-columns:1fr!important}
-}
-
-/* ─── CONTROL DE VERSION ─────────────────────────────── */
-.top-header{position:relative}
+.btn-dark{background:var(--accent);color:white}.btn-dark:hover{background:#333}
+.btn-outline{background:white;color:var(--text);border:1.5px solid var(--border)}.btn-outline:hover{border-color:var(--accent)}
+.btn-send{background:#1a5fa8;color:white}.btn-send:hover{background:#154d8a}.btn-send:disabled{background:#999;cursor:not-allowed}
 .sc-version{position:absolute;top:16px;right:20px;display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:.5px;color:#cfcfc9;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);padding:5px 11px;border-radius:20px;cursor:pointer;transition:background .2s}
 .sc-version:hover{background:rgba(255,255,255,.16)}
 .sc-version::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--r4)}
@@ -239,82 +161,59 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .sc-card{background:#fff;border-radius:12px;max-width:420px;width:100%;padding:32px 28px;text-align:center;box-shadow:0 12px 48px rgba(0,0,0,.25)}
 .sc-card h3{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;margin-bottom:8px;color:var(--text)}
 .sc-card p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px}
-.sc-card .btn{width:100%}
-.sc-mini{font-size:12px;color:var(--muted);margin-top:12px}
+.sc-card .btn{width:100%}.sc-mini{font-size:12px;color:var(--muted);margin-top:12px}
 .sc-modal{background:#fff;border-radius:12px;max-width:540px;width:100%;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 12px 48px rgba(0,0,0,.25);text-align:left}
 .sc-modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border)}
 .sc-modal-head h3{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400}
 .sc-modal-close{background:none;border:none;font-size:26px;line-height:1;color:var(--muted);cursor:pointer}
 .sc-modal-body{padding:8px 22px 20px;overflow-y:auto}
-.sc-nov{padding:14px 0;border-bottom:1px solid var(--border)}
-.sc-nov:last-child{border-bottom:none}
+.sc-nov{padding:14px 0;border-bottom:1px solid var(--border)}.sc-nov:last-child{border-bottom:none}
 .sc-nov-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:5px}
-.sc-nov-ver{font-weight:700;font-size:14px}
-.sc-nov-fecha{font-size:12px;color:var(--muted)}
+.sc-nov-ver{font-weight:700;font-size:14px}.sc-nov-fecha{font-size:12px;color:var(--muted)}
 .sc-nov-desc{font-size:13px;color:var(--text);line-height:1.5}
 .sc-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 9px;border-radius:20px;color:#fff}
 .sc-tag.lanz{background:#1a5fa8}.sc-tag.corr{background:var(--r2)}.sc-tag.nueva{background:var(--r4)}.sc-tag.otro{background:var(--r5)}
+@media(max-width:600px){
+  .page-wrap{padding:14px 12px 60px}.top-header{padding:20px 16px}.top-header h1{font-size:22px}
+  .meta-grid{grid-template-columns:1fr}.field{border-right:none}
+  .item-row{flex-wrap:wrap;gap:8px;padding:11px 14px}.item-text{font-size:13px;width:100%}.item-num{display:none}
+  .rating{width:100%;justify-content:space-between}.rating-btn{width:42px;height:42px;font-size:14px}.na-btn{font-size:10px}
+  .actions{flex-direction:column}.btn{width:100%;text-align:center;padding:14px}
+  .devolucion-grid{grid-template-columns:1fr!important}
+  .guide-toggle-btn{padding-left:14px}.guide-panel{padding-left:14px}.item-comment-wrap{padding-left:14px}
+}
 </style>
 </head>
 <body>
-
-<!-- ════════════════════ LOGIN ════════════════════ -->
 <div id="loginWrap">
   <div class="login-card">
     <div class="login-org">Luccianos</div>
     <div class="login-title">Sistema de Capacitacion</div>
     <div id="fLogin">
-      <div class="login-field">
-        <label class="login-label">Usuario</label>
-        <input class="login-input" id="lUser" type="text" placeholder="Tu usuario" autocomplete="off" autocapitalize="none">
-      </div>
-      <div class="login-field">
-        <label class="login-label">Contrasena</label>
-        <div class="pass-wrap">
-          <input class="login-input" id="lPass" type="password" placeholder="Tu contrasena" autocomplete="off">
-          <button class="eye-btn" onclick="toggleEye('lPass',this)" type="button">👁</button>
-        </div>
-      </div>
+      <div class="login-field"><label class="login-label">Usuario</label><input class="login-input" id="lUser" type="text" placeholder="Tu usuario" autocomplete="off" autocapitalize="none"></div>
+      <div class="login-field"><label class="login-label">Contrasena</label><div class="pass-wrap"><input class="login-input" id="lPass" type="password" placeholder="Tu contrasena" autocomplete="off"><button class="eye-btn" onclick="toggleEye('lPass',this)" type="button">&#128065;</button></div></div>
       <span class="login-link" onclick="mostrar('fReg')">No tenes cuenta? Registrate</span>
       <button class="login-btn" onclick="doLogin()">Ingresar</button>
       <div class="login-msg error" id="lMsg"></div>
     </div>
     <div id="fReg" style="display:none">
-      <div class="login-field">
-        <label class="login-label">Nombre completo</label>
-        <input class="login-input" id="rNombre" type="text" placeholder="Ej: Juan Perez" autocomplete="off">
-      </div>
-      <div class="login-field">
-        <label class="login-label">Usuario</label>
-        <input class="login-input" id="rUser" type="text" placeholder="Elegi un usuario" autocomplete="off" autocapitalize="none">
-      </div>
-      <div class="login-field">
-        <label class="login-label">Contrasena</label>
-        <div class="pass-wrap">
-          <input class="login-input" id="rPass" type="password" placeholder="Elegi una contrasena" autocomplete="off">
-          <button class="eye-btn" onclick="toggleEye('rPass',this)" type="button">👁</button>
-        </div>
-      </div>
+      <div class="login-field"><label class="login-label">Nombre completo</label><input class="login-input" id="rNombre" type="text" placeholder="Ej: Juan Perez" autocomplete="off"></div>
+      <div class="login-field"><label class="login-label">Usuario</label><input class="login-input" id="rUser" type="text" placeholder="Elegi un usuario" autocomplete="off" autocapitalize="none"></div>
+      <div class="login-field"><label class="login-label">Contrasena</label><div class="pass-wrap"><input class="login-input" id="rPass" type="password" placeholder="Elegi una contrasena" autocomplete="off"><button class="eye-btn" onclick="toggleEye('rPass',this)" type="button">&#128065;</button></div></div>
       <span class="login-link" onclick="mostrar('fLogin')">Ya tenes cuenta? Inicia sesion</span>
       <button class="login-btn" onclick="doRegister()">Solicitar acceso</button>
       <div class="login-msg" id="rMsg"></div>
     </div>
   </div>
 </div>
-
-<!-- ════════════════════ MAIN ════════════════════ -->
 <div id="mainContent" style="display:none">
-
 <div class="top-header">
-  <button type="button" class="sc-version no-print" onclick="abrirNovedades()" title="Ver novedades">v<span id="scVerNum">1.1.3</span></button>
+  <button type="button" class="sc-version no-print" onclick="abrirNovedades()" title="Ver novedades">v<span id="scVerNum">1.2.0</span></button>
   <div class="org">Luccianos &mdash; Formulario de Capacitacion</div>
   <h1>Evaluacion de Capacitacion<br>7 Modulos Operativos</h1>
-  <div class="sub">Escala 1 a 4 &middot; Valor 5 = No aplica &middot; 47 criterios &middot; Puntaje sobre items aplicables</div>
+  <div class="sub">Escala 1 a 4 &middot; Valor 5 = No aplica &middot; 46 criterios &middot; Puntaje sobre items aplicables</div>
 </div>
-
 <div class="page-wrap">
-
-<!-- META -->
 <div class="meta-card">
   <div class="meta-card-head"><h2>Datos de la Evaluacion</h2></div>
   <div class="meta-grid">
@@ -322,21 +221,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
     <div class="field"><label>Local / Sucursal</label><input id="f-local" type="text" placeholder="Ej: Arcos"></div>
     <div class="field"><label>Evaluador</label><input id="f-evaluador" type="text" placeholder="Nombre del capacitador"></div>
     <div class="field"><label>Fecha</label><input id="f-fecha" type="date"></div>
-    <div class="field"><label>Tipo de Capacitacion</label>
-      <select id="f-tipo"><option value="">Seleccionar...</option><option>Inicial</option><option>Refuerzo</option><option>Seguimiento</option></select>
-    </div>
-    <div class="field"><label>Rol</label>
-      <select id="f-rol"><option value="">Seleccionar...</option><option>Colaborador</option><option>Responsable</option></select>
-    </div>
+    <div class="field"><label>Tipo de Capacitacion</label><select id="f-tipo"><option value="">Seleccionar...</option><option>Inicial</option><option>Refuerzo</option><option>Seguimiento</option></select></div>
+    <div class="field"><label>Rol</label><select id="f-rol"><option value="">Seleccionar...</option><option>Colaborador</option><option>Responsable</option></select></div>
   </div>
 </div>
-
-<!-- MODULE SELECTOR -->
 <div class="mod-selector no-print">
-  <div class="mod-selector-head">
-    <h2>Modulos a Evaluar</h2>
-    <p>Selecciona los modulos que aplican a esta sesion. Los desactivados no se incluyen en el puntaje.</p>
-  </div>
+  <div class="mod-selector-head"><h2>Modulos a Evaluar</h2><p>Selecciona los modulos que aplican a esta sesion. Los desactivados no se incluyen en el puntaje.</p></div>
   <div class="mod-toggle-wrap" id="modToggles">
     <button type="button" class="mod-toggle active" onclick="toggleMod(this,'mod1')">01 &middot; Equipamiento</button>
     <button type="button" class="mod-toggle active" onclick="toggleMod(this,'mod2')">02 &middot; Cafeteria</button>
@@ -347,153 +237,161 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
     <button type="button" class="mod-toggle active" onclick="toggleMod(this,'mod7')">07 &middot; Atencion al Cliente</button>
   </div>
 </div>
-
-<!-- LEGEND -->
 <div class="legend">
   <span><span class="lbadge" style="background:var(--r1)">1</span> <strong>Inicial</strong> &mdash; no lo conoce o no puede hacerlo solo</span>
-  <span><span class="lbadge" style="background:var(--r2)">2</span> <strong>En proceso</strong> &mdash; lo entiende pero necesita acompañamiento</span>
+  <span><span class="lbadge" style="background:var(--r2)">2</span> <strong>En proceso</strong> &mdash; lo entiende pero necesita acompa&#241;amiento</span>
   <span><span class="lbadge" style="background:var(--r3)">3</span> <strong>Logrado</strong> &mdash; lo hace correctamente de forma autonoma</span>
-  <span><span class="lbadge" style="background:var(--r4)">4</span> <strong>Destacado</strong> &mdash; lo domina y puede ensenarselo a otros</span>
+  <span><span class="lbadge" style="background:var(--r4)">4</span> <strong>Destacado</strong> &mdash; lo domina y puede ense&#241;arselo a otros</span>
   <span><span class="lbadge" style="background:var(--r5);font-size:9px">NA</span> <strong>No aplica</strong> &mdash; el item no corresponde al formato de este local</span>
 </div>
-
-<!-- ── MOD 01 ── -->
 <div class="section-block" id="mod1">
-  <div class="sec-title-bar"><span class="sec-num">01</span><h2>Equipamiento</h2><span class="sec-badge">4 ítems</span></div>
-  <div class="item-row"><span class="item-num">1</span><span class="item-text">Identifica y opera correctamente las <strong>máquinas del sector</strong></span><div class="rating"><input type="radio" name="q1" id="q1v1" value="1"><label class="rating-btn" for="q1v1">1</label><input type="radio" name="q1" id="q1v2" value="2"><label class="rating-btn" for="q1v2">2</label><input type="radio" name="q1" id="q1v3" value="3"><label class="rating-btn" for="q1v3">3</label><input type="radio" name="q1" id="q1v4" value="4"><label class="rating-btn" for="q1v4">4</label><input type="radio" name="q1" id="q1v5" value="5"><label class="rating-btn na-btn" for="q1v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(1)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic1"><textarea placeholder="Comentario sobre este ítem..." id="ict1"></textarea></div>
-  <div class="item-row"><span class="item-num">2</span><span class="item-text">Conoce y aplica los <strong>estándares de limpieza</strong> de cada equipo</span><div class="rating"><input type="radio" name="q2" id="q2v1" value="1"><label class="rating-btn" for="q2v1">1</label><input type="radio" name="q2" id="q2v2" value="2"><label class="rating-btn" for="q2v2">2</label><input type="radio" name="q2" id="q2v3" value="3"><label class="rating-btn" for="q2v3">3</label><input type="radio" name="q2" id="q2v4" value="4"><label class="rating-btn" for="q2v4">4</label><input type="radio" name="q2" id="q2v5" value="5"><label class="rating-btn na-btn" for="q2v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(2)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic2"><textarea placeholder="Comentario sobre este ítem..." id="ict2"></textarea></div>
-  <div class="item-row"><span class="item-num">3</span><span class="item-text">Mantiene el <strong>orden del sector</strong> durante la operación</span><div class="rating"><input type="radio" name="q3" id="q3v1" value="1"><label class="rating-btn" for="q3v1">1</label><input type="radio" name="q3" id="q3v2" value="2"><label class="rating-btn" for="q3v2">2</label><input type="radio" name="q3" id="q3v3" value="3"><label class="rating-btn" for="q3v3">3</label><input type="radio" name="q3" id="q3v4" value="4"><label class="rating-btn" for="q3v4">4</label><input type="radio" name="q3" id="q3v5" value="5"><label class="rating-btn na-btn" for="q3v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(3)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic3"><textarea placeholder="Comentario sobre este ítem..." id="ict3"></textarea></div>
-  <div class="item-row"><span class="item-num">4</span><span class="item-text">Conoce y aplica las <strong>normas de cuidado y seguridad</strong></span><div class="rating"><input type="radio" name="q4" id="q4v1" value="1"><label class="rating-btn" for="q4v1">1</label><input type="radio" name="q4" id="q4v2" value="2"><label class="rating-btn" for="q4v2">2</label><input type="radio" name="q4" id="q4v3" value="3"><label class="rating-btn" for="q4v3">3</label><input type="radio" name="q4" id="q4v4" value="4"><label class="rating-btn" for="q4v4">4</label><input type="radio" name="q4" id="q4v5" value="5"><label class="rating-btn na-btn" for="q4v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(4)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic4"><textarea placeholder="Comentario sobre este ítem..." id="ict4"></textarea></div>
+  <div class="sec-title-bar"><span class="sec-num">01</span><h2>Equipamiento</h2><span class="sec-badge">4 &#237;tems</span></div>
+  <div class="item-row"><span class="item-num">1</span><span class="item-text">Identifica y opera correctamente las <strong>m&#225;quinas del sector</strong></span><div class="rating"><input type="radio" name="q1" id="q1v1" value="1"><label class="rating-btn" for="q1v1">1</label><input type="radio" name="q1" id="q1v2" value="2"><label class="rating-btn" for="q1v2">2</label><input type="radio" name="q1" id="q1v3" value="3"><label class="rating-btn" for="q1v3">3</label><input type="radio" name="q1" id="q1v4" value="4"><label class="rating-btn" for="q1v4">4</label><input type="radio" name="q1" id="q1v5" value="5"><label class="rating-btn na-btn" for="q1v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(1)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g1',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g1"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Qu&#233; m&#225;quinas hay en el sector? Pedile que las nombre.</li><li>&#191;Para qu&#233; sirve cada una? Que explique la funci&#243;n.</li><li>&#191;C&#243;mo se enciende y se apaga cada m&#225;quina?</li></ul></div></div>
+  <div class="item-comment-wrap" id="ic1"><textarea placeholder="Practicar m&#243;dulo" id="ict1"></textarea></div>
+  <div class="item-row"><span class="item-num">2</span><span class="item-text">Conoce y aplica los <strong>est&#225;ndares de limpieza</strong> de cada equipo</span><div class="rating"><input type="radio" name="q2" id="q2v1" value="1"><label class="rating-btn" for="q2v1">1</label><input type="radio" name="q2" id="q2v2" value="2"><label class="rating-btn" for="q2v2">2</label><input type="radio" name="q2" id="q2v3" value="3"><label class="rating-btn" for="q2v3">3</label><input type="radio" name="q2" id="q2v4" value="4"><label class="rating-btn" for="q2v4">4</label><input type="radio" name="q2" id="q2v5" value="5"><label class="rating-btn na-btn" for="q2v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(2)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g2',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g2"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;C&#243;mo se realiza la limpieza profunda de las vitrinas?</li><li>&#191;C&#243;mo se limpia la m&#225;quina de cafeter&#237;a? Que describa el proceso.</li><li>&#191;Cada cu&#225;nto se limpian los armarios y el freezer?</li></ul></div></div>
+  <div class="item-comment-wrap" id="ic2"><textarea placeholder="Practicar m&#243;dulo" id="ict2"></textarea></div>
+  <div class="item-row"><span class="item-num">3</span><span class="item-text">Mantiene el <strong>orden del sector</strong> durante la operaci&#243;n</span><div class="rating"><input type="radio" name="q3" id="q3v1" value="1"><label class="rating-btn" for="q3v1">1</label><input type="radio" name="q3" id="q3v2" value="2"><label class="rating-btn" for="q3v2">2</label><input type="radio" name="q3" id="q3v3" value="3"><label class="rating-btn" for="q3v3">3</label><input type="radio" name="q3" id="q3v4" value="4"><label class="rating-btn" for="q3v4">4</label><input type="radio" name="q3" id="q3v5" value="5"><label class="rating-btn na-btn" for="q3v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(3)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="item-comment-wrap" id="ic3"><textarea placeholder="Practicar m&#243;dulo" id="ict3"></textarea></div>
+  <div class="item-row"><span class="item-num">4</span><span class="item-text">Conoce y aplica las <strong>normas de cuidado y seguridad</strong></span><div class="rating"><input type="radio" name="q4" id="q4v1" value="1"><label class="rating-btn" for="q4v1">1</label><input type="radio" name="q4" id="q4v2" value="2"><label class="rating-btn" for="q4v2">2</label><input type="radio" name="q4" id="q4v3" value="3"><label class="rating-btn" for="q4v3">3</label><input type="radio" name="q4" id="q4v4" value="4"><label class="rating-btn" for="q4v4">4</label><input type="radio" name="q4" id="q4v5" value="5"><label class="rating-btn na-btn" for="q4v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(4)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="item-comment-wrap" id="ic4"><textarea placeholder="Practicar m&#243;dulo" id="ict4"></textarea></div>
   <div class="sec-summary">Modulo 01 &middot; 4 criterios</div>
 </div>
-
-<!-- ── MOD 02 ── -->
 <div class="section-block" id="mod2">
-  <div class="sec-title-bar"><span class="sec-num">02</span><h2>Cafetería</h2><span class="sec-badge">7 ítems</span></div>
-  <div class="item-row"><span class="item-num">5</span><span class="item-text">Conoce y describe la <strong>carta completa del sector</strong></span><div class="rating"><input type="radio" name="q5" id="q5v1" value="1"><label class="rating-btn" for="q5v1">1</label><input type="radio" name="q5" id="q5v2" value="2"><label class="rating-btn" for="q5v2">2</label><input type="radio" name="q5" id="q5v3" value="3"><label class="rating-btn" for="q5v3">3</label><input type="radio" name="q5" id="q5v4" value="4"><label class="rating-btn" for="q5v4">4</label><input type="radio" name="q5" id="q5v5" value="5"><label class="rating-btn na-btn" for="q5v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(5)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic5"><textarea placeholder="Comentario sobre este ítem..." id="ict5"></textarea></div>
-  <div class="item-row"><span class="item-num">6</span><span class="item-text">Identifica y diferencia <strong>cafés simples y especiales</strong></span><div class="rating"><input type="radio" name="q6" id="q6v1" value="1"><label class="rating-btn" for="q6v1">1</label><input type="radio" name="q6" id="q6v2" value="2"><label class="rating-btn" for="q6v2">2</label><input type="radio" name="q6" id="q6v3" value="3"><label class="rating-btn" for="q6v3">3</label><input type="radio" name="q6" id="q6v4" value="4"><label class="rating-btn" for="q6v4">4</label><input type="radio" name="q6" id="q6v5" value="5"><label class="rating-btn na-btn" for="q6v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(6)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic6"><textarea placeholder="Comentario sobre este ítem..." id="ict6"></textarea></div>
-  <div class="item-row"><span class="item-num">7</span><span class="item-text">Conoce y aplica los <strong>procesos de bollería y pastelería</strong></span><div class="rating"><input type="radio" name="q7" id="q7v1" value="1"><label class="rating-btn" for="q7v1">1</label><input type="radio" name="q7" id="q7v2" value="2"><label class="rating-btn" for="q7v2">2</label><input type="radio" name="q7" id="q7v3" value="3"><label class="rating-btn" for="q7v3">3</label><input type="radio" name="q7" id="q7v4" value="4"><label class="rating-btn" for="q7v4">4</label><input type="radio" name="q7" id="q7v5" value="5"><label class="rating-btn na-btn" for="q7v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(7)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic7"><textarea placeholder="Comentario sobre este ítem..." id="ict7"></textarea></div>
-  <div class="item-row"><span class="item-num">8</span><span class="item-text">Aplica correctamente <strong>rotulación y rotación de productos</strong></span><div class="rating"><input type="radio" name="q8" id="q8v1" value="1"><label class="rating-btn" for="q8v1">1</label><input type="radio" name="q8" id="q8v2" value="2"><label class="rating-btn" for="q8v2">2</label><input type="radio" name="q8" id="q8v3" value="3"><label class="rating-btn" for="q8v3">3</label><input type="radio" name="q8" id="q8v4" value="4"><label class="rating-btn" for="q8v4">4</label><input type="radio" name="q8" id="q8v5" value="5"><label class="rating-btn na-btn" for="q8v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(8)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic8"><textarea placeholder="Comentario sobre este ítem..." id="ict8"></textarea></div>
-  <div class="item-row"><span class="item-num">9</span><span class="item-text">Utiliza correctamente <strong>vajilla, bandeja y elementos de trabajo</strong></span><div class="rating"><input type="radio" name="q9" id="q9v1" value="1"><label class="rating-btn" for="q9v1">1</label><input type="radio" name="q9" id="q9v2" value="2"><label class="rating-btn" for="q9v2">2</label><input type="radio" name="q9" id="q9v3" value="3"><label class="rating-btn" for="q9v3">3</label><input type="radio" name="q9" id="q9v4" value="4"><label class="rating-btn" for="q9v4">4</label><input type="radio" name="q9" id="q9v5" value="5"><label class="rating-btn na-btn" for="q9v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(9)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic9"><textarea placeholder="Comentario sobre este ítem..." id="ict9"></textarea></div>
-  <div class="item-row"><span class="item-num">10</span><span class="item-text">Respeta el <strong>orden de preparación y tiempos de servicio</strong></span><div class="rating"><input type="radio" name="q10" id="q10v1" value="1"><label class="rating-btn" for="q10v1">1</label><input type="radio" name="q10" id="q10v2" value="2"><label class="rating-btn" for="q10v2">2</label><input type="radio" name="q10" id="q10v3" value="3"><label class="rating-btn" for="q10v3">3</label><input type="radio" name="q10" id="q10v4" value="4"><label class="rating-btn" for="q10v4">4</label><input type="radio" name="q10" id="q10v5" value="5"><label class="rating-btn na-btn" for="q10v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(10)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic10"><textarea placeholder="Comentario sobre este ítem..." id="ict10"></textarea></div>
-  <div class="item-row"><span class="item-num">11</span><span class="item-text">Limpia correctamente la <strong>cafetera y el sector</strong> al finalizar</span><div class="rating"><input type="radio" name="q11" id="q11v1" value="1"><label class="rating-btn" for="q11v1">1</label><input type="radio" name="q11" id="q11v2" value="2"><label class="rating-btn" for="q11v2">2</label><input type="radio" name="q11" id="q11v3" value="3"><label class="rating-btn" for="q11v3">3</label><input type="radio" name="q11" id="q11v4" value="4"><label class="rating-btn" for="q11v4">4</label><input type="radio" name="q11" id="q11v5" value="5"><label class="rating-btn na-btn" for="q11v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(11)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic11"><textarea placeholder="Comentario sobre este ítem..." id="ict11"></textarea></div>
-  <div class="sec-summary">Modulo 02 &middot; 7 criterios</div>
+  <div class="sec-title-bar"><span class="sec-num">02</span><h2>Cafeter&#237;a</h2><span class="sec-badge">6 &#237;tems</span></div>
+  <div class="item-row"><span class="item-num">5</span><span class="item-text">Conoce cu&#225;l es la <strong>variedad de caf&#233; que ofrecemos</strong></span><div class="rating"><input type="radio" name="q5" id="q5v1" value="1"><label class="rating-btn" for="q5v1">1</label><input type="radio" name="q5" id="q5v2" value="2"><label class="rating-btn" for="q5v2">2</label><input type="radio" name="q5" id="q5v3" value="3"><label class="rating-btn" for="q5v3">3</label><input type="radio" name="q5" id="q5v4" value="4"><label class="rating-btn" for="q5v4">4</label><input type="radio" name="q5" id="q5v5" value="5"><label class="rating-btn na-btn" for="q5v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(5)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g5',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g5"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Qu&#233; variedades de caf&#233; ofrecemos?<span class="guide-resp">Esperado: espresso, espresso lungo, caff&#232; latte, cappuccino y caf&#233;s especiales</span></li><li>&#191;En qu&#233; orden se le presenta al cliente?<span class="guide-resp">Primero el tama&#241;o (espresso chico, espresso lungo mediano, caff&#232; latte grande), luego c&#243;mo lo quiere</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic5"><textarea placeholder="Practicar m&#243;dulo" id="ict5"></textarea></div>
+  <div class="item-row"><span class="item-num">6</span><span class="item-text">Identifica y reconoce qu&#233; son y <strong>c&#243;mo se hacen los especiales</strong></span><div class="rating"><input type="radio" name="q6" id="q6v1" value="1"><label class="rating-btn" for="q6v1">1</label><input type="radio" name="q6" id="q6v2" value="2"><label class="rating-btn" for="q6v2">2</label><input type="radio" name="q6" id="q6v3" value="3"><label class="rating-btn" for="q6v3">3</label><input type="radio" name="q6" id="q6v4" value="4"><label class="rating-btn" for="q6v4">4</label><input type="radio" name="q6" id="q6v5" value="5"><label class="rating-btn na-btn" for="q6v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(6)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g6',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g6"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Qu&#233; es un caf&#233; especial?<span class="guide-resp">Esperado: un caff&#232; latte que lleva dos push de salsa</span></li><li>&#191;Qu&#233; pasa si la receta lleva dos salsas distintas?<span class="guide-resp">Esperado: un push de cada una</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic6"><textarea placeholder="Practicar m&#243;dulo" id="ict6"></textarea></div>
+  <div class="item-row"><span class="item-num">7</span><span class="item-text">Conoce y aplica los procesos de <strong>boll&#233;r&#237;a, paster&#237;a y rotaci&#243;n de productos</strong></span><div class="rating"><input type="radio" name="q7" id="q7v1" value="1"><label class="rating-btn" for="q7v1">1</label><input type="radio" name="q7" id="q7v2" value="2"><label class="rating-btn" for="q7v2">2</label><input type="radio" name="q7" id="q7v3" value="3"><label class="rating-btn" for="q7v3">3</label><input type="radio" name="q7" id="q7v4" value="4"><label class="rating-btn" for="q7v4">4</label><input type="radio" name="q7" id="q7v5" value="5"><label class="rating-btn na-btn" for="q7v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(7)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g7',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g7"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Cu&#225;ndo se saca la boll&#233;r&#237;a?<span class="guide-resp">Esperado: un d&#237;a antes para que leude</span></li><li>&#191;Conoce los vencimientos?<span class="guide-resp">Tortas 5 d&#237;as &#8212; medialunas y croissant diario &#8212; roles y pain cada 2 d&#237;as</span></li><li>&#191;Cu&#225;ndo se coloca el alm&#237;bar?<span class="guide-resp">Esperado: cuando est&#225; caliente para que se adhiera mejor</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic7"><textarea placeholder="Practicar m&#243;dulo" id="ict7"></textarea></div>
+  <div class="item-row"><span class="item-num">8</span><span class="item-text">Utiliza correctamente <strong>vajilla, bandeja y elementos de trabajo</strong></span><div class="rating"><input type="radio" name="q8" id="q8v1" value="1"><label class="rating-btn" for="q8v1">1</label><input type="radio" name="q8" id="q8v2" value="2"><label class="rating-btn" for="q8v2">2</label><input type="radio" name="q8" id="q8v3" value="3"><label class="rating-btn" for="q8v3">3</label><input type="radio" name="q8" id="q8v4" value="4"><label class="rating-btn" for="q8v4">4</label><input type="radio" name="q8" id="q8v5" value="5"><label class="rating-btn na-btn" for="q8v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(8)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="item-comment-wrap" id="ic8"><textarea placeholder="Practicar m&#243;dulo" id="ict8"></textarea></div>
+  <div class="item-row"><span class="item-num">9</span><span class="item-text">Respeta el <strong>orden de preparaci&#243;n y tiempos de servicio</strong></span><div class="rating"><input type="radio" name="q9" id="q9v1" value="1"><label class="rating-btn" for="q9v1">1</label><input type="radio" name="q9" id="q9v2" value="2"><label class="rating-btn" for="q9v2">2</label><input type="radio" name="q9" id="q9v3" value="3"><label class="rating-btn" for="q9v3">3</label><input type="radio" name="q9" id="q9v4" value="4"><label class="rating-btn" for="q9v4">4</label><input type="radio" name="q9" id="q9v5" value="5"><label class="rating-btn na-btn" for="q9v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(9)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="item-comment-wrap" id="ic9"><textarea placeholder="Practicar m&#243;dulo" id="ict9"></textarea></div>
+  <div class="item-row"><span class="item-num">10</span><span class="item-text">Limpia correctamente la <strong>cafetera y el sector</strong> al finalizar</span><div class="rating"><input type="radio" name="q10" id="q10v1" value="1"><label class="rating-btn" for="q10v1">1</label><input type="radio" name="q10" id="q10v2" value="2"><label class="rating-btn" for="q10v2">2</label><input type="radio" name="q10" id="q10v3" value="3"><label class="rating-btn" for="q10v3">3</label><input type="radio" name="q10" id="q10v4" value="4"><label class="rating-btn" for="q10v4">4</label><input type="radio" name="q10" id="q10v5" value="5"><label class="rating-btn na-btn" for="q10v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(10)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="item-comment-wrap" id="ic10"><textarea placeholder="Practicar m&#243;dulo" id="ict10"></textarea></div>
+  <div class="sec-summary">Modulo 02 &middot; 6 criterios</div>
 </div>
-
-<!-- ── MOD 03 ── -->
 <div class="section-block" id="mod3">
-  <div class="sec-title-bar"><span class="sec-num">03</span><h2>Heladería</h2><span class="sec-badge">10 ítems</span></div>
-  <div class="item-row"><span class="item-num">12</span><span class="item-text">Prepara <strong>cucuruchos, vasos y potes</strong> con gramajes correctos</span><div class="rating"><input type="radio" name="q12" id="q12v1" value="1"><label class="rating-btn" for="q12v1">1</label><input type="radio" name="q12" id="q12v2" value="2"><label class="rating-btn" for="q12v2">2</label><input type="radio" name="q12" id="q12v3" value="3"><label class="rating-btn" for="q12v3">3</label><input type="radio" name="q12" id="q12v4" value="4"><label class="rating-btn" for="q12v4">4</label><input type="radio" name="q12" id="q12v5" value="5"><label class="rating-btn na-btn" for="q12v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(12)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic12"><textarea placeholder="Comentario sobre este ítem..." id="ict12"></textarea></div>
-  <div class="item-row"><span class="item-num">13</span><span class="item-text">Conoce y prepara <strong>batidos, smoothies, milkshakes y gelato shakes</strong></span><div class="rating"><input type="radio" name="q13" id="q13v1" value="1"><label class="rating-btn" for="q13v1">1</label><input type="radio" name="q13" id="q13v2" value="2"><label class="rating-btn" for="q13v2">2</label><input type="radio" name="q13" id="q13v3" value="3"><label class="rating-btn" for="q13v3">3</label><input type="radio" name="q13" id="q13v4" value="4"><label class="rating-btn" for="q13v4">4</label><input type="radio" name="q13" id="q13v5" value="5"><label class="rating-btn na-btn" for="q13v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(13)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic13"><textarea placeholder="Comentario sobre este ítem..." id="ict13"></textarea></div>
-  <div class="item-row"><span class="item-num">14</span><span class="item-text">Conoce y aplica el <strong>proceso de pase de helado</strong></span><div class="rating"><input type="radio" name="q14" id="q14v1" value="1"><label class="rating-btn" for="q14v1">1</label><input type="radio" name="q14" id="q14v2" value="2"><label class="rating-btn" for="q14v2">2</label><input type="radio" name="q14" id="q14v3" value="3"><label class="rating-btn" for="q14v3">3</label><input type="radio" name="q14" id="q14v4" value="4"><label class="rating-btn" for="q14v4">4</label><input type="radio" name="q14" id="q14v5" value="5"><label class="rating-btn na-btn" for="q14v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(14)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic14"><textarea placeholder="Comentario sobre este ítem..." id="ict14"></textarea></div>
-  <div class="item-row"><span class="item-num">15</span><span class="item-text">Identifica sabores con <strong>variegatos y fruta decorativa</strong></span><div class="rating"><input type="radio" name="q15" id="q15v1" value="1"><label class="rating-btn" for="q15v1">1</label><input type="radio" name="q15" id="q15v2" value="2"><label class="rating-btn" for="q15v2">2</label><input type="radio" name="q15" id="q15v3" value="3"><label class="rating-btn" for="q15v3">3</label><input type="radio" name="q15" id="q15v4" value="4"><label class="rating-btn" for="q15v4">4</label><input type="radio" name="q15" id="q15v5" value="5"><label class="rating-btn na-btn" for="q15v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(15)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic15"><textarea placeholder="Comentario sobre este ítem..." id="ict15"></textarea></div>
-  <div class="item-row"><span class="item-num">16</span><span class="item-text">Utiliza <strong>guantes, vaquetas y trapo específico</strong> correctamente</span><div class="rating"><input type="radio" name="q16" id="q16v1" value="1"><label class="rating-btn" for="q16v1">1</label><input type="radio" name="q16" id="q16v2" value="2"><label class="rating-btn" for="q16v2">2</label><input type="radio" name="q16" id="q16v3" value="3"><label class="rating-btn" for="q16v3">3</label><input type="radio" name="q16" id="q16v4" value="4"><label class="rating-btn" for="q16v4">4</label><input type="radio" name="q16" id="q16v5" value="5"><label class="rating-btn na-btn" for="q16v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(16)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic16"><textarea placeholder="Comentario sobre este ítem..." id="ict16"></textarea></div>
-  <div class="item-row"><span class="item-num">17</span><span class="item-text">Demuestra <strong>baño de chocolate y peinado de sabores</strong></span><div class="rating"><input type="radio" name="q17" id="q17v1" value="1"><label class="rating-btn" for="q17v1">1</label><input type="radio" name="q17" id="q17v2" value="2"><label class="rating-btn" for="q17v2">2</label><input type="radio" name="q17" id="q17v3" value="3"><label class="rating-btn" for="q17v3">3</label><input type="radio" name="q17" id="q17v4" value="4"><label class="rating-btn" for="q17v4">4</label><input type="radio" name="q17" id="q17v5" value="5"><label class="rating-btn na-btn" for="q17v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(17)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic17"><textarea placeholder="Comentario sobre este ítem..." id="ict17"></textarea></div>
-  <div class="item-row"><span class="item-num">18</span><span class="item-text">Realiza el <strong>guardado correcto post pase</strong></span><div class="rating"><input type="radio" name="q18" id="q18v1" value="1"><label class="rating-btn" for="q18v1">1</label><input type="radio" name="q18" id="q18v2" value="2"><label class="rating-btn" for="q18v2">2</label><input type="radio" name="q18" id="q18v3" value="3"><label class="rating-btn" for="q18v3">3</label><input type="radio" name="q18" id="q18v4" value="4"><label class="rating-btn" for="q18v4">4</label><input type="radio" name="q18" id="q18v5" value="5"><label class="rating-btn na-btn" for="q18v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(18)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic18"><textarea placeholder="Comentario sobre este ítem..." id="ict18"></textarea></div>
-  <div class="item-row"><span class="item-num">19</span><span class="item-text">Identifica <strong>vasos de cortesía y cialdinos</strong></span><div class="rating"><input type="radio" name="q19" id="q19v1" value="1"><label class="rating-btn" for="q19v1">1</label><input type="radio" name="q19" id="q19v2" value="2"><label class="rating-btn" for="q19v2">2</label><input type="radio" name="q19" id="q19v3" value="3"><label class="rating-btn" for="q19v3">3</label><input type="radio" name="q19" id="q19v4" value="4"><label class="rating-btn" for="q19v4">4</label><input type="radio" name="q19" id="q19v5" value="5"><label class="rating-btn na-btn" for="q19v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(19)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic19"><textarea placeholder="Comentario sobre este ítem..." id="ict19"></textarea></div>
-  <div class="item-row"><span class="item-num">20</span><span class="item-text">Comprende el impacto de <strong>no anticiparse al rush</strong></span><div class="rating"><input type="radio" name="q20" id="q20v1" value="1"><label class="rating-btn" for="q20v1">1</label><input type="radio" name="q20" id="q20v2" value="2"><label class="rating-btn" for="q20v2">2</label><input type="radio" name="q20" id="q20v3" value="3"><label class="rating-btn" for="q20v3">3</label><input type="radio" name="q20" id="q20v4" value="4"><label class="rating-btn" for="q20v4">4</label><input type="radio" name="q20" id="q20v5" value="5"><label class="rating-btn na-btn" for="q20v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(20)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic20"><textarea placeholder="Comentario sobre este ítem..." id="ict20"></textarea></div>
-  <div class="item-row"><span class="item-num">21</span><span class="item-text">Conoce los sabores <strong>Kosher: Dayri/Crema y Parve/Vegano</strong></span><div class="rating"><input type="radio" name="q21" id="q21v1" value="1"><label class="rating-btn" for="q21v1">1</label><input type="radio" name="q21" id="q21v2" value="2"><label class="rating-btn" for="q21v2">2</label><input type="radio" name="q21" id="q21v3" value="3"><label class="rating-btn" for="q21v3">3</label><input type="radio" name="q21" id="q21v4" value="4"><label class="rating-btn" for="q21v4">4</label><input type="radio" name="q21" id="q21v5" value="5"><label class="rating-btn na-btn" for="q21v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(21)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic21"><textarea placeholder="Comentario sobre este ítem..." id="ict21"></textarea></div>
+  <div class="sec-title-bar"><span class="sec-num">03</span><h2>Helader&#237;a</h2><span class="sec-badge">10 &#237;tems</span></div>
+  <div class="item-row"><span class="item-num">11</span><span class="item-text">Prepara <strong>cucuruchos, vasos y potes</strong> con gramajes correctos</span><div class="rating"><input type="radio" name="q11" id="q11v1" value="1"><label class="rating-btn" for="q11v1">1</label><input type="radio" name="q11" id="q11v2" value="2"><label class="rating-btn" for="q11v2">2</label><input type="radio" name="q11" id="q11v3" value="3"><label class="rating-btn" for="q11v3">3</label><input type="radio" name="q11" id="q11v4" value="4"><label class="rating-btn" for="q11v4">4</label><input type="radio" name="q11" id="q11v5" value="5"><label class="rating-btn na-btn" for="q11v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(11)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g11',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g11"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Sabe los gramajes por tama&#241;o?<span class="guide-resp">Vaso chico 120-130g &#8212; mediano 140-150g &#8212; grande 170-180g &#8212; cucurucho 190-200g</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic11"><textarea placeholder="Practicar m&#243;dulo" id="ict11"></textarea></div>
+  <div class="item-row"><span class="item-num">12</span><span class="item-text">Conoce y prepara <strong>batidos, smoothies, milkshakes y gelato shakes</strong></span><div class="rating"><input type="radio" name="q12" id="q12v1" value="1"><label class="rating-btn" for="q12v1">1</label><input type="radio" name="q12" id="q12v2" value="2"><label class="rating-btn" for="q12v2">2</label><input type="radio" name="q12" id="q12v3" value="3"><label class="rating-btn" for="q12v3">3</label><input type="radio" name="q12" id="q12v4" value="4"><label class="rating-btn" for="q12v4">4</label><input type="radio" name="q12" id="q12v5" value="5"><label class="rating-btn na-btn" for="q12v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(12)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g12',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g12"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Qu&#233; es un smoothie?<span class="guide-resp">2 bochas frutales al agua y 200ml de soda</span></li><li>&#191;Qu&#233; es un milkshake?<span class="guide-resp">2 bochas a elecci&#243;n, 200ml de leche, salsa a elecci&#243;n y crema</span></li><li>&#191;Qu&#233; es un gelato shake?<span class="guide-resp">Helado, leche, caf&#233; y crema &#8212; 100ml de leche y espresso con c&#225;psula ristretto</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic12"><textarea placeholder="Practicar m&#243;dulo" id="ict12"></textarea></div>
+  <div class="item-row"><span class="item-num">13</span><span class="item-text">Conoce y aplica correctamente el <strong>proceso de pase de helado</strong></span><div class="rating"><input type="radio" name="q13" id="q13v1" value="1"><label class="rating-btn" for="q13v1">1</label><input type="radio" name="q13" id="q13v2" value="2"><label class="rating-btn" for="q13v2">2</label><input type="radio" name="q13" id="q13v3" value="3"><label class="rating-btn" for="q13v3">3</label><input type="radio" name="q13" id="q13v4" value="4"><label class="rating-btn" for="q13v4">4</label><input type="radio" name="q13" id="q13v5" value="5"><label class="rating-btn na-btn" for="q13v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(13)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g13',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g13"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>Pedile que describa el proceso paso a paso.<span class="guide-resp">Si lo explica correctamente de forma aut&#243;noma &#8594; 3. Si adem&#225;s puede ense&#241;&#225;rselo a otro &#8594; 4</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic13"><textarea placeholder="Practicar m&#243;dulo" id="ict13"></textarea></div>
+  <div class="item-row"><span class="item-num">14</span><span class="item-text">Identifica sabores con <strong>variegatos y fruta decorativa</strong></span><div class="rating"><input type="radio" name="q14" id="q14v1" value="1"><label class="rating-btn" for="q14v1">1</label><input type="radio" name="q14" id="q14v2" value="2"><label class="rating-btn" for="q14v2">2</label><input type="radio" name="q14" id="q14v3" value="3"><label class="rating-btn" for="q14v3">3</label><input type="radio" name="q14" id="q14v4" value="4"><label class="rating-btn" for="q14v4">4</label><input type="radio" name="q14" id="q14v5" value="5"><label class="rating-btn na-btn" for="q14v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(14)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g14',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g14"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Qu&#233; helados llevan dulce de leche natural?<span class="guide-resp">Banana split dulce, peanut caramel, tramontana</span></li><li>&#191;Cu&#225;nto se fracciona el crumble de pistacho?<span class="guide-resp">200 gramos</span></li><li>&#191;C&#243;mo se decora el tiramisú al pistacho? Que explique.</li><li>&#191;Para qu&#233; se usa la stracciatella y c&#243;mo se aplica?</li></ul></div></div>
+  <div class="item-comment-wrap" id="ic14"><textarea placeholder="Practicar m&#243;dulo" id="ict14"></textarea></div>
+  <div class="item-row"><span class="item-num">15</span><span class="item-text">Utiliza <strong>guantes, vaquetas y trapo espec&#237;fico</strong> correctamente</span><div class="rating"><input type="radio" name="q15" id="q15v1" value="1"><label class="rating-btn" for="q15v1">1</label><input type="radio" name="q15" id="q15v2" value="2"><label class="rating-btn" for="q15v2">2</label><input type="radio" name="q15" id="q15v3" value="3"><label class="rating-btn" for="q15v3">3</label><input type="radio" name="q15" id="q15v4" value="4"><label class="rating-btn" for="q15v4">4</label><input type="radio" name="q15" id="q15v5" value="5"><label class="rating-btn na-btn" for="q15v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(15)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g15',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g15"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Qu&#233; elementos usa durante el pase?<span class="guide-resp">Guantes, mesada limpia, trapo espec&#237;fico, armario ordenado</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic15"><textarea placeholder="Practicar m&#243;dulo" id="ict15"></textarea></div>
+  <div class="item-row"><span class="item-num">16</span><span class="item-text">Demuestra <strong>ba&#241;o de chocolate y peinado de sabores</strong></span><div class="rating"><input type="radio" name="q16" id="q16v1" value="1"><label class="rating-btn" for="q16v1">1</label><input type="radio" name="q16" id="q16v2" value="2"><label class="rating-btn" for="q16v2">2</label><input type="radio" name="q16" id="q16v3" value="3"><label class="rating-btn" for="q16v3">3</label><input type="radio" name="q16" id="q16v4" value="4"><label class="rating-btn" for="q16v4">4</label><input type="radio" name="q16" id="q16v5" value="5"><label class="rating-btn na-btn" for="q16v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(16)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g16',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g16"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;C&#243;mo se hace el ba&#241;o de chocolate? Que explique el proceso.</li><li>&#191;Cu&#225;l es la temperatura ideal?<span class="guide-resp">Entre 30 y 40 grados</span></li><li>&#191;C&#243;mo se llama el chocolate que va en la chocolatera?<span class="guide-resp">Mapricoa</span></li><li>&#191;C&#243;mo se hace el peinado?<span class="guide-resp">3 olas y una peque&#241;a al final &#8212; 3 si sabe, 4 si puede ense&#241;&#225;rselo a otro</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic16"><textarea placeholder="Practicar m&#243;dulo" id="ict16"></textarea></div>
+  <div class="item-row"><span class="item-num">17</span><span class="item-text">Realiza el <strong>guardado correcto post pase</strong></span><div class="rating"><input type="radio" name="q17" id="q17v1" value="1"><label class="rating-btn" for="q17v1">1</label><input type="radio" name="q17" id="q17v2" value="2"><label class="rating-btn" for="q17v2">2</label><input type="radio" name="q17" id="q17v3" value="3"><label class="rating-btn" for="q17v3">3</label><input type="radio" name="q17" id="q17v4" value="4"><label class="rating-btn" for="q17v4">4</label><input type="radio" name="q17" id="q17v5" value="5"><label class="rating-btn na-btn" for="q17v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(17)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g17',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g17"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;C&#243;mo se guarda la vaqueta al finalizar?<span class="guide-resp">Dentro del armario con bolsa o domo</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic17"><textarea placeholder="Practicar m&#243;dulo" id="ict17"></textarea></div>
+  <div class="item-row"><span class="item-num">18</span><span class="item-text">Identifica <strong>vasos de cortes&#237;a y cialdinos</strong></span><div class="rating"><input type="radio" name="q18" id="q18v1" value="1"><label class="rating-btn" for="q18v1">1</label><input type="radio" name="q18" id="q18v2" value="2"><label class="rating-btn" for="q18v2">2</label><input type="radio" name="q18" id="q18v3" value="3"><label class="rating-btn" for="q18v3">3</label><input type="radio" name="q18" id="q18v4" value="4"><label class="rating-btn" for="q18v4">4</label><input type="radio" name="q18" id="q18v5" value="5"><label class="rating-btn na-btn" for="q18v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(18)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g18',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g18"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Cu&#225;ntos vasitos de cortes&#237;a van con cada presentaci&#243;n?<span class="guide-resp">2 cucuruchos o 4 vasitos por kilo &#8212; 1 cucurucho o 2 vasitos por medio kilo</span></li><li>&#191;Qu&#233; son los cialdinos?<span class="guide-resp">Obleas de uso exclusivo para cucuruchos</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic18"><textarea placeholder="Practicar m&#243;dulo" id="ict18"></textarea></div>
+  <div class="item-row"><span class="item-num">19</span><span class="item-text">Comprende el impacto de <strong>no anticiparse al rush</strong></span><div class="rating"><input type="radio" name="q19" id="q19v1" value="1"><label class="rating-btn" for="q19v1">1</label><input type="radio" name="q19" id="q19v2" value="2"><label class="rating-btn" for="q19v2">2</label><input type="radio" name="q19" id="q19v3" value="3"><label class="rating-btn" for="q19v3">3</label><input type="radio" name="q19" id="q19v4" value="4"><label class="rating-btn" for="q19v4">4</label><input type="radio" name="q19" id="q19v5" value="5"><label class="rating-btn na-btn" for="q19v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(19)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g19',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g19"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Qu&#233; pasa si no se reponen las vaquetas Dubai con tiempo?<span class="guide-resp">Saldr&#225;n duras, generando demoras y dificultad en la preparaci&#243;n</span></li><li>&#191;Qu&#233; pasa si no hay icepops a mano y piden uno de mandarina?<span class="guide-resp">Hay que ir a la c&#225;mara a buscarlo, generando demora</span></li><li>&#191;Qu&#233; pasa si un cliente pide 3 cajas de alfajores iguales y no est&#225;n armadas?<span class="guide-resp">Hay que armarlas en el momento, frenando el servicio</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic19"><textarea placeholder="Practicar m&#243;dulo" id="ict19"></textarea></div>
+  <div class="item-row"><span class="item-num">20</span><span class="item-text">Conoce los sabores <strong>Kosher: Dayri/Crema y Parve/Vegano</strong></span><div class="rating"><input type="radio" name="q20" id="q20v1" value="1"><label class="rating-btn" for="q20v1">1</label><input type="radio" name="q20" id="q20v2" value="2"><label class="rating-btn" for="q20v2">2</label><input type="radio" name="q20" id="q20v3" value="3"><label class="rating-btn" for="q20v3">3</label><input type="radio" name="q20" id="q20v4" value="4"><label class="rating-btn" for="q20v4">4</label><input type="radio" name="q20" id="q20v5" value="5"><label class="rating-btn na-btn" for="q20v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(20)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="item-comment-wrap" id="ic20"><textarea placeholder="Practicar m&#243;dulo" id="ict20"></textarea></div>
   <div class="sec-summary">Modulo 03 &middot; 10 criterios</div>
 </div>
-
-<!-- ── MOD 04 ── -->
 <div class="section-block" id="mod4">
-  <div class="sec-title-bar"><span class="sec-num">04</span><h2>Icepops</h2><span class="sec-badge">6 ítems</span></div>
-  <div class="item-row"><span class="item-num">22</span><span class="item-text">Identifica variedad de <strong>icepops, cannolis y geladots</strong></span><div class="rating"><input type="radio" name="q22" id="q22v1" value="1"><label class="rating-btn" for="q22v1">1</label><input type="radio" name="q22" id="q22v2" value="2"><label class="rating-btn" for="q22v2">2</label><input type="radio" name="q22" id="q22v3" value="3"><label class="rating-btn" for="q22v3">3</label><input type="radio" name="q22" id="q22v4" value="4"><label class="rating-btn" for="q22v4">4</label><input type="radio" name="q22" id="q22v5" value="5"><label class="rating-btn na-btn" for="q22v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(22)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic22"><textarea placeholder="Comentario sobre este ítem..." id="ict22"></textarea></div>
-  <div class="item-row"><span class="item-num">23</span><span class="item-text">Conoce el <strong>formato de mini icepops y presentación geladots</strong></span><div class="rating"><input type="radio" name="q23" id="q23v1" value="1"><label class="rating-btn" for="q23v1">1</label><input type="radio" name="q23" id="q23v2" value="2"><label class="rating-btn" for="q23v2">2</label><input type="radio" name="q23" id="q23v3" value="3"><label class="rating-btn" for="q23v3">3</label><input type="radio" name="q23" id="q23v4" value="4"><label class="rating-btn" for="q23v4">4</label><input type="radio" name="q23" id="q23v5" value="5"><label class="rating-btn na-btn" for="q23v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(23)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic23"><textarea placeholder="Comentario sobre este ítem..." id="ict23"></textarea></div>
-  <div class="item-row"><span class="item-num">24</span><span class="item-text">Aplica <strong>rotación y entrega correcta</strong> desde vitrina</span><div class="rating"><input type="radio" name="q24" id="q24v1" value="1"><label class="rating-btn" for="q24v1">1</label><input type="radio" name="q24" id="q24v2" value="2"><label class="rating-btn" for="q24v2">2</label><input type="radio" name="q24" id="q24v3" value="3"><label class="rating-btn" for="q24v3">3</label><input type="radio" name="q24" id="q24v4" value="4"><label class="rating-btn" for="q24v4">4</label><input type="radio" name="q24" id="q24v5" value="5"><label class="rating-btn na-btn" for="q24v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(24)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic24"><textarea placeholder="Comentario sobre este ítem..." id="ict24"></textarea></div>
-  <div class="item-row"><span class="item-num">25</span><span class="item-text">Identifica productos <strong>gluten free y veganos</strong> correctamente</span><div class="rating"><input type="radio" name="q25" id="q25v1" value="1"><label class="rating-btn" for="q25v1">1</label><input type="radio" name="q25" id="q25v2" value="2"><label class="rating-btn" for="q25v2">2</label><input type="radio" name="q25" id="q25v3" value="3"><label class="rating-btn" for="q25v3">3</label><input type="radio" name="q25" id="q25v4" value="4"><label class="rating-btn" for="q25v4">4</label><input type="radio" name="q25" id="q25v5" value="5"><label class="rating-btn na-btn" for="q25v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(25)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic25"><textarea placeholder="Comentario sobre este ítem..." id="ict25"></textarea></div>
-  <div class="item-row"><span class="item-num">26</span><span class="item-text">Conoce el <strong>contenido de azúcar</strong> en helados y excepciones</span><div class="rating"><input type="radio" name="q26" id="q26v1" value="1"><label class="rating-btn" for="q26v1">1</label><input type="radio" name="q26" id="q26v2" value="2"><label class="rating-btn" for="q26v2">2</label><input type="radio" name="q26" id="q26v3" value="3"><label class="rating-btn" for="q26v3">3</label><input type="radio" name="q26" id="q26v4" value="4"><label class="rating-btn" for="q26v4">4</label><input type="radio" name="q26" id="q26v5" value="5"><label class="rating-btn na-btn" for="q26v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(26)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic26"><textarea placeholder="Comentario sobre este ítem..." id="ict26"></textarea></div>
-  <div class="item-row"><span class="item-num">27</span><span class="item-text">Reconoce e identifica los <strong>productos Kosher</strong> y su importancia</span><div class="rating"><input type="radio" name="q27" id="q27v1" value="1"><label class="rating-btn" for="q27v1">1</label><input type="radio" name="q27" id="q27v2" value="2"><label class="rating-btn" for="q27v2">2</label><input type="radio" name="q27" id="q27v3" value="3"><label class="rating-btn" for="q27v3">3</label><input type="radio" name="q27" id="q27v4" value="4"><label class="rating-btn" for="q27v4">4</label><input type="radio" name="q27" id="q27v5" value="5"><label class="rating-btn na-btn" for="q27v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(27)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic27"><textarea placeholder="Comentario sobre este ítem..." id="ict27"></textarea></div>
-  <div class="sec-summary">Modulo 04 &middot; 6 criterios</div>
+  <div class="sec-title-bar"><span class="sec-num">04</span><h2>Icepops</h2><span class="sec-badge">5 &#237;tems</span></div>
+  <div class="item-row"><span class="item-num">21</span><span class="item-text">Identifica variedad de <strong>icepops, cannolis y geladots</strong></span><div class="rating"><input type="radio" name="q21" id="q21v1" value="1"><label class="rating-btn" for="q21v1">1</label><input type="radio" name="q21" id="q21v2" value="2"><label class="rating-btn" for="q21v2">2</label><input type="radio" name="q21" id="q21v3" value="3"><label class="rating-btn" for="q21v3">3</label><input type="radio" name="q21" id="q21v4" value="4"><label class="rating-btn" for="q21v4">4</label><input type="radio" name="q21" id="q21v5" value="5"><label class="rating-btn na-btn" for="q21v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(21)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g21',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g21"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>Ped&#237; 2 o 3 icepops al azar &#8212; que d&#233; categor&#237;a y detalle.<span class="guide-resp">Ej: Peanut &#8594; helado de man&#237; con DDL y caramelo, cubierto en chocolate con leche y man&#237; salado</span></li><li>Que describa doble chocolate y King.<span class="guide-resp">King: helado de chocolate blanco y avellanas, cubierto en choco blanco y con leche &#8212; Minion y Oli tienen el mismo relleno</span></li><li>&#191;Qu&#233; son los cannolis?<span class="guide-resp">Obleas rellenas de helado cubiertas en chocolate &#8212; una de ellas es de DDL repostero</span></li><li>&#191;Qu&#233; son los geladots?<span class="guide-resp">Bombones helados cubiertos en chocolate</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic21"><textarea placeholder="Practicar m&#243;dulo" id="ict21"></textarea></div>
+  <div class="item-row"><span class="item-num">22</span><span class="item-text">Conoce el <strong>formato de mini icepops y presentaci&#243;n geladots</strong></span><div class="rating"><input type="radio" name="q22" id="q22v1" value="1"><label class="rating-btn" for="q22v1">1</label><input type="radio" name="q22" id="q22v2" value="2"><label class="rating-btn" for="q22v2">2</label><input type="radio" name="q22" id="q22v3" value="3"><label class="rating-btn" for="q22v3">3</label><input type="radio" name="q22" id="q22v4" value="4"><label class="rating-btn" for="q22v4">4</label><input type="radio" name="q22" id="q22v5" value="5"><label class="rating-btn na-btn" for="q22v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(22)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g22',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g22"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;C&#243;mo vienen los mini icepops?<span class="guide-resp">4 unidades por caja, 6 variedades</span></li><li>&#191;En qu&#233; presentaciones vienen los geladots?<span class="guide-resp">Mediano 18 unidades &#8212; grande 32 unidades</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic22"><textarea placeholder="Practicar m&#243;dulo" id="ict22"></textarea></div>
+  <div class="item-row"><span class="item-num">23</span><span class="item-text">Comprende y aplica el criterio de <strong>rotaci&#243;n al reponer la exhibici&#243;n</strong> de icepops</span><div class="rating"><input type="radio" name="q23" id="q23v1" value="1"><label class="rating-btn" for="q23v1">1</label><input type="radio" name="q23" id="q23v2" value="2"><label class="rating-btn" for="q23v2">2</label><input type="radio" name="q23" id="q23v3" value="3"><label class="rating-btn" for="q23v3">3</label><input type="radio" name="q23" id="q23v4" value="4"><label class="rating-btn" for="q23v4">4</label><input type="radio" name="q23" id="q23v5" value="5"><label class="rating-btn na-btn" for="q23v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(23)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g23',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g23"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;C&#243;mo orden&#225;s los icepops cuando repos&#233;s la vitrina?<span class="guide-resp">Primero entra primero sale &#8212; los nuevos van atr&#225;s, los m&#225;s antiguos al frente</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic23"><textarea placeholder="Practicar m&#243;dulo" id="ict23"></textarea></div>
+  <div class="item-row"><span class="item-num">24</span><span class="item-text">Identifica y sabe explicar qu&#233; son los <strong>productos gluten free y veganos</strong></span><div class="rating"><input type="radio" name="q24" id="q24v1" value="1"><label class="rating-btn" for="q24v1">1</label><input type="radio" name="q24" id="q24v2" value="2"><label class="rating-btn" for="q24v2">2</label><input type="radio" name="q24" id="q24v3" value="3"><label class="rating-btn" for="q24v3">3</label><input type="radio" name="q24" id="q24v4" value="4"><label class="rating-btn" for="q24v4">4</label><input type="radio" name="q24" id="q24v5" value="5"><label class="rating-btn na-btn" for="q24v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(24)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g24',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g24"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Qu&#233; son los gluten free?<span class="guide-resp">Potes individuales de un solo sabor, 190g &#8212; hay 8 variedades</span></li><li>&#191;Cu&#225;les son los veganos?<span class="guide-resp">Sorbete dark y sorbete Patagonia</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic24"><textarea placeholder="Practicar m&#243;dulo" id="ict24"></textarea></div>
+  <div class="item-row"><span class="item-num">25</span><span class="item-text">Conoce el <strong>contenido de az&#250;car</strong> en helados y excepciones</span><div class="rating"><input type="radio" name="q25" id="q25v1" value="1"><label class="rating-btn" for="q25v1">1</label><input type="radio" name="q25" id="q25v2" value="2"><label class="rating-btn" for="q25v2">2</label><input type="radio" name="q25" id="q25v3" value="3"><label class="rating-btn" for="q25v3">3</label><input type="radio" name="q25" id="q25v4" value="4"><label class="rating-btn" for="q25v4">4</label><input type="radio" name="q25" id="q25v5" value="5"><label class="rating-btn na-btn" for="q25v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(25)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g25',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g25"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Todos los productos tienen az&#250;car?<span class="guide-resp">S&#237;, pero se puede ofrecer la opci&#243;n cero% sin az&#250;car a&#241;adida y las tabletas &#8212; que detalle cu&#225;les</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic25"><textarea placeholder="Practicar m&#243;dulo" id="ict25"></textarea></div>
+  <div class="sec-summary">Modulo 04 &middot; 5 criterios</div>
 </div>
-
-<!-- ── MOD 05 ── -->
 <div class="section-block" id="mod5">
-  <div class="sec-title-bar"><span class="sec-num">05</span><h2>Chocolatería</h2><span class="sec-badge">6 ítems</span></div>
-  <div class="item-row"><span class="item-num">28</span><span class="item-text">Identifica variedad de <strong>alfajores, conitos y vieneses</strong></span><div class="rating"><input type="radio" name="q28" id="q28v1" value="1"><label class="rating-btn" for="q28v1">1</label><input type="radio" name="q28" id="q28v2" value="2"><label class="rating-btn" for="q28v2">2</label><input type="radio" name="q28" id="q28v3" value="3"><label class="rating-btn" for="q28v3">3</label><input type="radio" name="q28" id="q28v4" value="4"><label class="rating-btn" for="q28v4">4</label><input type="radio" name="q28" id="q28v5" value="5"><label class="rating-btn na-btn" for="q28v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(28)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic28"><textarea placeholder="Comentario sobre este ítem..." id="ict28"></textarea></div>
-  <div class="item-row"><span class="item-num">29</span><span class="item-text">Conoce el <strong>orden de alfajores y armado de cajas</strong></span><div class="rating"><input type="radio" name="q29" id="q29v1" value="1"><label class="rating-btn" for="q29v1">1</label><input type="radio" name="q29" id="q29v2" value="2"><label class="rating-btn" for="q29v2">2</label><input type="radio" name="q29" id="q29v3" value="3"><label class="rating-btn" for="q29v3">3</label><input type="radio" name="q29" id="q29v4" value="4"><label class="rating-btn" for="q29v4">4</label><input type="radio" name="q29" id="q29v5" value="5"><label class="rating-btn na-btn" for="q29v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(29)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic29"><textarea placeholder="Comentario sobre este ítem..." id="ict29"></textarea></div>
-  <div class="item-row"><span class="item-num">30</span><span class="item-text">Identifica <strong>tabletas, avellas y frascos de DDL</strong></span><div class="rating"><input type="radio" name="q30" id="q30v1" value="1"><label class="rating-btn" for="q30v1">1</label><input type="radio" name="q30" id="q30v2" value="2"><label class="rating-btn" for="q30v2">2</label><input type="radio" name="q30" id="q30v3" value="3"><label class="rating-btn" for="q30v3">3</label><input type="radio" name="q30" id="q30v4" value="4"><label class="rating-btn" for="q30v4">4</label><input type="radio" name="q30" id="q30v5" value="5"><label class="rating-btn na-btn" for="q30v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(30)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic30"><textarea placeholder="Comentario sobre este ítem..." id="ict30"></textarea></div>
-  <div class="item-row"><span class="item-num">31</span><span class="item-text">Aplica correctamente <strong>rotulación y uso de la máquina</strong></span><div class="rating"><input type="radio" name="q31" id="q31v1" value="1"><label class="rating-btn" for="q31v1">1</label><input type="radio" name="q31" id="q31v2" value="2"><label class="rating-btn" for="q31v2">2</label><input type="radio" name="q31" id="q31v3" value="3"><label class="rating-btn" for="q31v3">3</label><input type="radio" name="q31" id="q31v4" value="4"><label class="rating-btn" for="q31v4">4</label><input type="radio" name="q31" id="q31v5" value="5"><label class="rating-btn na-btn" for="q31v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(31)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic31"><textarea placeholder="Comentario sobre este ítem..." id="ict31"></textarea></div>
-  <div class="item-row"><span class="item-num">32</span><span class="item-text">Arma <strong>pack por 6</strong> y conoce pack Dubai</span><div class="rating"><input type="radio" name="q32" id="q32v1" value="1"><label class="rating-btn" for="q32v1">1</label><input type="radio" name="q32" id="q32v2" value="2"><label class="rating-btn" for="q32v2">2</label><input type="radio" name="q32" id="q32v3" value="3"><label class="rating-btn" for="q32v3">3</label><input type="radio" name="q32" id="q32v4" value="4"><label class="rating-btn" for="q32v4">4</label><input type="radio" name="q32" id="q32v5" value="5"><label class="rating-btn na-btn" for="q32v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(32)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic32"><textarea placeholder="Comentario sobre este ítem..." id="ict32"></textarea></div>
-  <div class="item-row"><span class="item-num">33</span><span class="item-text">Conoce la <strong>lata corazón con bombones y lata carrusel</strong></span><div class="rating"><input type="radio" name="q33" id="q33v1" value="1"><label class="rating-btn" for="q33v1">1</label><input type="radio" name="q33" id="q33v2" value="2"><label class="rating-btn" for="q33v2">2</label><input type="radio" name="q33" id="q33v3" value="3"><label class="rating-btn" for="q33v3">3</label><input type="radio" name="q33" id="q33v4" value="4"><label class="rating-btn" for="q33v4">4</label><input type="radio" name="q33" id="q33v5" value="5"><label class="rating-btn na-btn" for="q33v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(33)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic33"><textarea placeholder="Comentario sobre este ítem..." id="ict33"></textarea></div>
+  <div class="sec-title-bar"><span class="sec-num">05</span><h2>Chocolater&#237;a</h2><span class="sec-badge">6 &#237;tems</span></div>
+  <div class="item-row"><span class="item-num">26</span><span class="item-text">Identifica variedad de <strong>alfajores, conitos y vieneses</strong></span><div class="rating"><input type="radio" name="q26" id="q26v1" value="1"><label class="rating-btn" for="q26v1">1</label><input type="radio" name="q26" id="q26v2" value="2"><label class="rating-btn" for="q26v2">2</label><input type="radio" name="q26" id="q26v3" value="3"><label class="rating-btn" for="q26v3">3</label><input type="radio" name="q26" id="q26v4" value="4"><label class="rating-btn" for="q26v4">4</label><input type="radio" name="q26" id="q26v5" value="5"><label class="rating-btn na-btn" for="q26v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(26)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g26',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g26"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Cu&#225;ntas variedades de alfajores hay y en qu&#233; presentaciones?<span class="guide-resp">6 variedades &#8212; unidad, caja de 6, caja de 10, mini alfajor surtidos y pistacho x12</span></li><li>&#191;Cu&#225;ntos conitos hay y en qu&#233; presentaciones?<span class="guide-resp">Por unidad y cajas de 6</span></li><li>&#191;Qu&#233; son los vieneses y qu&#233; variedades hay?<span class="guide-resp">Obleas rellenas de crema cubiertas en chocolate &#8212; vainilla, pistacho y chocolate fondente</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic26"><textarea placeholder="Practicar m&#243;dulo" id="ict26"></textarea></div>
+  <div class="item-row"><span class="item-num">27</span><span class="item-text">Conoce y sabe armar <strong>orden de cajas mixtas</strong></span><div class="rating"><input type="radio" name="q27" id="q27v1" value="1"><label class="rating-btn" for="q27v1">1</label><input type="radio" name="q27" id="q27v2" value="2"><label class="rating-btn" for="q27v2">2</label><input type="radio" name="q27" id="q27v3" value="3"><label class="rating-btn" for="q27v3">3</label><input type="radio" name="q27" id="q27v4" value="4"><label class="rating-btn" for="q27v4">4</label><input type="radio" name="q27" id="q27v5" value="5"><label class="rating-btn na-btn" for="q27v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(27)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g27',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g27"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;C&#243;mo se arma una caja mixta de 6? Que explique el orden.</li><li>&#191;C&#243;mo se arma una caja mixta de 10? Que explique el orden.</li></ul></div></div>
+  <div class="item-comment-wrap" id="ic27"><textarea placeholder="Practicar m&#243;dulo" id="ict27"></textarea></div>
+  <div class="item-row"><span class="item-num">28</span><span class="item-text">Identifica <strong>tabletas, avellas y frascos de DDL</strong></span><div class="rating"><input type="radio" name="q28" id="q28v1" value="1"><label class="rating-btn" for="q28v1">1</label><input type="radio" name="q28" id="q28v2" value="2"><label class="rating-btn" for="q28v2">2</label><input type="radio" name="q28" id="q28v3" value="3"><label class="rating-btn" for="q28v3">3</label><input type="radio" name="q28" id="q28v4" value="4"><label class="rating-btn" for="q28v4">4</label><input type="radio" name="q28" id="q28v5" value="5"><label class="rating-btn na-btn" for="q28v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(28)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g28',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g28"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Cu&#225;ntas tabletas tenemos?<span class="guide-resp">16 &#8212; que mencione dos de chocolate con leche y dos de chocolate blanco que no sean las cl&#225;sicas</span></li><li>&#191;Qu&#233; son las avellas y cu&#225;les hay?</li><li>&#191;Qu&#233; otros productos de este segmento vendemos?<span class="guide-resp">Tambi&#233;n dulce de leche en frascos</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic28"><textarea placeholder="Practicar m&#243;dulo" id="ict28"></textarea></div>
+  <div class="item-row"><span class="item-num">29</span><span class="item-text">Conoce y sabe usar <strong>la rotuladora</strong></span><div class="rating"><input type="radio" name="q29" id="q29v1" value="1"><label class="rating-btn" for="q29v1">1</label><input type="radio" name="q29" id="q29v2" value="2"><label class="rating-btn" for="q29v2">2</label><input type="radio" name="q29" id="q29v3" value="3"><label class="rating-btn" for="q29v3">3</label><input type="radio" name="q29" id="q29v4" value="4"><label class="rating-btn" for="q29v4">4</label><input type="radio" name="q29" id="q29v5" value="5"><label class="rating-btn na-btn" for="q29v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(29)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g29',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g29"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Cu&#225;l es el vencimiento de los alfajores y conitos cl&#225;sicos?<span class="guide-resp">Alfajores 70 d&#237;as &#8212; conitos 55 d&#237;as</span></li><li>&#191;Y los pink y pistacho?<span class="guide-resp">Alfajores 60 d&#237;as &#8212; conitos 45 d&#237;as</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic29"><textarea placeholder="Practicar m&#243;dulo" id="ict29"></textarea></div>
+  <div class="item-row"><span class="item-num">30</span><span class="item-text">Arma <strong>pack por 6</strong> y conoce pack Dubai</span><div class="rating"><input type="radio" name="q30" id="q30v1" value="1"><label class="rating-btn" for="q30v1">1</label><input type="radio" name="q30" id="q30v2" value="2"><label class="rating-btn" for="q30v2">2</label><input type="radio" name="q30" id="q30v3" value="3"><label class="rating-btn" for="q30v3">3</label><input type="radio" name="q30" id="q30v4" value="4"><label class="rating-btn" for="q30v4">4</label><input type="radio" name="q30" id="q30v5" value="5"><label class="rating-btn na-btn" for="q30v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(30)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g30',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g30"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Las tabletas del pack vienen con orden preestablecido o lo elige el cliente?<span class="guide-resp">Orden establecido &#8212; caja blanca y caja negra. El cliente puede personalizar si compra 6, con caja de cortes&#237;a</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic30"><textarea placeholder="Practicar m&#243;dulo" id="ict30"></textarea></div>
+  <div class="item-row"><span class="item-num">31</span><span class="item-text">Conoce la <strong>lata coraz&#243;n con bombones y lata carrusel</strong></span><div class="rating"><input type="radio" name="q31" id="q31v1" value="1"><label class="rating-btn" for="q31v1">1</label><input type="radio" name="q31" id="q31v2" value="2"><label class="rating-btn" for="q31v2">2</label><input type="radio" name="q31" id="q31v3" value="3"><label class="rating-btn" for="q31v3">3</label><input type="radio" name="q31" id="q31v4" value="4"><label class="rating-btn" for="q31v4">4</label><input type="radio" name="q31" id="q31v5" value="5"><label class="rating-btn na-btn" for="q31v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(31)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g31',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g31"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Qu&#233; tiene la lata coraz&#243;n y cu&#225;ntos bombones trae?<span class="guide-resp">12 bombones de chocolate con leche rellenos de dulce de leche</span></li><li>&#191;Cu&#225;ntas variedades de lata carrusel hay y qu&#233; contiene cada una?<span class="guide-resp">3 variedades con mix de productos y sistema musical &#8212; verde (pistacho), bordo (cl&#225;sica), negra (dark)</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic31"><textarea placeholder="Practicar m&#243;dulo" id="ict31"></textarea></div>
   <div class="sec-summary">Modulo 05 &middot; 6 criterios</div>
 </div>
-
-<!-- ── MOD 06 ── -->
 <div class="section-block" id="mod6">
-  <div class="sec-title-bar"><span class="sec-num">06</span><h2>Sistema y Caja</h2><span class="sec-badge">8 ítems</span></div>
-  <div class="item-row"><span class="item-num">34</span><span class="item-text">Navega y <strong>busca productos en el sistema</strong> correctamente</span><div class="rating"><input type="radio" name="q34" id="q34v1" value="1"><label class="rating-btn" for="q34v1">1</label><input type="radio" name="q34" id="q34v2" value="2"><label class="rating-btn" for="q34v2">2</label><input type="radio" name="q34" id="q34v3" value="3"><label class="rating-btn" for="q34v3">3</label><input type="radio" name="q34" id="q34v4" value="4"><label class="rating-btn" for="q34v4">4</label><input type="radio" name="q34" id="q34v5" value="5"><label class="rating-btn na-btn" for="q34v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(34)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic34"><textarea placeholder="Comentario sobre este ítem..." id="ict34"></textarea></div>
-  <div class="item-row"><span class="item-num">35</span><span class="item-text">Factura en <strong>efectivo, tarjeta y QR</strong></span><div class="rating"><input type="radio" name="q35" id="q35v1" value="1"><label class="rating-btn" for="q35v1">1</label><input type="radio" name="q35" id="q35v2" value="2"><label class="rating-btn" for="q35v2">2</label><input type="radio" name="q35" id="q35v3" value="3"><label class="rating-btn" for="q35v3">3</label><input type="radio" name="q35" id="q35v4" value="4"><label class="rating-btn" for="q35v4">4</label><input type="radio" name="q35" id="q35v5" value="5"><label class="rating-btn na-btn" for="q35v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(35)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic35"><textarea placeholder="Comentario sobre este ítem..." id="ict35"></textarea></div>
-  <div class="item-row"><span class="item-num">36</span><span class="item-text">Gestiona <strong>cobros divididos, sin cargo, gift card, venta online y factura A</strong></span><div class="rating"><input type="radio" name="q36" id="q36v1" value="1"><label class="rating-btn" for="q36v1">1</label><input type="radio" name="q36" id="q36v2" value="2"><label class="rating-btn" for="q36v2">2</label><input type="radio" name="q36" id="q36v3" value="3"><label class="rating-btn" for="q36v3">3</label><input type="radio" name="q36" id="q36v4" value="4"><label class="rating-btn" for="q36v4">4</label><input type="radio" name="q36" id="q36v5" value="5"><label class="rating-btn na-btn" for="q36v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(36)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic36"><textarea placeholder="Comentario sobre este ítem..." id="ict36"></textarea></div>
-  <div class="item-row"><span class="item-num">37</span><span class="item-text">Opera <strong>apertura, cierre y arqueo de caja</strong></span><div class="rating"><input type="radio" name="q37" id="q37v1" value="1"><label class="rating-btn" for="q37v1">1</label><input type="radio" name="q37" id="q37v2" value="2"><label class="rating-btn" for="q37v2">2</label><input type="radio" name="q37" id="q37v3" value="3"><label class="rating-btn" for="q37v3">3</label><input type="radio" name="q37" id="q37v4" value="4"><label class="rating-btn" for="q37v4">4</label><input type="radio" name="q37" id="q37v5" value="5"><label class="rating-btn na-btn" for="q37v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(37)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic37"><textarea placeholder="Comentario sobre este ítem..." id="ict37"></textarea></div>
-  <div class="item-row"><span class="item-num">38</span><span class="item-text">Conoce y aplica el <strong>uso manual de Mercado Pago</strong> ante imprevistos</span><div class="rating"><input type="radio" name="q38" id="q38v1" value="1"><label class="rating-btn" for="q38v1">1</label><input type="radio" name="q38" id="q38v2" value="2"><label class="rating-btn" for="q38v2">2</label><input type="radio" name="q38" id="q38v3" value="3"><label class="rating-btn" for="q38v3">3</label><input type="radio" name="q38" id="q38v4" value="4"><label class="rating-btn" for="q38v4">4</label><input type="radio" name="q38" id="q38v5" value="5"><label class="rating-btn na-btn" for="q38v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(38)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic38"><textarea placeholder="Comentario sobre este ítem..." id="ict38"></textarea></div>
-  <div class="item-row"><span class="item-num">39</span><span class="item-text">Consulta <strong>últimas ventas</strong> y utiliza botón utilidades</span><div class="rating"><input type="radio" name="q39" id="q39v1" value="1"><label class="rating-btn" for="q39v1">1</label><input type="radio" name="q39" id="q39v2" value="2"><label class="rating-btn" for="q39v2">2</label><input type="radio" name="q39" id="q39v3" value="3"><label class="rating-btn" for="q39v3">3</label><input type="radio" name="q39" id="q39v4" value="4"><label class="rating-btn" for="q39v4">4</label><input type="radio" name="q39" id="q39v5" value="5"><label class="rating-btn na-btn" for="q39v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(39)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic39"><textarea placeholder="Comentario sobre este ítem..." id="ict39"></textarea></div>
-  <div class="item-row"><span class="item-num">40</span><span class="item-text">Gestiona <strong>nota de crédito, modificación de comprobante y devoluciones MP</strong></span><div class="rating"><input type="radio" name="q40" id="q40v1" value="1"><label class="rating-btn" for="q40v1">1</label><input type="radio" name="q40" id="q40v2" value="2"><label class="rating-btn" for="q40v2">2</label><input type="radio" name="q40" id="q40v3" value="3"><label class="rating-btn" for="q40v3">3</label><input type="radio" name="q40" id="q40v4" value="4"><label class="rating-btn" for="q40v4">4</label><input type="radio" name="q40" id="q40v5" value="5"><label class="rating-btn na-btn" for="q40v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(40)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic40"><textarea placeholder="Comentario sobre este ítem..." id="ict40"></textarea></div>
-  <div class="item-row"><span class="item-num">41</span><span class="item-text">Comprende integración con <strong>PedidosYa</strong></span><div class="rating"><input type="radio" name="q41" id="q41v1" value="1"><label class="rating-btn" for="q41v1">1</label><input type="radio" name="q41" id="q41v2" value="2"><label class="rating-btn" for="q41v2">2</label><input type="radio" name="q41" id="q41v3" value="3"><label class="rating-btn" for="q41v3">3</label><input type="radio" name="q41" id="q41v4" value="4"><label class="rating-btn" for="q41v4">4</label><input type="radio" name="q41" id="q41v5" value="5"><label class="rating-btn na-btn" for="q41v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(41)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic41"><textarea placeholder="Comentario sobre este ítem..." id="ict41"></textarea></div>
-  <div class="sec-summary">Modulo 06 &middot; 8 criterios</div>
+  <div class="sec-title-bar"><span class="sec-num">06</span><h2>Sistema y Caja</h2><span class="sec-badge">7 &#237;tems</span></div>
+  <div class="item-row"><span class="item-num">32</span><span class="item-text">Navega y <strong>busca productos en el sistema</strong> correctamente</span><div class="rating"><input type="radio" name="q32" id="q32v1" value="1"><label class="rating-btn" for="q32v1">1</label><input type="radio" name="q32" id="q32v2" value="2"><label class="rating-btn" for="q32v2">2</label><input type="radio" name="q32" id="q32v3" value="3"><label class="rating-btn" for="q32v3">3</label><input type="radio" name="q32" id="q32v4" value="4"><label class="rating-btn" for="q32v4">4</label><input type="radio" name="q32" id="q32v5" value="5"><label class="rating-btn na-btn" for="q32v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(32)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="item-comment-wrap" id="ic32"><textarea placeholder="Practicar m&#243;dulo" id="ict32"></textarea></div>
+  <div class="item-row"><span class="item-num">33</span><span class="item-text">Factura en <strong>efectivo, tarjeta y QR</strong></span><div class="rating"><input type="radio" name="q33" id="q33v1" value="1"><label class="rating-btn" for="q33v1">1</label><input type="radio" name="q33" id="q33v2" value="2"><label class="rating-btn" for="q33v2">2</label><input type="radio" name="q33" id="q33v3" value="3"><label class="rating-btn" for="q33v3">3</label><input type="radio" name="q33" id="q33v4" value="4"><label class="rating-btn" for="q33v4">4</label><input type="radio" name="q33" id="q33v5" value="5"><label class="rating-btn na-btn" for="q33v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(33)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="item-comment-wrap" id="ic33"><textarea placeholder="Practicar m&#243;dulo" id="ict33"></textarea></div>
+  <div class="item-row"><span class="item-num">34</span><span class="item-text">Gestiona <strong>cobros divididos, sin cargo, gift card, venta online y factura A</strong></span><div class="rating"><input type="radio" name="q34" id="q34v1" value="1"><label class="rating-btn" for="q34v1">1</label><input type="radio" name="q34" id="q34v2" value="2"><label class="rating-btn" for="q34v2">2</label><input type="radio" name="q34" id="q34v3" value="3"><label class="rating-btn" for="q34v3">3</label><input type="radio" name="q34" id="q34v4" value="4"><label class="rating-btn" for="q34v4">4</label><input type="radio" name="q34" id="q34v5" value="5"><label class="rating-btn na-btn" for="q34v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(34)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g34',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g34"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Sabe hacer un cobro dividido? Que explique el proceso.</li><li>&#191;Sabe gestionar un sin cargo? Que explique.</li><li>&#191;Sabe operar con gift card? Que explique.</li><li>&#191;Sabe gestionar venta online? Que explique.</li><li>&#191;Sabe emitir factura A? Que explique.</li></ul></div></div>
+  <div class="item-comment-wrap" id="ic34"><textarea placeholder="Practicar m&#243;dulo" id="ict34"></textarea></div>
+  <div class="item-row"><span class="item-num">35</span><span class="item-text">Opera <strong>apertura, cierre y arqueo de caja</strong></span><div class="rating"><input type="radio" name="q35" id="q35v1" value="1"><label class="rating-btn" for="q35v1">1</label><input type="radio" name="q35" id="q35v2" value="2"><label class="rating-btn" for="q35v2">2</label><input type="radio" name="q35" id="q35v3" value="3"><label class="rating-btn" for="q35v3">3</label><input type="radio" name="q35" id="q35v4" value="4"><label class="rating-btn" for="q35v4">4</label><input type="radio" name="q35" id="q35v5" value="5"><label class="rating-btn na-btn" for="q35v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(35)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="item-comment-wrap" id="ic35"><textarea placeholder="Practicar m&#243;dulo" id="ict35"></textarea></div>
+  <div class="item-row"><span class="item-num">36</span><span class="item-text">Conoce y aplica el <strong>uso manual de Mercado Pago</strong> ante imprevistos</span><div class="rating"><input type="radio" name="q36" id="q36v1" value="1"><label class="rating-btn" for="q36v1">1</label><input type="radio" name="q36" id="q36v2" value="2"><label class="rating-btn" for="q36v2">2</label><input type="radio" name="q36" id="q36v3" value="3"><label class="rating-btn" for="q36v3">3</label><input type="radio" name="q36" id="q36v4" value="4"><label class="rating-btn" for="q36v4">4</label><input type="radio" name="q36" id="q36v5" value="5"><label class="rating-btn na-btn" for="q36v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(36)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g36',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g36"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>Un cliente est&#225; pagando y el sistema se cierra. &#191;Qu&#233; hac&#233;s?<span class="guide-resp">Abrir nuevamente el sistema, marcar los mismos &#237;tems, ir a Mercado Pago, poner manual y cargar el c&#243;digo</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic36"><textarea placeholder="Practicar m&#243;dulo" id="ict36"></textarea></div>
+  <div class="item-row"><span class="item-num">37</span><span class="item-text">Gestiona <strong>nota de cr&#233;dito, modificaci&#243;n de comprobante y devoluciones MP</strong></span><div class="rating"><input type="radio" name="q37" id="q37v1" value="1"><label class="rating-btn" for="q37v1">1</label><input type="radio" name="q37" id="q37v2" value="2"><label class="rating-btn" for="q37v2">2</label><input type="radio" name="q37" id="q37v3" value="3"><label class="rating-btn" for="q37v3">3</label><input type="radio" name="q37" id="q37v4" value="4"><label class="rating-btn" for="q37v4">4</label><input type="radio" name="q37" id="q37v5" value="5"><label class="rating-btn na-btn" for="q37v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(37)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g37',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g37"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Qu&#233; hace una nota de cr&#233;dito?<span class="guide-resp">Cancela el comprobante</span></li><li>&#191;C&#243;mo se modifica un comprobante?<span class="guide-resp">NC + refactura el producto por cambio + adjunta comprobante original, NC y cup&#243;n del POS si aplica</span></li><li>&#191;C&#243;mo se gestiona una devoluci&#243;n por Mercado Pago?<span class="guide-resp">Se devuelve el efectivo &#8212; ajuste de caja con leyenda "devoluci&#243;n por MP y n&#186; de ticket" &#8212; NC &#8212; se adjunta todo</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic37"><textarea placeholder="Practicar m&#243;dulo" id="ict37"></textarea></div>
+  <div class="item-row"><span class="item-num">38</span><span class="item-text">Comprende la <strong>integraci&#243;n con PedidosYa</strong></span><div class="rating"><input type="radio" name="q38" id="q38v1" value="1"><label class="rating-btn" for="q38v1">1</label><input type="radio" name="q38" id="q38v2" value="2"><label class="rating-btn" for="q38v2">2</label><input type="radio" name="q38" id="q38v3" value="3"><label class="rating-btn" for="q38v3">3</label><input type="radio" name="q38" id="q38v4" value="4"><label class="rating-btn" for="q38v4">4</label><input type="radio" name="q38" id="q38v5" value="5"><label class="rating-btn na-btn" for="q38v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(38)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g38',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g38"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;Para qu&#233; sirve la integraci&#243;n con PedidosYa?<span class="guide-resp">Para visualizar y reimprimir &#243;rdenes</span></li><li>Llegan 5 pedidos y los cadetes no llegan. &#191;Qu&#233; hac&#233;s?<span class="guide-resp">Dar el preparado al cadete para que le llegue la informaci&#243;n y acorte el tiempo de demora</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic38"><textarea placeholder="Practicar m&#243;dulo" id="ict38"></textarea></div>
+  <div class="sec-summary">Modulo 06 &middot; 7 criterios</div>
 </div>
-
-<!-- ── MOD 07 ── -->
 <div class="section-block" id="mod7">
-  <div class="sec-title-bar"><span class="sec-num">07</span><h2>Atención al Cliente</h2><span class="sec-badge">6 ítems</span></div>
-  <div class="item-row"><span class="item-num">42</span><span class="item-text">Recibe al cliente con <strong>actitud cordial y contacto visual</strong></span><div class="rating"><input type="radio" name="q42" id="q42v1" value="1"><label class="rating-btn" for="q42v1">1</label><input type="radio" name="q42" id="q42v2" value="2"><label class="rating-btn" for="q42v2">2</label><input type="radio" name="q42" id="q42v3" value="3"><label class="rating-btn" for="q42v3">3</label><input type="radio" name="q42" id="q42v4" value="4"><label class="rating-btn" for="q42v4">4</label><input type="radio" name="q42" id="q42v5" value="5"><label class="rating-btn na-btn" for="q42v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(42)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic42"><textarea placeholder="Comentario sobre este ítem..." id="ict42"></textarea></div>
-  <div class="item-row"><span class="item-num">43</span><span class="item-text">Escucha activamente e <strong>interpreta necesidades</strong></span><div class="rating"><input type="radio" name="q43" id="q43v1" value="1"><label class="rating-btn" for="q43v1">1</label><input type="radio" name="q43" id="q43v2" value="2"><label class="rating-btn" for="q43v2">2</label><input type="radio" name="q43" id="q43v3" value="3"><label class="rating-btn" for="q43v3">3</label><input type="radio" name="q43" id="q43v4" value="4"><label class="rating-btn" for="q43v4">4</label><input type="radio" name="q43" id="q43v5" value="5"><label class="rating-btn na-btn" for="q43v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(43)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic43"><textarea placeholder="Comentario sobre este ítem..." id="ict43"></textarea></div>
-  <div class="item-row"><span class="item-num">44</span><span class="item-text">Demuestra <strong>conocimiento del producto y venta sugestiva</strong></span><div class="rating"><input type="radio" name="q44" id="q44v1" value="1"><label class="rating-btn" for="q44v1">1</label><input type="radio" name="q44" id="q44v2" value="2"><label class="rating-btn" for="q44v2">2</label><input type="radio" name="q44" id="q44v3" value="3"><label class="rating-btn" for="q44v3">3</label><input type="radio" name="q44" id="q44v4" value="4"><label class="rating-btn" for="q44v4">4</label><input type="radio" name="q44" id="q44v5" value="5"><label class="rating-btn na-btn" for="q44v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(44)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic44"><textarea placeholder="Comentario sobre este ítem..." id="ict44"></textarea></div>
-  <div class="item-row"><span class="item-num">45</span><span class="item-text">Responde dudas con <strong>seguridad y resuelve problemas</strong></span><div class="rating"><input type="radio" name="q45" id="q45v1" value="1"><label class="rating-btn" for="q45v1">1</label><input type="radio" name="q45" id="q45v2" value="2"><label class="rating-btn" for="q45v2">2</label><input type="radio" name="q45" id="q45v3" value="3"><label class="rating-btn" for="q45v3">3</label><input type="radio" name="q45" id="q45v4" value="4"><label class="rating-btn" for="q45v4">4</label><input type="radio" name="q45" id="q45v5" value="5"><label class="rating-btn na-btn" for="q45v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(45)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic45"><textarea placeholder="Comentario sobre este ítem..." id="ict45"></textarea></div>
-  <div class="item-row"><span class="item-num">46</span><span class="item-text">Mantiene <strong>orden y limpieza</strong> durante la atención</span><div class="rating"><input type="radio" name="q46" id="q46v1" value="1"><label class="rating-btn" for="q46v1">1</label><input type="radio" name="q46" id="q46v2" value="2"><label class="rating-btn" for="q46v2">2</label><input type="radio" name="q46" id="q46v3" value="3"><label class="rating-btn" for="q46v3">3</label><input type="radio" name="q46" id="q46v4" value="4"><label class="rating-btn" for="q46v4">4</label><input type="radio" name="q46" id="q46v5" value="5"><label class="rating-btn na-btn" for="q46v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(46)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic46"><textarea placeholder="Comentario sobre este ítem..." id="ict46"></textarea></div>
-  <div class="item-row"><span class="item-num">47</span><span class="item-text">Agradece y <strong>solicita reseña</strong> al finalizar</span><div class="rating"><input type="radio" name="q47" id="q47v1" value="1"><label class="rating-btn" for="q47v1">1</label><input type="radio" name="q47" id="q47v2" value="2"><label class="rating-btn" for="q47v2">2</label><input type="radio" name="q47" id="q47v3" value="3"><label class="rating-btn" for="q47v3">3</label><input type="radio" name="q47" id="q47v4" value="4"><label class="rating-btn" for="q47v4">4</label><input type="radio" name="q47" id="q47v5" value="5"><label class="rating-btn na-btn" for="q47v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(47)" title="Agregar comentario">💬</button></div></div>
-  <div class="item-comment-wrap" id="ic47"><textarea placeholder="Comentario sobre este ítem..." id="ict47"></textarea></div>
+  <div class="sec-title-bar"><span class="sec-num">07</span><h2>Atenci&#243;n al Cliente</h2><span class="sec-badge">6 &#237;tems</span></div>
+  <div class="item-row"><span class="item-num">39</span><span class="item-text">Recibe al cliente con <strong>actitud cordial y contacto visual</strong></span><div class="rating"><input type="radio" name="q39" id="q39v1" value="1"><label class="rating-btn" for="q39v1">1</label><input type="radio" name="q39" id="q39v2" value="2"><label class="rating-btn" for="q39v2">2</label><input type="radio" name="q39" id="q39v3" value="3"><label class="rating-btn" for="q39v3">3</label><input type="radio" name="q39" id="q39v4" value="4"><label class="rating-btn" for="q39v4">4</label><input type="radio" name="q39" id="q39v5" value="5"><label class="rating-btn na-btn" for="q39v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(39)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g39',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g39"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>&#191;C&#243;mo recib&#237;s a un cliente cuando entra?<span class="guide-resp">Usa bienvenida como sandwich &#8212; "hola, &#191;c&#243;mo est&#225;s? bienvenido, &#191;c&#243;mo te ayudo?"</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic39"><textarea placeholder="Practicar m&#243;dulo" id="ict39"></textarea></div>
+  <div class="item-row"><span class="item-num">40</span><span class="item-text">Escucha activamente e <strong>interpreta necesidades</strong></span><div class="rating"><input type="radio" name="q40" id="q40v1" value="1"><label class="rating-btn" for="q40v1">1</label><input type="radio" name="q40" id="q40v2" value="2"><label class="rating-btn" for="q40v2">2</label><input type="radio" name="q40" id="q40v3" value="3"><label class="rating-btn" for="q40v3">3</label><input type="radio" name="q40" id="q40v4" value="4"><label class="rating-btn" for="q40v4">4</label><input type="radio" name="q40" id="q40v5" value="5"><label class="rating-btn na-btn" for="q40v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(40)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g40',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g40"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>El cliente ya viene a comprar &#8212; &#191;c&#243;mo lo acompa&#241;&#225;s desde que pide hasta que cierra?<span class="guide-resp">Usa preguntas cortas &#8212; &#191;en vasito o cucurucho? &#191;con ba&#241;o de chocolate? &#191;quer&#233;s sumar algo de chocolater&#237;a?</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic40"><textarea placeholder="Practicar m&#243;dulo" id="ict40"></textarea></div>
+  <div class="item-row"><span class="item-num">41</span><span class="item-text">Demuestra <strong>conocimiento del producto y venta sugestiva</strong></span><div class="rating"><input type="radio" name="q41" id="q41v1" value="1"><label class="rating-btn" for="q41v1">1</label><input type="radio" name="q41" id="q41v2" value="2"><label class="rating-btn" for="q41v2">2</label><input type="radio" name="q41" id="q41v3" value="3"><label class="rating-btn" for="q41v3">3</label><input type="radio" name="q41" id="q41v4" value="4"><label class="rating-btn" for="q41v4">4</label><input type="radio" name="q41" id="q41v5" value="5"><label class="rating-btn na-btn" for="q41v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(41)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="guide-wrap"><button type="button" class="guide-toggle-btn" onclick="toggleGuide('g41',this)">&#9658; Ver preguntas gu&#237;a <span class="g-chev">&#9660;</span></button><div class="guide-panel" id="g41"><div class="guide-panel-title">Preguntas gu&#237;a &#8212; solo capacitador</div><ul class="guide-list"><li>Si un cliente pide un vaso chico &#8212; &#191;qu&#233; hac&#233;s?<span class="guide-resp">Mostrar tama&#241;os con la mano y mencionar que por $500 m&#225;s puede tener un mediano</span></li><li>Si un cliente pide cualquier vaso &#8212; &#191;qu&#233; sum&#225;s?<span class="guide-resp">"&#191;Lo quer&#233;s ba&#241;ado en chocolate?"</span></li><li>&#191;C&#243;mo cerr&#225;s la venta?<span class="guide-resp">Confirmar el pedido y ofrecer sumar alfajor, conito o vienesi &#8212; "&#191;para conocer o para m&#225;s tarde?"</span></li><li>&#191;C&#243;mo acompa&#241;&#225;s la venta f&#237;sicamente?<span class="guide-resp">Siempre acompa&#241;ar con la mano se&#241;alando el producto</span></li></ul></div></div>
+  <div class="item-comment-wrap" id="ic41"><textarea placeholder="Practicar m&#243;dulo" id="ict41"></textarea></div>
+  <div class="item-row"><span class="item-num">42</span><span class="item-text">Responde dudas con <strong>seguridad y resuelve problemas</strong></span><div class="rating"><input type="radio" name="q42" id="q42v1" value="1"><label class="rating-btn" for="q42v1">1</label><input type="radio" name="q42" id="q42v2" value="2"><label class="rating-btn" for="q42v2">2</label><input type="radio" name="q42" id="q42v3" value="3"><label class="rating-btn" for="q42v3">3</label><input type="radio" name="q42" id="q42v4" value="4"><label class="rating-btn" for="q42v4">4</label><input type="radio" name="q42" id="q42v5" value="5"><label class="rating-btn na-btn" for="q42v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(42)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="item-comment-wrap" id="ic42"><textarea placeholder="Practicar m&#243;dulo" id="ict42"></textarea></div>
+  <div class="item-row"><span class="item-num">43</span><span class="item-text">Mantiene <strong>orden y limpieza</strong> durante la atenci&#243;n</span><div class="rating"><input type="radio" name="q43" id="q43v1" value="1"><label class="rating-btn" for="q43v1">1</label><input type="radio" name="q43" id="q43v2" value="2"><label class="rating-btn" for="q43v2">2</label><input type="radio" name="q43" id="q43v3" value="3"><label class="rating-btn" for="q43v3">3</label><input type="radio" name="q43" id="q43v4" value="4"><label class="rating-btn" for="q43v4">4</label><input type="radio" name="q43" id="q43v5" value="5"><label class="rating-btn na-btn" for="q43v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(43)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="item-comment-wrap" id="ic43"><textarea placeholder="Practicar m&#243;dulo" id="ict43"></textarea></div>
+  <div class="item-row"><span class="item-num">44</span><span class="item-text">Agradece y <strong>solicita rese&#241;a</strong> al finalizar</span><div class="rating"><input type="radio" name="q44" id="q44v1" value="1"><label class="rating-btn" for="q44v1">1</label><input type="radio" name="q44" id="q44v2" value="2"><label class="rating-btn" for="q44v2">2</label><input type="radio" name="q44" id="q44v3" value="3"><label class="rating-btn" for="q44v3">3</label><input type="radio" name="q44" id="q44v4" value="4"><label class="rating-btn" for="q44v4">4</label><input type="radio" name="q44" id="q44v5" value="5"><label class="rating-btn na-btn" for="q44v5">NA</label><button type="button" class="item-comment-btn" onclick="toggleComment(44)" title="Agregar comentario">&#128172;</button></div></div>
+  <div class="item-comment-wrap" id="ic44"><textarea placeholder="Practicar m&#243;dulo" id="ict44"></textarea></div>
   <div class="sec-summary">Modulo 07 &middot; 6 criterios</div>
 </div>
-
-<!-- ── DEVOLUCION ── -->
 <div class="section-block" id="finalComments">
   <div class="sec-title-bar"><span class="sec-num">08</span><h2>Devolucion al Evaluado</h2></div>
   <div class="devolucion-grid">
@@ -506,10 +404,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
       <div class="dev-content" id="reforzar-lista"><em style="color:#aaa;font-size:12px">Se generan al calcular puntaje...</em></div>
     </div>
   </div>
-
 </div>
-
-<!-- ── SCORE FOOTER ── -->
 <div class="score-footer">
   <div class="score-footer-left">
     <h3>Puntaje Total</h3>
@@ -519,26 +414,22 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   </div>
   <div class="score-box">
     <div class="num" id="totalScore">--</div>
-    <div class="denom" id="totalDenom">/ 188</div>
+    <div class="denom" id="totalDenom">/ 184</div>
   </div>
 </div>
-
 <div class="actions no-print">
   <button class="btn btn-dark" onclick="calcScore()">Calcular Puntaje</button>
   <button class="btn btn-send" id="btnEnviar" onclick="enviarPlanilla()">&#8679; Enviar a planilla</button>
-  <button class="btn btn-outline" id="btnPDF" onclick="imprimirPDF()" disabled style="opacity:0.35;cursor:not-allowed" title="Primero enviá la planilla">&#8595; Imprimir PDF</button>
+  <button class="btn btn-outline" id="btnPDF" onclick="imprimirPDF()" disabled style="opacity:0.35;cursor:not-allowed" title="Primero envi&#225; la planilla">&#8595; Imprimir PDF</button>
   <button class="btn btn-outline" onclick="resetForm()">Reiniciar</button>
 </div>
-
-</div><!-- end page-wrap -->
-
-<!-- ════════════════════ CONTROL DE VERSION ════════════════════ -->
+</div>
 <div class="sc-overlay no-print" id="scUpdate" style="display:none">
   <div class="sc-card">
     <h3>Nueva version disponible</h3>
-    <p>Estas usando una version anterior de SisCap. Para continuar necesitas actualizar a la version <strong id="scVerNueva">—</strong>.</p>
+    <p>Estas usando una version anterior de SisCap. Para continuar necesitas actualizar a la version <strong id="scVerNueva">&#8212;</strong>.</p>
     <button class="btn btn-dark" onclick="forzarActualizacion()">Actualizar ahora</button>
-    <div class="sc-mini">Se actualiza solo en <span id="scCuenta">10</span> s…</div>
+    <div class="sc-mini">Se actualiza solo en <span id="scCuenta">10</span> s&#8230;</div>
   </div>
 </div>
 <div class="sc-overlay no-print" id="scNovedades" style="display:none">
@@ -547,541 +438,49 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
     <div class="sc-modal-body" id="scNovLista"></div>
   </div>
 </div>
-
 <script>
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbypLjubjEFbt6QlHMTFNy9gWFpCAEGrluKu6yAJrF_nosJ4sN_UmMGrI8VDg8jiAYhkng/exec';
-
-function callScript(params) {
-  return new Promise(function(resolve) {
-    var url = SHEET_URL + '?' + new URLSearchParams(params).toString();
-    fetch(url).then(function(r){ return r.json(); }).then(resolve).catch(function(){ resolve({status:'error'}); });
-  });
-}
-
-/* ===== CONTROL DE VERSION ===== */
-const APP_VERSION = '1.1.3';   // <-- SUBI este numero cada vez que publiques en GitHub
-let _scCuenta = null;
-
-function scEsMayor(a, b){
-  var pa=String(a).split('.').map(Number), pb=String(b).split('.').map(Number);
-  for(var i=0;i<Math.max(pa.length,pb.length);i++){var x=pa[i]||0,y=pb[i]||0;if(x>y)return true;if(x<y)return false;}
-  return false;
-}
-function checkVersion(){
-  var n=document.getElementById('scVerNum'); if(n) n.textContent=APP_VERSION;
-  callScript({action:'version'}).then(function(res){
-    if(res && res.status==='ok' && res.version && scEsMayor(res.version, APP_VERSION)) mostrarActualizacion(res.version);
-  });
-}
-function mostrarActualizacion(v){
-  var ov=document.getElementById('scUpdate'); if(!ov || ov.style.display==='flex') return;
-  document.getElementById('scVerNueva').textContent='v'+v;
-  ov.style.display='flex';
-  var n=10; document.getElementById('scCuenta').textContent=n;
-  _scCuenta=setInterval(function(){n--;document.getElementById('scCuenta').textContent=n;if(n<=0){clearInterval(_scCuenta);forzarActualizacion();}},1000);
-}
-function forzarActualizacion(){
-  if(_scCuenta) clearInterval(_scCuenta);
-  var base=location.href.split('?')[0].split('#')[0];
-  location.replace(base+'?v='+Date.now());
-}
-function abrirNovedades(){
-  var ov=document.getElementById('scNovedades'); if(!ov) return;
-  ov.style.display='flex';
-  var cont=document.getElementById('scNovLista');
-  cont.innerHTML='<p style="color:var(--muted);font-size:13px">Cargando…</p>';
-  function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
-  callScript({action:'novedades'}).then(function(res){
-    var items=(res&&res.items)?res.items:[];
-    if(!items.length){cont.innerHTML='<p style="color:var(--muted);font-size:13px">Sin novedades cargadas.</p>';return;}
-    cont.innerHTML=items.map(function(it){
-      var t=(it.tipo||'').toLowerCase(),cls='otro';
-      if(t.indexOf('lanz')>-1)cls='lanz';else if(t.indexOf('corr')>-1)cls='corr';else if(t.indexOf('nueva')>-1||t.indexOf('func')>-1)cls='nueva';
-      return '<div class="sc-nov"><div class="sc-nov-top"><span class="sc-nov-ver">v'+esc(it.version)+'</span><span class="sc-tag '+cls+'">'+esc(it.tipo)+'</span><span class="sc-nov-fecha">'+esc(it.fecha)+'</span></div><div class="sc-nov-desc">'+esc(it.descripcion)+'</div></div>';
-    }).join('');
-  });
-}
+function callScript(params){return new Promise(function(resolve){var url=SHEET_URL+'?'+new URLSearchParams(params).toString();fetch(url).then(function(r){return r.json();}).then(resolve).catch(function(){resolve({status:'error'});});});}
+const APP_VERSION='1.2.0';
+let _scCuenta=null;
+function scEsMayor(a,b){var pa=String(a).split('.').map(Number),pb=String(b).split('.').map(Number);for(var i=0;i<Math.max(pa.length,pb.length);i++){var x=pa[i]||0,y=pb[i]||0;if(x>y)return true;if(x<y)return false;}return false;}
+function checkVersion(){var n=document.getElementById('scVerNum');if(n)n.textContent=APP_VERSION;callScript({action:'version'}).then(function(res){if(res&&res.status==='ok'&&res.version&&scEsMayor(res.version,APP_VERSION))mostrarActualizacion(res.version);});}
+function mostrarActualizacion(v){var ov=document.getElementById('scUpdate');if(!ov||ov.style.display==='flex')return;document.getElementById('scVerNueva').textContent='v'+v;ov.style.display='flex';var n=10;document.getElementById('scCuenta').textContent=n;_scCuenta=setInterval(function(){n--;document.getElementById('scCuenta').textContent=n;if(n<=0){clearInterval(_scCuenta);forzarActualizacion();}},1000);}
+function forzarActualizacion(){if(_scCuenta)clearInterval(_scCuenta);var base=location.href.split('?')[0].split('#')[0];location.replace(base+'?v='+Date.now());}
+function abrirNovedades(){var ov=document.getElementById('scNovedades');if(!ov)return;ov.style.display='flex';var cont=document.getElementById('scNovLista');cont.innerHTML='<p style="color:var(--muted);font-size:13px">Cargando…</p>';function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}callScript({action:'novedades'}).then(function(res){var items=(res&&res.items)?res.items:[];if(!items.length){cont.innerHTML='<p style="color:var(--muted);font-size:13px">Sin novedades cargadas.</p>';return;}cont.innerHTML=items.map(function(it){var t=(it.tipo||'').toLowerCase(),cls='otro';if(t.indexOf('lanz')>-1)cls='lanz';else if(t.indexOf('corr')>-1)cls='corr';else if(t.indexOf('nueva')>-1||t.indexOf('func')>-1)cls='nueva';return'<div class="sc-nov"><div class="sc-nov-top"><span class="sc-nov-ver">v'+esc(it.version)+'</span><span class="sc-tag '+cls+'">'+esc(it.tipo)+'</span><span class="sc-nov-fecha">'+esc(it.fecha)+'</span></div><div class="sc-nov-desc">'+esc(it.descripcion)+'</div></div>';}).join('');});}
 function cerrarNovedades(){var ov=document.getElementById('scNovedades');if(ov)ov.style.display='none';}
-
-function toggleEye(inputId, btn) {
-  var inp = document.getElementById(inputId);
-  inp.type = inp.type === 'password' ? 'text' : 'password';
-  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
-}
-
-function mostrar(id) {
-  document.getElementById('fLogin').style.display = id === 'fLogin' ? '' : 'none';
-  document.getElementById('fReg').style.display   = id === 'fReg'   ? '' : 'none';
-  document.getElementById('lMsg').textContent = '';
-  document.getElementById('rMsg').textContent = '';
-}
-
-function doLogin() {
-  var user = document.getElementById('lUser').value.trim().toLowerCase();
-  var pass = document.getElementById('lPass').value.trim();
-  var msg  = document.getElementById('lMsg');
-  if (!user || !pass) { msg.textContent = 'Completa usuario y contrasena.'; return; }
-  msg.textContent = 'Verificando...'; msg.className = 'login-msg warn';
-  callScript({action:'login', user:user, pass:pass}).then(function(res) {
-    if (res.status === 'ok') {
-      sessionStorage.setItem('sc_user', user);
-      sessionStorage.setItem('sc_nombre', res.nombre);
-      var lw = document.getElementById('loginWrap'); lw.style.display = 'none'; lw.style.pointerEvents = 'none'; lw.style.visibility = 'hidden';
-      document.getElementById('mainContent').style.display = 'block';
-      document.getElementById('f-evaluador').value = res.nombre;
-      document.getElementById('f-evaluador').readOnly = true;
-      document.getElementById('f-evaluador').style.color = '#6B6B6B';
-    } else if (res.status === 'pendiente') {
-      msg.textContent = 'Tu cuenta esta pendiente de aprobacion. Contacta a Gabi.';
-      msg.className = 'login-msg warn';
-    } else {
-      msg.textContent = 'Usuario o contrasena incorrectos.';
-      msg.className = 'login-msg error';
-    }
-  });
-}
-
-function doRegister() {
-  var nombre = document.getElementById('rNombre').value.trim();
-  var user   = document.getElementById('rUser').value.trim().toLowerCase();
-  var pass   = document.getElementById('rPass').value.trim();
-  var msg    = document.getElementById('rMsg');
-  if (!nombre || !user || !pass) { msg.textContent = 'Completa todos los campos.'; msg.className = 'login-msg error'; return; }
-  msg.textContent = 'Enviando solicitud...'; msg.className = 'login-msg warn';
-  callScript({action:'register', nombre:nombre, user:user, pass:pass}).then(function(res) {
-    if (res.status === 'ok') {
-      msg.textContent = 'Solicitud enviada. Espera la aprobacion de Gabi para poder ingresar.';
-      msg.className = 'login-msg ok';
-    } else if (res.status === 'existe') {
-      msg.textContent = 'Ese usuario ya existe. Elegi otro.';
-      msg.className = 'login-msg error';
-    } else {
-      msg.textContent = 'Error al enviar. Intenta de nuevo.';
-      msg.className = 'login-msg error';
-    }
-  });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  var u = sessionStorage.getItem('sc_user');
-  var n = sessionStorage.getItem('sc_nombre');
-  if (u && n) {
-    var lw = document.getElementById('loginWrap'); lw.style.display = 'none'; lw.style.pointerEvents = 'none'; lw.style.visibility = 'hidden';
-    document.getElementById('mainContent').style.display = 'block';
-    var evEl = document.getElementById('f-evaluador');
-    if (evEl) { evEl.value = n; evEl.readOnly = true; evEl.style.color = '#6B6B6B'; }
-  }
-  checkVersion();
-  setInterval(checkVersion, 5*60*1000);
-  window.addEventListener('focus', checkVersion);
-});
-
-const MODS = [
-  {id:'s1sc', midx:'s1max', secId:'mod1', name:'Equipamiento',        start:1,  end:4},
-  {id:'s2sc', midx:'s2max', secId:'mod2', name:'Cafeteria',           start:5,  end:11},
-  {id:'s3sc', midx:'s3max', secId:'mod3', name:'Heladeria',           start:12, end:21},
-  {id:'s4sc', midx:'s4max', secId:'mod4', name:'Icepops',             start:22, end:27},
-  {id:'s5sc', midx:'s5max', secId:'mod5', name:'Chocolateria',        start:28, end:33},
-  {id:'s6sc', midx:'s6max', secId:'mod6', name:'Sistema y Caja',      start:34, end:41},
-  {id:'s7sc', midx:'s7max', secId:'mod7', name:'Atencion al Cliente', start:42, end:47}
+function toggleGuide(id,btn){var panel=document.getElementById(id);if(!panel)return;var open=panel.classList.toggle('open');btn.classList.toggle('open',open);}
+function toggleEye(inputId,btn){var inp=document.getElementById(inputId);inp.type=inp.type==='password'?'text':'password';btn.textContent=inp.type==='password'?'\u{1F441}':'\u{1F648}';}
+function mostrar(id){document.getElementById('fLogin').style.display=id==='fLogin'?'':'none';document.getElementById('fReg').style.display=id==='fReg'?'':'none';document.getElementById('lMsg').textContent='';document.getElementById('rMsg').textContent='';}
+function doLogin(){var user=document.getElementById('lUser').value.trim().toLowerCase();var pass=document.getElementById('lPass').value.trim();var msg=document.getElementById('lMsg');if(!user||!pass){msg.textContent='Completa usuario y contrasena.';return;}msg.textContent='Verificando...';msg.className='login-msg warn';callScript({action:'login',user:user,pass:pass}).then(function(res){if(res.status==='ok'){sessionStorage.setItem('sc_user',user);sessionStorage.setItem('sc_nombre',res.nombre);var lw=document.getElementById('loginWrap');lw.style.display='none';lw.style.pointerEvents='none';lw.style.visibility='hidden';document.getElementById('mainContent').style.display='block';document.getElementById('f-evaluador').value=res.nombre;document.getElementById('f-evaluador').readOnly=true;document.getElementById('f-evaluador').style.color='#6B6B6B';}else if(res.status==='pendiente'){msg.textContent='Tu cuenta esta pendiente de aprobacion. Contacta a Gabi.';msg.className='login-msg warn';}else{msg.textContent='Usuario o contrasena incorrectos.';msg.className='login-msg error';}});}
+function doRegister(){var nombre=document.getElementById('rNombre').value.trim();var user=document.getElementById('rUser').value.trim().toLowerCase();var pass=document.getElementById('rPass').value.trim();var msg=document.getElementById('rMsg');if(!nombre||!user||!pass){msg.textContent='Completa todos los campos.';msg.className='login-msg error';return;}msg.textContent='Enviando solicitud...';msg.className='login-msg warn';callScript({action:'register',nombre:nombre,user:user,pass:pass}).then(function(res){if(res.status==='ok'){msg.textContent='Solicitud enviada. Espera la aprobacion de Gabi para poder ingresar.';msg.className='login-msg ok';}else if(res.status==='existe'){msg.textContent='Ese usuario ya existe. Elegi otro.';msg.className='login-msg error';}else{msg.textContent='Error al enviar. Intenta de nuevo.';msg.className='login-msg error';}});}
+document.addEventListener('DOMContentLoaded',function(){var u=sessionStorage.getItem('sc_user');var n=sessionStorage.getItem('sc_nombre');if(u&&n){var lw=document.getElementById('loginWrap');lw.style.display='none';lw.style.pointerEvents='none';lw.style.visibility='hidden';document.getElementById('mainContent').style.display='block';var evEl=document.getElementById('f-evaluador');if(evEl){evEl.value=n;evEl.readOnly=true;evEl.style.color='#6B6B6B';}}checkVersion();setInterval(checkVersion,5*60*1000);window.addEventListener('focus',checkVersion);});
+const MODS=[
+  {id:'s1sc',midx:'s1max',secId:'mod1',name:'Equipamiento',start:1,end:4},
+  {id:'s2sc',midx:'s2max',secId:'mod2',name:'Cafeteria',start:5,end:10},
+  {id:'s3sc',midx:'s3max',secId:'mod3',name:'Heladeria',start:11,end:20},
+  {id:'s4sc',midx:'s4max',secId:'mod4',name:'Icepops',start:21,end:25},
+  {id:'s5sc',midx:'s5max',secId:'mod5',name:'Chocolateria',start:26,end:31},
+  {id:'s6sc',midx:'s6max',secId:'mod6',name:'Sistema y Caja',start:32,end:38},
+  {id:'s7sc',midx:'s7max',secId:'mod7',name:'Atencion al Cliente',start:39,end:44}
 ];
-
-let activeSet = new Set(['mod1','mod2','mod3','mod4','mod5','mod6','mod7']);
-let puntajeCalculado = false;
-let yaEnviado = false;
-
-function toggleComment(n) {
-  var wrap = document.getElementById('ic' + n);
-  if (!wrap) return;
-  wrap.classList.toggle('open');
-  if (wrap.classList.contains('open')) wrap.querySelector('textarea').focus();
-}
-
-function toggleMod(btn, secId) {
-  var section = document.getElementById(secId);
-  if (!section) return;
-  if (activeSet.has(secId)) {
-    activeSet.delete(secId); section.style.display = 'none'; btn.classList.remove('active');
-  } else {
-    activeSet.add(secId); section.style.display = ''; btn.classList.add('active');
-  }
-  puntajeCalculado = false;
-}
-
-document.addEventListener('change', function(e) {
-  if (e.target && e.target.type === 'radio') puntajeCalculado = false;
-});
-
-(function() {
-  var fechaInput = document.getElementById('f-fecha');
-  if (!fechaInput) return;
-  var hoy = new Date();
-  var minDate = new Date(hoy); minDate.setDate(hoy.getDate() - 5);
-  var toISO = function(d) { return d.toISOString().split('T')[0]; };
-  fechaInput.max = toISO(hoy); fechaInput.min = toISO(minDate); fechaInput.value = toISO(hoy);
-})();
-
-function calcScore() {
-  const evaluado  = document.getElementById('f-evaluado')?.value?.trim() || '';
-  const local     = document.getElementById('f-local')?.value?.trim()    || '';
-  const evaluador = document.getElementById('f-evaluador')?.value?.trim()|| '';
-  const fecha     = document.getElementById('f-fecha')?.value            || '';
-  const tipo      = document.getElementById('f-tipo')?.value             || '';
-  const rol       = document.getElementById('f-rol')?.value              || '';
-  if (!evaluado || !local || !evaluador || !fecha || !tipo || !rol) {
-    let f = [];
-    if (!evaluado)  f.push('Nombre del evaluado');
-    if (!local)     f.push('Local / Sucursal');
-    if (!evaluador) f.push('Evaluador');
-    if (!fecha)     f.push('Fecha');
-    if (!tipo)      f.push('Tipo de Capacitación');
-    if (!rol)       f.push('Rol');
-    alert('Completá los siguientes campos antes de calcular:\n\n• ' + f.join('\n• ')); return;
-  }
-  let grand = 0, grandMax = 0, grandAnswered = 0, grandTotal = 0, html = '';
-  MODS.forEach(m => {
-    const isActive = activeSet.has(m.secId);
-    const itemCount = m.end - m.start + 1;
-    if (!isActive) {
-      html += `<div class="mod-card" style="opacity:0.3"><div class="mn">${m.name}</div><div class="mv" style="font-size:11px;font-weight:400;color:#666">No evaluado</div></div>`;
-      return;
-    }
-    let score = 0, naCount = 0, answered = 0;
-    for (let i = m.start; i <= m.end; i++) {
-      const s = document.querySelector(`input[name="q${i}"]:checked`);
-      if (s) { answered++; const v = +s.value; if (v === 5) naCount++; else score += v; }
-    }
-    const modMax = (itemCount - naCount) * 4;
-    grand += score; grandMax += modMax; grandAnswered += answered; grandTotal += itemCount;
-    const naNote = naCount > 0 ? `<div class="mna">${naCount} No Aplica${naCount>1?'n':''}</div>` : '';
-    const pctTxt = modMax > 0 && answered > 0 ? `<div class="mpct">${Math.round((score/modMax)*100)}%</div>` : '';
-    html += `<div class="mod-card"><div class="mn">${m.name}</div><div class="mv">${answered > 0 ? score : '--'}<span class="mm"> / ${modMax > 0 ? modMax : itemCount*4}</span></div>${pctTxt}${naNote}</div>`;
-  });
-  document.getElementById('modGrid').innerHTML = html;
-  const scoreEl = document.getElementById('totalScore');
-  const denomEl = document.getElementById('totalDenom');
-  if (grandAnswered > 0) { scoreEl.textContent = grand; denomEl.textContent = `/ ${grandMax}`; }
-  else { scoreEl.textContent = '--'; denomEl.textContent = '/ --'; }
-  const band = document.getElementById('perfBand');
-  if (grandAnswered >= grandTotal && grandTotal > 0) {
-    if (grandMax === 0) { band.style.display = 'none'; return; }
-    const pct = (grand / grandMax) * 100;
-    let msg, bg, fg;
-    if (pct >= 90)      { msg='Desempeno Excepcional';   bg='#1A6B1A'; fg='white'; }
-    else if (pct >= 75) { msg='Desempeno Solido';        bg='#27ae60'; fg='white'; }
-    else if (pct >= 60) { msg='Desempeno Aceptable';     bg='#f39c12'; fg='#1C1C1C'; }
-    else if (pct >= 40) { msg='Por Debajo del Estandar'; bg='#d35400'; fg='white'; }
-    else                { msg='Desempeno Critico';       bg='#c0392b'; fg='white'; }
-    band.style.cssText = `display:block;background:${bg};color:${fg};padding:10px 14px;border-radius:6px;margin-top:12px;font-size:14px;font-weight:700;`;
-    band.textContent = `${msg} — ${Math.round(pct)}%`;
-  } else {
-    band.style.display = 'none';
-    const pending = grandTotal - grandAnswered;
-    if (pending > 0) {
-      const detalles = [];
-      MODS.forEach(m => {
-        if (!activeSet.has(m.secId)) return;
-        let sin = 0;
-        for (let i = m.start; i <= m.end; i++) { if (!document.querySelector(`input[name="q${i}"]:checked`)) sin++; }
-        if (sin > 0) detalles.push(`• ${m.name}: ${sin} item${sin > 1 ? 's' : ''} pendiente${sin > 1 ? 's' : ''}`);
-      });
-      alert(`Faltan items por calificar:\n\n${detalles.join('\n')}\n\nTotal: ${pending} item${pending > 1 ? 's' : ''}`);
-      return;
-    }
-  }
-  generarComentarios();
-  puntajeCalculado = true;
-}
-
-function generarComentarios() {
-  const fortalezasEl = document.getElementById('fortalezas-lista');
-  const reforzarEl   = document.getElementById('reforzar-lista');
-  const fortalezas = [], reforzar = [];
-  MODS.forEach(m => {
-    if (!activeSet.has(m.secId)) return;
-    const section = document.getElementById(m.secId);
-    if (!section) return;
-    for (let i = m.start; i <= m.end; i++) {
-      const selected = document.querySelector(`input[name="q${i}"]:checked`);
-      if (!selected) continue;
-      const val = parseInt(selected.value);
-      if (val === 5) continue;
-      const rows = section.querySelectorAll('.item-row');
-      let itemText = '';
-      rows.forEach(row => {
-        const numEl = row.querySelector('.item-num');
-        if (numEl && numEl.textContent.trim() === String(i)) itemText = row.querySelector('.item-text')?.innerText?.trim() || '';
-      });
-      if (!itemText) continue;
-      if (val >= 3) fortalezas.push({mod: m.name, text: itemText, val});
-      else          reforzar.push({mod: m.name, text: itemText, val});
-    }
-  });
-
-  const renderGroup = (items, colorTitle, tagFn) => {
-    if (!items.length) return '';
-    const grouped = {};
-    items.forEach(e => { if (!grouped[e.mod]) grouped[e.mod] = []; grouped[e.mod].push(e); });
-    return Object.entries(grouped).map(([mod, its]) =>
-      `<div style="margin-bottom:10px">
-        <div class="dev-group-title">${mod}</div>
-        ${its.map(e => {
-          const {bg, label} = tagFn(e.val);
-          return `<div class="dev-item">
-            <span class="dev-item-dot" style="background:${bg}"></span>
-            <span class="dev-item-text">${e.text} <span class="dev-tag" style="background:${bg}22;color:${bg}">${label}</span></span>
-          </div>`;
-        }).join('')}
-      </div>`
-    ).join('');
-  };
-
-  fortalezasEl.innerHTML = renderGroup(fortalezas, '#27ae60', v => (
-    v === 4 ? {bg:'#1e8449', label:'★ Destacado'} : {bg:'#1a5276', label:'✓ Logrado'}
-  )) || '<span style="color:#aaa;font-size:12px">Sin items destacados en esta evaluacion.</span>';
-
-  reforzarEl.innerHTML = renderGroup(reforzar, '#d35400', v => (
-    v === 1 ? {bg:'#c0392b', label:'✗ Inicial'} : {bg:'#d35400', label:'⚠ En proceso'}
-  )) || '<span style="color:#27ae60;font-size:12px">✓ Todos los items evaluados dentro del estandar.</span>';
-}
-
-function enviarPlanilla() {
-  var evaluado  = document.getElementById('f-evaluado')?.value?.trim()  || '';
-  var local     = document.getElementById('f-local')?.value?.trim()     || '';
-  var evaluador = document.getElementById('f-evaluador')?.value?.trim() || '';
-  var fecha     = document.getElementById('f-fecha')?.value             || '';
-  var tipo      = document.getElementById('f-tipo')?.value              || '';
-  var rol       = document.getElementById('f-rol')?.value               || '';
-  if (!evaluado || !local || !evaluador || !fecha || !tipo || !rol) {
-    var f = [];
-    if (!evaluado)  f.push('Nombre del evaluado');
-    if (!local)     f.push('Local / Sucursal');
-    if (!evaluador) f.push('Evaluador');
-    if (!fecha)     f.push('Fecha');
-    if (!tipo)      f.push('Tipo de Capacitación');
-    if (!rol)       f.push('Rol');
-    alert('Completá los siguientes campos:\n\n• ' + f.join('\n• ')); return;
-  }
-  var itemsFaltantes = [];
-  MODS.forEach(function(m) {
-    if (!activeSet.has(m.secId)) return;
-    var sin = 0;
-    for (var i = m.start; i <= m.end; i++) { if (!document.querySelector('input[name="q' + i + '"]:checked')) sin++; }
-    if (sin > 0) itemsFaltantes.push('- ' + m.name + ': ' + sin + ' item' + (sin > 1 ? 's' : '') + ' sin calificar');
-  });
-  if (itemsFaltantes.length > 0) { alert('Faltan items por calificar:\n\n' + itemsFaltantes.join('\n')); return; }
-  if (!puntajeCalculado) { alert('Primero presiona Calcular Puntaje.'); return; }
-  if (yaEnviado) { showToast('Esta evaluacion ya fue enviada.'); return; }
-  enviarSilencioso();
-  yaEnviado = true;
-
-  // Cambiar el título YA, para que iOS lo tenga listo cuando se imprima
-  var evNom = (document.getElementById('f-evaluado')?.value?.trim() || 'Evaluacion').replace(/\s+/g, '_');
-  var evFec = document.getElementById('f-fecha')?.value || '';
-  document.title = 'Evaluacion_' + evNom + '_' + evFec;
-
-  var btnE = document.getElementById('btnEnviar');
-  if (btnE) { btnE.textContent = '✓ Enviado'; btnE.disabled = true; btnE.style.background = '#27ae60'; }
-  var btnP = document.getElementById('btnPDF');
-  if (btnP) { btnP.disabled = false; btnP.style.opacity = '1'; btnP.style.cursor = 'pointer'; btnP.removeAttribute('title'); }
-  showToast('Evaluacion enviada a la planilla');
-}
-
-function recopilarDatosParaPDF_() {
-  var data = {
-    evaluado:  (document.getElementById('f-evaluado')?.value||'').trim(),
-    local:     (document.getElementById('f-local')?.value||'').trim(),
-    evaluador: (document.getElementById('f-evaluador')?.value||'').trim(),
-    fecha:     document.getElementById('f-fecha')?.value||'',
-    tipo:      document.getElementById('f-tipo')?.value||'',
-    rol:       document.getElementById('f-rol')?.value||'',
-    total:     document.getElementById('totalScore')?.textContent||'',
-    totalMax:  (document.getElementById('totalDenom')?.textContent||'').replace('/ ','').trim(),
-    resultado: document.getElementById('perfBand')?.textContent||'',
-    fortalezas: (document.getElementById('fortalezas-lista')?.innerText||'').trim(),
-    reforzar:   (document.getElementById('reforzar-lista')?.innerText||'').trim(),
-    modulos: []
-  };
-  MODS.forEach(function(m) {
-    var section = document.getElementById(m.secId);
-    var mod = {
-      nombre:  m.name,
-      activo:  activeSet.has(m.secId),
-      score:   0,
-      max:     0,
-      vals:    [],
-      comentarios: [],
-      obs: ''
-    };
-    if (mod.activo) {
-      var naCount = 0;
-      for (var i = m.start; i <= m.end; i++) {
-        var sel = document.querySelector('input[name="q'+i+'"]:checked');
-        var v   = sel ? parseInt(sel.value) : 0;
-        mod.vals.push(v);
-        if (v === 5) naCount++; else mod.score += v;
-        // Comentario por ítem (solo si tiene texto)
-        var cmt = (document.getElementById('ict'+i)?.value||'').trim();
-        if (cmt) {
-          // Buscar texto del ítem
-          var txt = '';
-          if (section) {
-            var rows = section.querySelectorAll('.item-row');
-            for (var r = 0; r < rows.length; r++) {
-              var ne = rows[r].querySelector('.item-num');
-              if (ne && ne.textContent.trim() === String(i)) {
-                txt = (rows[r].querySelector('.item-text')?.innerText||'').trim();
-                break;
-              }
-            }
-          }
-          mod.comentarios.push({ num: i, texto: txt, comentario: cmt });
-        }
-      }
-      mod.max = (m.end - m.start + 1 - naCount) * 4;
-      // Observación del módulo
-      if (section) {
-        var obsTA = section.querySelector('.obs-row textarea');
-        mod.obs = obsTA ? (obsTA.value||'').trim() : '';
-      }
-    }
-    data.modulos.push(mod);
-  });
-  return data;
-}
-
-function base64ToBlob_(b64, mime) {
-  var bin = atob(b64), arr = new Uint8Array(bin.length);
-  for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
-  return new Blob([arr], { type: mime || 'application/pdf' });
-}
-
-function imprimirPDF() {
-  if (!yaEnviado) { alert('Primero enviá la planilla antes de imprimir.'); return; }
-
-  var btnP = document.getElementById('btnPDF');
-  if (btnP) { btnP.textContent = 'Generando...'; btnP.disabled = true; }
-  showToast('Generando PDF, un momento...');
-
-  var payload = recopilarDatosParaPDF_();
-
-  // POST evita el límite de caracteres de GET
-  fetch(SHEET_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify({ action: 'pdf', payload: payload })
-  })
-  .then(function(r) { return r.json(); })
-  .then(function(res) {
-    if (btnP) { btnP.textContent = '↓ Imprimir PDF'; btnP.disabled = false; }
-    if (!res || res.status === 'error') {
-      alert('No se pudo generar el PDF. Intentá de nuevo.');
-      return;
-    }
-    var blob = base64ToBlob_(res.base64, res.mime);
-    var url  = URL.createObjectURL(blob);
-    var a    = document.createElement('a');
-    a.href     = url;
-    a.download = res.nombre;
-    a.target   = '_blank';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(function() { URL.revokeObjectURL(url); a.remove(); }, 4000);
-    showToast('PDF descargado ✓');
-  })
-  .catch(function(err) {
-    if (btnP) { btnP.textContent = '↓ Imprimir PDF'; btnP.disabled = false; }
-    alert('No se pudo generar el PDF. Intentá de nuevo.');
-  });
-}
-
-
-
-function enviarSilencioso() {
-  const evaluado  = document.getElementById('f-evaluado')?.value?.trim()  || '';
-  const local     = document.getElementById('f-local')?.value?.trim()     || '';
-  const evaluador = document.getElementById('f-evaluador')?.value?.trim() || '';
-  const fecha     = document.getElementById('f-fecha')?.value             || '';
-  const tipo      = document.getElementById('f-tipo')?.value              || '';
-  const rol       = document.getElementById('f-rol')?.value               || '';
-  const modData = {};
-  MODS.forEach(function(m, idx) {
-    var n = idx + 1;
-    if (!activeSet.has(m.secId)) { modData['s'+n]='No evaluado'; modData['s'+n+'max']='-'; modData['obs'+n]=''; return; }
-    var score=0, naCount=0, answered=0, itemCount=m.end-m.start+1;
-    for (var i=m.start; i<=m.end; i++) {
-      var s=document.querySelector('input[name="q'+i+'"]:checked');
-      if (s) { answered++; var v=+s.value; if(v===5) naCount++; else score+=v; }
-    }
-    modData['s'+n]=answered>0?score:'--'; modData['s'+n+'max']=(itemCount-naCount)*4;
-    modData['obs'+n]=document.getElementById(m.secId)?.querySelector('.obs-row textarea')?.value?.trim()||'';
-  });
-  const totalScore=document.getElementById('totalScore').textContent;
-  const totalMax=document.getElementById('totalDenom').textContent.replace('/ ','').trim();
-  const band=document.getElementById('perfBand');
-  const resultado=band?.style.display!=='none'?band?.textContent:'Sin calcular';
-  const pct=totalScore!=='--'&&totalMax?Math.round((+totalScore/+totalMax)*100)+'%':'--';
-  const fortalezasArr=[], reforzarArr=[];
-  MODS.forEach(function(m) {
-    if (!activeSet.has(m.secId)) return;
-    var section=document.getElementById(m.secId); if (!section) return;
-    for (var i=m.start; i<=m.end; i++) {
-      var sel=document.querySelector('input[name="q'+i+'"]:checked'); if (!sel) continue;
-      var val=parseInt(sel.value); if (val===5) continue;
-      var rows=section.querySelectorAll('.item-row'), itemText='';
-      rows.forEach(function(row) { var n=row.querySelector('.item-num'); if(n&&n.textContent.trim()===String(i)) itemText=row.querySelector('.item-text')?.innerText?.trim()||''; });
-      if (!itemText) return;
-      var label=val===4?'Destacado':val===3?'Logrado':val===2?'En proceso':'Inicial';
-      if (val>=3) fortalezasArr.push('['+m.name+'] '+itemText+' ('+label+')');
-      else        reforzarArr.push('['+m.name+'] '+itemText+' ('+label+')');
-    }
-  });
-  const obsEval=document.getElementById('obs-evaluador')?.value?.trim()||'';
-  const payload=Object.assign({fecha,evaluado,local,evaluador,tipo,rol},modData,{
-    total:totalScore, totalMax, porcentaje:pct, resultado,
-    fortalezas:fortalezasArr.join(' | '), reforzar:reforzarArr.join(' | '), observaciones:obsEval
-  });
-  const img=new Image();
-  img.src=SHEET_URL+'?'+new URLSearchParams({payload:JSON.stringify(payload)});
-}
-
-function resetForm() {
-  if (!confirm('Reiniciar toda la evaluacion?')) return;
-  document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
-  ['f-evaluado','f-local','f-evaluador','f-fecha'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
-  ['f-tipo','f-rol'].forEach(id => { const el=document.getElementById(id); if(el) el.selectedIndex=0; });
-  document.querySelectorAll('textarea').forEach(t => t.value = '');
-  document.getElementById('totalScore').textContent='--';
-  document.getElementById('totalDenom').textContent='/ 188';
-  document.getElementById('perfBand').style.display='none';
-  document.getElementById('modGrid').innerHTML='';
-  const f=document.getElementById('fortalezas-lista'), r=document.getElementById('reforzar-lista');
-  if(f) f.innerHTML='<em style="color:#aaa;font-size:12px">Se generan al calcular puntaje...</em>';
-  if(r) r.innerHTML='<em style="color:#aaa;font-size:12px">Se generan al calcular puntaje...</em>';
-  document.querySelectorAll('.mod-toggle[onclick]').forEach(function(btn) {
-    var match=btn.getAttribute('onclick').match(/'(mod\d+)'/); if(!match) return;
-    btn.classList.add('active'); activeSet.add(match[1]);
-    var s=document.getElementById(match[1]); if(s) s.style.display='';
-  });
-  yaEnviado=false; puntajeCalculado=false;
-  var btnE=document.getElementById('btnEnviar'); if(btnE){btnE.textContent='↑ Enviar a planilla';btnE.disabled=false;btnE.style.background='';}
-  var btnP=document.getElementById('btnPDF'); if(btnP){btnP.disabled=true;btnP.style.opacity='0.35';btnP.style.cursor='not-allowed';btnP.setAttribute('title','Primero enviá la planilla');}
-  document.querySelectorAll('.item-comment-wrap').forEach(el => el.classList.remove('open'));
-}
-
-function showToast(msg, duration) {
-  duration=duration||2800;
-  let t=document.getElementById('_toast');
-  if (!t) {
-    t=document.createElement('div'); t.id='_toast';
-    t.style.cssText='position:fixed;bottom:36px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:white;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999;pointer-events:none;transition:opacity .4s;max-width:90%;text-align:center';
-    document.body.appendChild(t);
-  }
-  t.textContent=msg; t.style.opacity='1';
-  setTimeout(()=>{ t.style.opacity='0'; }, duration);
-}
+let activeSet=new Set(['mod1','mod2','mod3','mod4','mod5','mod6','mod7']);
+let puntajeCalculado=false;
+let yaEnviado=false;
+function toggleComment(n){var wrap=document.getElementById('ic'+n);if(!wrap)return;wrap.classList.toggle('open');if(wrap.classList.contains('open'))wrap.querySelector('textarea').focus();}
+function toggleMod(btn,secId){var section=document.getElementById(secId);if(!section)return;if(activeSet.has(secId)){activeSet.delete(secId);section.style.display='none';btn.classList.remove('active');}else{activeSet.add(secId);section.style.display='';btn.classList.add('active');}puntajeCalculado=false;}
+document.addEventListener('change',function(e){if(e.target&&e.target.type==='radio')puntajeCalculado=false;});
+(function(){var fechaInput=document.getElementById('f-fecha');if(!fechaInput)return;var hoy=new Date();var minDate=new Date(hoy);minDate.setDate(hoy.getDate()-5);var toISO=function(d){return d.toISOString().split('T')[0];};fechaInput.max=toISO(hoy);fechaInput.min=toISO(minDate);fechaInput.value=toISO(hoy);})();
+function calcScore(){const evaluado=document.getElementById('f-evaluado')?.value?.trim()||'';const local=document.getElementById('f-local')?.value?.trim()||'';const evaluador=document.getElementById('f-evaluador')?.value?.trim()||'';const fecha=document.getElementById('f-fecha')?.value||'';const tipo=document.getElementById('f-tipo')?.value||'';const rol=document.getElementById('f-rol')?.value||'';if(!evaluado||!local||!evaluador||!fecha||!tipo||!rol){let f=[];if(!evaluado)f.push('Nombre del evaluado');if(!local)f.push('Local / Sucursal');if(!evaluador)f.push('Evaluador');if(!fecha)f.push('Fecha');if(!tipo)f.push('Tipo de Capacitaci\u00f3n');if(!rol)f.push('Rol');alert('Complet\u00e1 los siguientes campos antes de calcular:\n\n\u2022 '+f.join('\n\u2022 '));return;}let grand=0,grandMax=0,grandAnswered=0,grandTotal=0,html='';MODS.forEach(m=>{const isActive=activeSet.has(m.secId);const itemCount=m.end-m.start+1;if(!isActive){html+=`<div class="mod-card" style="opacity:0.3"><div class="mn">${m.name}</div><div class="mv" style="font-size:11px;font-weight:400;color:#666">No evaluado</div></div>`;return;}let score=0,naCount=0,answered=0;for(let i=m.start;i<=m.end;i++){const s=document.querySelector(`input[name="q${i}"]:checked`);if(s){answered++;const v=+s.value;if(v===5)naCount++;else score+=v;}}const modMax=(itemCount-naCount)*4;grand+=score;grandMax+=modMax;grandAnswered+=answered;grandTotal+=itemCount;const naNote=naCount>0?`<div class="mna">${naCount} No Aplica${naCount>1?'n':''}</div>`:'';const pctTxt=modMax>0&&answered>0?`<div class="mpct">${Math.round((score/modMax)*100)}%</div>`:'';html+=`<div class="mod-card"><div class="mn">${m.name}</div><div class="mv">${answered>0?score:'--'}<span class="mm"> / ${modMax>0?modMax:itemCount*4}</span></div>${pctTxt}${naNote}</div>`;});document.getElementById('modGrid').innerHTML=html;const scoreEl=document.getElementById('totalScore');const denomEl=document.getElementById('totalDenom');if(grandAnswered>0){scoreEl.textContent=grand;denomEl.textContent=`/ ${grandMax}`;}else{scoreEl.textContent='--';denomEl.textContent='/ --';}const band=document.getElementById('perfBand');if(grandAnswered>=grandTotal&&grandTotal>0){if(grandMax===0){band.style.display='none';return;}const pct=(grand/grandMax)*100;let msg,bg,fg;if(pct>=90){msg='Desempeno Excepcional';bg='#1A6B1A';fg='white';}else if(pct>=75){msg='Desempeno Solido';bg='#27ae60';fg='white';}else if(pct>=60){msg='Desempeno Aceptable';bg='#f39c12';fg='#1C1C1C';}else if(pct>=40){msg='Por Debajo del Estandar';bg='#d35400';fg='white';}else{msg='Desempeno Critico';bg='#c0392b';fg='white';}band.style.cssText=`display:block;background:${bg};color:${fg};padding:10px 14px;border-radius:6px;margin-top:12px;font-size:14px;font-weight:700;`;band.textContent=`${msg} \u2014 ${Math.round(pct)}%`;}else{band.style.display='none';const pending=grandTotal-grandAnswered;if(pending>0){const detalles=[];MODS.forEach(m=>{if(!activeSet.has(m.secId))return;let sin=0;for(let i=m.start;i<=m.end;i++){if(!document.querySelector(`input[name="q${i}"]:checked`))sin++;}if(sin>0)detalles.push(`\u2022 ${m.name}: ${sin} item${sin>1?'s':''} pendiente${sin>1?'s':''}`);});alert(`Faltan items por calificar:\n\n${detalles.join('\n')}\n\nTotal: ${pending} item${pending>1?'s':''}`);return;}}generarComentarios();puntajeCalculado=true;}
+function generarComentarios(){const fortalezasEl=document.getElementById('fortalezas-lista');const reforzarEl=document.getElementById('reforzar-lista');const fortalezas=[],reforzar=[];MODS.forEach(m=>{if(!activeSet.has(m.secId))return;const section=document.getElementById(m.secId);if(!section)return;for(let i=m.start;i<=m.end;i++){const selected=document.querySelector(`input[name="q${i}"]:checked`);if(!selected)continue;const val=parseInt(selected.value);if(val===5)continue;const rows=section.querySelectorAll('.item-row');let itemText='';rows.forEach(row=>{const numEl=row.querySelector('.item-num');if(numEl&&numEl.textContent.trim()===String(i))itemText=row.querySelector('.item-text')?.innerText?.trim()||'';});if(!itemText)continue;if(val>=3)fortalezas.push({mod:m.name,text:itemText,val});else reforzar.push({mod:m.name,text:itemText,val});}});const renderGroup=(items,colorTitle,tagFn)=>{if(!items.length)return'';const grouped={};items.forEach(e=>{if(!grouped[e.mod])grouped[e.mod]=[];grouped[e.mod].push(e);});return Object.entries(grouped).map(([mod,its])=>`<div style="margin-bottom:10px"><div class="dev-group-title">${mod}</div>${its.map(e=>{const{bg,label}=tagFn(e.val);return`<div class="dev-item"><span class="dev-item-dot" style="background:${bg}"></span><span class="dev-item-text">${e.text} <span class="dev-tag" style="background:${bg}22;color:${bg}">${label}</span></span></div>`;}).join('')}</div>`).join('');};fortalezasEl.innerHTML=renderGroup(fortalezas,'#27ae60',v=>(v===4?{bg:'#1e8449',label:'\u2605 Destacado'}:{bg:'#1a5276',label:'\u2713 Logrado'}))||'<span style="color:#aaa;font-size:12px">Sin items destacados en esta evaluacion.</span>';reforzarEl.innerHTML=renderGroup(reforzar,'#d35400',v=>(v===1?{bg:'#c0392b',label:'\u2717 Inicial'}:{bg:'#d35400',label:'\u26A0 En proceso'}))||'<span style="color:#27ae60;font-size:12px">\u2713 Todos los items evaluados dentro del estandar.</span>';}
+function enviarPlanilla(){var evaluado=document.getElementById('f-evaluado')?.value?.trim()||'';var local=document.getElementById('f-local')?.value?.trim()||'';var evaluador=document.getElementById('f-evaluador')?.value?.trim()||'';var fecha=document.getElementById('f-fecha')?.value||'';var tipo=document.getElementById('f-tipo')?.value||'';var rol=document.getElementById('f-rol')?.value||'';if(!evaluado||!local||!evaluador||!fecha||!tipo||!rol){var f=[];if(!evaluado)f.push('Nombre del evaluado');if(!local)f.push('Local / Sucursal');if(!evaluador)f.push('Evaluador');if(!fecha)f.push('Fecha');if(!tipo)f.push('Tipo de Capacitaci\u00f3n');if(!rol)f.push('Rol');alert('Complet\u00e1 los siguientes campos:\n\n\u2022 '+f.join('\n\u2022 '));return;}var itemsFaltantes=[];MODS.forEach(function(m){if(!activeSet.has(m.secId))return;var sin=0;for(var i=m.start;i<=m.end;i++){if(!document.querySelector('input[name="q'+i+'"]:checked'))sin++;}if(sin>0)itemsFaltantes.push('- '+m.name+': '+sin+' item'+(sin>1?'s':'')+' sin calificar');});if(itemsFaltantes.length>0){alert('Faltan items por calificar:\n\n'+itemsFaltantes.join('\n'));return;}if(!puntajeCalculado){alert('Primero presiona Calcular Puntaje.');return;}if(yaEnviado){showToast('Esta evaluacion ya fue enviada.');return;}enviarSilencioso();yaEnviado=true;var evNom=(document.getElementById('f-evaluado')?.value?.trim()||'Evaluacion').replace(/\s+/g,'_');var evFec=document.getElementById('f-fecha')?.value||'';document.title='Evaluacion_'+evNom+'_'+evFec;var btnE=document.getElementById('btnEnviar');if(btnE){btnE.textContent='\u2713 Enviado';btnE.disabled=true;btnE.style.background='#27ae60';}var btnP=document.getElementById('btnPDF');if(btnP){btnP.disabled=false;btnP.style.opacity='1';btnP.style.cursor='pointer';btnP.removeAttribute('title');}showToast('Evaluacion enviada a la planilla');}
+function recopilarDatosParaPDF_(){var data={evaluado:(document.getElementById('f-evaluado')?.value||'').trim(),local:(document.getElementById('f-local')?.value||'').trim(),evaluador:(document.getElementById('f-evaluador')?.value||'').trim(),fecha:document.getElementById('f-fecha')?.value||'',tipo:document.getElementById('f-tipo')?.value||'',rol:document.getElementById('f-rol')?.value||'',total:document.getElementById('totalScore')?.textContent||'',totalMax:(document.getElementById('totalDenom')?.textContent||'').replace('/ ','').trim(),resultado:document.getElementById('perfBand')?.textContent||'',fortalezas:(document.getElementById('fortalezas-lista')?.innerText||'').trim(),reforzar:(document.getElementById('reforzar-lista')?.innerText||'').trim(),modulos:[]};MODS.forEach(function(m){var section=document.getElementById(m.secId);var mod={nombre:m.name,activo:activeSet.has(m.secId),score:0,max:0,vals:[],comentarios:[],obs:''};if(mod.activo){var naCount=0;for(var i=m.start;i<=m.end;i++){var sel=document.querySelector('input[name="q'+i+'"]:checked');var v=sel?parseInt(sel.value):0;mod.vals.push(v);if(v===5)naCount++;else mod.score+=v;var cmt=(document.getElementById('ict'+i)?.value||'').trim();if(cmt){var txt='';if(section){var rows=section.querySelectorAll('.item-row');for(var r=0;r<rows.length;r++){var ne=rows[r].querySelector('.item-num');if(ne&&ne.textContent.trim()===String(i)){txt=(rows[r].querySelector('.item-text')?.innerText||'').trim();break;}}}mod.comentarios.push({num:i,texto:txt,comentario:cmt});}}mod.max=(m.end-m.start+1-naCount)*4;if(section){var obsTA=section.querySelector('.obs-row textarea');mod.obs=obsTA?(obsTA.value||'').trim():'';}}data.modulos.push(mod);});return data;}
+function base64ToBlob_(b64,mime){var bin=atob(b64),arr=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return new Blob([arr],{type:mime||'application/pdf'});}
+function imprimirPDF(){if(!yaEnviado){alert('Primero envi\u00e1 la planilla antes de imprimir.');return;}var btnP=document.getElementById('btnPDF');if(btnP){btnP.textContent='Generando...';btnP.disabled=true;}showToast('Generando PDF, un momento...');var payload=recopilarDatosParaPDF_();fetch(SHEET_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'pdf',payload:payload})}).then(function(r){return r.json();}).then(function(res){if(btnP){btnP.textContent='\u2193 Imprimir PDF';btnP.disabled=false;}if(!res||res.status==='error'){alert('No se pudo generar el PDF. Intent\u00e1 de nuevo.');return;}var blob=base64ToBlob_(res.base64,res.mime);var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=res.nombre;a.target='_blank';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},4000);showToast('PDF descargado \u2713');}).catch(function(){if(btnP){btnP.textContent='\u2193 Imprimir PDF';btnP.disabled=false;}alert('No se pudo generar el PDF. Intent\u00e1 de nuevo.');});}
+function enviarSilencioso(){const evaluado=document.getElementById('f-evaluado')?.value?.trim()||'';const local=document.getElementById('f-local')?.value?.trim()||'';const evaluador=document.getElementById('f-evaluador')?.value?.trim()||'';const fecha=document.getElementById('f-fecha')?.value||'';const tipo=document.getElementById('f-tipo')?.value||'';const rol=document.getElementById('f-rol')?.value||'';const modData={};MODS.forEach(function(m,idx){var n=idx+1;if(!activeSet.has(m.secId)){modData['s'+n]='No evaluado';modData['s'+n+'max']='-';modData['obs'+n]='';return;}var score=0,naCount=0,answered=0,itemCount=m.end-m.start+1;for(var i=m.start;i<=m.end;i++){var s=document.querySelector('input[name="q'+i+'"]:checked');if(s){answered++;var v=+s.value;if(v===5)naCount++;else score+=v;}}modData['s'+n]=answered>0?score:'--';modData['s'+n+'max']=(itemCount-naCount)*4;modData['obs'+n]=document.getElementById(m.secId)?.querySelector('.obs-row textarea')?.value?.trim()||'';});const totalScore=document.getElementById('totalScore').textContent;const totalMax=document.getElementById('totalDenom').textContent.replace('/ ','').trim();const band=document.getElementById('perfBand');const resultado=band?.style.display!=='none'?band?.textContent:'Sin calcular';const pct=totalScore!=='--'&&totalMax?Math.round((+totalScore/+totalMax)*100)+'%':'--';const fortalezasArr=[],reforzarArr=[];MODS.forEach(function(m){if(!activeSet.has(m.secId))return;var section=document.getElementById(m.secId);if(!section)return;for(var i=m.start;i<=m.end;i++){var sel=document.querySelector('input[name="q'+i+'"]:checked');if(!sel)continue;var val=parseInt(sel.value);if(val===5)continue;var rows=section.querySelectorAll('.item-row'),itemText='';rows.forEach(function(row){var n=row.querySelector('.item-num');if(n&&n.textContent.trim()===String(i))itemText=row.querySelector('.item-text')?.innerText?.trim()||'';});if(!itemText)return;var label=val===4?'Destacado':val===3?'Logrado':val===2?'En proceso':'Inicial';if(val>=3)fortalezasArr.push('['+m.name+'] '+itemText+' ('+label+')');else reforzarArr.push('['+m.name+'] '+itemText+' ('+label+')');}});const obsEval=document.getElementById('obs-evaluador')?.value?.trim()||'';const payload=Object.assign({fecha,evaluado,local,evaluador,tipo,rol},modData,{total:totalScore,totalMax,porcentaje:pct,resultado,fortalezas:fortalezasArr.join(' | '),reforzar:reforzarArr.join(' | '),observaciones:obsEval});const img=new Image();img.src=SHEET_URL+'?'+new URLSearchParams({payload:JSON.stringify(payload)});}
+function resetForm(){if(!confirm('Reiniciar toda la evaluacion?'))return;document.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false);['f-evaluado','f-local','f-evaluador','f-fecha'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});['f-tipo','f-rol'].forEach(id=>{const el=document.getElementById(id);if(el)el.selectedIndex=0;});document.querySelectorAll('textarea').forEach(t=>t.value='');document.getElementById('totalScore').textContent='--';document.getElementById('totalDenom').textContent='/ 184';document.getElementById('perfBand').style.display='none';document.getElementById('modGrid').innerHTML='';const f=document.getElementById('fortalezas-lista'),r=document.getElementById('reforzar-lista');if(f)f.innerHTML='<em style="color:#aaa;font-size:12px">Se generan al calcular puntaje...</em>';if(r)r.innerHTML='<em style="color:#aaa;font-size:12px">Se generan al calcular puntaje...</em>';document.querySelectorAll('.mod-toggle[onclick]').forEach(function(btn){var match=btn.getAttribute('onclick').match(/'(mod\d+)'/);if(!match)return;btn.classList.add('active');activeSet.add(match[1]);var s=document.getElementById(match[1]);if(s)s.style.display='';});yaEnviado=false;puntajeCalculado=false;var btnE=document.getElementById('btnEnviar');if(btnE){btnE.textContent='\u2191 Enviar a planilla';btnE.disabled=false;btnE.style.background='';}var btnP=document.getElementById('btnPDF');if(btnP){btnP.disabled=true;btnP.style.opacity='0.35';btnP.style.cursor='not-allowed';btnP.setAttribute('title','Primero envi\u00e1 la planilla');}document.querySelectorAll('.item-comment-wrap').forEach(el=>el.classList.remove('open'));document.querySelectorAll('.guide-panel').forEach(el=>el.classList.remove('open'));document.querySelectorAll('.guide-toggle-btn').forEach(el=>el.classList.remove('open'));}
+function showToast(msg,duration){duration=duration||2800;let t=document.getElementById('_toast');if(!t){t=document.createElement('div');t.id='_toast';t.style.cssText='position:fixed;bottom:36px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:white;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999;pointer-events:none;transition:opacity .4s;max-width:90%;text-align:center';document.body.appendChild(t);}t.textContent=msg;t.style.opacity='1';setTimeout(()=>{t.style.opacity='0';},duration);}
 </script>
-
-</div><!-- end mainContent -->
+</div>
 </body>
 </html>
