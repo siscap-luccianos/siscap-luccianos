@@ -441,7 +441,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 <script>
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbypLjubjEFbt6QlHMTFNy9gWFpCAEGrluKu6yAJrF_nosJ4sN_UmMGrI8VDg8jiAYhkng/exec';
 function callScript(params){return new Promise(function(resolve){var url=SHEET_URL+'?'+new URLSearchParams(params).toString();fetch(url).then(function(r){return r.json();}).then(resolve).catch(function(){resolve({status:'error'});});});}
-const APP_VERSION='1.2.0';
+const APP_VERSION='2.3.0';
 let _scCuenta=null;
 function scEsMayor(a,b){var pa=String(a).split('.').map(Number),pb=String(b).split('.').map(Number);for(var i=0;i<Math.max(pa.length,pb.length);i++){var x=pa[i]||0,y=pb[i]||0;if(x>y)return true;if(x<y)return false;}return false;}
 function checkVersion(){var n=document.getElementById('scVerNum');if(n)n.textContent=APP_VERSION;callScript({action:'version'}).then(function(res){if(res&&res.status==='ok'&&res.version&&scEsMayor(res.version,APP_VERSION))mostrarActualizacion(res.version);});}
