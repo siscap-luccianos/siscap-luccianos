@@ -439,7 +439,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   </div>
 </div>
 <script>
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbypLjubjEFbt6QlHMTFNy9gWFpCAEGrluKu6yAJrF_nosJ4sN_UmMGrI8VDg8jiAYhkng/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyI_kUHwWjRTdbKzE0NbCVe8zkk382JkoUstnND3Xv-LfPKbFFzb_O1FHvZ4FjA2rCj/exec';
 function callScript(params){return new Promise(function(resolve){var url=SHEET_URL+'?'+new URLSearchParams(params).toString();fetch(url).then(function(r){return r.json();}).then(resolve).catch(function(){resolve({status:'error'});});});}
 const APP_VERSION='1.2.0';
 let _scCuenta=null;
