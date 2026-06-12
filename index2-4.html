@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>SisCap 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#C9A84C;--gold-light:#E2C06A;--gold-dark:#A07830;--black:#0D0D0D;--dark:#1A1A1A;--dark2:#242424;--dark3:#2E2E2E;--white:#F5F0E8;--gray:#888;--green:#2ECC71;--green-bg:#1a3d2b;--yellow:#F39C12;--yellow-bg:#3d2e0a;--red:#E74C3C;--red-bg:#3d1010;--radius:14px;--radius-sm:8px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:var(--black);color:var(--white);font-family:'Inter',sans-serif;overflow-x:hidden;}
+.screen{display:none;flex-direction:column;min-height:100vh;animation:fadeIn .3s ease;}
+.screen.active{display:flex;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* LOGIN */
+#screen-login{background:var(--black);align-items:center;justify-content:center;padding:32px 24px;}
+.login-logo{font-family:'Montserrat',sans-serif;font-weight:900;font-size:42px;color:var(--gold);letter-spacing:-1px;margin-bottom:4px;}
+.login-sub{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gray);margin-bottom:48px;}
+.login-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--radius);padding:28px 24px;width:100%;max-width:380px;}
+.login-card h2{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:700;margin-bottom:24px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--gray);margin-bottom:6px;}
+.field input,.field select{width:100%;padding:12px 14px;background:var(--dark2);border:1px solid #333;border-radius:var(--radius-sm);color:var(--white);font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;-webkit-appearance:none;appearance:none;}
+.field input:focus,.field select:focus{border-color:var(--gold);}
+.field select option{background:var(--dark2);}
+.btn-primary{width:100%;padding:14px;background:var(--gold);color:var(--black);font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;text-transform:uppercase;border:none;border-radius:var(--radius-sm);cursor:pointer;transition:background .2s,transform .1s;margin-top:8px;}
+.btn-primary:active{transform:scale(.98);background:var(--gold-dark);}
+.btn-secondary{width:100%;padding:12px;background:transparent;color:var(--gold);font-family:'Montserrat',sans-serif;font-weight:600;font-size:13px;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--gold-dark);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;margin-top:8px;}
+.btn-secondary:active{background:var(--gold-dark);color:var(--black);}
+.btn-green{width:100%;padding:14px;background:var(--green-bg);color:var(--green);font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--green);border-radius:var(--radius-sm);cursor:pointer;margin-top:8px;}
+.error-msg{color:var(--red);font-size:13px;margin-top:10px;text-align:center;min-height:20px;}
+
+/* HEADER */
+.app-header{background:var(--dark);border-bottom:1px solid #2a2a2a;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.app-header .logo{font-family:'Montserrat',sans-serif;font-weight:900;font-size:22px;color:var(--gold);}
+.app-header .badge{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);}
+.header-user{display:flex;align-items:center;gap:8px;}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--gold-dark);color:var(--black);font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;}
+.header-right{display:flex;align-items:center;gap:12px;}
+.config-btn{background:none;border:none;color:var(--gray);font-size:20px;cursor:pointer;padding:4px;}
+.config-btn:hover{color:var(--gold);}
+
+/* HOME */
+#screen-home{background:var(--black);}
+.home-body{padding:20px;flex:1;display:flex;flex-direction:column;gap:20px;padding-bottom:80px;}
+.section-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.stat-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:4px;}
+.stat-card .stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);}
+.stat-card .stat-value{font-family:'Montserrat',sans-serif;font-weight:900;font-size:32px;color:var(--white);line-height:1;}
+.stat-card .stat-sub{font-size:11px;color:var(--gray);}
+.stat-card.gold{border-color:var(--gold-dark);}
+.stat-card.gold .stat-value{color:var(--gold);}
+
+/* Alertas */
+.alert-strip{background:var(--yellow-bg);border:1px solid var(--yellow);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:flex-start;gap:12px;}
+.alert-strip .alert-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--yellow);margin-bottom:4px;}
+.alert-strip .alert-list{font-size:12px;color:#ccc;line-height:1.6;}
+
+/* CTA eval */
+.cta-eval{background:var(--gold);color:var(--black);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background .2s;border:none;width:100%;}
+.cta-eval:active{background:var(--gold-dark);}
+.cta-eval .cta-text{font-family:'Montserrat',sans-serif;font-weight:800;font-size:16px;}
+.cta-eval .cta-sub{font-size:11px;margin-top:2px;opacity:.7;}
+
+/* Buscador */
+.search-wrap{position:relative;}
+.search-input{width:100%;padding:10px 14px 10px 36px;background:var(--dark2);border:1px solid #333;border-radius:var(--radius-sm);color:var(--white);font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;}
+.search-input:focus{border-color:var(--gold);}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray);font-size:14px;}
+
+/* Sucursales list */
+.suc-list{display:flex;flex-direction:column;gap:8px;}
+.suc-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--radius);overflow:hidden;transition:border-color .2s;}
+.suc-card-head{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.suc-card-head:active{background:var(--dark2);}
+.suc-left{display:flex;flex-direction:column;gap:3px;}
+.suc-name{font-weight:600;font-size:14px;color:var(--white);}
+.suc-date{font-size:11px;color:var(--gray);}
+.suc-right{display:flex;align-items:center;gap:8px;}
+.suc-pct{font-family:'Montserrat',sans-serif;font-weight:700;font-size:18px;}
+.suc-chev{color:var(--gray);font-size:12px;transition:transform .2s;}
+.suc-chev.open{transform:rotate(180deg);}
+.badge-estado{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:20px;}
+.badge-aprobado{background:var(--green-bg);color:var(--green);border:1px solid var(--green);}
+.badge-observado{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow);}
+.badge-urgente{background:var(--red-bg);color:var(--red);border:1px solid var(--red);}
+.color-green{color:var(--green);}
+.color-yellow{color:var(--yellow);}
+.color-red{color:var(--red);}
+.bar-green{background:var(--green);}
+.bar-yellow{background:var(--yellow);}
+.bar-red{background:var(--red);}
+
+/* Detalle sucursal expandido */
+.suc-detail{display:none;border-top:1px solid #2a2a2a;padding:12px 16px;background:var(--dark2);flex-direction:column;gap:8px;}
+.suc-detail.open{display:flex;}
+.colab-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--dark3);border-radius:var(--radius-sm);cursor:pointer;}
+.colab-row:active{background:#3a3a3a;}
+.colab-info{display:flex;flex-direction:column;gap:2px;}
+.colab-name{font-size:13px;font-weight:600;color:var(--white);}
+.colab-date{font-size:11px;color:var(--gray);}
+.colab-right{display:flex;align-items:center;gap:8px;}
+.colab-pct{font-family:'Montserrat',sans-serif;font-weight:700;font-size:15px;}
+.colab-actions{display:flex;gap:6px;margin-top:4px;}
+.btn-reeval{flex:1;padding:8px;background:var(--gold);color:var(--black);font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;border:none;border-radius:var(--radius-sm);cursor:pointer;}
+.btn-ver{flex:1;padding:8px;background:transparent;color:var(--gold);font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--gold-dark);border-radius:var(--radius-sm);cursor:pointer;}
+.btn-del{padding:8px 12px;background:var(--red-bg);color:var(--red);font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;border:1px solid var(--red);border-radius:var(--radius-sm);cursor:pointer;}
+.nueva-eval-local{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:transparent;color:var(--gold);font-size:12px;font-weight:600;border:1px dashed var(--gold-dark);border-radius:var(--radius-sm);cursor:pointer;width:100%;}
+.ver-mas-btn{text-align:center;padding:10px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;letter-spacing:1px;text-transform:uppercase;}
+
+/* Bottom nav */
+.bottom-nav{background:var(--dark);border-top:1px solid #2a2a2a;display:flex;position:sticky;bottom:0;}
+.nav-btn{flex:1;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:color .2s;color:var(--gray);font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:600;border:none;background:none;}
+.nav-btn.active{color:var(--gold);}
+.nav-icon{font-size:20px;}
+
+/* TENDENCIAS */
+#screen-tendencias{background:var(--black);}
+.tend-body{padding:20px;flex:1;display:flex;flex-direction:column;gap:20px;padding-bottom:80px;}
+.tend-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--radius);padding:16px;}
+.tend-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.tend-card-name{font-weight:600;font-size:14px;color:var(--white);}
+.tend-card-pct{font-family:'Montserrat',sans-serif;font-weight:800;font-size:20px;}
+.tend-bar-wrap{background:#333;border-radius:4px;height:6px;overflow:hidden;}
+.tend-bar{height:100%;border-radius:4px;transition:width .6s ease;}
+.tend-dates{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.tend-dot-wrap{display:flex;flex-direction:column;align-items:center;}
+.tend-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--black);}
+.tend-dot-label{font-size:9px;color:var(--gray);text-align:center;margin-top:2px;}
+.riesgo-card{border-radius:var(--radius);padding:14px 16px;display:flex;gap:14px;align-items:flex-start;margin-bottom:10px;}
+.riesgo-pct{font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;min-width:50px;}
+.riesgo-text .riesgo-title{font-weight:700;font-size:13px;margin-bottom:3px;}
+.riesgo-text .riesgo-desc{font-size:12px;color:#ccc;line-height:1.5;}
+
+/* FORMULARIO */
+#screen-form{background:var(--black);}
+.form-header-bar{background:var(--dark);border-bottom:1px solid #2a2a2a;padding:12px 20px;position:sticky;top:0;z-index:90;}
+.form-progress-wrap{display:flex;align-items:center;gap:12px;margin-top:8px;}
+.form-progress-bar-outer{flex:1;background:#333;border-radius:4px;height:5px;}
+.form-progress-bar{height:100%;border-radius:4px;background:var(--gold);transition:width .4s ease;width:0%;}
+.form-progress-text{font-size:11px;color:var(--gray);white-space:nowrap;}
+.form-meta{display:flex;gap:16px;flex-wrap:wrap;margin-top:6px;}
+.form-meta span{font-size:12px;color:var(--gray);}
+.form-meta strong{color:var(--white);}
+.form-cabecera{padding:16px 20px;background:var(--dark2);border-bottom:1px solid #2a2a2a;display:flex;flex-direction:column;gap:12px;}
+
+/* Selector módulos */
+.mod-selector{padding:14px 20px;background:var(--dark);border-bottom:1px solid #2a2a2a;}
+.mod-selector-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:10px;}
+.mod-toggle-wrap{display:flex;flex-wrap:wrap;gap:8px;}
+.mod-toggle{padding:8px 14px;border-radius:20px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;border:1.5px solid #444;background:var(--dark2);color:var(--gray);display:inline-flex;align-items:center;gap:5px;-webkit-tap-highlight-color:transparent;}
+.mod-toggle.active{background:var(--gold);color:var(--black);border-color:var(--gold);}
+
+/* Leyenda */
+.legend-bar{display:flex;flex-wrap:wrap;gap:8px 16px;background:var(--dark);border-bottom:1px solid #2a2a2a;padding:12px 20px;font-size:12px;color:var(--gray);position:sticky;top:73px;z-index:89;}
+.legend-bar span{display:flex;align-items:center;gap:6px;font-weight:500;}
+.lbadge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:10px;font-weight:700;color:white;flex-shrink:0;}
+
+.form-body{padding:20px;display:flex;flex-direction:column;gap:24px;padding-bottom:100px;}
+.modulo-block{display:flex;flex-direction:column;gap:10px;}
+.modulo-header{background:var(--dark2);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;gap:10px;}
+.modulo-num{width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--black);font-family:'Montserrat',sans-serif;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.modulo-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:#5DCAA5;}
+.modulo-tag{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#5DCAA5;margin-left:4px;}
+
+/* Banner hospitalidad */
+.hosp-banner{background:linear-gradient(135deg,#1a1a0a,#2a2500);border:1px solid var(--gold-dark);border-radius:var(--radius);padding:24px 20px;text-align:center;margin:0 20px 4px;}
+.hosp-org{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-dark);margin-bottom:10px;}
+.hosp-title{font-family:'Montserrat',sans-serif;font-weight:900;font-size:28px;color:var(--gold);line-height:1.1;margin-bottom:8px;}
+.hosp-sub{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:12px;}
+.hosp-line{width:40px;height:2px;background:var(--gold-dark);margin:0 auto;}
+
+.item-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--radius);padding:14px;transition:border-color .2s;}
+.item-card.answered{border-color:#3a3a2a;}
+.item-num{font-size:10px;color:var(--gold);font-weight:700;margin-bottom:4px;}
+.item-label{font-size:13px;color:var(--white);margin-bottom:10px;line-height:1.5;}
+.item-label strong{font-weight:700;}
+.score-btns{display:flex;gap:6px;}
+.score-btn{flex:1;padding:9px 4px;background:var(--dark2);border:1px solid #333;border-radius:var(--radius-sm);color:var(--gray);font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:all .15s;text-align:center;}
+.score-btn:active{transform:scale(.95);}
+.score-btn.sel-1{background:#3d1010;border-color:var(--red);color:var(--red);}
+.score-btn.sel-2{background:#3d2e0a;border-color:var(--yellow);color:var(--yellow);}
+.score-btn.sel-3{background:#1a3020;border-color:#27ae60;color:#27ae60;}
+.score-btn.sel-4{background:var(--green-bg);border-color:var(--green);color:var(--green);}
+.score-btn.sel-na{background:#222;border-color:#555;color:var(--gray);}
+.score-labels{display:flex;gap:6px;margin-top:5px;}
+.score-label{flex:1;font-size:8px;color:var(--gray);text-align:center;}
+
+/* Guía técnica */
+.guide-toggle{margin-top:10px;font-size:11px;color:#5DCAA5;cursor:pointer;display:flex;align-items:center;gap:4px;background:none;border:none;padding:0;font-family:'Inter',sans-serif;}
+.guide-panel{margin-top:8px;background:#0F1F18;border-left:2px solid #5DCAA5;border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:10px 12px;font-size:12px;color:#9dd;line-height:1.6;display:none;}
+.guide-panel.open{display:block;}
+.guide-panel .guide-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#5DCAA5;margin-bottom:6px;}
+.guide-panel ul{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.guide-panel li{font-size:12px;color:#aaa;padding:3px 0;border-bottom:1px solid #1a3028;}
+.guide-panel li:last-child{border-bottom:none;}
+.guide-resp{font-size:11px;color:#5DCAA5;font-style:italic;padding-left:12px;display:block;margin-top:2px;}
+
+/* Hospitalidad toggle */
+.hosp-toggle{margin-top:6px;font-size:11px;color:var(--gold);cursor:pointer;display:flex;align-items:center;gap:4px;background:none;border:none;padding:0;font-family:'Inter',sans-serif;}
+.hosp-panel{margin-top:8px;background:#1a1500;border-left:2px solid var(--gold-dark);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:10px 12px;font-size:12px;color:#ccc;line-height:1.6;display:none;}
+.hosp-panel.open{display:block;}
+
+/* Comentario por ítem */
+.item-comment-btn{background:none;border:none;cursor:pointer;color:var(--gray);font-size:18px;padding:0 2px;flex-shrink:0;opacity:.5;transition:opacity .2s;line-height:1;margin-left:4px;}
+.item-comment-btn:hover{opacity:1;color:var(--gold);}
+.item-comment-wrap{display:none;margin-top:8px;}
+.item-comment-wrap.open{display:block;}
+.item-comment-wrap textarea{width:100%;background:var(--dark2);border:1px solid #333;border-radius:var(--radius-sm);padding:8px 10px;font-family:'Inter',sans-serif;font-size:12px;color:var(--white);resize:vertical;min-height:44px;outline:none;transition:border-color .2s;}
+.item-comment-wrap textarea:focus{border-color:var(--gold);}
+
+/* Obs hospitalidad */
+.obs-hosp-wrap{background:#1a1500;border:1px solid var(--gold-dark);border-radius:var(--radius-sm);padding:12px;margin-top:10px;}
+.obs-hosp-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+.obs-hosp-wrap textarea{width:100%;background:transparent;border:none;font-family:'Inter',sans-serif;font-size:13px;color:var(--white);resize:vertical;min-height:50px;outline:none;}
+
+/* Form footer */
+.form-footer{position:fixed;bottom:0;left:0;right:0;background:var(--dark);border-top:1px solid #2a2a2a;padding:12px 20px;z-index:200;}
+
+/* RESULTADO */
+#screen-resultado{background:var(--black);}
+.resultado-body{padding:20px;flex:1;display:flex;flex-direction:column;gap:16px;padding-bottom:40px;}
+.resultado-hero{border-radius:var(--radius);padding:24px 20px;text-align:center;}
+.resultado-hero.aprobado{background:var(--green-bg);border:1px solid var(--green);}
+.resultado-hero.observado{background:var(--yellow-bg);border:1px solid var(--yellow);}
+.resultado-hero.urgente{background:var(--red-bg);border:1px solid var(--red);}
+.resultado-pct{font-family:'Montserrat',sans-serif;font-weight:900;font-size:64px;line-height:1;}
+.resultado-hero.aprobado .resultado-pct{color:var(--green);}
+.resultado-hero.observado .resultado-pct{color:var(--yellow);}
+.resultado-hero.urgente .resultado-pct{color:var(--red);}
+.resultado-estado{font-family:'Montserrat',sans-serif;font-weight:800;font-size:16px;margin-top:8px;margin-bottom:4px;}
+.resultado-local{font-size:13px;color:#aaa;}
+.modulo-result{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;}
+.modulo-result-pct{font-family:'Montserrat',sans-serif;font-weight:900;font-size:26px;min-width:58px;text-align:center;}
+.modulo-result-info{flex:1;}
+.modulo-result-name{font-weight:600;font-size:13px;color:var(--white);margin-bottom:4px;}
+.modulo-result-bar-outer{background:#333;border-radius:4px;height:5px;}
+.modulo-result-bar{height:100%;border-radius:4px;}
+.modulo-result-badge{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:5px;}
+
+/* Spinner / Toast */
+.spinner-wrap{display:flex;align-items:center;justify-content:center;padding:40px;}
+.spinner{width:36px;height:36px;border:3px solid #333;border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark3);color:var(--white);padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;border:1px solid #3a3a3a;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Autocomplete local */
+.autocomplete-wrap{position:relative;}
+.autocomplete-list{position:absolute;top:100%;left:0;right:0;background:var(--dark2);border:1px solid var(--gold-dark);border-radius:var(--radius-sm);z-index:300;max-height:200px;overflow-y:auto;display:none;}
+.autocomplete-list.open{display:block;}
+.autocomplete-item{padding:10px 14px;font-size:14px;cursor:pointer;border-bottom:1px solid #333;}
+.autocomplete-item:hover,.autocomplete-item:active{background:var(--dark3);color:var(--gold);}
+.autocomplete-item:last-child{border-bottom:none;}
+
+
+/* VER EVALUACIÓN */
+.ver-eval-header{background:var(--dark2);border-radius:var(--radius);padding:16px;margin-bottom:4px;}
+.ver-eval-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.ver-eval-field{display:flex;flex-direction:column;gap:2px;}
+.ver-eval-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);}
+.ver-eval-value{font-size:13px;font-weight:600;color:var(--white);}
+.ver-mod-block{display:flex;flex-direction:column;gap:6px;}
+.ver-mod-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:#5DCAA5;padding:8px 12px;background:var(--dark2);border-radius:var(--radius-sm);}
+.ver-item{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--radius-sm);padding:10px 12px;}
+.ver-item-label{font-size:12px;color:#ccc;margin-bottom:6px;line-height:1.4;}
+.ver-item-score{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.ver-item-score.s1{background:#3d1010;color:var(--red);border:1px solid var(--red);}
+.ver-item-score.s2{background:#3d2e0a;color:var(--yellow);border:1px solid var(--yellow);}
+.ver-item-score.s3{background:#1a3020;color:#27ae60;border:1px solid #27ae60;}
+.ver-item-score.s4{background:var(--green-bg);color:var(--green);border:1px solid var(--green);}
+.ver-item-score.sna{background:#222;color:var(--gray);border:1px solid #555;}
+.ver-item-comment{margin-top:6px;padding:6px 10px;background:#1a1a1a;border-left:2px solid var(--gold-dark);border-radius:0 4px 4px 0;font-size:11px;color:#bbb;font-style:italic;}
+.ver-score-total{background:var(--dark2);border-radius:var(--radius);padding:16px;display:flex;align-items:center;justify-content:space-between;}
+
+@media(max-width:480px){
+  .hosp-title{font-size:22px;}
+  .score-btn{padding:8px 2px;font-size:13px;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="screen-login" class="screen active">
+  <div class="login-logo">SisCap</div>
+  <div class="login-sub">Sistema de Capacitación v2</div>
+  <div class="login-card">
+    <h2>Iniciar sesión</h2>
+    <div class="field"><label>Usuario</label><input type="text" id="login-user" placeholder="Tu usuario" autocomplete="off" autocapitalize="none"/></div>
+    <div class="field"><label>Contraseña</label><input type="password" id="login-pass" placeholder="••••••••"/></div>
+    <button class="btn-primary" onclick="doLogin()">Ingresar</button>
+    <div class="error-msg" id="login-error"></div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div id="screen-home" class="screen">
+  <div class="app-header">
+    <div><div class="logo">SisCap</div><div class="badge">v2.0</div></div>
+    <div class="header-right">
+      <button class="config-btn" onclick="showToast('Configuración próximamente')" title="Configuración">⚙</button>
+      <div class="header-user">
+        <div class="avatar" id="home-avatar">G</div>
+        <div style="font-size:13px;color:var(--white);font-weight:500" id="home-name">Capacitador</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-body">
+    <!-- Stats -->
+    <div>
+      <div class="section-title">Resumen</div>
+      <div class="stat-grid">
+        <div class="stat-card gold"><div class="stat-label">Evaluaciones</div><div class="stat-value" id="stat-total">—</div><div class="stat-sub">registradas</div></div>
+        <div class="stat-card"><div class="stat-label">Promedio red</div><div class="stat-value" id="stat-prom">—</div><div class="stat-sub">% general</div></div>
+        <div class="stat-card"><div class="stat-label">Aprobadas</div><div class="stat-value" style="color:var(--green)" id="stat-aprobadas">—</div><div class="stat-sub">≥ 80%</div></div>
+        <div class="stat-card"><div class="stat-label">Con alerta</div><div class="stat-value" style="color:var(--red)" id="stat-alertas">—</div><div class="stat-sub">< 60%</div></div>
+      </div>
+    </div>
+
+    <!-- Alerta sin evaluar -->
+    <div id="alert-sin-evaluar" style="display:none">
+      <div class="section-title">⚠ Alertas</div>
+      <div class="alert-strip"><div><div class="alert-title">Locales sin evaluar (+30 días)</div><div class="alert-list" id="alert-sin-lista"></div></div></div>
+    </div>
+
+    <!-- CTA -->
+    <button class="cta-eval" onclick="irAFormulario()">
+      <div><div class="cta-text">Nueva evaluación</div><div class="cta-sub">Iniciar formulario completo</div></div>
+      <div style="font-size:24px">→</div>
+    </button>
+
+    <!-- Sucursales -->
+    <div>
+      <div class="section-title">Últimas evaluaciones</div>
+      <div class="search-wrap" style="margin-bottom:12px">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" id="suc-search" placeholder="Buscar sucursal..." oninput="filtrarSucursales()" autocomplete="off"/>
+      </div>
+      <div class="suc-list" id="suc-list"><div class="spinner-wrap"><div class="spinner"></div></div></div>
+      <div class="ver-mas-btn" id="ver-mas-btn" style="display:none" onclick="toggleVerMas()">▼ Ver más sucursales</div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-btn active" onclick="showTab('home')"><span class="nav-icon">🏠</span>Inicio</button>
+    <button class="nav-btn" onclick="irAFormulario()"><span class="nav-icon">✏️</span>Evaluar</button>
+  </div>
+</div>
+
+
+<!-- FORMULARIO -->
+<div id="screen-form" class="screen">
+  <div class="form-header-bar">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <button class="btn-secondary" style="width:auto;padding:6px 14px;font-size:11px" onclick="showTab('home')">← Volver</button>
+      <div style="font-family:Montserrat;font-weight:800;font-size:16px;color:var(--gold)">Nueva evaluación</div>
+      <div style="width:70px"></div>
+    </div>
+    <div class="form-progress-wrap">
+      <div class="form-progress-bar-outer"><div class="form-progress-bar" id="form-progress-bar"></div></div>
+      <div class="form-progress-text" id="form-progress-text">0 / 44</div>
+    </div>
+    <div class="form-meta">
+      <span>Local: <strong id="form-local-label">—</strong></span>
+      <span>Evaluado: <strong id="form-evaluado-label">—</strong></span>
+    </div>
+  </div>
+
+  <!-- Cabecera -->
+  <div class="form-cabecera">
+    <div class="field"><label>Fecha</label><input type="date" id="f-fecha"/></div>
+    <div class="field">
+      <label>Local / Sucursal</label>
+      <div class="autocomplete-wrap">
+        <input type="text" id="f-local" placeholder="Buscar sucursal..." autocomplete="off" oninput="filtrarLocales()" onfocus="filtrarLocales()"/>
+        <div class="autocomplete-list" id="local-list"></div>
+      </div>
+    </div>
+    <div class="field"><label>Nombre del colaborador</label><input type="text" id="f-evaluado" placeholder="Nombre completo" oninput="updateFormMeta()"/></div>
+    <div class="field"><label>Capacitador</label><select id="f-evaluador"><option value="">— Seleccioná —</option><option>Gabriel Busquets</option><option>Tomás Ojeda</option><option>Ever Rodríguez</option><option>Lourdes</option><option>Nicolás López</option><option>Iván Herrera</option></select></div>
+    <div class="field"><label>Tipo</label><select id="f-tipo"><option value="">— Seleccioná —</option><option>Inicial</option><option>Refuerzo</option><option>Seguimiento</option></select></div>
+    <div class="field"><label>Rol</label><select id="f-rol"><option value="">— Seleccioná —</option><option>Colaborador</option><option>Responsable</option></select></div>
+    <div class="field"><label>Antigüedad</label><select id="f-antiguedad"><option value="">— Seleccioná —</option><option>Menos de 1 mes</option><option>1 a 3 meses</option><option>3 a 6 meses</option><option>Más de 6 meses</option></select></div>
+  </div>
+
+  <!-- Selector módulos -->
+  <div class="mod-selector">
+    <div class="mod-selector-label">Módulos a evaluar — desactivá los que no aplican</div>
+    <div class="mod-toggle-wrap" id="mod-toggles">
+      <button class="mod-toggle active" onclick="toggleMod(this,'mod1')">✓ 01 · Equipamiento</button>
+      <button class="mod-toggle active" onclick="toggleMod(this,'mod2')">✓ 02 · Cafetería</button>
+      <button class="mod-toggle active" onclick="toggleMod(this,'mod3')">✓ 03 · Heladería</button>
+      <button class="mod-toggle active" onclick="toggleMod(this,'mod4')">✓ 04 · Icepops</button>
+      <button class="mod-toggle active" onclick="toggleMod(this,'mod5')">✓ 05 · Chocolatería</button>
+      <button class="mod-toggle active" onclick="toggleMod(this,'mod6')">✓ 06 · Sistema y Caja</button>
+      <button class="mod-toggle active" onclick="toggleMod(this,'mod7')">✓ 07 · Atención al Cliente</button>
+    </div>
+  </div>
+
+  <!-- Leyenda escala -->
+  <div class="legend-bar">
+    <span><span class="lbadge" style="background:#c0392b">1</span> <strong>Inicial</strong> — no lo conoce o no puede hacerlo solo</span>
+    <span><span class="lbadge" style="background:#d35400">2</span> <strong>En proceso</strong> — lo entiende pero necesita acompañamiento</span>
+    <span><span class="lbadge" style="background:#f39c12">3</span> <strong>Logrado</strong> — lo hace correctamente de forma autónoma</span>
+    <span><span class="lbadge" style="background:#27ae60">4</span> <strong>Destacado</strong> — lo domina y puede enseñárselo a otros</span>
+    <span><span class="lbadge" style="background:#7f8c8d;font-size:9px">NA</span> <strong>No aplica</strong> — el ítem no corresponde al formato de este local</span>
+  </div>
+
+  <div class="form-body" id="form-body"></div>
+
+  <div class="form-footer">
+    <button class="btn-primary" id="btn-enviar" onclick="enviarFormulario()">Enviar evaluación</button>
+  </div>
+</div>
+
+<!-- RESULTADO -->
+<div id="screen-resultado" class="screen">
+  <div class="app-header">
+    <div><div class="logo">SisCap</div><div class="badge">Resultado</div></div>
+    <button class="btn-secondary" style="width:auto;padding:6px 14px;font-size:11px" onclick="showTab('home')">Ir al inicio</button>
+  </div>
+  <div class="resultado-body">
+    <div class="resultado-hero" id="resultado-hero">
+      <div class="resultado-pct" id="resultado-pct">—</div>
+      <div class="resultado-estado" id="resultado-estado">—</div>
+      <div class="resultado-local" id="resultado-local">—</div>
+    </div>
+    <div><div class="section-title">Detalle por módulo</div><div style="display:flex;flex-direction:column;gap:8px" id="resultado-modulos"></div></div>
+    <button class="btn-green" id="btn-pdf" onclick="generarPDF()">⬇ Descargar PDF</button>
+    <button class="btn-primary" onclick="nuevaEvaluacion()">Nueva evaluación</button>
+    <button class="btn-secondary" onclick="showTab('home')">Volver al inicio</button>
+  </div>
+</div>
+
+<!-- VER EVALUACIÓN -->
+<div id="screen-ver" class="screen">
+  <div class="app-header">
+    <div><div class="logo">SisCap</div><div class="badge">Evaluación</div></div>
+    <button class="btn-secondary" style="width:auto;padding:6px 14px;font-size:11px" onclick="showTab('home')">← Volver</button>
+  </div>
+  <div style="padding:20px;flex:1;display:flex;flex-direction:column;gap:16px;padding-bottom:40px" id="ver-body">
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzqN6VfiauS9oSbotGuzIEqn1WdHvpZLsSY9eHZWzIzsBB3l06FLHojZihRbDj12PaMBA/exec';
+const UMBRAL_APROBADO = 80;
+const UMBRAL_OBSERVADO = 60;
+const DIAS_ALERTA = 30;
+const SUCURSALES_MAX = 5;
+
+const USUARIOS = {
+  'gabi':    { pass:'cap2024', nombre:'Gabriel Busquets', rol:'Jefe Capacitación', isAdmin:true },
+  'tomas':   { pass:'cap2024', nombre:'Tomás Ojeda',      rol:'Capacitador CABA' },
+  'ever':    { pass:'cap2024', nombre:'Ever Rodríguez',   rol:'Capacitador CABA' },
+  'lourdes': { pass:'cap2024', nombre:'Lourdes',          rol:'Capacitadora MdP' },
+  'nico':    { pass:'cap2024', nombre:'Nicolás López',    rol:'Capacitador MdP' },
+  'ivan':    { pass:'cap2024', nombre:'Iván Herrera',     rol:'Capacitador Córdoba' },
+};
+
+const LOCALES = [
+  "Lucciano's Recoleta","Lucciano's Olivos","Lucciano's Nordelta","Lucciano's Pilar",
+  "Lucciano's San Isidro","Lucciano's Palermo","Lucciano's Belgrano",
+  "Lucciano's Nuevocentro Shopping","Lucciano's Abasto","Lucciano's Alto Palermo",
+  "Lucciano's Unicenter","Lucciano's DOT","Lucciano's Quilmes","Lucciano's Lanús",
+  "Lucciano's Adrogué","Lucciano's Floresta","Lucciano's Villa del Parque",
+  "Lucciano's Rosario","Lucciano's Córdoba","Lucciano's Mar del Plata"
+];
+
+// ============================================================
+// MÓDULOS — ítems reales del index original
+// ============================================================
+const MODS = [
+  { num:1, id:'mod1', nombre:'Equipamiento', tag:'', items:[
+    { id:'M1I1', n:1,  label:'Identifica y opera correctamente las <strong>máquinas del sector</strong>',
+      guia:['¿Qué máquinas hay en el sector? Pedile que las nombre.','¿Para qué sirve cada una? Que explique la función.','¿Cómo se enciende y se apaga cada máquina?'] },
+    { id:'M1I2', n:2,  label:'Conoce y aplica los <strong>estándares de limpieza</strong> de cada equipo',
+      guia:['¿Cómo se realiza la limpieza profunda de las vitrinas?','¿Cómo se limpia la máquina de cafetería? Que describa el proceso.','¿Cada cuánto se limpian los armarios y el freezer?'] },
+    { id:'M1I3', n:3,  label:'Mantiene el <strong>orden del sector</strong> durante la operación', guia:[] },
+    { id:'M1I4', n:4,  label:'Conoce y aplica las <strong>normas de cuidado y seguridad</strong>', guia:[] },
+  ]},
+  { num:2, id:'mod2', nombre:'Cafetería', tag:'', items:[
+    { id:'M2I1', n:5,  label:'Conoce cuál es la <strong>variedad de café que ofrecemos</strong>',
+      guia:['¿Qué variedades de café ofrecemos?','Esperado: espresso, espresso lungo, caffè latte, cappuccino y cafés especiales','¿En qué orden se le presenta al cliente?','Primero el tamaño, luego cómo lo quiere'] },
+    { id:'M2I2', n:6,  label:'Identifica y reconoce qué son y <strong>cómo se hacen los especiales</strong>',
+      guia:['¿Qué es un café especial?','Esperado: un caffè latte que lleva dos push de salsa','¿Qué pasa si la receta lleva dos salsas distintas?','Esperado: un push de cada una'] },
+    { id:'M2I3', n:7,  label:'Conoce y aplica los procesos de <strong>bollería, pastería y rotación de productos</strong>',
+      guia:['¿Cuándo se saca la bollería?','Esperado: un día antes para que leude','¿Conoce los vencimientos?','Tortas 5 días — medialunas y croissant diario — roles y pain cada 2 días','¿Cuándo se coloca el almíbar?','Esperado: cuando está caliente para que se adhiera mejor'] },
+    { id:'M2I4', n:8,  label:'Utiliza correctamente <strong>vajilla, bandeja y elementos de trabajo</strong>', guia:[] },
+    { id:'M2I5', n:9,  label:'Respeta el <strong>orden de preparación y tiempos de servicio</strong>', guia:[] },
+    { id:'M2I6', n:10, label:'Limpia correctamente la <strong>cafetera y el sector</strong> al finalizar', guia:[] },
+  ]},
+  { num:3, id:'mod3', nombre:'Heladería', tag:'', items:[
+    { id:'M3I1',  n:11, label:'Prepara <strong>cucuruchos, vasos y potes</strong> con gramajes correctos',
+      guia:['¿Sabe los gramajes por tamaño?','Vaso chico 120-130g — mediano 140-150g — grande 170-180g — cucurucho 190-200g'] },
+    { id:'M3I2',  n:12, label:'Conoce y prepara <strong>batidos, smoothies, milkshakes y gelato shakes</strong>',
+      guia:['¿Qué es un smoothie?','2 bochas frutales al agua y 200ml de soda','¿Qué es un milkshake?','2 bochas a elección, 200ml de leche, salsa a elección y crema','¿Qué es un gelato shake?','Helado, leche, café y crema — 100ml de leche y espresso con cápsula ristretto'] },
+    { id:'M3I3',  n:13, label:'Conoce y aplica correctamente el <strong>proceso de pase de helado</strong>',
+      guia:['Pedile que describa el proceso paso a paso.','Si lo explica correctamente de forma autónoma → 3. Si además puede enseñárselo a otro → 4'] },
+    { id:'M3I4',  n:14, label:'Identifica sabores con <strong>variegatos y fruta decorativa</strong>',
+      guia:['¿Qué helados llevan dulce de leche natural?','Banana split dulce, peanut caramel, tramontana','¿Cuánto se fracciona el crumble de pistacho?','200 gramos','¿Cómo se decora el tiramisú al pistacho?','¿Para qué se usa la stracciatella y cómo se aplica?'] },
+    { id:'M3I5',  n:15, label:'Utiliza <strong>guantes, vaquetas y trapo específico</strong> correctamente',
+      guia:['¿Qué elementos usa durante el pase?','Guantes, mesada limpia, trapo específico, armario ordenado'] },
+    { id:'M3I6',  n:16, label:'Demuestra <strong>baño de chocolate y peinado de sabores</strong>',
+      guia:['¿Cómo se hace el baño de chocolate?','¿Cuál es la temperatura ideal?','Entre 30 y 40 grados','¿Cómo se llama el chocolate que va en la chocolatera?','Mapricoa','¿Cómo se hace el peinado?','3 olas y una pequeña al final'] },
+    { id:'M3I7',  n:17, label:'Realiza el <strong>guardado correcto post pase</strong>',
+      guia:['¿Cómo se guarda la vaqueta al finalizar?','Dentro del armario con bolsa o domo'] },
+    { id:'M3I8',  n:18, label:'Identifica <strong>vasos de cortesía y cialdinos</strong>',
+      guia:['¿Cuántos vasitos de cortesía van con cada presentación?','2 cucuruchos o 4 vasitos por kilo — 1 cucurucho o 2 vasitos por medio kilo','¿Qué son los cialdinos?','Obleas de uso exclusivo para cucuruchos'] },
+    { id:'M3I9',  n:19, label:'Comprende el impacto de <strong>no anticiparse al rush</strong>',
+      guia:['¿Qué pasa si no se reponen las vaquetas Dubai con tiempo?','Saldrán duras, generando demoras','¿Qué pasa si no hay icepops y piden uno de mandarina?','Hay que ir a la cámara a buscarlo, generando demora'] },
+    { id:'M3I10', n:20, label:'Conoce los sabores <strong>Kosher: Dayri/Crema y Parve/Vegano</strong>', guia:[] },
+  ]},
+  { num:4, id:'mod4', nombre:'Icepops', tag:'', items:[
+    { id:'M4I1', n:21, label:'Identifica variedad de <strong>icepops, cannolis y geladots</strong>',
+      guia:['Pedí 2 o 3 icepops al azar — que dé categoría y detalle.','Ej: Peanut → helado de maní con DDL y caramelo, cubierto en chocolate con leche y maní salado','¿Qué son los cannolis?','Obleas rellenas de helado cubiertas en chocolate','¿Qué son los geladots?','Bombones helados cubiertos en chocolate'] },
+    { id:'M4I2', n:22, label:'Conoce el <strong>formato de mini icepops y presentación geladots</strong>',
+      guia:['¿Cómo vienen los mini icepops?','4 unidades por caja, 6 variedades','¿En qué presentaciones vienen los geladots?','Mediano 18 unidades — grande 32 unidades'] },
+    { id:'M4I3', n:23, label:'Comprende y aplica el criterio de <strong>rotación al reponer la exhibición</strong> de icepops',
+      guia:['¿Cómo ordenás los icepops cuando reposés la vitrina?','Primero entra primero sale — los nuevos van atrás, los más antiguos al frente'] },
+    { id:'M4I4', n:24, label:'Identifica y sabe explicar qué son los <strong>productos gluten free y veganos</strong>',
+      guia:['¿Qué son los gluten free?','Potes individuales de un solo sabor, 190g — hay 8 variedades','¿Cuáles son los veganos?','Sorbete dark y sorbete Patagonia'] },
+    { id:'M4I5', n:25, label:'Conoce el <strong>contenido de azúcar</strong> en helados y excepciones',
+      guia:['¿Todos los productos tienen azúcar?','Sí, pero se puede ofrecer la opción cero% sin azúcar añadida y las tabletas'] },
+  ]},
+  { num:5, id:'mod5', nombre:'Chocolatería', tag:'', items:[
+    { id:'M5I1', n:26, label:'Identifica variedad de <strong>alfajores, conitos y vieneses</strong>',
+      guia:['¿Cuántas variedades de alfajores hay y en qué presentaciones?','6 variedades — unidad, caja de 6, caja de 10, mini alfajor surtidos y pistacho x12','¿Cuántos conitos hay y en qué presentaciones?','Por unidad y cajas de 6','¿Qué son los vieneses?','Obleas rellenas de crema cubiertas en chocolate — vainilla, pistacho y chocolate fondente'] },
+    { id:'M5I2', n:27, label:'Conoce y sabe armar <strong>orden de cajas mixtas</strong>',
+      guia:['¿Cómo se arma una caja mixta de 6? Que explique el orden.','¿Cómo se arma una caja mixta de 10? Que explique el orden.'] },
+    { id:'M5I3', n:28, label:'Identifica <strong>tabletas, avellas y frascos de DDL</strong>',
+      guia:['¿Cuántas tabletas tenemos?','16 — que mencione dos de chocolate con leche y dos de chocolate blanco que no sean las clásicas','¿Qué son las avellas y cuáles hay?','¿Qué otros productos de este segmento vendemos?','También dulce de leche en frascos'] },
+    { id:'M5I4', n:29, label:'Conoce y sabe usar <strong>la rotuladora</strong>',
+      guia:['¿Cuál es el vencimiento de los alfajores y conitos clásicos?','Alfajores 70 días — conitos 55 días','¿Y los pink y pistacho?','Alfajores 60 días — conitos 45 días'] },
+    { id:'M5I5', n:30, label:'Arma <strong>pack por 6</strong> y conoce pack Dubai',
+      guia:['¿Las tabletas del pack vienen con orden preestablecido?','Orden establecido — caja blanca y caja negra. El cliente puede personalizar si compra 6, con caja de cortesía'] },
+    { id:'M5I6', n:31, label:'Conoce la <strong>lata corazón con bombones y lata carrusel</strong>',
+      guia:['¿Qué tiene la lata corazón y cuántos bombones trae?','12 bombones de chocolate con leche rellenos de dulce de leche','¿Cuántas variedades de lata carrusel hay?','3 variedades — verde (pistacho), bordo (clásica), negra (dark)'] },
+  ]},
+  { num:6, id:'mod6', nombre:'Sistema y Caja', tag:'', items:[
+    { id:'M6I1', n:32, label:'Navega y <strong>busca productos en el sistema</strong> correctamente', guia:[] },
+    { id:'M6I2', n:33, label:'Factura en <strong>efectivo, tarjeta y QR</strong>', guia:[] },
+    { id:'M6I3', n:34, label:'Gestiona <strong>cobros divididos, sin cargo, gift card, venta online y factura A</strong>',
+      guia:['¿Sabe hacer un cobro dividido?','¿Sabe gestionar un sin cargo?','¿Sabe operar con gift card?','¿Sabe gestionar venta online?','¿Sabe emitir factura A?'] },
+    { id:'M6I4', n:35, label:'Opera <strong>apertura, cierre y arqueo de caja</strong>', guia:[] },
+    { id:'M6I5', n:36, label:'Conoce y aplica el <strong>uso manual de Mercado Pago</strong> ante imprevistos',
+      guia:['Un cliente está pagando y el sistema se cierra. ¿Qué hacés?','Abrir nuevamente el sistema, marcar los mismos ítems, ir a Mercado Pago, poner manual y cargar el código'] },
+    { id:'M6I6', n:37, label:'Gestiona <strong>nota de crédito, modificación de comprobante y devoluciones MP</strong>',
+      guia:['¿Qué hace una nota de crédito?','Cancela el comprobante','¿Cómo se modifica un comprobante?','NC + refactura el producto + adjunta comprobante original, NC y cupón del POS si aplica','¿Cómo se gestiona una devolución por Mercado Pago?','Se devuelve el efectivo — ajuste de caja con leyenda "devolución por MP y nº de ticket" — NC — se adjunta todo'] },
+    { id:'M6I7', n:38, label:'Comprende la <strong>integración con PedidosYa</strong>',
+      guia:['¿Para qué sirve la integración con PedidosYa?','Para visualizar y reimprimir órdenes','Llegan 5 pedidos y los cadetes no llegan. ¿Qué hacés?','Dar el preparado al cadete para que le llegue la información y acorte el tiempo de demora'] },
+  ]},
+  { num:7, id:'mod7', nombre:'Atención al Cliente', tag:'HOSPITALIDAD', items:[
+    { id:'M7I1', n:39, label:'Recibe al cliente con <strong>actitud cordial y contacto visual</strong>',
+      guia:['¿Cómo recibís a un cliente cuando entra?','Usa bienvenida como sandwich — "hola, ¿cómo estás? bienvenido, ¿cómo te ayudo?"'],
+      hosp:'Observar si crea un momento genuino de conexión, no solo si cumple el protocolo. ¿El cliente se siente visto?'},
+    { id:'M7I2', n:40, label:'Escucha activamente e <strong>interpreta necesidades</strong>',
+      guia:['El cliente ya viene a comprar — ¿cómo lo acompañás desde que pide hasta que cierra?','Usa preguntas cortas — ¿en vasito o cucurucho? ¿con baño de chocolate? ¿querés sumar algo de chocolatería?'],
+      hosp:'¿Demuestra curiosidad genuina por lo que el cliente necesita? ¿O solo ejecuta el pedido?'},
+    { id:'M7I3', n:41, label:'Demuestra <strong>conocimiento del producto y venta sugestiva</strong>',
+      guia:['Si un cliente pide un vaso chico — ¿qué hacés?','Mostrar tamaños con la mano y mencionar que por $500 más puede tener un mediano','Si un cliente pide cualquier vaso — ¿qué sumás?','"¿Lo querés bañado en chocolate?"','¿Cómo cerrás la venta?','Confirmar el pedido y ofrecer sumar alfajor, conito o vienesi'],
+      hosp:'¿La sugerencia se siente natural y genuina o mecánica? ¿Agrega valor al cliente?'},
+    { id:'M7I4', n:42, label:'Responde dudas con <strong>seguridad y resuelve problemas</strong>',
+      guia:[], hosp:'¿Maneja situaciones difíciles con calma? ¿El cliente se va con una solución o con una disculpa?'},
+    { id:'M7I5', n:43, label:'Mantiene <strong>orden y limpieza</strong> durante la atención',
+      guia:[], hosp:'El orden y la limpieza comunican respeto al cliente. ¿El espacio refleja los valores de la marca?'},
+    { id:'M7I6', n:44, label:'Agradece y <strong>solicita reseña</strong> al finalizar',
+      guia:[], hosp:'¿El cierre invita al cliente a volver? ¿Hay un momento de calidez genuino antes de despedirse?'},
+  ]},
+];
+
+// Mapa modId → activo
+const activeModulos = { mod1:true, mod2:true, mod3:true, mod4:true, mod5:true, mod6:true, mod7:true };
+
+// Estado global
+let currentUser = null;
+let respuestas = {};
+let datosResumen = [];
+let mostrandoTodos = false;
+let ultimoResultado = null;
+let precargarLocal = null;
+let precargarEvaluado = null;
+
+// ============================================================
+// LOGIN
+// ============================================================
+function doLogin() {
+  const user = document.getElementById('login-user').value.trim().toLowerCase();
+  const pass = document.getElementById('login-pass').value.trim();
+  const err  = document.getElementById('login-error');
+  if (!USUARIOS[user]) { err.textContent = 'Usuario no encontrado.'; return; }
+  if (USUARIOS[user].pass !== pass) { err.textContent = 'Contraseña incorrecta.'; return; }
+  currentUser = { ...USUARIOS[user], username: user };
+  document.getElementById('home-avatar').textContent = currentUser.nombre.charAt(0).toUpperCase();
+  document.getElementById('home-name').textContent = currentUser.nombre.split(' ')[0];
+  // preseleccionar evaluador
+  const sel = document.getElementById('f-evaluador');
+  for (let i = 0; i < sel.options.length; i++) {
+    if (sel.options[i].text === currentUser.nombre) { sel.selectedIndex = i; break; }
+  }
+  showTab('home');
+  cargarDatos();
+}
+document.getElementById('login-user').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('login-pass').focus(); });
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+// ============================================================
+// NAVEGACIÓN
+// ============================================================
+function showTab(tab) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + tab).classList.add('active');
+  // actualizar nav activo
+  document.querySelectorAll('.bottom-nav .nav-btn').forEach(b => b.classList.remove('active'));
+}
+
+function irAFormulario(preLocal, preEvaluado) {
+  precargarLocal = preLocal || null;
+  precargarEvaluado = preEvaluado || null;
+  buildForm();
+  showTab('form');
+}
+
+function nuevaEvaluacion() {
+  respuestas = {};
+  irAFormulario();
+}
+
+// ============================================================
+// AUTOCOMPLETE LOCAL
+// ============================================================
+function filtrarLocales() {
+  const val = document.getElementById('f-local').value.toLowerCase();
+  const list = document.getElementById('local-list');
+  const filtrados = val.length < 1 ? LOCALES : LOCALES.filter(l => l.toLowerCase().includes(val));
+  if (!filtrados.length) { list.classList.remove('open'); return; }
+  list.innerHTML = filtrados.map(l =>
+    `<div class="autocomplete-item" onclick="seleccionarLocal('${l.replace(/'/g,"\\'")}')">` + l + '</div>'
+  ).join('');
+  list.classList.add('open');
+}
+
+function seleccionarLocal(nombre) {
+  document.getElementById('f-local').value = nombre;
+  document.getElementById('local-list').classList.remove('open');
+  updateFormMeta();
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.autocomplete-wrap')) {
+    document.getElementById('local-list').classList.remove('open');
+  }
+});
+
+// ============================================================
+// DATOS DESDE SHEETS
+// ============================================================
+async function cargarDatos() {
+  try {
+    const res = await fetch(SHEET_URL + '?action=getResumen');
+    const data = await res.json();
+    datosResumen = (data && data.registros) ? data.registros : generarDemoData();
+  } catch(e) {
+    datosResumen = generarDemoData();
+  }
+  renderHome();
+  renderTendencias();
+}
+
+function generarDemoData() {
+  const hoy = new Date();
+  return [
+    { local:"Lucciano's Recoleta",   evaluado:'Ana García',    porcentaje:72, fecha: offsetDate(hoy,5),  evaluador:'Gabriel Busquets' },
+    { local:"Lucciano's Olivos",     evaluado:'Luis Pérez',    porcentaje:88, fecha: offsetDate(hoy,10), evaluador:'Tomás Ojeda' },
+    { local:"Lucciano's Nordelta",   evaluado:'María López',   porcentaje:91, fecha: offsetDate(hoy,35), evaluador:'Gabriel Busquets' },
+    { local:"Lucciano's Palermo",    evaluado:'Carlos Ruiz',   porcentaje:65, fecha: offsetDate(hoy,22), evaluador:'Ever Rodríguez' },
+    { local:"Lucciano's Belgrano",   evaluado:'Sofía Castro',  porcentaje:83, fecha: offsetDate(hoy,8),  evaluador:'Gabriel Busquets' },
+    { local:"Lucciano's San Isidro", evaluado:'Pablo Méndez',  porcentaje:57, fecha: offsetDate(hoy,45), evaluador:'Iván Herrera' },
+    { local:"Lucciano's Recoleta",   evaluado:'Juan Torres',   porcentaje:78, fecha: offsetDate(hoy,2),  evaluador:'Gabriel Busquets' },
+  ];
+}
+
+function offsetDate(d, dias) {
+  const r = new Date(d); r.setDate(r.getDate() - dias);
+  return r.toISOString().split('T')[0];
+}
+
+// ============================================================
+// RENDER HOME
+// ============================================================
+function renderHome() {
+  if (!datosResumen.length) return;
+
+  // agrupar por local → última evaluación
+  const porLocal = {};
+  datosResumen.forEach(r => {
+    if (!porLocal[r.local] || r.fecha > porLocal[r.local].fecha) porLocal[r.local] = r;
+  });
+  const ultimas = Object.values(porLocal);
+
+  // stats
+  document.getElementById('stat-total').textContent = datosResumen.length;
+  const prom = Math.round(ultimas.reduce((s,r) => s+r.porcentaje,0) / ultimas.length);
+  document.getElementById('stat-prom').textContent = prom + '%';
+  document.getElementById('stat-aprobadas').textContent = ultimas.filter(r=>r.porcentaje>=UMBRAL_APROBADO).length;
+  document.getElementById('stat-alertas').textContent = ultimas.filter(r=>r.porcentaje<UMBRAL_OBSERVADO).length;
+
+  // alertas sin evaluar
+  const hoy = new Date();
+  const sinEval = ultimas.filter(r => (hoy - new Date(r.fecha))/86400000 > DIAS_ALERTA);
+  if (sinEval.length) {
+    document.getElementById('alert-sin-evaluar').style.display = 'block';
+    document.getElementById('alert-sin-lista').innerHTML = sinEval.map(r =>
+      `• ${r.local} (hace ${Math.round((hoy-new Date(r.fecha))/86400000)} días)`).join('<br>');
+  }
+
+  // ordenar por peor puntaje
+  ultimas.sort((a,b) => a.porcentaje - b.porcentaje);
+  window._sucursalesRender = ultimas;
+  renderSucursales(ultimas);
+}
+
+function renderSucursales(lista) {
+  const search = (document.getElementById('suc-search').value || '').toLowerCase();
+  let filtradas = search ? lista.filter(r => r.local.toLowerCase().includes(search)) : lista;
+  const mostrar = mostrandoTodos ? filtradas : filtradas.slice(0, SUCURSALES_MAX);
+  const hayMas = !search && filtradas.length > SUCURSALES_MAX;
+
+  document.getElementById('suc-list').innerHTML = mostrar.map(r => {
+    const { estado, colorClass, badgeClass } = getEstado(r.porcentaje);
+    // colaboradores de este local
+    const colabs = datosResumen.filter(x => x.local === r.local)
+      .sort((a,b) => b.fecha.localeCompare(a.fecha));
+    const colabsHTML = colabs.map(c => {
+      const { colorClass: cc } = getEstado(c.porcentaje);
+      const localEnc = c.local.replace(/'/g,"\\'");
+      const evalEnc  = c.evaluado.replace(/'/g,"\\'");
+      const adminDel = (currentUser && currentUser.isAdmin)
+        ? `<button class="btn-del" onclick="event.stopPropagation();eliminarEval(event,'${localEnc}','${evalEnc}','${c.fecha}')">🗑</button>` : '';
+      return `<div class="colab-row" onclick="verEval('${localEnc}','${evalEnc}','${c.fecha}')">
+        <div class="colab-info">
+          <div class="colab-name">${c.evaluado}</div>
+          <div class="colab-date">${formatFecha(c.fecha)} · ${c.evaluador || ''}</div>
+        </div>
+        <div class="colab-right">
+          <span class="colab-pct ${cc}">${c.porcentaje}%</span>
+          <span style="color:var(--gray);font-size:11px">›</span>
+        </div>
+      </div>
+      <div class="colab-actions">
+        <button class="btn-reeval" onclick="event.stopPropagation();irAFormulario('${localEnc}','${evalEnc}')">↺ Re-evaluar</button>
+        ${adminDel}
+      </div>`;
+    }).join('');
+
+    const localEnc2 = r.local.replace(/'/g,"\\'");
+    return `<div class="suc-card" id="scard-${r.local.replace(/\W/g,'_')}">
+      <div class="suc-card-head" onclick="toggleSucursal(this)">
+        <div class="suc-left">
+          <div class="suc-name">${r.local}</div>
+          <div class="suc-date">Última: ${formatFecha(r.fecha)}</div>
+        </div>
+        <div class="suc-right">
+          <div>
+            <div class="suc-pct ${colorClass}">${r.porcentaje}%</div>
+            <div class="badge-estado ${badgeClass}">${estado}</div>
+          </div>
+          <span class="suc-chev">▼</span>
+        </div>
+      </div>
+      <div class="suc-detail">
+        ${colabsHTML}
+        <button class="nueva-eval-local" onclick="irAFormulario('${localEnc2}','')">+ Nueva evaluación en este local</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  const btn = document.getElementById('ver-mas-btn');
+  btn.style.display = hayMas ? 'block' : 'none';
+  btn.textContent = mostrandoTodos ? '▲ Ver menos' : `▼ Ver más sucursales (${filtradas.length - SUCURSALES_MAX} más)`;
+}
+
+function filtrarSucursales() {
+  if (window._sucursalesRender) renderSucursales(window._sucursalesRender);
+}
+
+function toggleVerMas() {
+  mostrandoTodos = !mostrandoTodos;
+  if (window._sucursalesRender) renderSucursales(window._sucursalesRender);
+}
+
+function toggleSucursal(head) {
+  const detail = head.nextElementSibling;
+  const chev   = head.querySelector('.suc-chev');
+  const isOpen = detail.classList.contains('open');
+  // cerrar todos
+  document.querySelectorAll('.suc-detail.open').forEach(d => { d.classList.remove('open'); d.previousElementSibling.querySelector('.suc-chev').classList.remove('open'); });
+  if (!isOpen) { detail.classList.add('open'); chev.classList.add('open'); }
+}
+
+function eliminarEval(e, local, evaluado, fecha) {
+  e.stopPropagation();
+  if (!confirm(`¿Eliminar evaluación de ${evaluado} (${fecha})?`)) return;
+  datosResumen = datosResumen.filter(r => !(r.local===local && r.evaluado===evaluado && r.fecha===fecha));
+  renderHome();
+  renderTendencias();
+  showToast('Evaluación eliminada');
+}
+
+// ============================================================
+// TENDENCIAS
+// ============================================================
+function renderTendencias() {
+  if (!datosResumen.length) return;
+  const porLocal = {};
+  datosResumen.forEach(r => {
+    if (!porLocal[r.local]) porLocal[r.local] = [];
+    porLocal[r.local].push(r);
+  });
+  const hoy = new Date();
+
+  // riesgos
+  const sinEval   = Object.entries(porLocal).filter(([,ev]) => { const u=ev.sort((a,b)=>b.fecha.localeCompare(a.fecha))[0]; return (hoy-new Date(u.fecha))/86400000>DIAS_ALERTA; });
+  const conCaida  = Object.entries(porLocal).filter(([,ev]) => { if(ev.length<2)return false; ev.sort((a,b)=>b.fecha.localeCompare(a.fecha)); return ev[0].porcentaje<ev[1].porcentaje-10; });
+  const criticos  = Object.entries(porLocal).filter(([,ev]) => { const u=ev.sort((a,b)=>b.fecha.localeCompare(a.fecha))[0]; return u.porcentaje<UMBRAL_OBSERVADO; });
+  const total     = Object.keys(porLocal).length;
+
+  document.getElementById('riesgos-wrap').innerHTML = [
+    { n:sinEval.length,  titulo:`Sin evaluar +${DIAS_ALERTA} días`, desc: sinEval.length ? sinEval.map(([l])=>l).join(', ') : 'Todos al día.', riesgo:sinEval.length>0 },
+    { n:conCaida.length, titulo:'Caída entre evaluaciones', desc: conCaida.length ? conCaida.map(([l])=>l).join(', ') : 'Sin caídas detectadas.', riesgo:conCaida.length>0 },
+    { n:criticos.length, titulo:'Estado crítico (< 60%)', desc: criticos.length ? criticos.map(([l])=>l).join(', ') : 'Ningún local crítico.', riesgo:criticos.length>0 },
+  ].map(r => {
+    const c = r.riesgo ? 'var(--red)' : 'var(--green)';
+    const bg = r.riesgo ? 'var(--red-bg)' : 'var(--green-bg)';
+    return `<div class="riesgo-card" style="background:${bg};border:1px solid ${c}">
+      <div class="riesgo-pct" style="color:${c}">${r.n}/${total}</div>
+      <div class="riesgo-text"><div class="riesgo-title" style="color:${c}">${r.titulo}</div><div class="riesgo-desc">${r.desc}</div></div>
+    </div>`;
+  }).join('');
+
+  // evolución
+  document.getElementById('tend-grid').innerHTML = Object.entries(porLocal).map(([local, evals]) => {
+    evals.sort((a,b)=>a.fecha.localeCompare(b.fecha));
+    const ultima = evals[evals.length-1];
+    const { colorClass, barClass } = getEstado(ultima.porcentaje);
+    const dots = evals.slice(-5).map(e => {
+      const { colorHex } = getEstadoHex(e.porcentaje);
+      return `<div class="tend-dot-wrap"><div class="tend-dot" style="background:${colorHex}">${e.porcentaje}%</div><div class="tend-dot-label">${e.fecha.substring(5,7)}</div></div>`;
+    }).join('');
+    return `<div class="tend-card">
+      <div class="tend-card-header"><div class="tend-card-name">${local}</div><div class="tend-card-pct ${colorClass}">${ultima.porcentaje}%</div></div>
+      <div class="tend-bar-wrap"><div class="tend-bar ${barClass}" style="width:${ultima.porcentaje}%"></div></div>
+      <div class="tend-dates">${dots}</div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// FORMULARIO
+// ============================================================
+function buildForm() {
+  // Fecha: hoy, mín hace 7 días
+  const hoy = new Date();
+  const min = new Date(hoy); min.setDate(min.getDate()-7);
+  const toISO = d => d.toISOString().split('T')[0];
+  const fechaEl = document.getElementById('f-fecha');
+  fechaEl.max = toISO(hoy);
+  fechaEl.min = toISO(min);
+  fechaEl.value = toISO(hoy);
+
+  // Precargar local/evaluado si viene de re-evaluar
+  if (precargarLocal) {
+    document.getElementById('f-local').value = precargarLocal;
+    updateFormMeta();
+  }
+  if (precargarEvaluado) {
+    document.getElementById('f-evaluado').value = precargarEvaluado;
+    updateFormMeta();
+  }
+
+  // Resetear respuestas si es nueva
+  if (!precargarLocal && !precargarEvaluado) {
+    respuestas = {};
+    document.getElementById('f-evaluado').value = '';
+    document.getElementById('f-local').value = '';
+    document.getElementById('f-tipo').selectedIndex = 0;
+    document.getElementById('f-rol').selectedIndex = 0;
+    document.getElementById('f-antiguedad').selectedIndex = 0;
+  }
+
+  const body = document.getElementById('form-body');
+  body.innerHTML = '';
+
+  MODS.forEach(mod => {
+    if (!activeModulos[mod.id]) return;
+
+    // Banner hospitalidad antes del módulo 7
+    if (mod.id === 'mod7') {
+      const banner = document.createElement('div');
+      banner.className = 'hosp-banner';
+      banner.innerHTML = `<div class="hosp-org">Lucciano's · Filosofía de Servicio</div>
+        <div class="hosp-title">NUESTRO PROPÓSITO ES<br>CREAR MOMENTOS<br>DE FELICIDAD</div>
+        <div class="hosp-sub">El propósito vence la tarea</div>
+        <div class="hosp-line"></div>`;
+      body.appendChild(banner);
+    }
+
+    const block = document.createElement('div');
+    block.className = 'modulo-block';
+    block.id = 'fmod-' + mod.id;
+    block.innerHTML = `<div class="modulo-header">
+      <div class="modulo-num">${mod.num}</div>
+      <div class="modulo-title">${mod.nombre}</div>
+      ${mod.tag ? `<span class="modulo-tag">· ${mod.tag}</span>` : ''}
+    </div>`;
+
+    mod.items.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'item-card';
+      card.id = 'card-' + item.id;
+
+      let guiaHTML = '';
+      if (item.guia && item.guia.length) {
+        const items = [];
+        for (let i = 0; i < item.guia.length; i += 2) {
+          const pregunta = item.guia[i];
+          const resp = item.guia[i+1] || '';
+          items.push(`<li>${pregunta}${resp ? `<span class="guide-resp">${resp}</span>` : ''}</li>`);
+        }
+        guiaHTML = `<button class="guide-toggle" onclick="togglePanel('gp-${item.id}',this)">💡 Ver guía técnica</button>
+          <div class="guide-panel" id="gp-${item.id}">
+            <div class="guide-title">Preguntas guía — solo capacitador</div>
+            <ul>${items.join('')}</ul>
+          </div>`;
+      }
+
+      let hospHTML = '';
+      if (item.hosp) {
+        hospHTML = `<button class="hosp-toggle" onclick="togglePanel('hp-${item.id}',this)">🤝 Hospitalidad — ¿qué observar?</button>
+          <div class="hosp-panel" id="hp-${item.id}">${item.hosp}</div>`;
+      }
+
+      card.innerHTML = `
+        <div class="item-num">Ítem ${item.id}</div>
+        <div class="item-label">${item.label}</div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <div class="score-btns" style="flex:1">
+            ${[1,2,3,4].map(n=>`<button class="score-btn" onclick="setScore('${item.id}',${n},this)">${n}</button>`).join('')}
+            <button class="score-btn" onclick="setScore('${item.id}','NA',this)">NA</button>
+          </div>
+          <button class="item-comment-btn" onclick="togglePanel('ic-${item.id}',this)" title="Agregar comentario">💬</button>
+        </div>
+        <div class="score-labels">
+          <span class="score-label">Inicial</span><span class="score-label">En proceso</span>
+          <span class="score-label">Logrado</span><span class="score-label">Destacado</span>
+          <span class="score-label">N/A</span><span class="score-label"></span>
+        </div>
+        ${guiaHTML}
+        ${hospHTML}
+        <div class="item-comment-wrap" id="ic-${item.id}">
+          <textarea placeholder="Observación sobre este ítem..." id="ict-${item.id}"></textarea>
+        </div>`;
+
+      block.appendChild(card);
+    });
+
+    // Obs hospitalidad al final del mod 7
+    if (mod.id === 'mod7') {
+      const obsDiv = document.createElement('div');
+      obsDiv.className = 'obs-hosp-wrap';
+      obsDiv.innerHTML = `<div class="obs-hosp-label">🤝 Observación de Hospitalidad</div>
+        <textarea id="obs-hospitalidad" placeholder="Observaciones generales sobre la actitud hospitalaria del colaborador..."></textarea>`;
+      block.appendChild(obsDiv);
+    }
+
+    body.appendChild(block);
+  });
+
+  updateProgress();
+}
+
+function toggleMod(btn, modId) {
+  activeModulos[modId] = !activeModulos[modId];
+  btn.classList.toggle('active');
+  btn.textContent = (activeModulos[modId] ? '✓ ' : '✗ ') + btn.textContent.replace(/^[✓✗] /,'');
+  // reconstruir el body del form sin perder respuestas
+  buildFormBody();
+  updateProgress();
+}
+
+function buildFormBody() {
+  // re-render sin resetear respuestas ni cabecera
+  const body = document.getElementById('form-body');
+  body.innerHTML = '';
+  MODS.forEach(mod => {
+    if (!activeModulos[mod.id]) return;
+    if (mod.id === 'mod7') {
+      const banner = document.createElement('div');
+      banner.className = 'hosp-banner';
+      banner.innerHTML = `<div class="hosp-org">Lucciano's · Filosofía de Servicio</div><div class="hosp-title">NUESTRO PROPÓSITO ES<br>CREAR MOMENTOS<br>DE FELICIDAD</div><div class="hosp-sub">El propósito vence la tarea</div><div class="hosp-line"></div>`;
+      body.appendChild(banner);
+    }
+    const block = document.createElement('div');
+    block.className = 'modulo-block'; block.id = 'fmod-' + mod.id;
+    block.innerHTML = `<div class="modulo-header"><div class="modulo-num">${mod.num}</div><div class="modulo-title">${mod.nombre}</div>${mod.tag?`<span class="modulo-tag">· ${mod.tag}</span>`:''}</div>`;
+    mod.items.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'item-card' + (respuestas[item.id] !== undefined ? ' answered' : '');
+      card.id = 'card-' + item.id;
+      let guiaHTML='',hospHTML='';
+      if(item.guia&&item.guia.length){const its=[];for(let i=0;i<item.guia.length;i+=2){const p=item.guia[i],r=item.guia[i+1]||'';its.push(`<li>${p}${r?`<span class="guide-resp">${r}</span>`:''}</li>`);}guiaHTML=`<button class="guide-toggle" onclick="togglePanel('gp-${item.id}',this)">💡 Ver guía técnica</button><div class="guide-panel" id="gp-${item.id}"><div class="guide-title">Preguntas guía — solo capacitador</div><ul>${its.join('')}</ul></div>`;}
+      if(item.hosp){hospHTML=`<button class="hosp-toggle" onclick="togglePanel('hp-${item.id}',this)">🤝 Hospitalidad — ¿qué observar?</button><div class="hosp-panel" id="hp-${item.id}">${item.hosp}</div>`;}
+      const val = respuestas[item.id];
+      card.innerHTML = `<div class="item-num">Ítem ${item.id}</div><div class="item-label">${item.label}</div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <div class="score-btns" style="flex:1">
+            ${[1,2,3,4].map(n=>`<button class="score-btn${val==n?' sel-'+n:''}" onclick="setScore('${item.id}',${n},this)">${n}</button>`).join('')}
+            <button class="score-btn${val==='NA'?' sel-na':''}" onclick="setScore('${item.id}','NA',this)">NA</button>
+          </div>
+          <button class="item-comment-btn" onclick="togglePanel('ic-${item.id}',this)" title="Agregar comentario">💬</button>
+        </div>
+        <div class="score-labels" style="padding-right:30px"><span class="score-label">Inicial</span><span class="score-label">En proceso</span><span class="score-label">Logrado</span><span class="score-label">Destacado</span><span class="score-label">N/A</span></div>
+        ${guiaHTML}${hospHTML}
+        <div class="item-comment-wrap" id="ic-${item.id}"><textarea placeholder="Observación sobre este ítem..." id="ict-${item.id}"></textarea></div>`;
+      block.appendChild(card);
+    });
+    if(mod.id==='mod7'){const o=document.createElement('div');o.className='obs-hosp-wrap';o.innerHTML=`<div class="obs-hosp-label">🤝 Observación de Hospitalidad</div><textarea id="obs-hospitalidad" placeholder="Observaciones generales..."></textarea>`;block.appendChild(o);}
+    body.appendChild(block);
+  });
+}
+
+function setScore(id, val, btn) {
+  respuestas[id] = val;
+  const card = document.getElementById('card-' + id);
+  card.classList.add('answered');
+  card.querySelectorAll('.score-btn').forEach(b => {
+    b.className = 'score-btn';
+    if (b === btn) b.classList.add(val==='NA'?'sel-na':'sel-'+val);
+  });
+  updateProgress();
+}
+
+function updateProgress() {
+  const activos = MODS.filter(m => activeModulos[m.id]);
+  const total   = activos.reduce((s,m) => s+m.items.length, 0);
+  const resp    = Object.keys(respuestas).filter(k => {
+    // solo contar ítems de módulos activos
+    const mod = MODS.find(m => m.items.some(i => i.id === k));
+    return mod && activeModulos[mod.id];
+  }).length;
+  const pct = total ? Math.round(resp/total*100) : 0;
+  document.getElementById('form-progress-bar').style.width = pct + '%';
+  document.getElementById('form-progress-text').textContent = `${resp} / ${total}`;
+}
+
+function updateFormMeta() {
+  document.getElementById('form-local-label').textContent  = document.getElementById('f-local').value || '—';
+  document.getElementById('form-evaluado-label').textContent = document.getElementById('f-evaluado').value || '—';
+}
+
+function togglePanel(id, btn) {
+  const panel = document.getElementById(id);
+  if (!panel) return;
+  panel.classList.toggle('open');
+}
+
+
+function scrollAlItemPendiente() {
+  const activos = MODS.filter(m => activeModulos[m.id]);
+  for (const mod of activos) {
+    for (const item of mod.items) {
+      if (respuestas[item.id] === undefined) {
+        const card = document.getElementById('card-' + item.id);
+        if (card) {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          card.style.border = '2px solid var(--yellow)';
+          setTimeout(() => { card.style.border = ''; }, 2000);
+        }
+        return;
+      }
+    }
+  }
+}
+
+// ============================================================
+// ENVÍO
+// ============================================================
+async function enviarFormulario() {
+  const fecha    = document.getElementById('f-fecha').value;
+  const local    = document.getElementById('f-local').value;
+  const evaluado = document.getElementById('f-evaluado').value.trim();
+  const evaluador= document.getElementById('f-evaluador').value;
+  const tipo     = document.getElementById('f-tipo').value;
+  const rol      = document.getElementById('f-rol').value;
+  const antiguedad = document.getElementById('f-antiguedad').value;
+
+  if (!fecha||!local||!evaluado||!evaluador||!tipo||!rol) {
+    showToast('⚠ Completá todos los campos de cabecera'); return;
+  }
+
+  const activos = MODS.filter(m => activeModulos[m.id]);
+  const totalItems = activos.reduce((s,m)=>s+m.items.length,0);
+  const respondidos = Object.keys(respuestas).filter(k => {
+    const mod = MODS.find(m => m.items.some(i=>i.id===k));
+    return mod && activeModulos[mod.id];
+  }).length;
+
+  if (respondidos < totalItems) {
+    showToast(`⚠ Faltan ${totalItems-respondidos} ítems — tocá para ir al primero`);
+    setTimeout(scrollAlItemPendiente, 400);
+    return;
+  }
+
+  const btn = document.getElementById('btn-enviar');
+  btn.textContent = 'Enviando...'; btn.disabled = true;
+
+  const resultado = calcularResultados();
+  ultimoResultado = { local, evaluado, fecha, evaluador, tipo, rol, antiguedad, resultado };
+
+  // Payload para Sheets (formato compatible con original)
+  const modData = {};
+  MODS.forEach((m,idx) => {
+    const n = idx+1;
+    if (!activeModulos[m.id]) { modData['s'+n]='No evaluado'; modData['s'+n+'max']='-'; return; }
+    let score=0, naCount=0;
+    m.items.forEach(item => {
+      const v = respuestas[item.id];
+      if (v && v!=='NA') score += v;
+      else if (v==='NA') naCount++;
+    });
+    const max = (m.items.length - naCount) * 4;
+    modData['s'+n] = score;
+    modData['s'+n+'max'] = max;
+  });
+
+  const fortalezasArr=[], reforzarArr=[];
+  MODS.forEach(m => {
+    if (!activeModulos[m.id]) return;
+    m.items.forEach(item => {
+      const v = respuestas[item.id];
+      if (!v || v==='NA') return;
+      const label = v===4?'Destacado':v===3?'Logrado':v===2?'En proceso':'Inicial';
+      const texto = item.label.replace(/<[^>]+>/g,'');
+      if (v>=3) fortalezasArr.push(`[${m.nombre}] ${texto} (${label})`);
+      else reforzarArr.push(`[${m.nombre}] ${texto} (${label})`);
+    });
+  });
+
+  const pct = resultado.total + '%';
+  const band = resultado.total >= UMBRAL_APROBADO ? 'Desempeño Sólido' : resultado.total >= UMBRAL_OBSERVADO ? 'Desempeño Aceptable' : 'Atención Urgente';
+  const payload = { fecha,evaluado,local,evaluador,tipo,rol,antiguedad,...modData,
+    total:String(resultado.totalRaw), totalMax:String(resultado.totalMax),
+    porcentaje:pct, resultado:band + ' — ' + pct,
+    fortalezas:fortalezasArr.join(' | '), reforzar:reforzarArr.join(' | '),
+    observaciones: (document.getElementById('obs-hospitalidad')?.value||'').trim()
+  };
+
+  try {
+    await fetch(SHEET_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify({action:'submit',...payload}) });
+    showToast('✓ Evaluación enviada');
+    // agregar localmente
+    datosResumen.push({ local, evaluado, fecha, evaluador, porcentaje: resultado.total });
+  } catch(e) { showToast('⚠ Error al enviar'); }
+
+  btn.textContent = 'Enviar evaluación'; btn.disabled = false;
+  mostrarResultado(local, evaluado, resultado, payload);
+}
+
+// ============================================================
+// CALCULAR
+// ============================================================
+function calcularResultados() {
+  let grandScore=0, grandMax=0;
+  const modulos = MODS.map(m => {
+    if (!activeModulos[m.id]) return { nombre:m.nombre, num:m.num, porcentaje:null, score:0, max:0, items_detalle:[] };
+    let score=0, naCount=0;
+    const items_detalle = [];
+    m.items.forEach(item => {
+      const v = respuestas[item.id];
+      const vn = v==='NA' ? 5 : (parseInt(v)||0);
+      if (vn===5) naCount++;
+      else score += vn;
+      items_detalle.push({ id:item.id, n:item.n, texto: item.label.replace(/<[^>]+>/g,''), val:vn===5?0:vn,
+        comentario: (document.getElementById('ict-'+item.id)?.value||'').trim() });
+    });
+    const max = (m.items.length - naCount) * 4;
+    const pct = max>0 ? Math.round(score/max*100) : null;
+    grandScore += score; grandMax += max;
+    return { nombre:m.nombre, num:m.num, porcentaje:pct, score, max, items_detalle };
+  });
+  const total = grandMax>0 ? Math.round(grandScore/grandMax*100) : 0;
+  return { total, totalRaw:grandScore, totalMax:grandMax, modulos };
+}
+
+// ============================================================
+// RESULTADO
+// ============================================================
+function mostrarResultado(local, evaluado, resultado, payload) {
+  // Guardar en cache para poder verla después
+  const cacheKey = local + '|' + evaluado + '|' + fecha;
+  const obsHospVal = (document.getElementById('obs-hospitalidad')?.value||'').trim();
+  resultado.modulos.forEach(m => { m.obsHosp = (m.id === 'mod7') ? obsHospVal : ''; });
+  guardarEnCache(cacheKey, { evaluado, local, fecha, evaluador, tipo, rol, total: resultado.total, modulos: resultado.modulos });
+
+  const { total, modulos } = resultado;
+  const { estado, colorClass, heroClass } = getEstado(total);
+
+  document.getElementById('resultado-pct').textContent = total + '%';
+  document.getElementById('resultado-estado').textContent = estado;
+  document.getElementById('resultado-local').textContent = local + ' · ' + evaluado;
+  document.getElementById('resultado-hero').className = 'resultado-hero ' + heroClass;
+
+  document.getElementById('resultado-modulos').innerHTML = modulos
+    .filter(m => m.porcentaje !== null)
+    .map(m => {
+      const { colorClass:cc, barClass:bc, badgeLabel } = getEstado(m.porcentaje);
+      return `<div class="modulo-result">
+        <div class="modulo-result-pct ${cc}">${m.porcentaje}%</div>
+        <div class="modulo-result-info">
+          <div class="modulo-result-name">${m.num}. ${m.nombre}</div>
+          <div class="modulo-result-bar-outer"><div class="modulo-result-bar ${bc}" style="width:${m.porcentaje}%"></div></div>
+          <div class="modulo-result-badge ${cc}">${badgeLabel}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+  renderHome();
+  renderTendencias();
+  showTab('resultado');
+}
+
+
+// ============================================================
+// VER EVALUACIÓN GUARDADA
+// ============================================================
+// Cache de evaluaciones completas (solo las que se hacen en esta sesión)
+const evalCache = {};
+
+function guardarEnCache(key, datos) {
+  evalCache[key] = datos;
+}
+
+function verEval(local, evaluado, fecha) {
+  const key = local + '|' + evaluado + '|' + fecha;
+  const cached = evalCache[key];
+  const body = document.getElementById('ver-body');
+
+  if (!cached) {
+    // Mostrar lo que tenemos del resumen
+    const reg = datosResumen.find(r => r.local===local && r.evaluado===evaluado && r.fecha===fecha);
+    const pct = reg ? reg.porcentaje : '—';
+    const { estado, colorClass } = reg ? getEstado(reg.porcentaje) : { estado:'—', colorClass:'' };
+    body.innerHTML = `
+      <div class="ver-eval-header">
+        <div style="font-family:Montserrat;font-weight:800;font-size:18px;color:var(--gold)">${evaluado}</div>
+        <div class="ver-eval-grid">
+          <div class="ver-eval-field"><div class="ver-eval-label">Local</div><div class="ver-eval-value">${local}</div></div>
+          <div class="ver-eval-field"><div class="ver-eval-label">Fecha</div><div class="ver-eval-value">${formatFecha(fecha)}</div></div>
+          <div class="ver-eval-field"><div class="ver-eval-label">Resultado</div><div class="ver-eval-value ${colorClass}">${pct}%</div></div>
+          <div class="ver-eval-field"><div class="ver-eval-label">Estado</div><div class="ver-eval-value">${estado}</div></div>
+        </div>
+      </div>
+      <div style="background:var(--yellow-bg);border:1px solid var(--yellow);border-radius:var(--radius);padding:16px;text-align:center">
+        <div style="color:var(--yellow);font-weight:700;font-size:13px;margin-bottom:6px">Detalle no disponible</div>
+        <div style="font-size:12px;color:#ccc">Esta evaluación fue cargada en una sesión anterior.<br>Solo se guardaron los totales. Para ver el detalle completo,<br>las próximas evaluaciones se guardarán automáticamente.</div>
+      </div>`;
+    showTab('ver');
+    return;
+  }
+
+  // Tenemos el detalle completo
+  const scoreLabels = { 1:'✗ Inicial', 2:'⚠ En proceso', 3:'✓ Logrado', 4:'★ Destacado', 'NA':'— N/A' };
+  const scoreClass  = { 1:'s1', 2:'s2', 3:'s3', 4:'s4', 'NA':'sna' };
+  const { estado, colorClass } = getEstado(cached.total);
+
+  let html = `<div class="ver-eval-header">
+    <div style="font-family:Montserrat;font-weight:800;font-size:18px;color:var(--gold)">${cached.evaluado}</div>
+    <div class="ver-eval-grid">
+      <div class="ver-eval-field"><div class="ver-eval-label">Local</div><div class="ver-eval-value">${cached.local}</div></div>
+      <div class="ver-eval-field"><div class="ver-eval-label">Fecha</div><div class="ver-eval-value">${formatFecha(cached.fecha)}</div></div>
+      <div class="ver-eval-field"><div class="ver-eval-label">Evaluador</div><div class="ver-eval-value">${cached.evaluador}</div></div>
+      <div class="ver-eval-field"><div class="ver-eval-label">Tipo</div><div class="ver-eval-value">${cached.tipo}</div></div>
+    </div>
+  </div>
+  <div class="ver-score-total">
+    <div style="font-family:Montserrat;font-weight:700;font-size:14px">Resultado total</div>
+    <div style="font-family:Montserrat;font-weight:900;font-size:28px" class="${colorClass}">${cached.total}% <span style="font-size:13px;font-weight:600">${estado}</span></div>
+  </div>`;
+
+  cached.modulos.filter(m => m.porcentaje !== null).forEach(m => {
+    html += `<div class="ver-mod-block"><div class="ver-mod-title">${m.num}. ${m.nombre}`;
+    if (m.porcentaje !== null) html += ` <span style="float:right;color:var(--gray)">${m.porcentaje}%</span>`;
+    html += `</div>`;
+    m.items_detalle.forEach(it => {
+      if (!it.val && it.val !== 0) return;
+      const sc = it.val === 0 ? 'NA' : it.val;
+      const label = scoreLabels[sc] || sc;
+      const cls   = scoreClass[sc] || 'sna';
+      html += `<div class="ver-item">
+        <div class="ver-item-label">${it.texto}</div>
+        <span class="ver-item-score ${cls}">${label}</span>
+        ${it.comentario ? `<div class="ver-item-comment">💬 ${it.comentario}</div>` : ''}
+      </div>`;
+    });
+    if (m.obsHosp) html += `<div style="background:#1a1500;border:1px solid var(--gold-dark);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;color:#ccc"><span style="color:var(--gold);font-weight:700;font-size:10px;letter-spacing:1px">🤝 HOSPITALIDAD</span><br>${m.obsHosp}</div>`;
+    html += `</div>`;
+  });
+
+  body.innerHTML = html;
+  showTab('ver');
+}
+
+// ============================================================
+// PDF
+// ============================================================
+async function generarPDF() {
+  const btn = document.getElementById('btn-pdf');
+  btn.textContent = '⏳ Generando...'; btn.disabled = true;
+  showToast('Generando PDF...');
+
+  if (!ultimoResultado) { showToast('⚠ Sin datos'); btn.textContent='⬇ Descargar PDF'; btn.disabled=false; return; }
+
+  const r = ultimoResultado.resultado;
+  const fortalezas=[], reforzar=[];
+  r.modulos.filter(m=>m.porcentaje!==null).forEach(m => {
+    m.items_detalle.forEach(i => {
+      if (!i.val) return;
+      const label = i.val===4?'Destacado':i.val===3?'Logrado':i.val===2?'En proceso':'Inicial';
+      if (i.val>=3) fortalezas.push({ mod:m.nombre, texto:i.texto, val:i.val, label, comentario:i.comentario, id:i.id, n:i.n });
+      else reforzar.push({ mod:m.nombre, texto:i.texto, val:i.val, label, comentario:i.comentario, id:i.id, n:i.n });
+    });
+  });
+
+  const pct = r.total + '%';
+  const bandLabel = r.total>=UMBRAL_APROBADO ? 'Desempeño Sólido' : r.total>=UMBRAL_OBSERVADO ? 'Desempeño Aceptable' : 'Atención Urgente';
+
+  // Comentarios aplanados: incluye ítem + comentario + indicación clara
+  const comentarios = [];
+  r.modulos.filter(m=>m.porcentaje!==null).forEach(m => {
+    m.items_detalle.forEach(i => {
+      if (!i.comentario) return;
+      const modAbrev = m.nombre.substring(0,2).toUpperCase() + m.num;
+      comentarios.push({
+        modulo: m.nombre,
+        item: `${modAbrev}${i.n} · ${i.texto}`,
+        texto: i.comentario
+      });
+    });
+  });
+
+  const payload = {
+    evaluado: ultimoResultado.evaluado,
+    local:    ultimoResultado.local,
+    evaluador:ultimoResultado.evaluador,
+    fecha:    ultimoResultado.fecha,
+    tipo:     ultimoResultado.tipo,
+    rol:      ultimoResultado.rol,
+    antiguedad: ultimoResultado.antiguedad,
+    total:    String(r.totalRaw),
+    totalMax: String(r.totalMax),
+    resultado: bandLabel + ' — ' + pct,
+    fortalezas: fortalezas.map(f=>`[${f.mod}] ${f.texto} (${f.label})`).join(' | '),
+    reforzar:   reforzar.map(f=>`[${f.mod}] ${f.texto} (${f.label})${f.comentario?' | '+f.comentario:''}`).join(' | '),
+    modulos: r.modulos.filter(m=>m.porcentaje!==null).map(m=>({
+      nombre: m.nombre, activo:true, score:m.score, max:m.max
+    })),
+    comentarios,
+    obsHospitalidad: (document.getElementById('obs-hospitalidad')?.value||'').trim()
+  };
+
+  try {
+    const res = await fetch(SHEET_URL, {
+      method:'POST', headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify({ action:'pdf', payload })
+    });
+    const data = await res.json();
+    btn.textContent = '⬇ Descargar PDF'; btn.disabled = false;
+    if (data.status==='ok' && data.url) {
+      window.open(data.url, '_blank');
+      showToast('✓ PDF generado');
+    } else {
+      showToast('⚠ ' + (data.msg||'Error al generar PDF'));
+      console.error('PDF error:', data);
+    }
+  } catch(e) {
+    btn.textContent = '⬇ Descargar PDF'; btn.disabled = false;
+    showToast('⚠ Error de conexión');
+  }
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function getEstado(pct) {
+  if (pct >= UMBRAL_APROBADO) return { estado:'Aprobado', colorClass:'color-green', barClass:'bar-green', heroClass:'aprobado', badgeLabel:'✓ Aprobado', badgeClass:'badge-aprobado' };
+  if (pct >= UMBRAL_OBSERVADO) return { estado:'Observado', colorClass:'color-yellow', barClass:'bar-yellow', heroClass:'observado', badgeLabel:'⚠ Observado', badgeClass:'badge-observado' };
+  return { estado:'Atención urgente', colorClass:'color-red', barClass:'bar-red', heroClass:'urgente', badgeLabel:'✖ Urgente', badgeClass:'badge-urgente' };
+}
+function getEstadoHex(pct) {
+  if (pct>=UMBRAL_APROBADO) return { colorHex:'#2ECC71' };
+  if (pct>=UMBRAL_OBSERVADO) return { colorHex:'#F39C12' };
+  return { colorHex:'#E74C3C' };
+}
+function formatFecha(str) {
+  if (!str) return '—';
+  const [y,m,d] = str.split('-');
+  return `${d}/${m}/${y}`;
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
