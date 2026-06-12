@@ -1464,10 +1464,13 @@ function calcularResultados() {
 function mostrarResultado(local, evaluado, resultado, payload) {
   try {
   // Guardar en cache para poder verla después
-  const cacheKey = local + '|' + evaluado + '|' + fecha;
+  const _fecha    = ultimoResultado ? ultimoResultado.fecha    : '';
+  const _evaluador= ultimoResultado ? ultimoResultado.evaluador: '';
+  const _tipo     = ultimoResultado ? ultimoResultado.tipo     : '';
+  const _rol      = ultimoResultado ? ultimoResultado.rol      : '';
+  const cacheKey  = local + '|' + evaluado + '|' + _fecha;
   const obsHospVal = (document.getElementById('obs-hospitalidad')?.value||'').trim();
-  resultado.modulos.forEach(m => { m.obsHosp = (m.id === 'mod7') ? obsHospVal : ''; });
-  guardarEnCache(cacheKey, { evaluado, local, fecha, evaluador, tipo, rol, total: resultado.total, modulos: resultado.modulos });
+  guardarEnCache(cacheKey, { evaluado, local, fecha: _fecha, evaluador: _evaluador, tipo: _tipo, rol: _rol, total: resultado.total, modulos: resultado.modulos });
 
   const { total, modulos } = resultado;
   const { estado, colorClass, heroClass } = getEstado(total);
