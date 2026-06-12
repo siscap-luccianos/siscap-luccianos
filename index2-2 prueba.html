@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>SisCap 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E2C06A;
+    --gold-dark: #A07830;
+    --black: #0D0D0D;
+    --dark: #1A1A1A;
+    --dark2: #242424;
+    --dark3: #2E2E2E;
+    --white: #F5F0E8;
+    --gray: #888;
+    --green: #2ECC71;
+    --green-bg: #1a3d2b;
+    --yellow: #F39C12;
+    --yellow-bg: #3d2e0a;
+    --red: #E74C3C;
+    --red-bg: #3d1010;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; background: var(--black); color: var(--white); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+
+  /* ===== SCREENS ===== */
+  .screen { display: none; flex-direction: column; min-height: 100vh; animation: fadeIn 0.35s ease; }
+  .screen.active { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  /* ===== LOGIN ===== */
+  #screen-login {
+    background: var(--black);
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    gap: 0;
+  }
+  .login-logo {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 42px;
+    color: var(--gold);
+    letter-spacing: -1px;
+    margin-bottom: 4px;
+  }
+  .login-sub {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 48px;
+  }
+  .login-card {
+    background: var(--dark);
+    border: 1px solid #2a2a2a;
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 380px;
+  }
+  .login-card h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: var(--white);
+  }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--gray); margin-bottom: 6px; }
+  .field input, .field select {
+    width: 100%; padding: 12px 14px;
+    background: var(--dark2); border: 1px solid #333;
+    border-radius: var(--radius-sm); color: var(--white);
+    font-size: 15px; font-family: 'Inter', sans-serif;
+    outline: none; transition: border-color 0.2s;
+    -webkit-appearance: none; appearance: none;
+  }
+  .field input:focus, .field select:focus { border-color: var(--gold); }
+  .field select option { background: var(--dark2); }
+
+  .btn-primary {
+    width: 100%; padding: 14px;
+    background: var(--gold); color: var(--black);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700; font-size: 14px;
+    letter-spacing: 1px; text-transform: uppercase;
+    border: none; border-radius: var(--radius-sm);
+    cursor: pointer; transition: background 0.2s, transform 0.1s;
+    margin-top: 8px;
+  }
+  .btn-primary:active { transform: scale(0.98); background: var(--gold-dark); }
+  .btn-secondary {
+    width: 100%; padding: 12px;
+    background: transparent; color: var(--gold);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600; font-size: 13px;
+    letter-spacing: 1px; text-transform: uppercase;
+    border: 1px solid var(--gold-dark); border-radius: var(--radius-sm);
+    cursor: pointer; transition: all 0.2s;
+    margin-top: 8px;
+  }
+  .btn-secondary:active { background: var(--gold-dark); color: var(--black); }
+
+  .error-msg { color: var(--red); font-size: 13px; margin-top: 10px; text-align: center; min-height: 20px; }
+
+  /* ===== HEADER ===== */
+  .app-header {
+    background: var(--dark);
+    border-bottom: 1px solid #2a2a2a;
+    padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .app-header .logo { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 22px; color: var(--gold); }
+  .app-header .badge { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); }
+  .header-user { display: flex; align-items: center; gap: 8px; }
+  .avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--gold-dark); color: var(--black);
+    font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .header-name { font-size: 13px; color: var(--white); font-weight: 500; }
+
+  /* ===== HOME ===== */
+  #screen-home { background: var(--black); }
+  .home-body { padding: 20px; flex: 1; display: flex; flex-direction: column; gap: 20px; }
+
+  .section-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 12px;
+  }
+
+  /* Stat cards */
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat-card {
+    background: var(--dark); border: 1px solid #2a2a2a;
+    border-radius: var(--radius); padding: 16px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .stat-card .stat-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); }
+  .stat-card .stat-value { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 32px; color: var(--white); line-height: 1; }
+  .stat-card .stat-sub { font-size: 11px; color: var(--gray); }
+  .stat-card.gold { border-color: var(--gold-dark); }
+  .stat-card.gold .stat-value { color: var(--gold); }
+
+  /* Alert strip */
+  .alert-strip {
+    background: var(--red-bg); border: 1px solid var(--red);
+    border-radius: var(--radius); padding: 14px 16px;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .alert-strip .alert-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .alert-strip .alert-title { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px; color: var(--red); margin-bottom: 4px; }
+  .alert-strip .alert-list { font-size: 12px; color: #ccc; line-height: 1.6; }
+  .alert-strip.yellow { background: var(--yellow-bg); border-color: var(--yellow); }
+  .alert-strip.yellow .alert-title { color: var(--yellow); }
+
+  /* Sucursales list */
+  .suc-list { display: flex; flex-direction: column; gap: 10px; }
+  .suc-card {
+    background: var(--dark); border: 1px solid #2a2a2a;
+    border-radius: var(--radius); padding: 14px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; transition: border-color 0.2s;
+  }
+  .suc-card:active { border-color: var(--gold); }
+  .suc-left { display: flex; flex-direction: column; gap: 3px; }
+  .suc-name { font-weight: 600; font-size: 14px; color: var(--white); }
+  .suc-date { font-size: 11px; color: var(--gray); }
+  .suc-right { display: flex; align-items: center; gap: 10px; }
+  .suc-pct { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 18px; }
+  .badge-estado {
+    font-size: 9px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; padding: 3px 8px;
+    border-radius: 20px;
+  }
+  .badge-aprobado { background: var(--green-bg); color: var(--green); border: 1px solid var(--green); }
+  .badge-observado { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow); }
+  .badge-urgente { background: var(--red-bg); color: var(--red); border: 1px solid var(--red); }
+  .badge-sd { background: #222; color: var(--gray); border: 1px solid #444; }
+
+  /* CTA Nueva evaluación */
+  .cta-eval {
+    background: var(--gold); color: var(--black);
+    border-radius: var(--radius); padding: 18px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .cta-eval:active { background: var(--gold-dark); }
+  .cta-eval .cta-text { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 16px; }
+  .cta-eval .cta-sub { font-size: 11px; margin-top: 2px; opacity: 0.7; }
+  .cta-arrow { font-size: 24px; }
+
+  /* Bottom nav */
+  .bottom-nav {
+    background: var(--dark); border-top: 1px solid #2a2a2a;
+    display: flex; position: sticky; bottom: 0;
+  }
+  .nav-btn {
+    flex: 1; padding: 12px 8px;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer; transition: color 0.2s; color: var(--gray);
+    font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+    font-weight: 600; border: none; background: none;
+  }
+  .nav-btn.active { color: var(--gold); }
+  .nav-btn .nav-icon { font-size: 20px; }
+
+  /* ===== TENDENCIAS ===== */
+  #screen-tendencias { background: var(--black); }
+  .tend-body { padding: 20px; flex: 1; display: flex; flex-direction: column; gap: 20px; }
+  .tend-grid { display: flex; flex-direction: column; gap: 10px; }
+  .tend-card {
+    background: var(--dark); border: 1px solid #2a2a2a;
+    border-radius: var(--radius); padding: 16px;
+  }
+  .tend-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .tend-card-name { font-weight: 600; font-size: 14px; color: var(--white); }
+  .tend-card-pct { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 20px; }
+  .tend-bar-wrap { background: #333; border-radius: 4px; height: 6px; overflow: hidden; }
+  .tend-bar { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+  .tend-dates { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .tend-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700; color: var(--black);
+    position: relative;
+  }
+  .tend-dot-label { font-size: 9px; color: var(--gray); text-align: center; margin-top: 2px; }
+  .tend-dot-wrap { display: flex; flex-direction: column; align-items: center; }
+
+  /* Riesgos */
+  .riesgo-card {
+    background: var(--red-bg); border: 1px solid var(--red);
+    border-radius: var(--radius); padding: 14px 16px;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .riesgo-pct { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 24px; color: var(--red); min-width: 50px; }
+  .riesgo-text .riesgo-title { font-weight: 700; font-size: 13px; color: var(--red); margin-bottom: 3px; }
+  .riesgo-text .riesgo-desc { font-size: 12px; color: #ccc; line-height: 1.5; }
+
+  /* ===== FORMULARIO ===== */
+  #screen-form { background: var(--black); }
+  .form-header-bar {
+    background: var(--dark); border-bottom: 1px solid #2a2a2a;
+    padding: 14px 20px; position: sticky; top: 0; z-index: 90;
+  }
+  .form-progress-wrap { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+  .form-progress-bar-outer { flex: 1; background: #333; border-radius: 4px; height: 5px; }
+  .form-progress-bar { height: 100%; border-radius: 4px; background: var(--gold); transition: width 0.4s ease; width: 0%; }
+  .form-progress-text { font-size: 11px; color: var(--gray); white-space: nowrap; }
+  .form-meta { display: flex; gap: 16px; flex-wrap: wrap; }
+  .form-meta span { font-size: 12px; color: var(--gray); }
+  .form-meta strong { color: var(--white); }
+
+  .form-body { padding: 20px; display: flex; flex-direction: column; gap: 24px; padding-bottom: 100px; }
+
+  .modulo-block { display: flex; flex-direction: column; gap: 12px; }
+  .modulo-header {
+    background: var(--dark2); border-radius: var(--radius-sm);
+    padding: 12px 14px; display: flex; align-items: center; gap: 10px;
+  }
+  .modulo-num {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--gold); color: var(--black);
+    font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 12px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .modulo-title { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 14px; color: var(--white); }
+
+  .item-card {
+    background: var(--dark); border: 1px solid #2a2a2a;
+    border-radius: var(--radius); padding: 14px;
+    transition: border-color 0.2s;
+  }
+  .item-card.answered { border-color: #3a3a2a; }
+  .item-label { font-size: 13px; color: var(--white); margin-bottom: 10px; line-height: 1.5; }
+  .item-num { font-size: 10px; color: var(--gold); font-weight: 700; margin-bottom: 4px; }
+
+  .score-btns { display: flex; gap: 6px; }
+  .score-btn {
+    flex: 1; padding: 8px 4px;
+    background: var(--dark2); border: 1px solid #333;
+    border-radius: var(--radius-sm); color: var(--gray);
+    font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px;
+    cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .score-btn:active { transform: scale(0.95); }
+  .score-btn.sel-1 { background: #3d1010; border-color: var(--red); color: var(--red); }
+  .score-btn.sel-2 { background: #3d2e0a; border-color: var(--yellow); color: var(--yellow); }
+  .score-btn.sel-3 { background: #1a3020; border-color: #27ae60; color: #27ae60; }
+  .score-btn.sel-4 { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+  .score-btn.sel-na { background: #222; border-color: #555; color: var(--gray); }
+
+  .score-labels { display: flex; gap: 6px; margin-top: 5px; }
+  .score-label { flex: 1; font-size: 8px; color: var(--gray); text-align: center; letter-spacing: 0.5px; }
+
+  /* Guide panel */
+  .guide-toggle {
+    margin-top: 10px; font-size: 11px; color: var(--gold);
+    cursor: pointer; display: flex; align-items: center; gap: 4px;
+    background: none; border: none; padding: 0;
+  }
+  .guide-panel {
+    margin-top: 8px; background: var(--dark2);
+    border-left: 2px solid var(--gold-dark);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 10px 12px; font-size: 12px; color: #bbb; line-height: 1.6;
+    display: none;
+  }
+  .guide-panel.open { display: block; }
+
+  /* Botón enviar fijo */
+  .form-footer {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--dark); border-top: 1px solid #2a2a2a;
+    padding: 12px 20px; z-index: 200;
+  }
+  .form-footer .btn-primary { margin-top: 0; }
+
+  /* ===== RESULTADO ===== */
+  #screen-resultado { background: var(--black); }
+  .resultado-body { padding: 20px; flex: 1; display: flex; flex-direction: column; gap: 20px; padding-bottom: 40px; }
+
+  .resultado-hero {
+    border-radius: var(--radius); padding: 24px 20px; text-align: center;
+  }
+  .resultado-hero.aprobado { background: var(--green-bg); border: 1px solid var(--green); }
+  .resultado-hero.observado { background: var(--yellow-bg); border: 1px solid var(--yellow); }
+  .resultado-hero.urgente { background: var(--red-bg); border: 1px solid var(--red); }
+
+  .resultado-pct {
+    font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 64px;
+    line-height: 1;
+  }
+  .resultado-hero.aprobado .resultado-pct { color: var(--green); }
+  .resultado-hero.observado .resultado-pct { color: var(--yellow); }
+  .resultado-hero.urgente .resultado-pct { color: var(--red); }
+
+  .resultado-estado {
+    font-family: 'Montserrat', sans-serif; font-weight: 800;
+    font-size: 16px; margin-top: 8px; margin-bottom: 4px;
+  }
+  .resultado-local { font-size: 13px; color: #aaa; }
+
+  .modulo-result {
+    background: var(--dark); border: 1px solid #2a2a2a;
+    border-radius: var(--radius); padding: 16px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .modulo-result-pct {
+    font-family: 'Montserrat', sans-serif; font-weight: 900;
+    font-size: 26px; min-width: 60px; text-align: center;
+  }
+  .modulo-result-info { flex: 1; }
+  .modulo-result-name { font-weight: 600; font-size: 13px; color: var(--white); margin-bottom: 4px; }
+  .modulo-result-bar-outer { background: #333; border-radius: 4px; height: 5px; }
+  .modulo-result-bar { height: 100%; border-radius: 4px; }
+  .modulo-result-badge { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-top: 5px; }
+
+  .color-green { color: var(--green); }
+  .color-yellow { color: var(--yellow); }
+  .color-red { color: var(--red); }
+  .bar-green { background: var(--green); }
+  .bar-yellow { background: var(--yellow); }
+  .bar-red { background: var(--red); }
+
+  /* Spinner */
+  .spinner-wrap { display: flex; align-items: center; justify-content: center; padding: 40px; }
+  .spinner {
+    width: 36px; height: 36px; border: 3px solid #333;
+    border-top-color: var(--gold); border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--dark3); color: var(--white);
+    padding: 10px 20px; border-radius: 20px; font-size: 13px;
+    opacity: 0; transition: all 0.3s; z-index: 999; white-space: nowrap;
+    border: 1px solid #3a3a3a;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Tabs */
+  .tab-bar {
+    display: flex; background: var(--dark2);
+    border-radius: var(--radius-sm); padding: 4px;
+    gap: 4px;
+  }
+  .tab-btn {
+    flex: 1; padding: 8px;
+    background: none; border: none;
+    color: var(--gray); font-family: 'Montserrat', sans-serif;
+    font-weight: 700; font-size: 11px; letter-spacing: 1px;
+    text-transform: uppercase; cursor: pointer;
+    border-radius: 6px; transition: all 0.2s;
+  }
+  .tab-btn.active { background: var(--gold); color: var(--black); }
+
+  /* Responsive */
+  @media (min-width: 480px) {
+    .login-card { padding: 36px 32px; }
+    .form-body { max-width: 600px; margin: 0 auto; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== PANTALLA: LOGIN ===== -->
+<div id="screen-login" class="screen active">
+  <div class="login-logo">SisCap</div>
+  <div class="login-sub">Sistema de Capacitación v2</div>
+  <div class="login-card">
+    <h2>Iniciar sesión</h2>
+    <div class="field">
+      <label>Usuario</label>
+      <input type="text" id="login-user" placeholder="Tu nombre de usuario" autocomplete="off"/>
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <input type="password" id="login-pass" placeholder="••••••••"/>
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Ingresar</button>
+    <div class="error-msg" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ===== PANTALLA: HOME ===== -->
+<div id="screen-home" class="screen">
+  <div class="app-header">
+    <div>
+      <div class="logo">SisCap</div>
+      <div class="badge">v2.0</div>
+    </div>
+    <div class="header-user">
+      <div class="avatar" id="home-avatar">G</div>
+      <div class="header-name" id="home-name">Capacitador</div>
+    </div>
+  </div>
+
+  <div class="home-body">
+
+    <!-- Stats -->
+    <div>
+      <div class="section-title">Resumen</div>
+      <div class="stat-grid">
+        <div class="stat-card gold">
+          <div class="stat-label">Evaluaciones</div>
+          <div class="stat-value" id="stat-total">—</div>
+          <div class="stat-sub">registradas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Promedio red</div>
+          <div class="stat-value" id="stat-prom">—</div>
+          <div class="stat-sub">% general</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Aprobadas</div>
+          <div class="stat-value" style="color:var(--green)" id="stat-aprobadas">—</div>
+          <div class="stat-sub">≥ 80%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Con alerta</div>
+          <div class="stat-value" style="color:var(--red)" id="stat-alertas">—</div>
+          <div class="stat-sub">< 60%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alertas locales sin evaluar -->
+    <div id="alert-sin-evaluar" style="display:none">
+      <div class="section-title">⚠ Alertas</div>
+      <div class="alert-strip yellow">
+        <div class="alert-icon">📋</div>
+        <div>
+          <div class="alert-title">Locales sin evaluar (+30 días)</div>
+          <div class="alert-list" id="alert-sin-lista"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA nueva evaluación -->
+    <div class="cta-eval" onclick="irAFormulario()">
+      <div>
+        <div class="cta-text">Nueva evaluación</div>
+        <div class="cta-sub">Iniciar formulario completo</div>
+      </div>
+      <div class="cta-arrow">→</div>
+    </div>
+
+    <!-- Sucursales -->
+    <div>
+      <div class="section-title">Últimas evaluaciones</div>
+      <div class="suc-list" id="suc-list">
+        <div class="spinner-wrap"><div class="spinner"></div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-btn active" onclick="showTab('home')">
+      <span class="nav-icon">🏠</span>Inicio
+    </button>
+    <button class="nav-btn" onclick="showTab('tendencias')">
+      <span class="nav-icon">📈</span>Tendencias
+    </button>
+    <button class="nav-btn" onclick="irAFormulario()">
+      <span class="nav-icon">✏️</span>Evaluar
+    </button>
+  </div>
+</div>
+
+<!-- ===== PANTALLA: TENDENCIAS ===== -->
+<div id="screen-tendencias" class="screen">
+  <div class="app-header">
+    <div>
+      <div class="logo">SisCap</div>
+      <div class="badge">Tendencias</div>
+    </div>
+    <button class="btn-secondary" style="width:auto;padding:6px 14px;font-size:11px" onclick="showTab('home')">← Volver</button>
+  </div>
+
+  <div class="tend-body">
+
+    <!-- Reporte de riesgos -->
+    <div>
+      <div class="section-title">Reporte de riesgos</div>
+      <div style="display:flex;flex-direction:column;gap:10px" id="riesgos-wrap">
+        <div class="spinner-wrap"><div class="spinner"></div></div>
+      </div>
+    </div>
+
+    <!-- Evolución por local -->
+    <div>
+      <div class="section-title">Evolución por local</div>
+      <div class="tend-grid" id="tend-grid">
+        <div class="spinner-wrap"><div class="spinner"></div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-btn" onclick="showTab('home')">
+      <span class="nav-icon">🏠</span>Inicio
+    </button>
+    <button class="nav-btn active" onclick="showTab('tendencias')">
+      <span class="nav-icon">📈</span>Tendencias
+    </button>
+    <button class="nav-btn" onclick="irAFormulario()">
+      <span class="nav-icon">✏️</span>Evaluar
+    </button>
+  </div>
+</div>
+
+<!-- ===== PANTALLA: FORMULARIO ===== -->
+<div id="screen-form" class="screen">
+  <div class="form-header-bar">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <button class="btn-secondary" style="width:auto;padding:6px 14px;font-size:11px" onclick="showTab('home')">← Volver</button>
+      <div style="font-family:Montserrat;font-weight:800;font-size:16px;color:var(--gold)">Nueva evaluación</div>
+      <div style="width:70px"></div>
+    </div>
+    <div class="form-progress-wrap">
+      <div class="form-progress-bar-outer"><div class="form-progress-bar" id="form-progress-bar"></div></div>
+      <div class="form-progress-text" id="form-progress-text">0 / 44</div>
+    </div>
+    <div class="form-meta" style="margin-top:8px">
+      <span>Local: <strong id="form-local-label">—</strong></span>
+      <span>Evaluado: <strong id="form-evaluado-label">—</strong></span>
+    </div>
+  </div>
+
+  <!-- Campos de cabecera -->
+  <div style="padding:16px 20px;background:var(--dark2);border-bottom:1px solid #2a2a2a;display:flex;flex-direction:column;gap:12px" id="form-cabecera">
+    <div class="field">
+      <label>Fecha</label>
+      <input type="date" id="f-fecha"/>
+    </div>
+    <div class="field">
+      <label>Local</label>
+      <select id="f-local" onchange="updateFormMeta()">
+        <option value="">— Seleccioná —</option>
+        <option>Lucciano's Recoleta</option>
+        <option>Lucciano's Olivos</option>
+        <option>Lucciano's Nordelta</option>
+        <option>Lucciano's Pilar</option>
+        <option>Lucciano's San Isidro</option>
+        <option>Lucciano's Palermo</option>
+        <option>Lucciano's Belgrano</option>
+        <option>Lucciano's Nuevocentro Shopping</option>
+        <option>Lucciano's Abasto</option>
+        <option>Lucciano's Alto Palermo</option>
+        <option>Lucciano's Unicenter</option>
+        <option>Lucciano's DOT</option>
+        <option>Lucciano's Quilmes</option>
+        <option>Lucciano's Lanús</option>
+        <option>Lucciano's Adrogué</option>
+        <option>Lucciano's Floresta</option>
+        <option>Lucciano's Villa del Parque</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Nombre del colaborador</label>
+      <input type="text" id="f-evaluado" placeholder="Nombre completo" onchange="updateFormMeta()"/>
+    </div>
+    <div class="field">
+      <label>Capacitador</label>
+      <select id="f-evaluador">
+        <option value="">— Seleccioná —</option>
+        <option>Gabriel Busquets</option>
+        <option>Tomás Ojeda</option>
+        <option>Ever Rodríguez</option>
+        <option>Lourdes</option>
+        <option>Nicolás López</option>
+        <option>Iván Herrera</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Antigüedad del colaborador</label>
+      <select id="f-antiguedad">
+        <option value="">— Seleccioná —</option>
+        <option>Menos de 1 mes</option>
+        <option>1 a 3 meses</option>
+        <option>3 a 6 meses</option>
+        <option>Más de 6 meses</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-body" id="form-body"></div>
+
+  <div class="form-footer">
+    <button class="btn-primary" id="btn-enviar" onclick="enviarFormulario()">Enviar evaluación</button>
+  </div>
+</div>
+
+<!-- ===== PANTALLA: RESULTADO ===== -->
+<div id="screen-resultado" class="screen">
+  <div class="app-header">
+    <div>
+      <div class="logo">SisCap</div>
+      <div class="badge">Resultado</div>
+    </div>
+    <button class="btn-secondary" style="width:auto;padding:6px 14px;font-size:11px" onclick="showTab('home')">Ir al inicio</button>
+  </div>
+  <div class="resultado-body">
+    <div class="resultado-hero" id="resultado-hero">
+      <div class="resultado-pct" id="resultado-pct">—</div>
+      <div class="resultado-estado" id="resultado-estado">—</div>
+      <div class="resultado-local" id="resultado-local">—</div>
+    </div>
+
+    <div>
+      <div class="section-title">Detalle por módulo</div>
+      <div style="display:flex;flex-direction:column;gap:10px" id="resultado-modulos"></div>
+    </div>
+
+    <button class="btn-primary" onclick="nuevaEvaluacion()">Nueva evaluación</button>
+    <button class="btn-secondary" onclick="showTab('home')">Volver al inicio</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// CONFIGURACIÓN
+// ============================================================
+// ⚠ URL del backend de prueba — reemplazar con el deploy real después
+const SHEET_URL = 'REEMPLAZAR_CON_URL_DEPLOY';
+
+// ============================================================
+// GENERAR PDF — abre URL de Drive (funciona en celular)
+// ============================================================
+async function generarPDF() {
+  const btn = document.getElementById('btn-pdf');
+  if (btn) { btn.textContent = 'Generando...'; btn.disabled = true; }
+  showToast('Generando PDF...');
+
+  const resultado = calcularResultados();
+  const payload = {
+    evaluado:  document.getElementById('f-evaluado').value.trim(),
+    local:     document.getElementById('f-local').value,
+    evaluador: document.getElementById('f-evaluador').value,
+    fecha:     document.getElementById('f-fecha').value,
+    tipo:      document.getElementById('f-tipo') ? document.getElementById('f-tipo').value : '',
+    rol:       document.getElementById('f-rol') ? document.getElementById('f-rol').value : '',
+    total:     String(resultado.total),
+    totalMax:  String(calcularTotalMax_(resultado.modulos)),
+    resultado: getEstado(resultado.total).estado,
+    fortalezas: generarFortalezasTexto_(resultado.modulos),
+    reforzar:   generarReforzarTexto_(resultado.modulos),
+    modulos:    resultado.modulos.map(m => ({
+      nombre: m.nombre,
+      activo: m.porcentaje !== null,
+      score:  m.score || 0,
+      max:    m.max || 0,
+      comentarios: recopilarComentariosModulo_(m)
+    })),
+    comentarios: recopilarTodosComentarios_()
+  };
+
+  try {
+    const res = await fetch(SHEET_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'pdf', payload })
+    });
+    const data = await res.json();
+
+    if (btn) { btn.textContent = '⬇ Descargar PDF'; btn.disabled = false; }
+
+    if (data.status === 'ok' && data.url) {
+      // Abrir URL directa — funciona en iOS y Android
+      window.open(data.url, '_blank');
+      showToast('✓ PDF generado');
+    } else {
+      showToast('⚠ Error al generar PDF');
+    }
+  } catch(e) {
+    if (btn) { btn.textContent = '⬇ Descargar PDF'; btn.disabled = false; }
+    showToast('⚠ Error de conexión');
+  }
+}
+
+function calcularTotalMax_(modulos) {
+  return modulos.filter(m => m.max).reduce((s, m) => s + (m.max || 0), 0);
+}
+
+function generarFortalezasTexto_(modulos) {
+  const items = [];
+  modulos.forEach(m => {
+    if (!m.items_detalle) return;
+    m.items_detalle.filter(i => i.val >= 3).forEach(i => {
+      items.push('[' + m.nombre + '] ' + i.texto + ' (' + (i.val === 4 ? 'Destacado' : 'Logrado') + ')');
+    });
+  });
+  return items.join(' | ');
+}
+
+function generarReforzarTexto_(modulos) {
+  const items = [];
+  modulos.forEach(m => {
+    if (!m.items_detalle) return;
+    m.items_detalle.filter(i => i.val > 0 && i.val < 3).forEach(i => {
+      items.push('[' + m.nombre + '] ' + i.texto + ' (' + (i.val === 1 ? 'Inicial' : 'En proceso') + ')');
+    });
+  });
+  return items.join(' | ');
+}
+
+function recopilarComentariosModulo_(mod) { return []; }
+
+function recopilarTodosComentarios_() {
+  // Recopilar comentarios por ítem del formulario original
+  const comentarios = [];
+  for (let i = 1; i <= 44; i++) {
+    const ta = document.getElementById('ict' + i);
+    if (ta && ta.value.trim()) {
+      comentarios.push({
+        modulo: 'Módulo',
+        item: 'Ítem ' + i,
+        texto: ta.value.trim()
+      });
+    }
+  }
+  return comentarios;
+}
+
+const USUARIOS = {
+  'gabi': { pass: 'cap2024', nombre: 'Gabriel Busquets', rol: 'Jefe Capacitación' },
+  'tomas': { pass: 'cap2024', nombre: 'Tomás Ojeda', rol: 'Capacitador CABA' },
+  'ever': { pass: 'cap2024', nombre: 'Ever Rodríguez', rol: 'Capacitador CABA' },
+  'lourdes': { pass: 'cap2024', nombre: 'Lourdes', rol: 'Capacitadora MdP' },
+  'nico': { pass: 'cap2024', nombre: 'Nicolás López', rol: 'Capacitador MdP' },
+  'ivan': { pass: 'cap2024', nombre: 'Iván Herrera', rol: 'Capacitador Córdoba' },
+};
+
+const UMBRAL_APROBADO = 80;
+const UMBRAL_OBSERVADO = 60;
+const DIAS_ALERTA = 30;
+
+// ============================================================
+// MÓDULOS E ÍTEMS (44 ítems, 7 módulos)
+// ============================================================
+const MODULOS = [
+  {
+    num: 1, nombre: 'Equipamiento',
+    items: [
+      { id: 'M1I1', label: 'Conoce y opera correctamente la heladera exhibidora', guia: '¿Sabe encender/apagar? ¿Conoce las temperaturas ideales? ¿Limpia correctamente?' },
+      { id: 'M1I2', label: 'Maneja el freezer y conservadores según protocolo', guia: '¿Mantiene el orden? ¿Registra temperaturas? ¿Sabe qué hacer ante una falla?' },
+      { id: 'M1I3', label: 'Utiliza correctamente la cafetera y accesorios', guia: '¿Sabe purgado, limpieza diaria y mantenimiento básico?' },
+      { id: 'M1I4', label: 'Opera balanza, POS y caja sin asistencia', guia: '¿Realiza operaciones básicas sin ayuda? ¿Conoce cómo hacer devoluciones?' },
+    ]
+  },
+  {
+    num: 2, nombre: 'Cafetería',
+    items: [
+      { id: 'M2I1', label: 'Prepara correctamente café espresso y variedades', guia: '¿Conoce tiempos de extracción? ¿Dosifica correctamente el café?' },
+      { id: 'M2I2', label: 'Texturiza la leche correctamente para distintas bebidas', guia: '¿Logra la temperatura ideal? ¿Diferencia texturizado para cappuccino vs. latte?' },
+      { id: 'M2I3', label: 'Conoce la carta de cafetería completa', guia: '¿Puede describir cada bebida? ¿Conoce ingredientes y presentación?' },
+      { id: 'M2I4', label: 'Prepara bebidas frías y batidos correctamente', guia: '¿Usa las proporciones correctas? ¿Presentación adecuada?' },
+      { id: 'M2I5', label: 'Mantiene limpieza y orden en la zona de cafetería', guia: '¿Limpia la cafetera entre cada uso? ¿Mantiene la barra ordenada?' },
+      { id: 'M2I6', label: 'Aplica técnicas de latte art básico', guia: '¿Intenta alguna figura? ¿Logra consistencia?' },
+    ]
+  },
+  {
+    num: 3, nombre: 'Heladería',
+    items: [
+      { id: 'M3I1', label: 'Conoce todos los sabores disponibles y sus características', guia: '¿Puede describir ingredientes y perfil de sabor de cada helado?' },
+      { id: 'M3I2', label: 'Realiza el despacho de helados con técnica correcta', guia: '¿Usa la paleta correctamente? ¿Logra la presentación esperada?' },
+      { id: 'M3I3', label: 'Arma copas y combinaciones según menú', guia: '¿Conoce las recetas de copas? ¿Las presenta correctamente?' },
+      { id: 'M3I4', label: 'Gestiona el stock de helados y solicita reposición a tiempo', guia: '¿Controla niveles? ¿Avisa antes de que se agoten?' },
+      { id: 'M3I5', label: 'Conoce y aplica el protocolo de temperatura de exhibición', guia: '¿Sabe las temperaturas ideales por tipo de helado?' },
+      { id: 'M3I6', label: 'Maneja correctamente sabores especiales y de temporada', guia: '¿Conoce los sabores nuevos? ¿Los puede describir y recomendar?' },
+      { id: 'M3I7', label: 'Arma conitos y cucuruchos con presentación correcta', guia: '¿Usa la cantidad correcta? ¿La presentación es atractiva?' },
+      { id: 'M3I8', label: 'Conoce alérgenos presentes en los helados', guia: '¿Puede informar sobre lácteos, gluten, maní, etc.?' },
+      { id: 'M3I9', label: 'Realiza limpieza y mantenimiento básico de piletas', guia: '¿Sabe cómo limpiar sin contaminar el producto?' },
+      { id: 'M3I10', label: 'Presenta el helado para take away correctamente', guia: '¿Usa los envases correctos? ¿Sella bien? ¿Entrega prolija?' },
+    ]
+  },
+  {
+    num: 4, nombre: 'Icepops',
+    items: [
+      { id: 'M4I1', label: 'Conoce el catálogo completo de Icepops (frutales, crema, bañados, luxury)', guia: '¿Puede describir las 4 categorías principales y sus productos?' },
+      { id: 'M4I2', label: 'Conoce los Geladots (variedades y presentaciones)', guia: '¿Sabe las 12 variedades? ¿Conoce presentaciones de 18 y 32 unidades?' },
+      { id: 'M4I3', label: 'Conoce los Cannolis y sus variedades', guia: '¿Puede describir las 6 variedades de cannolis?' },
+      { id: 'M4I4', label: 'Maneja el stock de Icepops y sus presentaciones', guia: '¿Sabe que los Mini vienen en caja de 4? ¿Controla el stock correctamente?' },
+      { id: 'M4I5', label: 'Exhibe y conserva los Icepops correctamente', guia: '¿Los mantiene a temperatura correcta? ¿La exhibición es atractiva?' },
+    ]
+  },
+  {
+    num: 5, nombre: 'Chocolatería',
+    items: [
+      { id: 'M5I1', label: 'Conoce la línea de alfajores y sus variedades', guia: '¿Puede describir tipos, coberturas y presentaciones?' },
+      { id: 'M5I2', label: 'Conoce los chocolates de barra y tabletas disponibles', guia: '¿Sabe qué variedades hay? ¿Puede recomendarlas?' },
+      { id: 'M5I3', label: 'Maneja correctamente los productos de chocolatería en vitrina', guia: '¿Los exhibe a temperatura correcta? ¿Los repone oportunamente?' },
+      { id: 'M5I4', label: 'Conoce los conitos bañados y su preparación', guia: '¿Sabe el proceso de bañado? ¿Conoce los sabores disponibles?' },
+      { id: 'M5I5', label: 'Describe correctamente los dulce de leches disponibles', guia: '¿Conoce variedades y usos? ¿Puede recomendarlos?' },
+      { id: 'M5I6', label: 'Realiza el packaging de chocolatería para regalo correctamente', guia: '¿Arma cajas y packaging de forma prolija y correcta?' },
+    ]
+  },
+  {
+    num: 6, nombre: 'Sistema y Caja',
+    items: [
+      { id: 'M6I1', label: 'Opera el sistema de ventas (POS) sin asistencia', guia: '¿Realiza ventas, anulaciones y devoluciones sin ayuda?' },
+      { id: 'M6I2', label: 'Maneja correctamente los medios de pago', guia: '¿Procesa efectivo, débito, crédito y QR correctamente?' },
+      { id: 'M6I3', label: 'Realiza apertura y cierre de caja correctamente', guia: '¿Sigue el protocolo completo? ¿El conteo es correcto?' },
+      { id: 'M6I4', label: 'Gestiona correctamente los pedidos de delivery y take away en sistema', guia: '¿Ingresa los pedidos sin errores? ¿Coordina bien con cocina/despacho?' },
+      { id: 'M6I5', label: 'Conoce y aplica las promociones vigentes en el sistema', guia: '¿Sabe cómo aplicar descuentos? ¿Conoce las promo del mes?' },
+      { id: 'M6I6', label: 'Maneja el cuaderno de novedades y registros diarios', guia: '¿Completa el cuaderno correctamente? ¿Reporta incidencias?' },
+      { id: 'M6I7', label: 'Conoce el protocolo ante discrepancias de caja', guia: '¿Sabe qué hacer ante sobrante o faltante? ¿A quién reporta?' },
+    ]
+  },
+  {
+    num: 7, nombre: 'Atención al Cliente',
+    items: [
+      { id: 'M7I1', label: 'Saluda y recibe al cliente con calidez y protocolo Lucciano\'s', guia: '¿Usa el saludo estándar? ¿Tiene buena presencia y actitud?' },
+      { id: 'M7I2', label: 'Aplica técnicas de venta sugestiva', guia: '¿Sugiere productos complementarios? ¿Lo hace naturalmente sin presionar?' },
+      { id: 'M7I3', label: 'Describe los productos con fluidez y entusiasmo', guia: '¿Usa lenguaje positivo? ¿Genera deseo en el cliente?' },
+      { id: 'M7I4', label: 'Maneja correctamente quejas y situaciones difíciles', guia: '¿Escucha activamente? ¿Ofrece solución? ¿Escala correctamente?' },
+      { id: 'M7I5', label: 'Mantiene presentación personal según estándar de la marca', guia: '¿Uniforme completo y limpio? ¿Higiene personal adecuada?' },
+      { id: 'M7I6', label: 'Cierra la atención correctamente (despedida, fidelización)', guia: '¿Despide al cliente de forma cálida? ¿Invita a volver?' },
+    ]
+  }
+];
+
+// ============================================================
+// ESTADO GLOBAL
+// ============================================================
+let currentUser = null;
+let respuestas = {};
+let datosResumen = [];
+
+// ============================================================
+// LOGIN
+// ============================================================
+function doLogin() {
+  const user = document.getElementById('login-user').value.trim().toLowerCase();
+  const pass = document.getElementById('login-pass').value.trim();
+  const err = document.getElementById('login-error');
+
+  if (!USUARIOS[user]) { err.textContent = 'Usuario no encontrado.'; return; }
+  if (USUARIOS[user].pass !== pass) { err.textContent = 'Contraseña incorrecta.'; return; }
+
+  currentUser = { ...USUARIOS[user], username: user };
+  document.getElementById('home-avatar').textContent = currentUser.nombre.charAt(0).toUpperCase();
+  document.getElementById('home-name').textContent = currentUser.nombre.split(' ')[0];
+
+  // Preseleccionar capacitador en form
+  const sel = document.getElementById('f-evaluador');
+  for (let i = 0; i < sel.options.length; i++) {
+    if (sel.options[i].text === currentUser.nombre) { sel.selectedIndex = i; break; }
+  }
+
+  showTab('home');
+  cargarDatos();
+}
+
+document.getElementById('login-user').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('login-pass').focus(); });
+document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+// ============================================================
+// NAVEGACIÓN
+// ============================================================
+function showTab(tab) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + tab).classList.add('active');
+}
+
+function irAFormulario() {
+  buildForm();
+  showTab('form');
+}
+
+function nuevaEvaluacion() {
+  respuestas = {};
+  document.getElementById('f-evaluado').value = '';
+  document.getElementById('f-local').selectedIndex = 0;
+  // reset fecha
+  const hoy = new Date().toISOString().split('T')[0];
+  document.getElementById('f-fecha').value = hoy;
+  updateFormMeta();
+  buildForm();
+  showTab('form');
+}
+
+// ============================================================
+// DATOS DESDE SHEETS
+// ============================================================
+async function cargarDatos() {
+  try {
+    const res = await fetch(SHEET_URL + '?action=getResumen', { method: 'GET' });
+    const data = await res.json();
+    if (data && data.registros) {
+      datosResumen = data.registros;
+    } else {
+      // fallback: datos de demo si el backend no responde
+      datosResumen = generarDemoData();
+    }
+  } catch(e) {
+    datosResumen = generarDemoData();
+  }
+  renderHome();
+  renderTendencias();
+}
+
+function generarDemoData() {
+  // Datos de ejemplo para prueba visual
+  const locales = [
+    'Lucciano\'s Recoleta', 'Lucciano\'s Olivos', 'Lucciano\'s Nordelta',
+    'Lucciano\'s Palermo', 'Lucciano\'s Belgrano', 'Lucciano\'s San Isidro'
+  ];
+  const hoy = new Date();
+  const demo = [];
+  locales.forEach((local, i) => {
+    const pcts = [72, 88, 91, 65, 83, 57];
+    const diasAtras = [5, 10, 35, 22, 8, 45];
+    const fecha = new Date(hoy);
+    fecha.setDate(fecha.getDate() - diasAtras[i]);
+    demo.push({
+      local,
+      porcentaje: pcts[i],
+      fecha: fecha.toISOString().split('T')[0],
+      evaluado: 'Colaborador ' + (i + 1),
+      evaluador: 'Gabriel Busquets'
+    });
+  });
+  return demo;
+}
+
+// ============================================================
+// RENDER HOME
+// ============================================================
+function renderHome() {
+  if (!datosResumen.length) return;
+
+  // Agrupar por local — última evaluación
+  const porLocal = {};
+  datosResumen.forEach(r => {
+    if (!porLocal[r.local] || r.fecha > porLocal[r.local].fecha) {
+      porLocal[r.local] = r;
+    }
+  });
+  const ultimas = Object.values(porLocal);
+
+  // Stats
+  const total = datosResumen.length;
+  const promedios = ultimas.map(r => r.porcentaje);
+  const prom = promedios.length ? Math.round(promedios.reduce((a, b) => a + b, 0) / promedios.length) : 0;
+  const aprobadas = ultimas.filter(r => r.porcentaje >= UMBRAL_APROBADO).length;
+  const alertas = ultimas.filter(r => r.porcentaje < UMBRAL_OBSERVADO).length;
+
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-prom').textContent = prom + '%';
+  document.getElementById('stat-aprobadas').textContent = aprobadas;
+  document.getElementById('stat-alertas').textContent = alertas;
+
+  // Alertas sin evaluar
+  const hoy = new Date();
+  const sinEvaluar = ultimas.filter(r => {
+    const diff = (hoy - new Date(r.fecha)) / (1000 * 60 * 60 * 24);
+    return diff > DIAS_ALERTA;
+  });
+  if (sinEvaluar.length) {
+    document.getElementById('alert-sin-evaluar').style.display = 'block';
+    document.getElementById('alert-sin-lista').innerHTML =
+      sinEvaluar.map(r => `• ${r.local} (hace ${Math.round((hoy - new Date(r.fecha)) / 86400000)} días)`).join('<br>');
+  }
+
+  // Lista sucursales ordenada por peor puntaje
+  ultimas.sort((a, b) => a.porcentaje - b.porcentaje);
+  const list = document.getElementById('suc-list');
+  list.innerHTML = ultimas.map(r => {
+    const { estado, colorClass, badgeClass } = getEstado(r.porcentaje);
+    return `<div class="suc-card">
+      <div class="suc-left">
+        <div class="suc-name">${r.local}</div>
+        <div class="suc-date">Última: ${formatFecha(r.fecha)}</div>
+      </div>
+      <div class="suc-right">
+        <div>
+          <div class="suc-pct ${colorClass}">${r.porcentaje}%</div>
+          <div class="badge-estado ${badgeClass}">${estado}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// RENDER TENDENCIAS
+// ============================================================
+function renderTendencias() {
+  if (!datosResumen.length) return;
+
+  // Agrupar por local — todas las evaluaciones
+  const porLocal = {};
+  datosResumen.forEach(r => {
+    if (!porLocal[r.local]) porLocal[r.local] = [];
+    porLocal[r.local].push(r);
+  });
+
+  // Reporte de riesgos
+  const hoy = new Date();
+  const riesgos = [];
+
+  const sinEvalReciente = Object.entries(porLocal).filter(([local, evals]) => {
+    const ultima = evals.sort((a, b) => b.fecha.localeCompare(a.fecha))[0];
+    return (hoy - new Date(ultima.fecha)) / 86400000 > DIAS_ALERTA;
+  });
+
+  const conCaida = Object.entries(porLocal).filter(([local, evals]) => {
+    if (evals.length < 2) return false;
+    evals.sort((a, b) => b.fecha.localeCompare(a.fecha));
+    return evals[0].porcentaje < evals[1].porcentaje - 10;
+  });
+
+  const criticos = Object.entries(porLocal).filter(([local, evals]) => {
+    const ultima = evals.sort((a, b) => b.fecha.localeCompare(a.fecha))[0];
+    return ultima.porcentaje < UMBRAL_OBSERVADO;
+  });
+
+  const totalLocales = Object.keys(porLocal).length;
+  const riesgosHTML = [
+    {
+      pct: sinEvalReciente.length,
+      total: totalLocales,
+      titulo: `Sin evaluar hace más de ${DIAS_ALERTA} días`,
+      desc: sinEvalReciente.length ? sinEvalReciente.map(([l]) => l).join(', ') : 'Todos los locales están al día.',
+      esRiesgo: sinEvalReciente.length > 0
+    },
+    {
+      pct: conCaida.length,
+      total: totalLocales,
+      titulo: 'Caída sostenida entre evaluaciones',
+      desc: conCaida.length ? conCaida.map(([l]) => l).join(', ') : 'No se detectaron caídas significativas.',
+      esRiesgo: conCaida.length > 0
+    },
+    {
+      pct: criticos.length,
+      total: totalLocales,
+      titulo: 'En estado crítico (< 60%)',
+      desc: criticos.length ? criticos.map(([l]) => l).join(', ') : 'Ningún local en estado crítico.',
+      esRiesgo: criticos.length > 0
+    }
+  ];
+
+  document.getElementById('riesgos-wrap').innerHTML = riesgosHTML.map(r => {
+    const pctVal = totalLocales ? Math.round(r.pct / r.total * 100) : 0;
+    const color = r.esRiesgo ? 'var(--red)' : 'var(--green)';
+    const bg = r.esRiesgo ? 'var(--red-bg)' : 'var(--green-bg)';
+    const border = r.esRiesgo ? 'var(--red)' : 'var(--green)';
+    return `<div class="riesgo-card" style="background:${bg};border-color:${border}">
+      <div class="riesgo-pct" style="color:${color}">${r.pct}/${r.total}</div>
+      <div class="riesgo-text">
+        <div class="riesgo-title" style="color:${color}">${r.titulo}</div>
+        <div class="riesgo-desc">${r.desc}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Evolución por local
+  const tendHTML = Object.entries(porLocal).map(([local, evals]) => {
+    evals.sort((a, b) => a.fecha.localeCompare(b.fecha));
+    const ultima = evals[evals.length - 1];
+    const { estado, colorClass, barClass } = getEstado(ultima.porcentaje);
+    const dots = evals.slice(-5).map(e => {
+      const { colorHex } = getEstadoHex(e.porcentaje);
+      const mes = e.fecha.substring(5, 7);
+      return `<div class="tend-dot-wrap">
+        <div class="tend-dot" style="background:${colorHex}">${e.porcentaje}%</div>
+        <div class="tend-dot-label">${mes}</div>
+      </div>`;
+    }).join('');
+
+    return `<div class="tend-card">
+      <div class="tend-card-header">
+        <div class="tend-card-name">${local}</div>
+        <div class="tend-card-pct ${colorClass}">${ultima.porcentaje}%</div>
+      </div>
+      <div class="tend-bar-wrap"><div class="tend-bar ${barClass}" style="width:${ultima.porcentaje}%"></div></div>
+      <div class="tend-dates">${dots}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('tend-grid').innerHTML = tendHTML || '<div style="color:var(--gray);font-size:13px">No hay datos suficientes aún.</div>';
+}
+
+// ============================================================
+// FORMULARIO
+// ============================================================
+function buildForm() {
+  // Fecha de hoy por defecto
+  if (!document.getElementById('f-fecha').value) {
+    document.getElementById('f-fecha').value = new Date().toISOString().split('T')[0];
+  }
+
+  const body = document.getElementById('form-body');
+  body.innerHTML = MODULOS.map(mod => {
+    const items = mod.items.map(item => `
+      <div class="item-card" id="card-${item.id}">
+        <div class="item-num">Ítem ${item.id}</div>
+        <div class="item-label">${item.label}</div>
+        <div class="score-btns">
+          ${[1,2,3,4].map(n => `<button class="score-btn" onclick="setScore('${item.id}',${n},this)">${n}</button>`).join('')}
+          <button class="score-btn" onclick="setScore('${item.id}','NA',this)">NA</button>
+        </div>
+        <div class="score-labels">
+          <span class="score-label">Inicial</span>
+          <span class="score-label">En proceso</span>
+          <span class="score-label">Logrado</span>
+          <span class="score-label">Destacado</span>
+          <span class="score-label">N/A</span>
+        </div>
+        <button class="guide-toggle" onclick="toggleGuide('g-${item.id}')">💡 Ver guía</button>
+        <div class="guide-panel" id="g-${item.id}">${item.guia}</div>
+      </div>
+    `).join('');
+
+    return `<div class="modulo-block">
+      <div class="modulo-header">
+        <div class="modulo-num">${mod.num}</div>
+        <div class="modulo-title">${mod.nombre}</div>
+      </div>
+      ${items}
+    </div>`;
+  }).join('');
+
+  updateProgress();
+}
+
+function setScore(id, val, btn) {
+  respuestas[id] = val;
+  const card = document.getElementById('card-' + id);
+  card.classList.add('answered');
+  card.querySelectorAll('.score-btn').forEach(b => {
+    b.className = 'score-btn';
+    if (b === btn) {
+      if (val === 'NA') b.classList.add('sel-na');
+      else b.classList.add('sel-' + val);
+    }
+  });
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = MODULOS.reduce((s, m) => s + m.items.length, 0);
+  const respondidos = Object.keys(respuestas).length;
+  const pct = Math.round(respondidos / total * 100);
+  document.getElementById('form-progress-bar').style.width = pct + '%';
+  document.getElementById('form-progress-text').textContent = `${respondidos} / ${total}`;
+}
+
+function updateFormMeta() {
+  document.getElementById('form-local-label').textContent = document.getElementById('f-local').value || '—';
+  document.getElementById('form-evaluado-label').textContent = document.getElementById('f-evaluado').value || '—';
+}
+
+function toggleGuide(id) {
+  const panel = document.getElementById(id);
+  panel.classList.toggle('open');
+}
+
+// ============================================================
+// ENVÍO
+// ============================================================
+async function enviarFormulario() {
+  const fecha = document.getElementById('f-fecha').value;
+  const local = document.getElementById('f-local').value;
+  const evaluado = document.getElementById('f-evaluado').value.trim();
+  const evaluador = document.getElementById('f-evaluador').value;
+  const antiguedad = document.getElementById('f-antiguedad').value;
+
+  if (!fecha || !local || !evaluado || !evaluador) {
+    showToast('⚠ Completá todos los campos de cabecera');
+    return;
+  }
+
+  const totalItems = MODULOS.reduce((s, m) => s + m.items.length, 0);
+  if (Object.keys(respuestas).length < totalItems) {
+    const faltan = totalItems - Object.keys(respuestas).length;
+    showToast(`⚠ Faltan ${faltan} ítems por responder`);
+    return;
+  }
+
+  const btn = document.getElementById('btn-enviar');
+  btn.textContent = 'Enviando...';
+  btn.disabled = true;
+
+  // Calcular resultados
+  const resultadoModulos = calcularResultados();
+
+  // Armar payload
+  const payload = {
+    action: 'submit',
+    fecha, local, evaluado, evaluador, antiguedad,
+    respuestas,
+    porcentajeTotal: resultadoModulos.total,
+    modulos: resultadoModulos.modulos
+  };
+
+  try {
+    await fetch(SHEET_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    });
+    showToast('✓ Evaluación enviada correctamente');
+  } catch(e) {
+    showToast('⚠ Error al enviar. Revisá tu conexión.');
+  }
+
+  btn.textContent = 'Enviar evaluación';
+  btn.disabled = false;
+
+  // Mostrar resultado
+  mostrarResultado(local, evaluado, resultadoModulos);
+}
+
+function calcularResultados() {
+  const modulosResult = MODULOS.map(mod => {
+    let suma = 0, count = 0;
+    mod.items.forEach(item => {
+      const val = respuestas[item.id];
+      if (val && val !== 'NA') { suma += val; count++; }
+    });
+    const pct = count > 0 ? Math.round(((suma / count - 1) / 3) * 100) : null;
+    return { nombre: mod.nombre, num: mod.num, porcentaje: pct, items: count };
+  });
+
+  const validos = modulosResult.filter(m => m.porcentaje !== null);
+  const total = validos.length ? Math.round(validos.reduce((s, m) => s + m.porcentaje, 0) / validos.length) : 0;
+
+  return { total, modulos: modulosResult };
+}
+
+function mostrarResultado(local, evaluado, resultado) {
+  const { total, modulos } = resultado;
+  const { estado, colorClass, heroClass } = getEstado(total);
+
+  document.getElementById('resultado-pct').textContent = total + '%';
+  document.getElementById('resultado-estado').textContent = estado;
+  document.getElementById('resultado-local').textContent = local + ' · ' + evaluado;
+
+  const hero = document.getElementById('resultado-hero');
+  hero.className = 'resultado-hero ' + heroClass;
+
+  document.getElementById('resultado-modulos').innerHTML = modulos.map(m => {
+    const pct = m.porcentaje;
+    if (pct === null) return '';
+    const { colorClass: cc, barClass: bc, badgeLabel } = getEstado(pct);
+    return `<div class="modulo-result">
+      <div class="modulo-result-pct ${cc}">${pct}%</div>
+      <div class="modulo-result-info">
+        <div class="modulo-result-name">${m.num}. ${m.nombre}</div>
+        <div class="modulo-result-bar-outer">
+          <div class="modulo-result-bar ${bc}" style="width:${pct}%"></div>
+        </div>
+        <div class="modulo-result-badge ${cc}">${badgeLabel}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Agregar al resumen local
+  datosResumen.push({
+    local, evaluado,
+    fecha: document.getElementById('f-fecha').value,
+    porcentaje: total,
+    evaluador: document.getElementById('f-evaluador').value
+  });
+  renderHome();
+  renderTendencias();
+
+  showTab('resultado');
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function getEstado(pct) {
+  if (pct >= UMBRAL_APROBADO) return { estado: 'Aprobado', colorClass: 'color-green', barClass: 'bar-green', heroClass: 'aprobado', badgeLabel: '✓ Aprobado', badgeClass: 'badge-aprobado' };
+  if (pct >= UMBRAL_OBSERVADO) return { estado: 'Observado', colorClass: 'color-yellow', barClass: 'bar-yellow', heroClass: 'observado', badgeLabel: '⚠ Observado', badgeClass: 'badge-observado' };
+  return { estado: 'Atención urgente', colorClass: 'color-red', barClass: 'bar-red', heroClass: 'urgente', badgeLabel: '✖ Urgente', badgeClass: 'badge-urgente' };
+}
+
+function getEstadoHex(pct) {
+  if (pct >= UMBRAL_APROBADO) return { colorHex: '#2ECC71' };
+  if (pct >= UMBRAL_OBSERVADO) return { colorHex: '#F39C12' };
+  return { colorHex: '#E74C3C' };
+}
+
+function formatFecha(str) {
+  if (!str) return '—';
+  const [y, m, d] = str.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
