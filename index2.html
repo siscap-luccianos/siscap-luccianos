@@ -2,285 +2,342 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#0D0D0D"/>
 <title>SisCap 2</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-:root{--gold:#C9A84C;--gold-light:#E2C06A;--gold-dark:#A07830;--black:#0D0D0D;--dark:#1A1A1A;--dark2:#242424;--dark3:#2E2E2E;--white:#F5F0E8;--gray:#888;--green:#2ECC71;--green-bg:#1a3d2b;--yellow:#F39C12;--yellow-bg:#3d2e0a;--red:#E74C3C;--red-bg:#3d1010;--radius:14px;--radius-sm:8px;}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;background:var(--black);color:var(--white);font-family:'Inter',sans-serif;overflow-x:hidden;}
-.screen{display:none;flex-direction:column;min-height:100vh;animation:fadeIn .3s ease;}
-.screen.active{display:flex;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* ── VARIABLES ──────────────────────────────────────────── */
+:root{
+  --gold:#C9A84C; --gold-light:#E2C06A; --gold-dark:#A07830;
+  --black:#0D0D0D; --dark:#1A1A1A; --dark2:#242424; --dark3:#2E2E2E;
+  --white:#F5F0E8; --gray:#888;
+  --green:#2ECC71; --green-bg:#1a3d2b;
+  --yellow:#F39C12; --yellow-bg:#3d2e0a;
+  --red:#E74C3C; --red-bg:#3d1010;
+  --teal:#5DCAA5; --teal-bg:#0F1F18;
+  --r:14px; --rs:8px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+}
 
-/* LOGIN */
-#screen-login{background:var(--black);align-items:center;justify-content:center;padding:32px 24px;}
-.login-logo{font-family:'Montserrat',sans-serif;font-weight:900;font-size:42px;color:var(--gold);letter-spacing:-1px;margin-bottom:4px;}
-.login-sub{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gray);margin-bottom:48px;}
-.login-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--radius);padding:28px 24px;width:100%;max-width:380px;}
-.login-card h2{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:700;margin-bottom:24px;}
-.field{margin-bottom:16px;}
-.field label{display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--gray);margin-bottom:6px;}
-.field input,.field select{width:100%;padding:12px 14px;background:var(--dark2);border:1px solid #333;border-radius:var(--radius-sm);color:var(--white);font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;-webkit-appearance:none;appearance:none;}
-.field input:focus,.field select:focus{border-color:var(--gold);}
-.field select option{background:var(--dark2);}
-.btn-primary{width:100%;padding:14px;background:var(--gold);color:var(--black);font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;text-transform:uppercase;border:none;border-radius:var(--radius-sm);cursor:pointer;transition:background .2s,transform .1s;margin-top:8px;}
-.btn-primary:active{transform:scale(.98);background:var(--gold-dark);}
-.btn-secondary{width:100%;padding:12px;background:transparent;color:var(--gold);font-family:'Montserrat',sans-serif;font-weight:600;font-size:13px;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--gold-dark);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;margin-top:8px;}
-.btn-secondary:active{background:var(--gold-dark);color:var(--black);}
-.btn-green{width:100%;padding:14px;background:var(--green-bg);color:var(--green);font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--green);border-radius:var(--radius-sm);cursor:pointer;margin-top:8px;}
-.error-msg{color:var(--red);font-size:13px;margin-top:10px;text-align:center;min-height:20px;}
+/* ── RESET ──────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%;-webkit-text-size-adjust:100%}
+body{min-height:100%;background:var(--black);color:var(--white);font-family:'Inter',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 
-/* HEADER */
-.app-header{background:var(--dark);border-bottom:1px solid #2a2a2a;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.app-header .logo{font-family:'Montserrat',sans-serif;font-weight:900;font-size:22px;color:var(--gold);}
-.app-header .badge{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);}
-.header-user{display:flex;align-items:center;gap:8px;}
-.avatar{width:34px;height:34px;border-radius:50%;background:var(--gold-dark);color:var(--black);font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;}
-.header-right{display:flex;align-items:center;gap:12px;}
-.config-btn{background:none;border:none;color:var(--gray);font-size:20px;cursor:pointer;padding:4px;}
-.config-btn:hover{color:var(--gold);}
+/* ── SCREENS ────────────────────────────────────────────── */
+.screen{display:none;flex-direction:column;min-height:100dvh;animation:fadeIn .25s ease}
+.screen.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
-/* HOME */
-#screen-home{background:var(--black);}
-.home-body{padding:20px;flex:1;display:flex;flex-direction:column;gap:20px;padding-bottom:80px;}
-.section-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.stat-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:4px;}
-.stat-card .stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);}
-.stat-card .stat-value{font-family:'Montserrat',sans-serif;font-weight:900;font-size:32px;color:var(--white);line-height:1;}
-.stat-card .stat-sub{font-size:11px;color:var(--gray);}
-.stat-card.gold{border-color:var(--gold-dark);}
-.stat-card.gold .stat-value{color:var(--gold);}
+/* ── TIPOGRAFÍA SHARED ──────────────────────────────────── */
+.font-brand{font-family:'Montserrat',sans-serif}
+.section-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
 
-/* Alertas */
-.alert-strip{background:var(--yellow-bg);border:1px solid var(--yellow);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:flex-start;gap:12px;}
-.alert-strip .alert-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--yellow);margin-bottom:4px;}
-.alert-strip .alert-list{font-size:12px;color:#ccc;line-height:1.6;}
+/* ── BOTONES ────────────────────────────────────────────── */
+.btn{display:block;width:100%;padding:14px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;text-transform:uppercase;border:none;border-radius:var(--rs);cursor:pointer;transition:filter .15s,transform .1s;text-align:center}
+.btn:active{transform:scale(.98);filter:brightness(.85)}
+.btn-gold{background:var(--gold);color:var(--black)}
+.btn-outline{background:transparent;color:var(--gold);border:1px solid var(--gold-dark);margin-top:8px}
+.btn-green-solid{background:var(--green-bg);color:var(--green);border:1px solid var(--green);margin-top:8px}
+.btn-sm{padding:7px 14px;font-size:11px;width:auto;display:inline-block;margin:0}
 
-/* CTA eval */
-.cta-eval{background:var(--gold);color:var(--black);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background .2s;border:none;width:100%;}
-.cta-eval:active{background:var(--gold-dark);}
-.cta-eval .cta-text{font-family:'Montserrat',sans-serif;font-weight:800;font-size:16px;}
-.cta-eval .cta-sub{font-size:11px;margin-top:2px;opacity:.7;}
+/* ── CAMPOS ─────────────────────────────────────────────── */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--gray);margin-bottom:5px}
+.field input,.field select,.field textarea{
+  width:100%;padding:12px 14px;background:var(--dark2);border:1px solid #333;
+  border-radius:var(--rs);color:var(--white);font-size:15px;font-family:'Inter',sans-serif;
+  outline:none;transition:border-color .2s;-webkit-appearance:none;appearance:none
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold)}
+.field select option{background:var(--dark2)}
 
-/* Buscador */
-.search-wrap{position:relative;}
-.search-input{width:100%;padding:10px 14px 10px 36px;background:var(--dark2);border:1px solid #333;border-radius:var(--radius-sm);color:var(--white);font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;}
-.search-input:focus{border-color:var(--gold);}
-.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray);font-size:14px;}
+/* ── HEADER ─────────────────────────────────────────────── */
+.app-header{
+  background:var(--dark);border-bottom:1px solid #2a2a2a;
+  padding:13px 20px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:200
+}
+.logo{font-family:'Montserrat',sans-serif;font-weight:900;font-size:22px;color:var(--gold)}
+.badge-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gray)}
+.avatar{
+  width:34px;height:34px;border-radius:50%;background:var(--gold-dark);
+  color:var(--black);font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0
+}
+.config-btn{background:none;border:none;color:var(--gray);font-size:20px;cursor:pointer;padding:6px;border-radius:50%;transition:color .2s}
+.config-btn:hover{color:var(--gold)}
 
-/* Sucursales list */
-.suc-list{display:flex;flex-direction:column;gap:8px;}
-.suc-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--radius);overflow:hidden;transition:border-color .2s;}
-.suc-card-head{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
-.suc-card-head:active{background:var(--dark2);}
-.suc-left{display:flex;flex-direction:column;gap:3px;}
-.suc-name{font-weight:600;font-size:14px;color:var(--white);}
-.suc-date{font-size:11px;color:var(--gray);}
-.suc-right{display:flex;align-items:center;gap:8px;}
-.suc-pct{font-family:'Montserrat',sans-serif;font-weight:700;font-size:18px;}
-.suc-chev{color:var(--gray);font-size:12px;transition:transform .2s;}
-.suc-chev.open{transform:rotate(180deg);}
-.badge-estado{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:20px;}
-.badge-aprobado{background:var(--green-bg);color:var(--green);border:1px solid var(--green);}
-.badge-observado{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow);}
-.badge-urgente{background:var(--red-bg);color:var(--red);border:1px solid var(--red);}
-.color-green{color:var(--green);}
-.color-yellow{color:var(--yellow);}
-.color-red{color:var(--red);}
-.bar-green{background:var(--green);}
-.bar-yellow{background:var(--yellow);}
-.bar-red{background:var(--red);}
+/* ── BOTTOM NAV ─────────────────────────────────────────── */
+.bottom-nav{
+  background:var(--dark);border-top:1px solid #2a2a2a;
+  display:flex;position:sticky;bottom:0;
+  padding-bottom:var(--safe-b);z-index:190
+}
+.nav-btn{
+  flex:1;padding:11px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;color:var(--gray);font-size:9px;letter-spacing:1px;text-transform:uppercase;
+  font-weight:600;border:none;background:none;transition:color .2s
+}
+.nav-btn.active{color:var(--gold)}
+.nav-icon{font-size:20px;line-height:1}
 
-/* Detalle sucursal expandido */
-.suc-detail{display:none;border-top:1px solid #2a2a2a;padding:12px 16px;background:var(--dark2);flex-direction:column;gap:8px;}
-.suc-detail.open{display:flex;}
-.colab-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--dark3);border-radius:var(--radius-sm);cursor:pointer;}
-.colab-row:active{background:#3a3a3a;}
-.colab-info{display:flex;flex-direction:column;gap:2px;}
-.colab-name{font-size:13px;font-weight:600;color:var(--white);}
-.colab-date{font-size:11px;color:var(--gray);}
-.colab-right{display:flex;align-items:center;gap:8px;}
-.colab-pct{font-family:'Montserrat',sans-serif;font-weight:700;font-size:15px;}
-.colab-actions{display:flex;gap:6px;margin-top:4px;}
-.btn-reeval{flex:1;padding:8px;background:var(--gold);color:var(--black);font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;border:none;border-radius:var(--radius-sm);cursor:pointer;}
-.btn-ver{flex:1;padding:8px;background:transparent;color:var(--gold);font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--gold-dark);border-radius:var(--radius-sm);cursor:pointer;}
-.btn-del{padding:8px 12px;background:var(--red-bg);color:var(--red);font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;border:1px solid var(--red);border-radius:var(--radius-sm);cursor:pointer;}
-.nueva-eval-local{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:transparent;color:var(--gold);font-size:12px;font-weight:600;border:1px dashed var(--gold-dark);border-radius:var(--radius-sm);cursor:pointer;width:100%;}
-.ver-mas-btn{text-align:center;padding:10px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;letter-spacing:1px;text-transform:uppercase;}
-
-/* Bottom nav */
-.bottom-nav{background:var(--dark);border-top:1px solid #2a2a2a;display:flex;position:sticky;bottom:0;}
-.nav-btn{flex:1;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:color .2s;color:var(--gray);font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:600;border:none;background:none;}
-.nav-btn.active{color:var(--gold);}
-.nav-icon{font-size:20px;}
-
-/* TENDENCIAS */
-#screen-tendencias{background:var(--black);}
-.tend-body{padding:20px;flex:1;display:flex;flex-direction:column;gap:20px;padding-bottom:80px;}
-.tend-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--radius);padding:16px;}
-.tend-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
-.tend-card-name{font-weight:600;font-size:14px;color:var(--white);}
-.tend-card-pct{font-family:'Montserrat',sans-serif;font-weight:800;font-size:20px;}
-.tend-bar-wrap{background:#333;border-radius:4px;height:6px;overflow:hidden;}
-.tend-bar{height:100%;border-radius:4px;transition:width .6s ease;}
-.tend-dates{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
-.tend-dot-wrap{display:flex;flex-direction:column;align-items:center;}
-.tend-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--black);}
-.tend-dot-label{font-size:9px;color:var(--gray);text-align:center;margin-top:2px;}
-.riesgo-card{border-radius:var(--radius);padding:14px 16px;display:flex;gap:14px;align-items:flex-start;margin-bottom:10px;}
-.riesgo-pct{font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;min-width:50px;}
-.riesgo-text .riesgo-title{font-weight:700;font-size:13px;margin-bottom:3px;}
-.riesgo-text .riesgo-desc{font-size:12px;color:#ccc;line-height:1.5;}
-
-/* FORMULARIO */
-#screen-form{background:var(--black);}
-.form-header-bar{background:var(--dark);border-bottom:1px solid #2a2a2a;padding:12px 20px;position:sticky;top:0;z-index:90;}
-.form-progress-wrap{display:flex;align-items:center;gap:12px;margin-top:8px;}
-.form-progress-bar-outer{flex:1;background:#333;border-radius:4px;height:5px;}
-.form-progress-bar{height:100%;border-radius:4px;background:var(--gold);transition:width .4s ease;width:0%;}
-.form-progress-text{font-size:11px;color:var(--gray);white-space:nowrap;}
-.form-meta{display:flex;gap:16px;flex-wrap:wrap;margin-top:6px;}
-.form-meta span{font-size:12px;color:var(--gray);}
-.form-meta strong{color:var(--white);}
-.form-cabecera{padding:16px 20px;background:var(--dark2);border-bottom:1px solid #2a2a2a;display:flex;flex-direction:column;gap:12px;}
-
-/* Selector módulos */
-.mod-selector{padding:14px 20px;background:var(--dark);border-bottom:1px solid #2a2a2a;}
-.mod-selector-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:10px;}
-.mod-toggle-wrap{display:flex;flex-wrap:wrap;gap:8px;}
-.mod-toggle{padding:8px 14px;border-radius:20px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;border:1.5px solid #444;background:var(--dark2);color:var(--gray);display:inline-flex;align-items:center;gap:5px;-webkit-tap-highlight-color:transparent;}
-.mod-toggle.active{background:var(--gold);color:var(--black);border-color:var(--gold);}
-
-/* Leyenda */
-.legend-bar{display:flex;flex-wrap:wrap;gap:8px 16px;background:var(--dark);border-bottom:1px solid #2a2a2a;padding:10px 20px;font-size:11px;color:var(--gray);position:sticky;top:0;z-index:88;}
-.legend-bar span{display:flex;align-items:center;gap:6px;font-weight:500;}
-.lbadge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:10px;font-weight:700;color:white;flex-shrink:0;}
-
-.form-body{padding:20px;display:flex;flex-direction:column;gap:24px;padding-bottom:100px;}
-.modulo-block{display:flex;flex-direction:column;gap:10px;}
-.modulo-header{background:var(--dark2);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;gap:10px;}
-.modulo-num{width:28px;height:28px;border-radius:50%;background:#5DCAA5;color:var(--black);font-family:'Montserrat',sans-serif;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.modulo-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:#5DCAA5;}
-.modulo-tag{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#5DCAA5;margin-left:4px;}
-
-/* Banner hospitalidad */
-.hosp-banner{background:linear-gradient(135deg,#1a1a0a,#2a2500);border:1px solid var(--gold-dark);border-radius:var(--radius);padding:24px 20px;text-align:center;margin:0 20px 4px;}
-.hosp-org{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-dark);margin-bottom:10px;}
-.hosp-title{font-family:'Montserrat',sans-serif;font-weight:900;font-size:28px;color:var(--gold);line-height:1.1;margin-bottom:8px;}
-.hosp-sub{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:12px;}
-.hosp-line{width:40px;height:2px;background:var(--gold-dark);margin:0 auto;}
-
-.item-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--radius);padding:14px;transition:border-color .2s;}
-.item-card.answered{border-color:#3a3a2a;}
-.item-num{font-size:10px;color:var(--gold);font-weight:700;margin-bottom:4px;}
-.item-label{font-size:13px;color:var(--white);margin-bottom:10px;line-height:1.5;}
-.item-label strong{font-weight:700;}
-.score-btns{display:flex;gap:6px;}
-.score-btn{flex:1;padding:9px 4px;background:var(--dark2);border:1px solid #333;border-radius:var(--radius-sm);color:var(--gray);font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:all .15s;text-align:center;}
-.score-btn:active{transform:scale(.95);}
-.na-base{color:#aaa;border-color:#666;}
-.score-btn.sel-1{background:#3d1010;border-color:var(--red);color:var(--red);}
-.score-btn.sel-2{background:#3d2e0a;border-color:var(--yellow);color:var(--yellow);}
-.score-btn.sel-3{background:#1a3020;border-color:#27ae60;color:#27ae60;}
-.score-btn.sel-4{background:var(--green-bg);border-color:var(--green);color:var(--green);}
-.score-btn.sel-na{background:#3a3a4a;border-color:#8888bb;color:#ccccff;font-weight:900;}
-.score-labels{display:flex;gap:6px;margin-top:5px;}
-.score-label{flex:1;font-size:8px;color:var(--gray);text-align:center;}
-
-/* Guía técnica */
-.guide-toggle{margin-top:10px;font-size:11px;color:#5DCAA5;cursor:pointer;display:flex;align-items:center;gap:4px;background:none;border:none;padding:0;font-family:'Inter',sans-serif;}
-.guide-panel{margin-top:8px;background:#0F1F18;border-left:2px solid #5DCAA5;border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:10px 12px;font-size:12px;color:#9dd;line-height:1.6;display:none;}
-.guide-panel.open{display:block;}
-.guide-panel .guide-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#5DCAA5;margin-bottom:6px;}
-.guide-panel ul{list-style:none;display:flex;flex-direction:column;gap:6px;}
-.guide-panel li{font-size:12px;color:#aaa;padding:3px 0;border-bottom:1px solid #1a3028;}
-.guide-panel li:last-child{border-bottom:none;}
-.guide-resp{font-size:11px;color:#5DCAA5;font-style:italic;padding-left:12px;display:block;margin-top:2px;}
-
-/* Hospitalidad toggle */
-.hosp-toggle{margin-top:6px;font-size:11px;color:var(--gold);cursor:pointer;display:flex;align-items:center;gap:4px;background:none;border:none;padding:0;font-family:'Inter',sans-serif;}
-.hosp-panel{margin-top:8px;background:#1a1500;border-left:2px solid var(--gold-dark);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:10px 12px;font-size:12px;color:#ccc;line-height:1.6;display:none;}
-.hosp-panel.open{display:block;}
-
-/* Comentario por ítem */
-.item-comment-btn{background:none;border:none;cursor:pointer;color:var(--gray);font-size:18px;padding:0 2px;flex-shrink:0;opacity:.5;transition:opacity .2s;line-height:1;margin-left:4px;}
-.item-comment-btn:hover{opacity:1;color:var(--gold);}
-.item-comment-wrap{display:none;margin-top:8px;}
-.item-comment-wrap.open{display:block;}
-.item-comment-wrap textarea{width:100%;background:var(--dark2);border:1px solid #333;border-radius:var(--radius-sm);padding:8px 10px;font-family:'Inter',sans-serif;font-size:12px;color:var(--white);resize:vertical;min-height:44px;outline:none;transition:border-color .2s;}
-.item-comment-wrap textarea:focus{border-color:var(--gold);}
-
-/* Obs hospitalidad */
-.obs-hosp-wrap{background:#1a1500;border:1px solid var(--gold-dark);border-radius:var(--radius-sm);padding:12px;margin-top:10px;}
-.obs-hosp-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
-.obs-hosp-wrap textarea{width:100%;background:transparent;border:none;font-family:'Inter',sans-serif;font-size:13px;color:var(--white);resize:vertical;min-height:50px;outline:none;}
-
-/* Form footer */
-.form-footer{position:fixed;bottom:0;left:0;right:0;background:var(--dark);border-top:1px solid #2a2a2a;padding:12px 20px;z-index:200;}
-
-/* RESULTADO */
-#screen-resultado{background:var(--black);}
-.resultado-body{padding:20px;flex:1;display:flex;flex-direction:column;gap:16px;padding-bottom:40px;}
-.resultado-hero{border-radius:var(--radius);padding:24px 20px;text-align:center;}
-.resultado-hero.aprobado{background:var(--green-bg);border:1px solid var(--green);}
-.resultado-hero.observado{background:var(--yellow-bg);border:1px solid var(--yellow);}
-.resultado-hero.urgente{background:var(--red-bg);border:1px solid var(--red);}
-.resultado-pct{font-family:'Montserrat',sans-serif;font-weight:900;font-size:64px;line-height:1;}
-.resultado-hero.aprobado .resultado-pct{color:var(--green);}
-.resultado-hero.observado .resultado-pct{color:var(--yellow);}
-.resultado-hero.urgente .resultado-pct{color:var(--red);}
-.resultado-estado{font-family:'Montserrat',sans-serif;font-weight:800;font-size:16px;margin-top:8px;margin-bottom:4px;}
-.resultado-local{font-size:13px;color:#aaa;}
-.modulo-result{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;}
-.modulo-result-pct{font-family:'Montserrat',sans-serif;font-weight:900;font-size:26px;min-width:58px;text-align:center;}
-.modulo-result-info{flex:1;}
-.modulo-result-name{font-weight:600;font-size:13px;color:var(--white);margin-bottom:4px;}
-.modulo-result-bar-outer{background:#333;border-radius:4px;height:5px;}
-.modulo-result-bar{height:100%;border-radius:4px;}
-.modulo-result-badge{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:5px;}
-
-/* Spinner / Toast */
-.spinner-wrap{display:flex;align-items:center;justify-content:center;padding:40px;}
-.spinner{width:36px;height:36px;border:3px solid #333;border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;}
+/* ── SPINNER / TOAST ────────────────────────────────────── */
+.spinner-wrap{display:flex;align-items:center;justify-content:center;padding:40px}
+.spinner{width:34px;height:34px;border:3px solid #333;border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark3);color:var(--white);padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;border:1px solid #3a3a3a;}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast{
+  position:fixed;bottom:calc(70px + var(--safe-b));left:50%;
+  transform:translateX(-50%) translateY(12px);
+  background:var(--dark3);color:var(--white);padding:10px 20px;
+  border-radius:20px;font-size:13px;opacity:0;transition:all .28s;
+  z-index:999;white-space:nowrap;border:1px solid #3a3a3a;pointer-events:none;
+  max-width:90vw;overflow:hidden;text-overflow:ellipsis
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* Autocomplete local */
-.autocomplete-wrap{position:relative;}
-.autocomplete-list{position:absolute;top:100%;left:0;right:0;background:var(--dark2);border:1px solid var(--gold-dark);border-radius:var(--radius-sm);z-index:300;max-height:200px;overflow-y:auto;display:none;}
-.autocomplete-list.open{display:block;}
-.autocomplete-item{padding:10px 14px;font-size:14px;cursor:pointer;border-bottom:1px solid #333;}
-.autocomplete-item:hover,.autocomplete-item:active{background:var(--dark3);color:var(--gold);}
-.autocomplete-item:last-child{border-bottom:none;}
+/* ── CARDS STAT ─────────────────────────────────────────── */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:4px}
+.stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gray)}
+.stat-value{font-family:'Montserrat',sans-serif;font-weight:900;font-size:32px;color:var(--white);line-height:1}
+.stat-sub{font-size:11px;color:var(--gray)}
+.stat-card.gold{border-color:var(--gold-dark)}
+.stat-card.gold .stat-value{color:var(--gold)}
 
+/* ── ALERTAS ────────────────────────────────────────────── */
+.alert-strip{background:var(--yellow-bg);border:1px solid var(--yellow);border-radius:var(--r);padding:13px 15px}
+.alert-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;color:var(--yellow);margin-bottom:4px}
+.alert-list{font-size:12px;color:#ccc;line-height:1.6}
 
-/* VER EVALUACIÓN */
-.ver-eval-header{background:var(--dark2);border-radius:var(--radius);padding:16px;margin-bottom:4px;}
-.ver-eval-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
-.ver-eval-field{display:flex;flex-direction:column;gap:2px;}
-.ver-eval-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);}
-.ver-eval-value{font-size:13px;font-weight:600;color:var(--white);}
-.ver-mod-block{display:flex;flex-direction:column;gap:6px;}
-.ver-mod-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:#5DCAA5;padding:8px 12px;background:var(--dark2);border-radius:var(--radius-sm);}
-.ver-item{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--radius-sm);padding:10px 12px;}
-.ver-item-label{font-size:12px;color:#ccc;margin-bottom:6px;line-height:1.4;}
-.ver-item-score{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;}
-.ver-item-score.s1{background:#3d1010;color:var(--red);border:1px solid var(--red);}
-.ver-item-score.s2{background:#3d2e0a;color:var(--yellow);border:1px solid var(--yellow);}
-.ver-item-score.s3{background:#1a3020;color:#27ae60;border:1px solid #27ae60;}
-.ver-item-score.s4{background:var(--green-bg);color:var(--green);border:1px solid var(--green);}
-.ver-item-score.sna{background:#222;color:var(--gray);border:1px solid #555;}
-.ver-item-comment{margin-top:6px;padding:6px 10px;background:#1a1a1a;border-left:2px solid var(--gold-dark);border-radius:0 4px 4px 0;font-size:11px;color:#bbb;font-style:italic;}
-.ver-score-total{background:var(--dark2);border-radius:var(--radius);padding:16px;display:flex;align-items:center;justify-content:space-between;}
+/* ── CTA EVALUAR ────────────────────────────────────────── */
+.cta-eval{
+  background:var(--gold);color:var(--black);border-radius:var(--r);
+  padding:17px 20px;display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;transition:filter .15s;border:none;width:100%;text-align:left
+}
+.cta-eval:active{filter:brightness(.85)}
+.cta-text{font-family:'Montserrat',sans-serif;font-weight:800;font-size:15px}
+.cta-sub{font-size:11px;margin-top:2px;opacity:.7}
 
-@media(max-width:480px){
-  .hosp-title{font-size:22px;}
-  .score-btn{padding:8px 2px;font-size:13px;}
+/* ── BÚSQUEDA ───────────────────────────────────────────── */
+.search-wrap{position:relative}
+.search-input{
+  width:100%;padding:10px 14px 10px 36px;background:var(--dark2);border:1px solid #333;
+  border-radius:var(--rs);color:var(--white);font-size:14px;font-family:'Inter',sans-serif;
+  outline:none;transition:border-color .2s
+}
+.search-input:focus{border-color:var(--gold)}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray);font-size:14px;pointer-events:none}
+
+/* ── SUCURSALES ─────────────────────────────────────────── */
+.suc-list{display:flex;flex-direction:column;gap:8px}
+.suc-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);overflow:hidden}
+.suc-card-head{padding:13px 15px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.suc-card-head:active{background:var(--dark2)}
+.suc-name{font-weight:600;font-size:14px;color:var(--white)}
+.suc-date{font-size:11px;color:var(--gray);margin-top:2px}
+.suc-pct{font-family:'Montserrat',sans-serif;font-weight:700;font-size:17px}
+.suc-chev{color:var(--gray);font-size:11px;transition:transform .2s;margin-left:6px;flex-shrink:0}
+.suc-chev.open{transform:rotate(180deg)}
+.suc-detail{display:none;border-top:1px solid #2a2a2a;padding:10px 14px;background:var(--dark2);flex-direction:column;gap:8px}
+.suc-detail.open{display:flex}
+.badge{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:20px}
+.badge-aprobado{background:var(--green-bg);color:var(--green);border:1px solid var(--green)}
+.badge-observado{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow)}
+.badge-urgente{background:var(--red-bg);color:var(--red);border:1px solid var(--red)}
+.color-green{color:var(--green)}.color-yellow{color:var(--yellow)}.color-red{color:var(--red)}
+.bar-green{background:var(--green)}.bar-yellow{background:var(--yellow)}.bar-red{background:var(--red)}
+
+/* ── COLABORADORES ──────────────────────────────────────── */
+.colab-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--dark3);border-radius:var(--rs);cursor:pointer}
+.colab-row:active{filter:brightness(1.15)}
+.colab-name{font-size:13px;font-weight:600;color:var(--white)}
+.colab-date{font-size:11px;color:var(--gray)}
+.colab-pct{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px}
+.colab-actions{display:flex;gap:6px}
+.btn-reeval{flex:1;padding:8px;background:var(--gold);color:var(--black);font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;border:none;border-radius:var(--rs);cursor:pointer}
+.btn-del{padding:8px 14px;background:var(--red-bg);color:var(--red);font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;border:1px solid var(--red);border-radius:var(--rs);cursor:pointer}
+.nueva-eval-local{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;color:var(--gold);font-size:12px;font-weight:600;border:1px dashed var(--gold-dark);border-radius:var(--rs);cursor:pointer;width:100%;background:transparent}
+.ver-mas-btn{text-align:center;padding:10px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;letter-spacing:1px;text-transform:uppercase}
+
+/* ── AUTOCOMPLETE ───────────────────────────────────────── */
+.autocomplete-wrap{position:relative}
+.autocomplete-list{position:absolute;top:100%;left:0;right:0;background:var(--dark2);border:1px solid var(--gold-dark);border-radius:var(--rs);z-index:300;max-height:200px;overflow-y:auto;display:none}
+.autocomplete-list.open{display:block}
+.autocomplete-item{padding:10px 14px;font-size:14px;cursor:pointer;border-bottom:1px solid #333}
+.autocomplete-item:last-child{border-bottom:none}
+.autocomplete-item:active{background:var(--dark3);color:var(--gold)}
+
+/* ── FORMULARIO ─────────────────────────────────────────── */
+.form-header-bar{background:var(--dark);border-bottom:1px solid #2a2a2a;padding:11px 18px;position:sticky;top:0;z-index:190}
+.form-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.form-title{font-family:'Montserrat',sans-serif;font-weight:800;font-size:15px;color:var(--gold)}
+.progress-wrap{display:flex;align-items:center;gap:10px}
+.progress-outer{flex:1;background:#333;border-radius:4px;height:4px;overflow:hidden}
+.progress-bar{height:100%;border-radius:4px;background:var(--gold);transition:width .35s ease;width:0%}
+.progress-text{font-size:11px;color:var(--gray);white-space:nowrap}
+.form-meta-bar{display:flex;gap:14px;flex-wrap:wrap;margin-top:5px}
+.form-meta-bar span{font-size:11px;color:var(--gray)}
+.form-meta-bar strong{color:var(--white)}
+.form-cabecera{padding:14px 18px;background:var(--dark2);border-bottom:1px solid #2a2a2a;display:flex;flex-direction:column;gap:10px}
+
+/* ── MÓDULOS SELECTOR ───────────────────────────────────── */
+.mod-selector{padding:12px 18px;background:var(--dark);border-bottom:1px solid #2a2a2a}
+.mod-selector-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:8px}
+.mod-toggle-wrap{display:flex;flex-wrap:wrap;gap:7px}
+.mod-toggle{
+  padding:7px 13px;border-radius:20px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .18s;border:1.5px solid #444;background:var(--dark2);color:var(--gray);
+  display:inline-flex;align-items:center;gap:4px;-webkit-tap-highlight-color:transparent;user-select:none
+}
+.mod-toggle.active{background:var(--gold);color:var(--black);border-color:var(--gold)}
+
+/* ── LEYENDA ────────────────────────────────────────────── */
+.legend-bar{
+  display:flex;flex-wrap:wrap;gap:7px 14px;background:var(--dark);
+  border-bottom:1px solid #2a2a2a;padding:9px 18px;font-size:11px;color:var(--gray);
+  position:sticky;top:0;z-index:88
+}
+.legend-bar span{display:flex;align-items:center;gap:5px;font-weight:500}
+.lbadge{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;font-size:9px;font-weight:700;color:white;flex-shrink:0}
+
+/* ── ITEMS DEL FORMULARIO ───────────────────────────────── */
+.form-body{padding:16px 18px;display:flex;flex-direction:column;gap:20px;padding-bottom:90px}
+.modulo-block{display:flex;flex-direction:column;gap:8px}
+.modulo-header{background:var(--dark2);border-radius:var(--rs);padding:11px 13px;display:flex;align-items:center;gap:9px}
+.modulo-num{width:26px;height:26px;border-radius:50%;background:var(--teal);color:var(--black);font-family:'Montserrat',sans-serif;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.modulo-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--teal)}
+.modulo-tag{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-left:4px}
+
+/* ── BANNER HOSPITALIDAD ────────────────────────────────── */
+.hosp-banner{background:linear-gradient(135deg,#1a1a0a,#2a2500);border:1px solid var(--gold-dark);border-radius:var(--r);padding:22px 18px;text-align:center;margin-bottom:4px}
+.hosp-org{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-dark);margin-bottom:8px}
+.hosp-title{font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;color:var(--gold);line-height:1.15;margin-bottom:7px}
+.hosp-sub{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:10px}
+.hosp-line{width:36px;height:2px;background:var(--gold-dark);margin:0 auto}
+
+/* ── ITEM CARD ──────────────────────────────────────────── */
+.item-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:13px;transition:border-color .2s}
+.item-card.answered{border-color:#3a3a2a}
+.item-card.pending-highlight{border-color:var(--yellow)!important;animation:pulse-border .6s ease}
+@keyframes pulse-border{0%,100%{border-color:var(--yellow)}50%{border-color:#ff0}}
+.item-id{font-size:9px;color:var(--gold);font-weight:700;margin-bottom:3px;letter-spacing:.5px}
+.item-label{font-size:13px;color:var(--white);margin-bottom:9px;line-height:1.55}
+.item-label strong{font-weight:700}
+.score-row{display:flex;align-items:center;gap:4px}
+.score-btns{display:flex;gap:5px;flex:1}
+.score-btn{
+  flex:1;padding:9px 2px;background:var(--dark2);border:1px solid #333;border-radius:var(--rs);
+  color:var(--gray);font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;
+  cursor:pointer;transition:all .12s;text-align:center;min-width:0
+}
+.score-btn:active{transform:scale(.93)}
+.score-btn.sel-1{background:#3d1010;border-color:var(--red);color:var(--red)}
+.score-btn.sel-2{background:#3d2e0a;border-color:var(--yellow);color:var(--yellow)}
+.score-btn.sel-3{background:#1a3020;border-color:#27ae60;color:#27ae60}
+.score-btn.sel-4{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+.score-btn.sel-na{background:#2a2a3a;border-color:#7777aa;color:#aaaadd;font-weight:900}
+.score-labels{display:flex;gap:5px;margin-top:4px;padding-right:30px}
+.score-label{flex:1;font-size:8px;color:var(--gray);text-align:center}
+.comment-btn{background:none;border:none;cursor:pointer;color:var(--gray);font-size:18px;padding:0 2px;flex-shrink:0;opacity:.5;transition:opacity .2s;line-height:1}
+.comment-btn:hover,.comment-btn:active{opacity:1;color:var(--gold)}
+.comment-wrap{display:none;margin-top:8px}
+.comment-wrap.open{display:block}
+.comment-wrap textarea{width:100%;background:var(--dark2);border:1px solid #333;border-radius:var(--rs);padding:8px 10px;font-family:'Inter',sans-serif;font-size:12px;color:var(--white);resize:vertical;min-height:42px;outline:none;transition:border-color .2s}
+.comment-wrap textarea:focus{border-color:var(--gold)}
+
+/* ── GUÍA TÉCNICA ───────────────────────────────────────── */
+.guide-toggle{margin-top:8px;font-size:11px;color:var(--teal);cursor:pointer;display:flex;align-items:center;gap:4px;background:none;border:none;padding:0;font-family:'Inter',sans-serif}
+.guide-panel{margin-top:7px;background:var(--teal-bg);border-left:2px solid var(--teal);border-radius:0 var(--rs) var(--rs) 0;padding:9px 11px;font-size:12px;color:#9dd;line-height:1.6;display:none}
+.guide-panel.open{display:block}
+.guide-panel-title{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--teal);margin-bottom:5px}
+.guide-panel ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.guide-panel li{font-size:11px;color:#aaa;padding:2px 0;border-bottom:1px solid #1a3028}
+.guide-panel li:last-child{border-bottom:none}
+.guide-resp{font-size:10px;color:var(--teal);font-style:italic;padding-left:10px;display:block;margin-top:2px}
+.hosp-toggle{margin-top:6px;font-size:11px;color:var(--gold);cursor:pointer;display:flex;align-items:center;gap:4px;background:none;border:none;padding:0;font-family:'Inter',sans-serif}
+.hosp-panel{margin-top:7px;background:#1a1500;border-left:2px solid var(--gold-dark);border-radius:0 var(--rs) var(--rs) 0;padding:9px 11px;font-size:12px;color:#ccc;line-height:1.6;display:none}
+.hosp-panel.open{display:block}
+.obs-hosp{background:#1a1500;border:1px solid var(--gold-dark);border-radius:var(--rs);padding:11px;margin-top:8px}
+.obs-hosp-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+.obs-hosp textarea{width:100%;background:transparent;border:none;font-family:'Inter',sans-serif;font-size:13px;color:var(--white);resize:vertical;min-height:48px;outline:none}
+
+/* ── FOOTER FORMULARIO ──────────────────────────────────── */
+.form-footer{position:sticky;bottom:0;left:0;right:0;background:var(--dark);border-top:1px solid #2a2a2a;padding:11px 18px;padding-bottom:calc(11px + var(--safe-b));z-index:190}
+
+/* ── RESULTADO ──────────────────────────────────────────── */
+.resultado-body{padding:18px;flex:1;display:flex;flex-direction:column;gap:14px;padding-bottom:36px}
+.resultado-hero{border-radius:var(--r);padding:22px 18px;text-align:center}
+.resultado-hero.aprobado{background:var(--green-bg);border:1px solid var(--green)}
+.resultado-hero.observado{background:var(--yellow-bg);border:1px solid var(--yellow)}
+.resultado-hero.urgente{background:var(--red-bg);border:1px solid var(--red)}
+.resultado-pct{font-family:'Montserrat',sans-serif;font-weight:900;font-size:62px;line-height:1}
+.resultado-hero.aprobado .resultado-pct{color:var(--green)}
+.resultado-hero.observado .resultado-pct{color:var(--yellow)}
+.resultado-hero.urgente .resultado-pct{color:var(--red)}
+.resultado-estado{font-family:'Montserrat',sans-serif;font-weight:800;font-size:15px;margin-top:7px;margin-bottom:3px}
+.resultado-local{font-size:12px;color:#aaa}
+.mod-result{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:13px 15px;display:flex;align-items:center;gap:12px}
+.mod-result-pct{font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;min-width:54px;text-align:center}
+.mod-result-name{font-weight:600;font-size:12px;color:var(--white);margin-bottom:3px}
+.mod-bar-outer{background:#333;border-radius:4px;height:4px}
+.mod-bar{height:100%;border-radius:4px}
+.mod-badge{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+
+/* ── VER EVALUACIÓN ─────────────────────────────────────── */
+.ver-body-inner{padding:18px;flex:1;display:flex;flex-direction:column;gap:14px;padding-bottom:36px;overflow-y:auto}
+.ver-header-card{background:var(--dark2);border-radius:var(--r);padding:14px}
+.ver-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.ver-field-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray)}
+.ver-field-value{font-size:13px;font-weight:600;color:var(--white)}
+.ver-mod-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;color:var(--teal);padding:7px 11px;background:var(--dark2);border-radius:var(--rs);display:flex;justify-content:space-between}
+.ver-item{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--rs);padding:9px 11px}
+.ver-item-label{font-size:11px;color:#ccc;margin-bottom:5px;line-height:1.4}
+.ver-score{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700}
+.ver-s1{background:#3d1010;color:var(--red);border:1px solid var(--red)}
+.ver-s2{background:#3d2e0a;color:var(--yellow);border:1px solid var(--yellow)}
+.ver-s3{background:#1a3020;color:#27ae60;border:1px solid #27ae60}
+.ver-s4{background:var(--green-bg);color:var(--green);border:1px solid var(--green)}
+.ver-sna{background:#222;color:var(--gray);border:1px solid #555}
+.ver-comment{margin-top:5px;padding:5px 9px;background:#1a1a1a;border-left:2px solid var(--gold-dark);border-radius:0 3px 3px 0;font-size:10px;color:#bbb;font-style:italic}
+.ver-total{background:var(--dark2);border-radius:var(--r);padding:14px;display:flex;align-items:center;justify-content:space-between}
+
+/* ── CONFIGURACIÓN ──────────────────────────────────────── */
+.config-body{padding:18px;flex:1;display:flex;flex-direction:column;gap:16px;padding-bottom:36px}
+.config-section{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);overflow:hidden}
+.config-section-head{background:var(--dark2);padding:13px 15px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2a2a2a}
+.config-section-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--teal)}
+.config-section-body{padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.user-row{background:var(--dark2);border-radius:var(--rs);padding:10px 13px;display:flex;align-items:center;justify-content:space-between}
+.user-name{font-weight:600;font-size:13px}
+.user-handle{font-size:11px;color:var(--gray)}
+.user-status{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px}
+.status-active{background:var(--green-bg);color:var(--green);border:1px solid var(--green)}
+.status-inactive{background:var(--red-bg);color:var(--red);border:1px solid var(--red)}
+.toggle-user-btn{background:none;border:1px solid #444;color:var(--gray);font-size:10px;padding:4px 10px;border-radius:20px;cursor:pointer}
+.user-form{display:none;flex-direction:column;gap:10px;padding:12px 14px;border-top:1px solid #2a2a2a}
+.user-form.open{display:flex}
+
+/* ── LOGIN ──────────────────────────────────────────────── */
+#screen-login{align-items:center;justify-content:center;padding:32px 22px}
+.login-logo{font-family:'Montserrat',sans-serif;font-weight:900;font-size:42px;color:var(--gold);letter-spacing:-1px;margin-bottom:4px}
+.login-sub{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gray);margin-bottom:44px}
+.login-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:26px 22px;width:100%;max-width:380px}
+.login-card h2{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:700;margin-bottom:20px}
+.error-msg{color:var(--red);font-size:12px;margin-top:8px;text-align:center;min-height:18px}
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+@media(max-width:380px){
+  .hosp-title{font-size:20px}
+  .score-btn{font-size:13px;padding:9px 1px}
+  .stat-value{font-size:26px}
+}
+@media(min-width:600px){
+  .form-body,.resultado-body,.ver-body-inner,.config-body,.home-body{max-width:640px;margin-left:auto;margin-right:auto;width:100%}
 }
 </style>
 </head>
@@ -292,9 +349,9 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'In
   <div class="login-sub">Sistema de Capacitación v2</div>
   <div class="login-card">
     <h2>Iniciar sesión</h2>
-    <div class="field"><label>Usuario</label><input type="text" id="login-user" placeholder="Tu usuario" autocomplete="off" autocapitalize="none"/></div>
-    <div class="field"><label>Contraseña</label><input type="password" id="login-pass" placeholder="••••••••"/></div>
-    <button class="btn-primary" onclick="doLogin()">Ingresar</button>
+    <div class="field"><label>Usuario</label><input type="text" id="login-user" placeholder="Tu usuario" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"/></div>
+    <div class="field"><label>Contraseña</label><input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"/></div>
+    <button class="btn btn-gold" onclick="doLogin()">Ingresar</button>
     <div class="error-msg" id="login-error"></div>
   </div>
 </div>
@@ -302,52 +359,49 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'In
 <!-- HOME -->
 <div id="screen-home" class="screen">
   <div class="app-header">
-    <div><div class="logo">SisCap</div><div class="badge">v2.0</div></div>
-    <div class="header-right">
-      <button class="config-btn" onclick="abrirConfig()" title="Configuración">⚙</button>
-      <div class="header-user">
+    <div><div class="logo">SisCap</div><div class="badge-label">v2.0</div></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="config-btn" id="cfg-btn" onclick="abrirConfig()" title="Configuración">⚙</button>
+      <div style="display:flex;align-items:center;gap:8px">
         <div class="avatar" id="home-avatar">G</div>
-        <div style="font-size:13px;color:var(--white);font-weight:500" id="home-name">Capacitador</div>
+        <span style="font-size:13px;color:var(--white);font-weight:500" id="home-name">—</span>
       </div>
     </div>
   </div>
 
-  <div class="home-body">
+  <div class="home-body" style="padding:18px;flex:1;display:flex;flex-direction:column;gap:18px;padding-bottom:72px;overflow-y:auto">
     <!-- Stats -->
     <div>
       <div class="section-title">Resumen</div>
       <div class="stat-grid">
         <div class="stat-card gold"><div class="stat-label">Evaluaciones</div><div class="stat-value" id="stat-total">—</div><div class="stat-sub">registradas</div></div>
         <div class="stat-card"><div class="stat-label">Promedio red</div><div class="stat-value" id="stat-prom">—</div><div class="stat-sub">% general</div></div>
-        <div class="stat-card"><div class="stat-label">Aprobadas</div><div class="stat-value" style="color:var(--green)" id="stat-aprobadas">—</div><div class="stat-sub">≥ 80%</div></div>
-        <div class="stat-card"><div class="stat-label">Con alerta</div><div class="stat-value" style="color:var(--red)" id="stat-alertas">—</div><div class="stat-sub">< 60%</div></div>
+        <div class="stat-card"><div class="stat-label">Aprobadas</div><div class="stat-value color-green" id="stat-aprobadas">—</div><div class="stat-sub">≥ 80%</div></div>
+        <div class="stat-card"><div class="stat-label">Con alerta</div><div class="stat-value color-red" id="stat-alertas">—</div><div class="stat-sub">< 60%</div></div>
       </div>
     </div>
-
-    <!-- Alerta sin evaluar -->
-    <div id="alert-sin-evaluar" style="display:none">
+    <!-- Alertas -->
+    <div id="alert-wrap" style="display:none">
       <div class="section-title">⚠ Alertas</div>
-      <div class="alert-strip"><div><div class="alert-title">Locales sin evaluar (+30 días)</div><div class="alert-list" id="alert-sin-lista"></div></div></div>
+      <div class="alert-strip"><div class="alert-title">Locales sin evaluar (+30 días)</div><div class="alert-list" id="alert-list"></div></div>
     </div>
-
     <!-- CTA -->
     <button class="cta-eval" onclick="irAFormulario()">
       <div><div class="cta-text">Nueva evaluación</div><div class="cta-sub">Iniciar formulario completo</div></div>
-      <div style="font-size:24px">→</div>
+      <span style="font-size:22px">→</span>
     </button>
-
     <!-- Sucursales -->
     <div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
         <div class="section-title" style="margin-bottom:0">Últimas evaluaciones</div>
-        <button onclick="recargarDatos()" style="background:none;border:1px solid #333;color:var(--gray);font-size:11px;padding:5px 12px;border-radius:20px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;letter-spacing:1px">↻ Actualizar</button>
+        <button onclick="recargarDatos()" style="background:none;border:1px solid #333;color:var(--gray);font-size:10px;padding:4px 11px;border-radius:20px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;letter-spacing:1px">↻ Actualizar</button>
       </div>
-      <div class="search-wrap" style="margin-bottom:12px">
+      <div class="search-wrap" style="margin-bottom:10px">
         <span class="search-icon">🔍</span>
         <input class="search-input" id="suc-search" placeholder="Buscar sucursal..." oninput="filtrarSucursales()" autocomplete="off"/>
       </div>
       <div class="suc-list" id="suc-list"><div class="spinner-wrap"><div class="spinner"></div></div></div>
-      <div class="ver-mas-btn" id="ver-mas-btn" style="display:none" onclick="toggleVerMas()">▼ Ver más sucursales</div>
+      <div class="ver-mas-btn" id="ver-mas-btn" style="display:none" onclick="toggleVerMas()"></div>
     </div>
   </div>
 
@@ -356,77 +410,72 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'In
   </div>
 </div>
 
-
 <!-- FORMULARIO -->
 <div id="screen-form" class="screen">
   <div class="form-header-bar">
-    <div style="display:flex;align-items:center;justify-content:space-between">
-      <button class="btn-secondary" style="width:auto;padding:6px 14px;font-size:11px" onclick="showTab('home')">← Volver</button>
-      <div style="font-family:Montserrat;font-weight:800;font-size:16px;color:var(--gold)">Nueva evaluación</div>
+    <div class="form-header-top">
+      <button class="btn btn-outline btn-sm" onclick="showTab('home')">← Volver</button>
+      <span class="form-title">Nueva evaluación</span>
       <div style="width:70px"></div>
     </div>
-    <div class="form-progress-wrap">
-      <div class="form-progress-bar-outer"><div class="form-progress-bar" id="form-progress-bar"></div></div>
-      <div class="form-progress-text" id="form-progress-text">0 / 44</div>
+    <div class="progress-wrap">
+      <div class="progress-outer"><div class="progress-bar" id="prog-bar"></div></div>
+      <span class="progress-text" id="prog-text">0 / 44</span>
     </div>
-    <div class="form-meta">
-      <span>Local: <strong id="form-local-label">—</strong></span>
-      <span>Evaluado: <strong id="form-evaluado-label">—</strong></span>
+    <div class="form-meta-bar">
+      <span>Local: <strong id="meta-local">—</strong></span>
+      <span>Evaluado: <strong id="meta-evaluado">—</strong></span>
     </div>
   </div>
 
-  <!-- Cabecera -->
   <div class="form-cabecera">
     <div class="field"><label>Fecha</label><input type="date" id="f-fecha"/></div>
     <div class="field">
       <label>Local / Sucursal</label>
       <div class="autocomplete-wrap">
-        <input type="text" id="f-local" placeholder="Buscar sucursal..." autocomplete="off" oninput="filtrarLocales()" onfocus="filtrarLocales()"/>
+        <input type="text" id="f-local" placeholder="Buscar sucursal..." autocomplete="off" autocorrect="off" oninput="filtrarLocales()" onfocus="filtrarLocales()"/>
         <div class="autocomplete-list" id="local-list"></div>
       </div>
     </div>
-    <div class="field"><label>Nombre del colaborador</label><input type="text" id="f-evaluado" placeholder="Nombre completo" oninput="updateFormMeta()"/></div>
+    <div class="field"><label>Nombre del colaborador</label><input type="text" id="f-evaluado" placeholder="Nombre completo" oninput="updateFormMeta()" autocorrect="off"/></div>
     <div class="field"><label>Capacitador</label><select id="f-evaluador"><option value="">— Seleccioná —</option><option>Gabriel Busquets</option><option>Tomás Ojeda</option><option>Ever Rodríguez</option><option>Lourdes</option><option>Nicolás López</option><option>Iván Herrera</option></select></div>
     <div class="field"><label>Tipo</label><select id="f-tipo"><option value="">— Seleccioná —</option><option>Inicial</option><option>Refuerzo</option><option>Seguimiento</option></select></div>
     <div class="field"><label>Rol</label><select id="f-rol"><option value="">— Seleccioná —</option><option>Colaborador</option><option>Responsable</option></select></div>
     <div class="field"><label>Antigüedad</label><select id="f-antiguedad"><option value="">— Seleccioná —</option><option>Menos de 1 mes</option><option>1 a 3 meses</option><option>3 a 6 meses</option><option>Más de 6 meses</option></select></div>
   </div>
 
-  <!-- Selector módulos -->
   <div class="mod-selector">
     <div class="mod-selector-label">Módulos a evaluar — desactivá los que no aplican</div>
     <div class="mod-toggle-wrap" id="mod-toggles">
-      <button class="mod-toggle active" onclick="toggleMod(this,'mod1')">✓ 01 · Equipamiento</button>
-      <button class="mod-toggle active" onclick="toggleMod(this,'mod2')">✓ 02 · Cafetería</button>
-      <button class="mod-toggle active" onclick="toggleMod(this,'mod3')">✓ 03 · Heladería</button>
-      <button class="mod-toggle active" onclick="toggleMod(this,'mod4')">✓ 04 · Icepops</button>
-      <button class="mod-toggle active" onclick="toggleMod(this,'mod5')">✓ 05 · Chocolatería</button>
-      <button class="mod-toggle active" onclick="toggleMod(this,'mod6')">✓ 06 · Sistema y Caja</button>
-      <button class="mod-toggle active" onclick="toggleMod(this,'mod7')">✓ 07 · Atención al Cliente</button>
+      <button class="mod-toggle active" data-mod="mod1" onclick="toggleMod(this)">✓ 01 · Equipamiento</button>
+      <button class="mod-toggle active" data-mod="mod2" onclick="toggleMod(this)">✓ 02 · Cafetería</button>
+      <button class="mod-toggle active" data-mod="mod3" onclick="toggleMod(this)">✓ 03 · Heladería</button>
+      <button class="mod-toggle active" data-mod="mod4" onclick="toggleMod(this)">✓ 04 · Icepops</button>
+      <button class="mod-toggle active" data-mod="mod5" onclick="toggleMod(this)">✓ 05 · Chocolatería</button>
+      <button class="mod-toggle active" data-mod="mod6" onclick="toggleMod(this)">✓ 06 · Sistema y Caja</button>
+      <button class="mod-toggle active" data-mod="mod7" onclick="toggleMod(this)">✓ 07 · Atención al Cliente</button>
     </div>
   </div>
 
-  <!-- Leyenda escala -->
   <div class="legend-bar">
-    <span><span class="lbadge" style="background:#c0392b">1</span> <strong>Inicial</strong> — no lo conoce o no puede hacerlo solo</span>
-    <span><span class="lbadge" style="background:#d35400">2</span> <strong>En proceso</strong> — lo entiende pero necesita acompañamiento</span>
-    <span><span class="lbadge" style="background:#f39c12">3</span> <strong>Logrado</strong> — lo hace correctamente de forma autónoma</span>
-    <span><span class="lbadge" style="background:#27ae60">4</span> <strong>Destacado</strong> — lo domina y puede enseñárselo a otros</span>
-    <span><span class="lbadge" style="background:#7f8c8d;font-size:9px">NA</span> <strong>No aplica</strong> — el ítem no corresponde al formato de este local</span>
+    <span><span class="lbadge" style="background:#c0392b">1</span> <strong>Inicial</strong> — no lo conoce</span>
+    <span><span class="lbadge" style="background:#d35400">2</span> <strong>En proceso</strong> — necesita acompañamiento</span>
+    <span><span class="lbadge" style="background:#f39c12">3</span> <strong>Logrado</strong> — autónomo</span>
+    <span><span class="lbadge" style="background:#27ae60">4</span> <strong>Destacado</strong> — puede enseñarlo</span>
+    <span><span class="lbadge" style="background:#7f8c8d;font-size:8px">NA</span> <strong>No aplica</strong></span>
   </div>
 
   <div class="form-body" id="form-body"></div>
-
   <div class="form-footer">
-    <button class="btn-primary" id="btn-enviar" onclick="enviarFormulario()">Enviar evaluación</button>
+    <button class="btn btn-gold" id="btn-enviar" onclick="enviarFormulario()">Enviar evaluación</button>
   </div>
 </div>
 
 <!-- RESULTADO -->
 <div id="screen-resultado" class="screen">
   <div class="app-header">
-    <div><div class="logo">SisCap</div><div class="badge">Resultado</div></div>
-    <button class="btn-secondary" style="width:auto;padding:6px 14px;font-size:11px" onclick="showTab('home')">Ir al inicio</button>
+    <div><div class="logo">SisCap</div><div class="badge-label">Resultado</div></div>
+    <button class="btn btn-outline btn-sm" onclick="showTab('home')">Inicio</button>
   </div>
   <div class="resultado-body">
     <div class="resultado-hero" id="resultado-hero">
@@ -434,511 +483,329 @@ html,body{height:100%;background:var(--black);color:var(--white);font-family:'In
       <div class="resultado-estado" id="resultado-estado">—</div>
       <div class="resultado-local" id="resultado-local">—</div>
     </div>
-    <div><div class="section-title">Detalle por módulo</div><div style="display:flex;flex-direction:column;gap:8px" id="resultado-modulos"></div></div>
-    <button class="btn-green" id="btn-pdf" onclick="generarPDF()">⬇ Descargar PDF</button>
-    <button class="btn-primary" onclick="nuevaEvaluacion()">Nueva evaluación</button>
-    <button class="btn-secondary" onclick="showTab('home')">Volver al inicio</button>
-  </div>
-</div>
-
-<!-- CONFIGURACIÓN -->
-<div id="screen-config" class="screen">
-  <div class="app-header">
-    <div><div class="logo">SisCap</div><div class="badge">Configuración</div></div>
-    <button class="btn-secondary" style="width:auto;padding:6px 14px;font-size:11px" onclick="showTab('home')">← Volver</button>
-  </div>
-  <div style="padding:20px;flex:1;display:flex;flex-direction:column;gap:16px;padding-bottom:40px">
-    <div class="section-title">Panel de control</div>
-
-    <!-- Usuarios -->
-    <div style="background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--radius);overflow:hidden">
-      <div style="background:var(--dark2);padding:14px 16px;display:flex;align-items:center;justify-content:space-between">
-        <div style="font-family:Montserrat;font-weight:700;font-size:14px;color:#5DCAA5">👥 Usuarios</div>
-        <button class="btn-primary" style="width:auto;padding:6px 14px;font-size:11px;margin:0" onclick="mostrarFormUsuario()">+ Nuevo</button>
-      </div>
-      <div id="usuarios-lista" style="padding:12px 16px;display:flex;flex-direction:column;gap:8px">
-        <div class="spinner-wrap"><div class="spinner"></div></div>
-      </div>
-    </div>
-
-    <!-- Form nuevo usuario (oculto) -->
-    <div id="form-usuario" style="display:none;background:var(--dark);border:1px solid var(--gold-dark);border-radius:var(--radius);padding:16px;display:none;flex-direction:column;gap:12px">
-      <div style="font-family:Montserrat;font-weight:700;font-size:13px;color:var(--gold)">Nuevo usuario</div>
-      <div class="field"><label>Nombre completo</label><input type="text" id="nu-nombre" placeholder="Ej: Juan Pérez"/></div>
-      <div class="field"><label>Usuario</label><input type="text" id="nu-user" placeholder="Ej: juan" autocapitalize="none"/></div>
-      <div class="field"><label>Contraseña</label><input type="text" id="nu-pass" placeholder="Contraseña inicial"/></div>
-      <div style="display:flex;gap:8px">
-        <button class="btn-primary" style="margin:0" onclick="crearUsuario()">Crear usuario</button>
-        <button class="btn-secondary" style="margin:0" onclick="document.getElementById('form-usuario').style.display='none'">Cancelar</button>
-      </div>
-    </div>
+    <div class="section-title">Detalle por módulo</div>
+    <div style="display:flex;flex-direction:column;gap:8px" id="resultado-modulos"></div>
+    <button class="btn btn-green-solid" id="btn-pdf" onclick="generarPDF()">⬇ Descargar PDF</button>
+    <button class="btn btn-gold" onclick="nuevaEvaluacion()" style="margin-top:8px">Nueva evaluación</button>
+    <button class="btn btn-outline" onclick="showTab('home')">Volver al inicio</button>
   </div>
 </div>
 
 <!-- VER EVALUACIÓN -->
 <div id="screen-ver" class="screen">
   <div class="app-header">
-    <div><div class="logo">SisCap</div><div class="badge">Evaluación</div></div>
-    <button class="btn-secondary" style="width:auto;padding:6px 14px;font-size:11px" onclick="showTab('home')">← Volver</button>
+    <div><div class="logo">SisCap</div><div class="badge-label">Evaluación</div></div>
+    <button class="btn btn-outline btn-sm" onclick="showTab('home')">← Volver</button>
   </div>
-  <div style="padding:20px;flex:1;display:flex;flex-direction:column;gap:16px;padding-bottom:40px" id="ver-body">
+  <div class="ver-body-inner" id="ver-body"></div>
+</div>
+
+<!-- CONFIGURACIÓN -->
+<div id="screen-config" class="screen">
+  <div class="app-header">
+    <div><div class="logo">SisCap</div><div class="badge-label">Configuración</div></div>
+    <button class="btn btn-outline btn-sm" onclick="showTab('home')">← Volver</button>
+  </div>
+  <div class="config-body">
+    <div class="section-title">Panel de administración</div>
+    <div class="config-section">
+      <div class="config-section-head">
+        <span class="config-section-title">👥 Usuarios</span>
+        <button class="btn btn-gold btn-sm" onclick="toggleUserForm()">+ Nuevo</button>
+      </div>
+      <div class="user-form" id="user-form">
+        <div class="field" style="margin-bottom:8px"><label>Nombre completo</label><input type="text" id="nu-nombre" placeholder="Ej: Juan Pérez" autocorrect="off"/></div>
+        <div class="field" style="margin-bottom:8px"><label>Usuario</label><input type="text" id="nu-user" placeholder="Ej: juan" autocapitalize="none" autocorrect="off"/></div>
+        <div class="field" style="margin-bottom:8px"><label>Contraseña</label><input type="text" id="nu-pass" placeholder="Contraseña inicial"/></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-gold btn-sm" style="flex:1" onclick="crearUsuario()">Crear</button>
+          <button class="btn btn-outline btn-sm" style="flex:1" onclick="toggleUserForm()">Cancelar</button>
+        </div>
+      </div>
+      <div class="config-section-body" id="usuarios-lista"><div class="spinner-wrap"><div class="spinner"></div></div></div>
+    </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 // CONFIG
-// ============================================================
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyxNW32ZN20cyB9C3sP7Qw1s5rlGnTIl_oSzfSFf7amDlN8fyprDgwyAnTs7aVe0JWg4g/exec';
-const UMBRAL_APROBADO = 80;
-const UMBRAL_OBSERVADO = 60;
+// ═══════════════════════════════════════════════════════════
+const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbyxNW32ZN20cyB9C3sP7Qw1s5rlGnTIl_oSzfSFf7amDlN8fyprDgwyAnTs7aVe0JWg4g/exec';
+const UMBRAL_OK   = 80;
+const UMBRAL_OBS  = 60;
 const DIAS_ALERTA = 30;
-const SUCURSALES_MAX = 5;
+const MAX_SUC     = 5;
 
 const USUARIOS = {
-  'gabi':    { pass:'cap2024', nombre:'Gabriel Busquets', rol:'Jefe Capacitación', isAdmin:true },
-  'tomas':   { pass:'cap2024', nombre:'Tomás Ojeda',      rol:'Capacitador CABA' },
-  'ever':    { pass:'cap2024', nombre:'Ever Rodríguez',   rol:'Capacitador CABA' },
-  'lourdes': { pass:'cap2024', nombre:'Lourdes',          rol:'Capacitadora MdP' },
-  'nico':    { pass:'cap2024', nombre:'Nicolás López',    rol:'Capacitador MdP' },
-  'ivan':    { pass:'cap2024', nombre:'Iván Herrera',     rol:'Capacitador Córdoba' },
+  gabi:    { pass:'cap2024', nombre:'Gabriel Busquets', isAdmin:true },
+  tomas:   { pass:'cap2024', nombre:'Tomás Ojeda' },
+  ever:    { pass:'cap2024', nombre:'Ever Rodríguez' },
+  lourdes: { pass:'cap2024', nombre:'Lourdes' },
+  nico:    { pass:'cap2024', nombre:'Nicolás López' },
+  ivan:    { pass:'cap2024', nombre:'Iván Herrera' },
 };
 
 const LOCALES = [
-  "Lucciano's Paso",
-  "Lucciano's Gallegos",
-  "Lucciano's Martinez",
-  "Lucciano's Constitución",
-  "Lucciano's Olivos",
-  "Lucciano's San Miguel",
-  "Lucciano's Nordelta",
-  "Lucciano's Aguero",
-  "Lucciano's Dot",
-  "Lucciano's Barrio Norte",
-  "Lucciano's Alto Rosario Shopping",
-  "Lucciano's Abasto",
-  "Lucciano's Peatonal",
-  "Lucciano's Recoleta",
-  "Lucciano's Calle Corrientes",
-  "Lucciano's Aldrey 774",
-  "Lucciano's La Imprenta",
-  "Lucciano's Salta",
-  "Lucciano's Alem",
-  "Lucciano's Alto Noa Salta",
-  "Lucciano's Guemes",
-  "Lucciano's Cerro Las Rosas",
-  "Lucciano's Posadas",
-  "Lucciano's Patio Bullrich",
-  "Lucciano's Distrito Arcos",
-  "Lucciano's Obelisco",
-  "Lucciano's Nuevo Centro Shopping Córdoba",
-  "Lucciano's Torreón Del Monje",
-  "Luccianos Galerias Pacífico",
-  "Lucciano's Agüero",
-  "Lucciano's Alto Rosario",
-  "Lucciano's Abasto II",
-  "Lucciano's Córdoba",
-  "Lucciano's Nuevo Centro Cba",
-  "Lucciano's Galeria",
-  "Luccianos Salta NOA",
-  "Luccianos Obelisco",
-  "Lucciano's Gondola Galerias",
-  "Lucciano's Dot Baires Shopping",
-  "Lucciano's Grand Hotel Imprenta",
-  "Lucciano's Aldrey",
-  "Lucciano's Varese",
-  "Luccianos Peatonal",
-  "Lucciano's Store Fabrica",
-  "Lucciano's Campana",
-  "Lucciano's Adrogué",
-  "Lucciano's Neuquén",
-  "Lucciano's Paseo Neuquen",
-  "Lucciano's Las Lomitas",
-  "Lucciano's Avellaneda",
-  "Lucciano's Juramento",
-  "Luccianos Puerto Madero",
-  "Lucciano's La Plata",
-  "Lucciano's Castelar",
-  "Lucciano's Villa Luro",
-  "Lucciano's Mendoza",
-  "Lucciano's Palmares Mza",
-  "Lucciano's Vista Pueblo",
-  "Lucciano's Tucumán",
-  "Lucciano's Yerba Buenas",
-  "Lucciano's Caballito",
-  "Lucciano's Resistencia",
-  "Lucciano's Devoto",
-  "Lucciano's Parque Rivadavia",
-  "Lucciano's Cipolletti",
-  "Lucciano's Pilar",
-  "Lucciano's Parque Leloir",
-  "Lucciano's Mar de las Pampas",
-  "Lucciano's Villa Gesell",
-  "Lucciano's Villa Urquiza",
-  "Lucciano's Baxar Mercado",
-  "Lucciano's City Bell",
-  "Lucciano's Cariló",
-  "Lucciano's Pinamar",
-  "Lucciano's Palermo",
-  "Lucciano's Coghlan",
-  "Lucciano's Tandil",
-  "Lucciano's Quilmes",
-  "Lucciano's Bahia Blanca",
-  "Lucciano's Ushuaia",
-  "Lucciano's Cañitas",
-  "Lucciano's Colegiales",
-  "Lucciano's Lanus",
-  "Lucciano's Caseros",
-  "Lucciano's Belgrano R Vidal",
-  "Lucciano's Nuñez",
-  "Lucciano's Gral Roca",
-  "Lucciano's San Telmo",
-  "Lucciano's Corrientes",
-  "Lucciano's Puerto Madero Dique",
-  "Lucciano's Urquiza 2",
-  "Lucciano's Ramos Mejia",
-  "Lucciano's Puerto Madryn",
-  "Lucciano's San Nicolas",
-  "Lucciano's Gral Pico",
-  "Lucciano's Santa Fe Rivera",
-  "Lucciano's Catamarca",
-  "Lucciano's Distrito T Gral Rodriguez",
-  "Lucciano's Almagro Medrano",
-  "Lucciano's Villa Del Parque",
-  "Lucciano's Paseo Pilar 2",
-  "Lucciano's Mendoza 4",
-  "Lucciano's Villa Mitre Bahia 2",
-  "Lucciano's Paseo del Angel",
-  "Lucciano's Palermo Chico",
-  "Lucciano's Bajo Belgrano",
-  "Lucciano's Plaza Houssay",
-  "Lucciano's San Fernando",
-  "Lucciano's Arcos del Rosedal",
-  "Lucciano's Cid Campeador",
-  "Lucciano's Pocitos",
-  "Lucciano's Punta Carretas",
-  "Lucciano's Punta Carrasco",
-  "Lucciano's Asuncion",
-  "Lucciano's Parque Arauco"
+  "Lucciano's Paso","Lucciano's Gallegos","Lucciano's Martinez",
+  "Lucciano's Constitución","Lucciano's Olivos","Lucciano's San Miguel",
+  "Lucciano's Nordelta","Lucciano's Aguero","Lucciano's Dot",
+  "Lucciano's Barrio Norte","Lucciano's Alto Rosario Shopping",
+  "Lucciano's Abasto","Lucciano's Peatonal","Lucciano's Recoleta",
+  "Lucciano's Calle Corrientes","Lucciano's Aldrey 774","Lucciano's La Imprenta",
+  "Lucciano's Salta","Lucciano's Alem","Lucciano's Alto Noa Salta",
+  "Lucciano's Guemes","Lucciano's Cerro Las Rosas","Lucciano's Posadas",
+  "Lucciano's Patio Bullrich","Lucciano's Distrito Arcos","Lucciano's Obelisco",
+  "Lucciano's Nuevo Centro Shopping Córdoba","Lucciano's Torreón Del Monje",
+  "Luccianos Galerias Pacífico","Lucciano's Agüero","Lucciano's Alto Rosario",
+  "Lucciano's Abasto II","Lucciano's Córdoba","Lucciano's Nuevo Centro Cba",
+  "Lucciano's Galeria","Luccianos Salta NOA","Luccianos Obelisco",
+  "Lucciano's Gondola Galerias","Lucciano's Dot Baires Shopping",
+  "Lucciano's Grand Hotel Imprenta","Lucciano's Aldrey","Lucciano's Varese",
+  "Luccianos Peatonal","Lucciano's Store Fabrica","Lucciano's Campana",
+  "Lucciano's Adrogué","Lucciano's Neuquén","Lucciano's Paseo Neuquen",
+  "Lucciano's Las Lomitas","Lucciano's Avellaneda","Lucciano's Juramento",
+  "Luccianos Puerto Madero","Lucciano's La Plata","Lucciano's Castelar",
+  "Lucciano's Villa Luro","Lucciano's Mendoza","Lucciano's Palmares Mza",
+  "Lucciano's Vista Pueblo","Lucciano's Tucumán","Lucciano's Yerba Buenas",
+  "Lucciano's Caballito","Lucciano's Resistencia","Lucciano's Devoto",
+  "Lucciano's Parque Rivadavia","Lucciano's Cipolletti","Lucciano's Pilar",
+  "Lucciano's Parque Leloir","Lucciano's Mar de las Pampas","Lucciano's Villa Gesell",
+  "Lucciano's Villa Urquiza","Lucciano's Baxar Mercado","Lucciano's City Bell",
+  "Lucciano's Cariló","Lucciano's Pinamar","Lucciano's Palermo","Lucciano's Coghlan",
+  "Lucciano's Tandil","Lucciano's Quilmes","Lucciano's Bahia Blanca",
+  "Lucciano's Ushuaia","Lucciano's Cañitas","Lucciano's Colegiales",
+  "Lucciano's Lanus","Lucciano's Caseros","Lucciano's Belgrano R Vidal",
+  "Lucciano's Nuñez","Lucciano's Gral Roca","Lucciano's San Telmo",
+  "Lucciano's Corrientes","Lucciano's Puerto Madero Dique","Lucciano's Urquiza 2",
+  "Lucciano's Ramos Mejia","Lucciano's Puerto Madryn","Lucciano's San Nicolas",
+  "Lucciano's Gral Pico","Lucciano's Santa Fe Rivera","Lucciano's Catamarca",
+  "Lucciano's Distrito T Gral Rodriguez","Lucciano's Almagro Medrano",
+  "Lucciano's Villa Del Parque","Lucciano's Paseo Pilar 2","Lucciano's Mendoza 4",
+  "Lucciano's Villa Mitre Bahia 2","Lucciano's Paseo del Angel",
+  "Lucciano's Palermo Chico","Lucciano's Bajo Belgrano","Lucciano's Plaza Houssay",
+  "Lucciano's San Fernando","Lucciano's Arcos del Rosedal","Lucciano's Cid Campeador",
+  "Lucciano's Pocitos","Lucciano's Punta Carretas","Lucciano's Punta Carrasco",
+  "Lucciano's Asuncion","Lucciano's Parque Arauco"
 ];
 
-// ============================================================
-// MÓDULOS — ítems reales del index original
-// ============================================================
+// ═══════════════════════════════════════════════════════════
+// MÓDULOS E ÍTEMS
+// ═══════════════════════════════════════════════════════════
 const MODS = [
   { num:1, id:'mod1', nombre:'Equipamiento', tag:'', items:[
-    { id:'M1I1', n:1,  label:'Identifica y opera correctamente las <strong>máquinas del sector</strong>',
-      guia:['¿Qué máquinas hay en el sector? Pedile que las nombre.','¿Para qué sirve cada una? Que explique la función.','¿Cómo se enciende y se apaga cada máquina?'] },
-    { id:'M1I2', n:2,  label:'Conoce y aplica los <strong>estándares de limpieza</strong> de cada equipo',
-      guia:['¿Cómo se realiza la limpieza profunda de las vitrinas?','¿Cómo se limpia la máquina de cafetería? Que describa el proceso.','¿Cada cuánto se limpian los armarios y el freezer?'] },
-    { id:'M1I3', n:3,  label:'Mantiene el <strong>orden del sector</strong> durante la operación', guia:[] },
-    { id:'M1I4', n:4,  label:'Conoce y aplica las <strong>normas de cuidado y seguridad</strong>', guia:[] },
+    { id:'M1I1', n:1, label:'Identifica y opera correctamente las <strong>máquinas del sector</strong>', guia:['¿Qué máquinas hay en el sector? Pedile que las nombre.','¿Para qué sirve cada una?','¿Cómo se enciende y apaga cada máquina?'] },
+    { id:'M1I2', n:2, label:'Conoce y aplica los <strong>estándares de limpieza</strong> de cada equipo', guia:['¿Cómo se realiza la limpieza profunda de las vitrinas?','¿Cómo se limpia la máquina de cafetería?','¿Cada cuánto se limpian los armarios y el freezer?'] },
+    { id:'M1I3', n:3, label:'Mantiene el <strong>orden del sector</strong> durante la operación', guia:[] },
+    { id:'M1I4', n:4, label:'Conoce y aplica las <strong>normas de cuidado y seguridad</strong>', guia:[] },
   ]},
   { num:2, id:'mod2', nombre:'Cafetería', tag:'', items:[
-    { id:'M2I1', n:5,  label:'Conoce cuál es la <strong>variedad de café que ofrecemos</strong>',
-      guia:['¿Qué variedades de café ofrecemos?','Esperado: espresso, espresso lungo, caffè latte, cappuccino y cafés especiales','¿En qué orden se le presenta al cliente?','Primero el tamaño, luego cómo lo quiere'] },
-    { id:'M2I2', n:6,  label:'Identifica y reconoce qué son y <strong>cómo se hacen los especiales</strong>',
-      guia:['¿Qué es un café especial?','Esperado: un caffè latte que lleva dos push de salsa','¿Qué pasa si la receta lleva dos salsas distintas?','Esperado: un push de cada una'] },
-    { id:'M2I3', n:7,  label:'Conoce y aplica los procesos de <strong>bollería, pastería y rotación de productos</strong>',
-      guia:['¿Cuándo se saca la bollería?','Esperado: un día antes para que leude','¿Conoce los vencimientos?','Tortas 5 días — medialunas y croissant diario — roles y pain cada 2 días','¿Cuándo se coloca el almíbar?','Esperado: cuando está caliente para que se adhiera mejor'] },
+    { id:'M2I1', n:5,  label:'Conoce cuál es la <strong>variedad de café que ofrecemos</strong>', guia:['¿Qué variedades de café ofrecemos?','Esperado: espresso, espresso lungo, caffè latte, cappuccino y cafés especiales','¿En qué orden se le presenta al cliente?','Primero el tamaño, luego cómo lo quiere'] },
+    { id:'M2I2', n:6,  label:'Identifica y reconoce qué son y <strong>cómo se hacen los especiales</strong>', guia:['¿Qué es un café especial?','Un caffè latte que lleva dos push de salsa','¿Qué pasa si la receta lleva dos salsas distintas?','Un push de cada una'] },
+    { id:'M2I3', n:7,  label:'Conoce y aplica los procesos de <strong>bollería, pastería y rotación de productos</strong>', guia:['¿Cuándo se saca la bollería?','Un día antes para que leude','¿Conoce los vencimientos?','Tortas 5 días — medialunas y croissant diario — roles y pain cada 2 días','¿Cuándo se coloca el almíbar?','Cuando está caliente para que se adhiera mejor'] },
     { id:'M2I4', n:8,  label:'Utiliza correctamente <strong>vajilla, bandeja y elementos de trabajo</strong>', guia:[] },
     { id:'M2I5', n:9,  label:'Respeta el <strong>orden de preparación y tiempos de servicio</strong>', guia:[] },
     { id:'M2I6', n:10, label:'Limpia correctamente la <strong>cafetera y el sector</strong> al finalizar', guia:[] },
   ]},
   { num:3, id:'mod3', nombre:'Heladería', tag:'', items:[
-    { id:'M3I1',  n:11, label:'Prepara <strong>cucuruchos, vasos y potes</strong> con gramajes correctos',
-      guia:['¿Sabe los gramajes por tamaño?','Vaso chico 120-130g — mediano 140-150g — grande 170-180g — cucurucho 190-200g'] },
-    { id:'M3I2',  n:12, label:'Conoce y prepara <strong>batidos, smoothies, milkshakes y gelato shakes</strong>',
-      guia:['¿Qué es un smoothie?','2 bochas frutales al agua y 200ml de soda','¿Qué es un milkshake?','2 bochas a elección, 200ml de leche, salsa a elección y crema','¿Qué es un gelato shake?','Helado, leche, café y crema — 100ml de leche y espresso con cápsula ristretto'] },
-    { id:'M3I3',  n:13, label:'Conoce y aplica correctamente el <strong>proceso de pase de helado</strong>',
-      guia:['Pedile que describa el proceso paso a paso.','Si lo explica correctamente de forma autónoma → 3. Si además puede enseñárselo a otro → 4'] },
-    { id:'M3I4',  n:14, label:'Identifica sabores con <strong>variegatos y fruta decorativa</strong>',
-      guia:['¿Qué helados llevan dulce de leche natural?','Banana split dulce, peanut caramel, tramontana','¿Cuánto se fracciona el crumble de pistacho?','200 gramos','¿Cómo se decora el tiramisú al pistacho?','¿Para qué se usa la stracciatella y cómo se aplica?'] },
-    { id:'M3I5',  n:15, label:'Utiliza <strong>guantes, vaquetas y trapo específico</strong> correctamente',
-      guia:['¿Qué elementos usa durante el pase?','Guantes, mesada limpia, trapo específico, armario ordenado'] },
-    { id:'M3I6',  n:16, label:'Demuestra <strong>baño de chocolate y peinado de sabores</strong>',
-      guia:['¿Cómo se hace el baño de chocolate?','¿Cuál es la temperatura ideal?','Entre 30 y 40 grados','¿Cómo se llama el chocolate que va en la chocolatera?','Mapricoa','¿Cómo se hace el peinado?','3 olas y una pequeña al final'] },
-    { id:'M3I7',  n:17, label:'Realiza el <strong>guardado correcto post pase</strong>',
-      guia:['¿Cómo se guarda la vaqueta al finalizar?','Dentro del armario con bolsa o domo'] },
-    { id:'M3I8',  n:18, label:'Identifica <strong>vasos de cortesía y cialdinos</strong>',
-      guia:['¿Cuántos vasitos de cortesía van con cada presentación?','2 cucuruchos o 4 vasitos por kilo — 1 cucurucho o 2 vasitos por medio kilo','¿Qué son los cialdinos?','Obleas de uso exclusivo para cucuruchos'] },
-    { id:'M3I9',  n:19, label:'Comprende el impacto de <strong>no anticiparse al rush</strong>',
-      guia:['¿Qué pasa si no se reponen las vaquetas Dubai con tiempo?','Saldrán duras, generando demoras','¿Qué pasa si no hay icepops y piden uno de mandarina?','Hay que ir a la cámara a buscarlo, generando demora'] },
+    { id:'M3I1',  n:11, label:'Prepara <strong>cucuruchos, vasos y potes</strong> con gramajes correctos', guia:['¿Sabe los gramajes por tamaño?','Vaso chico 120-130g — mediano 140-150g — grande 170-180g — cucurucho 190-200g'] },
+    { id:'M3I2',  n:12, label:'Conoce y prepara <strong>batidos, smoothies, milkshakes y gelato shakes</strong>', guia:['¿Qué es un smoothie?','2 bochas frutales al agua y 200ml de soda','¿Qué es un milkshake?','2 bochas a elección, 200ml de leche, salsa y crema','¿Qué es un gelato shake?','Helado, leche, café y crema — 100ml de leche y espresso ristretto'] },
+    { id:'M3I3',  n:13, label:'Conoce y aplica correctamente el <strong>proceso de pase de helado</strong>', guia:['Pedile que describa el proceso paso a paso.','Si lo explica correctamente solo → 3. Si puede enseñárselo a otro → 4'] },
+    { id:'M3I4',  n:14, label:'Identifica sabores con <strong>variegatos y fruta decorativa</strong>', guia:['¿Qué helados llevan dulce de leche natural?','Banana split dulce, peanut caramel, tramontana','¿Cuánto se fracciona el crumble de pistacho?','200 gramos'] },
+    { id:'M3I5',  n:15, label:'Utiliza <strong>guantes, vaquetas y trapo específico</strong> correctamente', guia:['¿Qué elementos usa durante el pase?','Guantes, mesada limpia, trapo específico, armario ordenado'] },
+    { id:'M3I6',  n:16, label:'Demuestra <strong>baño de chocolate y peinado de sabores</strong>', guia:['¿Cómo se hace el baño de chocolate?','¿Cuál es la temperatura ideal?','Entre 30 y 40 grados','¿Cómo se llama el chocolate?','Mapricoa','¿Cómo se hace el peinado?','3 olas y una pequeña al final'] },
+    { id:'M3I7',  n:17, label:'Realiza el <strong>guardado correcto post pase</strong>', guia:['¿Cómo se guarda la vaqueta al finalizar?','Dentro del armario con bolsa o domo'] },
+    { id:'M3I8',  n:18, label:'Identifica <strong>vasos de cortesía y cialdinos</strong>', guia:['¿Cuántos vasitos de cortesía van con cada presentación?','2 cucuruchos o 4 vasitos por kilo — 1 cucurucho o 2 vasitos por medio kilo','¿Qué son los cialdinos?','Obleas de uso exclusivo para cucuruchos'] },
+    { id:'M3I9',  n:19, label:'Comprende el impacto de <strong>no anticiparse al rush</strong>', guia:['¿Qué pasa si no se reponen las vaquetas Dubai con tiempo?','Saldrán duras, generando demoras','¿Qué pasa si no hay icepops a mano?','Hay que ir a la cámara, generando demora'] },
     { id:'M3I10', n:20, label:'Conoce los sabores <strong>Kosher: Dayri/Crema y Parve/Vegano</strong>', guia:[] },
   ]},
   { num:4, id:'mod4', nombre:'Icepops', tag:'', items:[
-    { id:'M4I1', n:21, label:'Identifica variedad de <strong>icepops, cannolis y geladots</strong>',
-      guia:['Pedí 2 o 3 icepops al azar — que dé categoría y detalle.','Ej: Peanut → helado de maní con DDL y caramelo, cubierto en chocolate con leche y maní salado','¿Qué son los cannolis?','Obleas rellenas de helado cubiertas en chocolate','¿Qué son los geladots?','Bombones helados cubiertos en chocolate'] },
-    { id:'M4I2', n:22, label:'Conoce el <strong>formato de mini icepops y presentación geladots</strong>',
-      guia:['¿Cómo vienen los mini icepops?','4 unidades por caja, 6 variedades','¿En qué presentaciones vienen los geladots?','Mediano 18 unidades — grande 32 unidades'] },
-    { id:'M4I3', n:23, label:'Comprende y aplica el criterio de <strong>rotación al reponer la exhibición</strong> de icepops',
-      guia:['¿Cómo ordenás los icepops cuando reposés la vitrina?','Primero entra primero sale — los nuevos van atrás, los más antiguos al frente'] },
-    { id:'M4I4', n:24, label:'Identifica y sabe explicar qué son los <strong>productos gluten free y veganos</strong>',
-      guia:['¿Qué son los gluten free?','Potes individuales de un solo sabor, 190g — hay 8 variedades','¿Cuáles son los veganos?','Sorbete dark y sorbete Patagonia'] },
-    { id:'M4I5', n:25, label:'Conoce el <strong>contenido de azúcar</strong> en helados y excepciones',
-      guia:['¿Todos los productos tienen azúcar?','Sí, pero se puede ofrecer la opción cero% sin azúcar añadida y las tabletas'] },
+    { id:'M4I1', n:21, label:'Identifica variedad de <strong>icepops, cannolis y geladots</strong>', guia:['Pedí 2 o 3 icepops al azar — que dé categoría y detalle.','Ej: Peanut → maní con DDL y caramelo, cubierto en chocolate con leche y maní salado','¿Qué son los cannolis?','Obleas rellenas de helado cubiertas en chocolate','¿Qué son los geladots?','Bombones helados cubiertos en chocolate'] },
+    { id:'M4I2', n:22, label:'Conoce el <strong>formato de mini icepops y presentación geladots</strong>', guia:['¿Cómo vienen los mini icepops?','4 unidades por caja, 6 variedades','¿En qué presentaciones vienen los geladots?','Mediano 18 unidades — grande 32 unidades'] },
+    { id:'M4I3', n:23, label:'Comprende y aplica el criterio de <strong>rotación al reponer la exhibición</strong> de icepops', guia:['¿Cómo ordenás los icepops cuando reposés la vitrina?','Primero entra primero sale — los nuevos van atrás, los más antiguos al frente'] },
+    { id:'M4I4', n:24, label:'Identifica y sabe explicar qué son los <strong>productos gluten free y veganos</strong>', guia:['¿Qué son los gluten free?','Potes individuales de un solo sabor, 190g — hay 8 variedades','¿Cuáles son los veganos?','Sorbete dark y sorbete Patagonia'] },
+    { id:'M4I5', n:25, label:'Conoce el <strong>contenido de azúcar</strong> en helados y excepciones', guia:['¿Todos los productos tienen azúcar?','Sí, pero se puede ofrecer la opción cero% sin azúcar añadida y las tabletas'] },
   ]},
   { num:5, id:'mod5', nombre:'Chocolatería', tag:'', items:[
-    { id:'M5I1', n:26, label:'Identifica variedad de <strong>alfajores, conitos y vieneses</strong>',
-      guia:['¿Cuántas variedades de alfajores hay y en qué presentaciones?','6 variedades — unidad, caja de 6, caja de 10, mini alfajor surtidos y pistacho x12','¿Cuántos conitos hay y en qué presentaciones?','Por unidad y cajas de 6','¿Qué son los vieneses?','Obleas rellenas de crema cubiertas en chocolate — vainilla, pistacho y chocolate fondente'] },
-    { id:'M5I2', n:27, label:'Conoce y sabe armar <strong>orden de cajas mixtas</strong>',
-      guia:['¿Cómo se arma una caja mixta de 6? Que explique el orden.','¿Cómo se arma una caja mixta de 10? Que explique el orden.'] },
-    { id:'M5I3', n:28, label:'Identifica <strong>tabletas, avellas y frascos de DDL</strong>',
-      guia:['¿Cuántas tabletas tenemos?','16 — que mencione dos de chocolate con leche y dos de chocolate blanco que no sean las clásicas','¿Qué son las avellas y cuáles hay?','¿Qué otros productos de este segmento vendemos?','También dulce de leche en frascos'] },
-    { id:'M5I4', n:29, label:'Conoce y sabe usar <strong>la rotuladora</strong>',
-      guia:['¿Cuál es el vencimiento de los alfajores y conitos clásicos?','Alfajores 70 días — conitos 55 días','¿Y los pink y pistacho?','Alfajores 60 días — conitos 45 días'] },
-    { id:'M5I5', n:30, label:'Arma <strong>pack por 6</strong> y conoce pack Dubai',
-      guia:['¿Las tabletas del pack vienen con orden preestablecido?','Orden establecido — caja blanca y caja negra. El cliente puede personalizar si compra 6, con caja de cortesía'] },
-    { id:'M5I6', n:31, label:'Conoce la <strong>lata corazón con bombones y lata carrusel</strong>',
-      guia:['¿Qué tiene la lata corazón y cuántos bombones trae?','12 bombones de chocolate con leche rellenos de dulce de leche','¿Cuántas variedades de lata carrusel hay?','3 variedades — verde (pistacho), bordo (clásica), negra (dark)'] },
+    { id:'M5I1', n:26, label:'Identifica variedad de <strong>alfajores, conitos y vieneses</strong>', guia:['¿Cuántas variedades de alfajores hay?','6 variedades — unidad, caja de 6, caja de 10, mini alfajor surtidos y pistacho x12','¿Qué son los vieneses?','Obleas rellenas de crema cubiertas en chocolate — vainilla, pistacho y fondente'] },
+    { id:'M5I2', n:27, label:'Conoce y sabe armar <strong>orden de cajas mixtas</strong>', guia:['¿Cómo se arma una caja mixta de 6?','¿Cómo se arma una caja mixta de 10?'] },
+    { id:'M5I3', n:28, label:'Identifica <strong>tabletas, avellas y frascos de DDL</strong>', guia:['¿Cuántas tabletas tenemos?','16 — que mencione dos de leche y dos de chocolate blanco que no sean las clásicas','¿Qué otros productos vendemos?','También dulce de leche en frascos'] },
+    { id:'M5I4', n:29, label:'Conoce y sabe usar <strong>la rotuladora</strong>', guia:['¿Cuál es el vencimiento de los alfajores y conitos clásicos?','Alfajores 70 días — conitos 55 días','¿Y los pink y pistacho?','Alfajores 60 días — conitos 45 días'] },
+    { id:'M5I5', n:30, label:'Arma <strong>pack por 6</strong> y conoce pack Dubai', guia:['¿Las tabletas del pack vienen con orden preestablecido?','Orden establecido — caja blanca y caja negra. El cliente puede personalizar si compra 6'] },
+    { id:'M5I6', n:31, label:'Conoce la <strong>lata corazón con bombones y lata carrusel</strong>', guia:['¿Qué tiene la lata corazón?','12 bombones de chocolate con leche rellenos de DDL','¿Cuántas variedades de lata carrusel hay?','3 variedades — verde (pistacho), bordo (clásica), negra (dark)'] },
   ]},
   { num:6, id:'mod6', nombre:'Sistema y Caja', tag:'', items:[
     { id:'M6I1', n:32, label:'Navega y <strong>busca productos en el sistema</strong> correctamente', guia:[] },
     { id:'M6I2', n:33, label:'Factura en <strong>efectivo, tarjeta y QR</strong>', guia:[] },
-    { id:'M6I3', n:34, label:'Gestiona <strong>cobros divididos, sin cargo, gift card, venta online y factura A</strong>',
-      guia:['¿Sabe hacer un cobro dividido?','¿Sabe gestionar un sin cargo?','¿Sabe operar con gift card?','¿Sabe gestionar venta online?','¿Sabe emitir factura A?'] },
+    { id:'M6I3', n:34, label:'Gestiona <strong>cobros divididos, sin cargo, gift card, venta online y factura A</strong>', guia:['¿Sabe hacer un cobro dividido?','¿Sabe gestionar un sin cargo?','¿Sabe operar con gift card?','¿Sabe gestionar venta online?','¿Sabe emitir factura A?'] },
     { id:'M6I4', n:35, label:'Opera <strong>apertura, cierre y arqueo de caja</strong>', guia:[] },
-    { id:'M6I5', n:36, label:'Conoce y aplica el <strong>uso manual de Mercado Pago</strong> ante imprevistos',
-      guia:['Un cliente está pagando y el sistema se cierra. ¿Qué hacés?','Abrir nuevamente el sistema, marcar los mismos ítems, ir a Mercado Pago, poner manual y cargar el código'] },
-    { id:'M6I6', n:37, label:'Gestiona <strong>nota de crédito, modificación de comprobante y devoluciones MP</strong>',
-      guia:['¿Qué hace una nota de crédito?','Cancela el comprobante','¿Cómo se modifica un comprobante?','NC + refactura el producto + adjunta comprobante original, NC y cupón del POS si aplica','¿Cómo se gestiona una devolución por Mercado Pago?','Se devuelve el efectivo — ajuste de caja con leyenda "devolución por MP y nº de ticket" — NC — se adjunta todo'] },
-    { id:'M6I7', n:38, label:'Comprende la <strong>integración con PedidosYa</strong>',
-      guia:['¿Para qué sirve la integración con PedidosYa?','Para visualizar y reimprimir órdenes','Llegan 5 pedidos y los cadetes no llegan. ¿Qué hacés?','Dar el preparado al cadete para que le llegue la información y acorte el tiempo de demora'] },
+    { id:'M6I5', n:36, label:'Conoce y aplica el <strong>uso manual de Mercado Pago</strong> ante imprevistos', guia:['Un cliente está pagando y el sistema se cierra. ¿Qué hacés?','Abrir el sistema, marcar los mismos ítems, ir a Mercado Pago, poner manual y cargar el código'] },
+    { id:'M6I6', n:37, label:'Gestiona <strong>nota de crédito, modificación de comprobante y devoluciones MP</strong>', guia:['¿Qué hace una nota de crédito?','Cancela el comprobante','¿Cómo se gestiona una devolución por Mercado Pago?','Se devuelve el efectivo — ajuste de caja con leyenda "devolución por MP y nº de ticket" — NC — se adjunta todo'] },
+    { id:'M6I7', n:38, label:'Comprende la <strong>integración con PedidosYa</strong>', guia:['¿Para qué sirve la integración con PedidosYa?','Para visualizar y reimprimir órdenes','Llegan 5 pedidos y los cadetes no llegan. ¿Qué hacés?','Dar el preparado al cadete para que le llegue la información'] },
   ]},
   { num:7, id:'mod7', nombre:'Atención al Cliente', tag:'HOSPITALIDAD', items:[
-    { id:'M7I1', n:39, label:'Recibe al cliente con <strong>actitud cordial y contacto visual</strong>',
-      guia:['¿Cómo recibís a un cliente cuando entra?','Usa bienvenida como sandwich — "hola, ¿cómo estás? bienvenido, ¿cómo te ayudo?"'],
-      hosp:'Observar si crea un momento genuino de conexión, no solo si cumple el protocolo. ¿El cliente se siente visto?'},
-    { id:'M7I2', n:40, label:'Escucha activamente e <strong>interpreta necesidades</strong>',
-      guia:['El cliente ya viene a comprar — ¿cómo lo acompañás desde que pide hasta que cierra?','Usa preguntas cortas — ¿en vasito o cucurucho? ¿con baño de chocolate? ¿querés sumar algo de chocolatería?'],
-      hosp:'¿Demuestra curiosidad genuina por lo que el cliente necesita? ¿O solo ejecuta el pedido?'},
-    { id:'M7I3', n:41, label:'Demuestra <strong>conocimiento del producto y venta sugestiva</strong>',
-      guia:['Si un cliente pide un vaso chico — ¿qué hacés?','Mostrar tamaños con la mano y mencionar que por $500 más puede tener un mediano','Si un cliente pide cualquier vaso — ¿qué sumás?','"¿Lo querés bañado en chocolate?"','¿Cómo cerrás la venta?','Confirmar el pedido y ofrecer sumar alfajor, conito o vienesi'],
-      hosp:'¿La sugerencia se siente natural y genuina o mecánica? ¿Agrega valor al cliente?'},
-    { id:'M7I4', n:42, label:'Responde dudas con <strong>seguridad y resuelve problemas</strong>',
-      guia:[], hosp:'¿Maneja situaciones difíciles con calma? ¿El cliente se va con una solución o con una disculpa?'},
-    { id:'M7I5', n:43, label:'Mantiene <strong>orden y limpieza</strong> durante la atención',
-      guia:[], hosp:'El orden y la limpieza comunican respeto al cliente. ¿El espacio refleja los valores de la marca?'},
-    { id:'M7I6', n:44, label:'Agradece y <strong>solicita reseña</strong> al finalizar',
-      guia:[], hosp:'¿El cierre invita al cliente a volver? ¿Hay un momento de calidez genuino antes de despedirse?'},
+    { id:'M7I1', n:39, label:'Recibe al cliente con <strong>actitud cordial y contacto visual</strong>', guia:['¿Cómo recibís a un cliente cuando entra?','Usa bienvenida como sandwich — "hola, ¿cómo estás? bienvenido, ¿cómo te ayudo?"'], hosp:'Observar si crea un momento genuino de conexión, no solo si cumple el protocolo. ¿El cliente se siente visto?' },
+    { id:'M7I2', n:40, label:'Escucha activamente e <strong>interpreta necesidades</strong>', guia:['El cliente ya viene a comprar — ¿cómo lo acompañás hasta que cierra?','Usa preguntas cortas — ¿en vasito o cucurucho? ¿con baño de chocolate?'], hosp:'¿Demuestra curiosidad genuina por lo que el cliente necesita? ¿O solo ejecuta el pedido?' },
+    { id:'M7I3', n:41, label:'Demuestra <strong>conocimiento del producto y venta sugestiva</strong>', guia:['Si un cliente pide un vaso chico — ¿qué hacés?','Mostrar tamaños con la mano y mencionar que por $500 más puede tener un mediano','Si un cliente pide cualquier vaso — ¿qué sumás?','"¿Lo querés bañado en chocolate?"','¿Cómo cerrás la venta?','Confirmar y ofrecer sumar alfajor, conito o vienesi'], hosp:'¿La sugerencia se siente natural y genuina o mecánica?' },
+    { id:'M7I4', n:42, label:'Responde dudas con <strong>seguridad y resuelve problemas</strong>', guia:[], hosp:'¿Maneja situaciones difíciles con calma? ¿El cliente se va con una solución o con una disculpa?' },
+    { id:'M7I5', n:43, label:'Mantiene <strong>orden y limpieza</strong> durante la atención', guia:[], hosp:'El orden y la limpieza comunican respeto al cliente. ¿El espacio refleja los valores de la marca?' },
+    { id:'M7I6', n:44, label:'Agradece y <strong>solicita reseña</strong> al finalizar', guia:[], hosp:'¿El cierre invita al cliente a volver? ¿Hay un momento de calidez genuino antes de despedirse?' },
   ]},
 ];
 
-// Mapa modId → activo
-const activeModulos = { mod1:true, mod2:true, mod3:true, mod4:true, mod5:true, mod6:true, mod7:true };
+// ═══════════════════════════════════════════════════════════
+// ESTADO GLOBAL
+// ═══════════════════════════════════════════════════════════
+const activeMods = { mod1:true, mod2:true, mod3:true, mod4:true, mod5:true, mod6:true, mod7:true };
+const evalCache  = {};
 
-// Estado global
-let currentUser = null;
-let respuestas = {};
-let datosResumen = [];
-let mostrandoTodos = false;
-let ultimoResultado = null;
-let precargarLocal = null;
-let precargarEvaluado = null;
-let yaEnviado = false;
+let currentUser    = null;
+let respuestas     = {};
+let datosResumen   = [];
+let mostrarTodos   = false;
+let ultimoResult   = null;
+let preLocal       = null;
+let preEvaluado    = null;
+let yaEnviado      = false;
 
-
-function recargarDatos() {
-  document.getElementById('suc-list').innerHTML = '<div class="spinner-wrap"><div class="spinner"></div></div>';
-  showToast('Actualizando...');
-  cargarDatos();
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+function getEstado(pct) {
+  if (pct >= UMBRAL_OK)  return { estado:'Aprobado',         cls:'color-green',  barCls:'bar-green',  hero:'aprobado',  badge:'✓ Aprobado',  badgeCls:'badge-aprobado' };
+  if (pct >= UMBRAL_OBS) return { estado:'Observado',        cls:'color-yellow', barCls:'bar-yellow', hero:'observado', badge:'⚠ Observado', badgeCls:'badge-observado' };
+  return                        { estado:'Atención urgente', cls:'color-red',    barCls:'bar-red',    hero:'urgente',   badge:'✖ Urgente',   badgeCls:'badge-urgente' };
+}
+function getEstadoHex(pct) {
+  return pct >= UMBRAL_OK ? '#2ECC71' : pct >= UMBRAL_OBS ? '#F39C12' : '#E74C3C';
+}
+function formatFecha(s) {
+  if (!s) return '—';
+  const [y,m,d] = s.split('-');
+  return `${d}/${m}/${y}`;
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+let _toastTimer = null;
+function showToast(msg, dur=2800) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => t.classList.remove('show'), dur);
+}
+function offsetDate(d, dias) {
+  const r = new Date(d); r.setDate(r.getDate()-dias);
+  return r.toISOString().split('T')[0];
+}
+function calcLabel(v) {
+  return v===4?'Destacado':v===3?'Logrado':v===2?'En proceso':'Inicial';
 }
 
-
-// ============================================================
-// CONFIGURACIÓN — USUARIOS
-// ============================================================
-function abrirConfig() {
-  if (!currentUser || !currentUser.isAdmin) {
-    showToast('⚠ Solo el administrador puede acceder');
-    return;
-  }
-  cargarUsuariosConfig();
-  showTab('config');
-}
-
-function mostrarFormUsuario() {
-  const f = document.getElementById('form-usuario');
-  f.style.display = f.style.display === 'none' ? 'flex' : 'none';
-}
-
-async function cargarUsuariosConfig() {
-  const lista = document.getElementById('usuarios-lista');
-  lista.innerHTML = '<div class="spinner-wrap"><div class="spinner"></div></div>';
-  try {
-    const res = await fetch(SHEET_URL + '?action=getUsuarios');
-    const data = await res.json();
-    if (data.usuarios && data.usuarios.length) {
-      lista.innerHTML = data.usuarios.map(u => `
-        <div style="background:var(--dark2);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;justify-content:space-between">
-          <div>
-            <div style="font-weight:600;font-size:13px">${u.nombre}</div>
-            <div style="font-size:11px;color:var(--gray)">@${u.usuario}</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;${u.estado==='activo'?'background:var(--green-bg);color:var(--green);border:1px solid var(--green)':'background:var(--red-bg);color:var(--red);border:1px solid var(--red)'}">${u.estado==='activo'?'✓ Activo':'✗ Inactivo'}</span>
-            <button onclick="toggleUsuario('${u.usuario}','${u.estado}')" style="background:none;border:1px solid #444;color:var(--gray);font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer">${u.estado==='activo'?'Desactivar':'Activar'}</button>
-          </div>
-        </div>`).join('');
-    } else {
-      lista.innerHTML = '<div style="color:var(--gray);font-size:13px">No hay usuarios registrados.</div>';
-    }
-  } catch(e) {
-    lista.innerHTML = '<div style="color:var(--gray);font-size:13px">Error al cargar usuarios.</div>';
-  }
-}
-
-async function crearUsuario() {
-  const nombre = document.getElementById('nu-nombre').value.trim();
-  const user   = document.getElementById('nu-user').value.trim().toLowerCase();
-  const pass   = document.getElementById('nu-pass').value.trim();
-  if (!nombre || !user || !pass) { showToast('⚠ Completá todos los campos'); return; }
-  showToast('Creando usuario...');
-  try {
-    const res = await fetch(SHEET_URL, {
-      method: 'POST', headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'createUser', nombre, user, pass, estado: 'activo' })
-    });
-    const data = await res.json();
-    if (data.status === 'ok') {
-      showToast('✓ Usuario creado');
-      document.getElementById('form-usuario').style.display = 'none';
-      document.getElementById('nu-nombre').value = '';
-      document.getElementById('nu-user').value = '';
-      document.getElementById('nu-pass').value = '';
-      cargarUsuariosConfig();
-    } else {
-      showToast('⚠ ' + (data.msg || 'Error'));
-    }
-  } catch(e) { showToast('⚠ Error de conexión'); }
-}
-
-async function toggleUsuario(usuario, estadoActual) {
-  const nuevoEstado = estadoActual === 'activo' ? 'inactivo' : 'activo';
-  try {
-    await fetch(SHEET_URL, {
-      method: 'POST', headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'updateUser', usuario, estado: nuevoEstado })
-    });
-    showToast('✓ Usuario ' + nuevoEstado);
-    cargarUsuariosConfig();
-  } catch(e) { showToast('⚠ Error'); }
-}
-
-// ============================================================
-// LOGIN
-// ============================================================
+// ═══════════════════════════════════════════════════════════
+// AUTH / LOGIN
+// ═══════════════════════════════════════════════════════════
 function doLogin() {
   const user = document.getElementById('login-user').value.trim().toLowerCase();
   const pass = document.getElementById('login-pass').value.trim();
   const err  = document.getElementById('login-error');
-  if (!USUARIOS[user]) { err.textContent = 'Usuario no encontrado.'; return; }
-  if (USUARIOS[user].pass !== pass) { err.textContent = 'Contraseña incorrecta.'; return; }
-  currentUser = { ...USUARIOS[user], username: user };
-  document.getElementById('home-avatar').textContent = currentUser.nombre.charAt(0).toUpperCase();
-  document.getElementById('home-name').textContent = currentUser.nombre.split(' ')[0];
+  const u = USUARIOS[user];
+  if (!u) { err.textContent = 'Usuario no encontrado.'; return; }
+  if (u.pass !== pass) { err.textContent = 'Contraseña incorrecta.'; return; }
+  currentUser = { ...u, username: user };
+  document.getElementById('home-avatar').textContent = u.nombre.charAt(0);
+  document.getElementById('home-name').textContent   = u.nombre.split(' ')[0];
   // preseleccionar evaluador
   const sel = document.getElementById('f-evaluador');
-  for (let i = 0; i < sel.options.length; i++) {
-    if (sel.options[i].text === currentUser.nombre) { sel.selectedIndex = i; break; }
+  for (let i=0; i<sel.options.length; i++) {
+    if (sel.options[i].text === u.nombre) { sel.selectedIndex=i; break; }
   }
+  // mostrar/ocultar botón config
+  document.getElementById('cfg-btn').style.display = u.isAdmin ? '' : 'none';
   showTab('home');
   cargarDatos();
 }
 document.getElementById('login-user').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('login-pass').focus(); });
 document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 // NAVEGACIÓN
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 function showTab(tab) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + tab).classList.add('active');
-  // actualizar nav activo
-  document.querySelectorAll('.bottom-nav .nav-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('screen-' + tab);
+  if (el) el.classList.add('active');
+  window.scrollTo(0,0);
 }
-
-function irAFormulario(preLocal, preEvaluado) {
-  precargarLocal = preLocal || null;
-  precargarEvaluado = preEvaluado || null;
-  yaEnviado = false;
+function irAFormulario(local='', evaluado='') {
+  preLocal    = local || null;
+  preEvaluado = evaluado || null;
+  yaEnviado   = false;
   buildForm();
   showTab('form');
 }
-
 function nuevaEvaluacion() {
   respuestas = {};
   irAFormulario();
 }
 
-// ============================================================
-// AUTOCOMPLETE LOCAL
-// ============================================================
-function filtrarLocales() {
-  const val = document.getElementById('f-local').value.toLowerCase();
-  const list = document.getElementById('local-list');
-  const filtrados = val.length < 1 ? LOCALES : LOCALES.filter(l => l.toLowerCase().includes(val));
-  if (!filtrados.length) { list.classList.remove('open'); return; }
-  list.innerHTML = filtrados.map(l =>
-    `<div class="autocomplete-item" onclick="seleccionarLocal('${l.replace(/'/g,"\\'")}')">` + l + '</div>'
-  ).join('');
-  list.classList.add('open');
+// ═══════════════════════════════════════════════════════════
+// API FETCH HELPERS
+// ═══════════════════════════════════════════════════════════
+async function apiGet(params) {
+  const url = SHEET_URL + '?' + new URLSearchParams(params);
+  const res = await fetch(url);
+  return res.json();
+}
+async function apiPost(body) {
+  const res = await fetch(SHEET_URL, {
+    method:'POST', headers:{'Content-Type':'text/plain'},
+    body: JSON.stringify(body)
+  });
+  return res.json();
+}
+function apiPostBg(body) {
+  fetch(SHEET_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(body) }).catch(()=>{});
 }
 
-function seleccionarLocal(nombre) {
-  document.getElementById('f-local').value = nombre;
-  document.getElementById('local-list').classList.remove('open');
-  updateFormMeta();
-}
-
-document.addEventListener('click', e => {
-  if (!e.target.closest('.autocomplete-wrap')) {
-    document.getElementById('local-list').classList.remove('open');
-  }
-});
-
-// ============================================================
-// DATOS DESDE SHEETS
-// ============================================================
+// ═══════════════════════════════════════════════════════════
+// DATOS
+// ═══════════════════════════════════════════════════════════
 async function cargarDatos() {
   try {
-    const res = await fetch(SHEET_URL + '?action=getResumen');
-    const data = await res.json();
-    datosResumen = (data && data.registros) ? data.registros : generarDemoData();
+    const data = await apiGet({ action:'getResumen' });
+    datosResumen = (data && data.registros) ? data.registros : demoData();
   } catch(e) {
-    datosResumen = generarDemoData();
+    datosResumen = demoData();
   }
   renderHome();
-  renderTendencias();
 }
-
-function generarDemoData() {
-  const hoy = new Date();
+function recargarDatos() {
+  document.getElementById('suc-list').innerHTML = '<div class="spinner-wrap"><div class="spinner"></div></div>';
+  showToast('Actualizando...');
+  cargarDatos();
+}
+function demoData() {
+  const h = new Date();
   return [
-    { local:"Lucciano's Recoleta",   evaluado:'Ana García',    porcentaje:72, fecha: offsetDate(hoy,5),  evaluador:'Gabriel Busquets' },
-    { local:"Lucciano's Olivos",     evaluado:'Luis Pérez',    porcentaje:88, fecha: offsetDate(hoy,10), evaluador:'Tomás Ojeda' },
-    { local:"Lucciano's Nordelta",   evaluado:'María López',   porcentaje:91, fecha: offsetDate(hoy,35), evaluador:'Gabriel Busquets' },
-    { local:"Lucciano's Palermo",    evaluado:'Carlos Ruiz',   porcentaje:65, fecha: offsetDate(hoy,22), evaluador:'Ever Rodríguez' },
-    { local:"Lucciano's Belgrano",   evaluado:'Sofía Castro',  porcentaje:83, fecha: offsetDate(hoy,8),  evaluador:'Gabriel Busquets' },
-    { local:"Lucciano's San Isidro", evaluado:'Pablo Méndez',  porcentaje:57, fecha: offsetDate(hoy,45), evaluador:'Iván Herrera' },
-    { local:"Lucciano's Recoleta",   evaluado:'Juan Torres',   porcentaje:78, fecha: offsetDate(hoy,2),  evaluador:'Gabriel Busquets' },
+    { local:"Lucciano's Recoleta",  evaluado:'Ana García',   porcentaje:72, fecha:offsetDate(h,5),  evaluador:'Gabriel Busquets' },
+    { local:"Lucciano's Olivos",    evaluado:'Luis Pérez',   porcentaje:88, fecha:offsetDate(h,10), evaluador:'Tomás Ojeda' },
+    { local:"Lucciano's Nordelta",  evaluado:'María López',  porcentaje:91, fecha:offsetDate(h,35), evaluador:'Gabriel Busquets' },
+    { local:"Lucciano's Palermo",   evaluado:'Carlos Ruiz',  porcentaje:65, fecha:offsetDate(h,22), evaluador:'Ever Rodríguez' },
+    { local:"Lucciano's Belgrano",  evaluado:'Sofía Castro', porcentaje:83, fecha:offsetDate(h,8),  evaluador:'Gabriel Busquets' },
+    { local:"Lucciano's Quilmes",   evaluado:'Pablo Méndez', porcentaje:57, fecha:offsetDate(h,45), evaluador:'Iván Herrera' },
+    { local:"Lucciano's Recoleta",  evaluado:'Juan Torres',  porcentaje:78, fecha:offsetDate(h,2),  evaluador:'Gabriel Busquets' },
   ];
 }
 
-function offsetDate(d, dias) {
-  const r = new Date(d); r.setDate(r.getDate() - dias);
-  return r.toISOString().split('T')[0];
-}
-
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 // RENDER HOME
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 function renderHome() {
   if (!datosResumen.length) return;
-
-  // agrupar por local → última evaluación
+  // última eval por local
   const porLocal = {};
   datosResumen.forEach(r => {
     if (!porLocal[r.local] || r.fecha > porLocal[r.local].fecha) porLocal[r.local] = r;
@@ -946,212 +813,174 @@ function renderHome() {
   const ultimas = Object.values(porLocal);
 
   // stats
-  document.getElementById('stat-total').textContent = datosResumen.length;
-  const prom = Math.round(ultimas.reduce((s,r) => s+r.porcentaje,0) / ultimas.length);
-  document.getElementById('stat-prom').textContent = prom + '%';
-  document.getElementById('stat-aprobadas').textContent = ultimas.filter(r=>r.porcentaje>=UMBRAL_APROBADO).length;
-  document.getElementById('stat-alertas').textContent = ultimas.filter(r=>r.porcentaje<UMBRAL_OBSERVADO).length;
+  document.getElementById('stat-total').textContent    = datosResumen.length;
+  document.getElementById('stat-prom').textContent     = Math.round(ultimas.reduce((s,r)=>s+r.porcentaje,0)/ultimas.length)+'%';
+  document.getElementById('stat-aprobadas').textContent= ultimas.filter(r=>r.porcentaje>=UMBRAL_OK).length;
+  document.getElementById('stat-alertas').textContent  = ultimas.filter(r=>r.porcentaje<UMBRAL_OBS).length;
 
-  // alertas sin evaluar
+  // alertas
   const hoy = new Date();
-  const sinEval = ultimas.filter(r => (hoy - new Date(r.fecha))/86400000 > DIAS_ALERTA);
+  const sinEval = ultimas.filter(r=>(hoy-new Date(r.fecha))/86400000>DIAS_ALERTA);
+  const aw = document.getElementById('alert-wrap');
   if (sinEval.length) {
-    document.getElementById('alert-sin-evaluar').style.display = 'block';
-    document.getElementById('alert-sin-lista').innerHTML = sinEval.map(r =>
-      `• ${r.local} (hace ${Math.round((hoy-new Date(r.fecha))/86400000)} días)`).join('<br>');
-  }
+    aw.style.display = 'block';
+    document.getElementById('alert-list').innerHTML = sinEval.map(r=>`• ${esc(r.local)} (hace ${Math.round((hoy-new Date(r.fecha))/86400000)} días)`).join('<br>');
+  } else { aw.style.display = 'none'; }
 
-  // ordenar por peor puntaje
-  ultimas.sort((a,b) => a.porcentaje - b.porcentaje);
-  window._sucursalesRender = ultimas;
+  ultimas.sort((a,b)=>a.porcentaje-b.porcentaje);
+  window._sucData = ultimas;
   renderSucursales(ultimas);
 }
 
 function renderSucursales(lista) {
-  const search = (document.getElementById('suc-search').value || '').toLowerCase();
-  let filtradas = search ? lista.filter(r => r.local.toLowerCase().includes(search)) : lista;
-  const mostrar = mostrandoTodos ? filtradas : filtradas.slice(0, SUCURSALES_MAX);
-  const hayMas = !search && filtradas.length > SUCURSALES_MAX;
+  const q = (document.getElementById('suc-search').value||'').toLowerCase().trim();
+  const filtradas = q ? lista.filter(r=>r.local.toLowerCase().includes(q)) : lista;
+  const mostrar   = mostrarTodos ? filtradas : filtradas.slice(0, MAX_SUC);
+  const hayMas    = !q && filtradas.length > MAX_SUC;
 
-  document.getElementById('suc-list').innerHTML = mostrar.map(r => {
-    const { estado, colorClass, badgeClass } = getEstado(r.porcentaje);
-    // colaboradores de este local
-    const colabs = datosResumen.filter(x => x.local === r.local)
-      .sort((a,b) => b.fecha.localeCompare(a.fecha));
-    const colabsHTML = colabs.map(c => {
-      const { colorClass: cc } = getEstado(c.porcentaje);
-      const localEnc = c.local.replace(/'/g,"\\'");
-      const evalEnc  = c.evaluado.replace(/'/g,"\\'");
-      const adminDel = (currentUser && currentUser.isAdmin)
-        ? `<button class="btn-del" onclick="event.stopPropagation();eliminarEval(event,'${localEnc}','${evalEnc}','${c.fecha}')">🗑</button>` : '';
-      return `<div class="colab-row" onclick="verEval('${localEnc}','${evalEnc}','${c.fecha}')">
-        <div class="colab-info">
-          <div class="colab-name">${c.evaluado}</div>
-          <div class="colab-date">${formatFecha(c.fecha)} · ${c.evaluador || ''}</div>
-        </div>
-        <div class="colab-right">
-          <span class="colab-pct ${cc}">${c.porcentaje}%</span>
-          <span style="color:var(--gray);font-size:11px">›</span>
-        </div>
-      </div>
-      <div class="colab-actions">
-        <button class="btn-reeval" onclick="event.stopPropagation();irAFormulario('${localEnc}','${evalEnc}')">↺ Re-evaluar</button>
-        ${adminDel}
+  const frag = document.createDocumentFragment();
+  mostrar.forEach(r => {
+    const { estado, cls, badgeCls } = getEstado(r.porcentaje);
+    const colabs = datosResumen.filter(x=>x.local===r.local).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+    const isAdmin = currentUser && currentUser.isAdmin;
+
+    const card = document.createElement('div');
+    card.className = 'suc-card';
+
+    const head = document.createElement('div');
+    head.className = 'suc-card-head';
+    head.innerHTML = `<div><div class="suc-name">${esc(r.local)}</div><div class="suc-date">Última: ${formatFecha(r.fecha)}</div></div>
+      <div style="display:flex;align-items:center">
+        <div style="text-align:right"><div class="suc-pct ${cls}">${r.porcentaje}%</div><div class="badge ${badgeCls}">${esc(estado)}</div></div>
+        <span class="suc-chev">▼</span>
       </div>`;
-    }).join('');
+    head.addEventListener('click', () => toggleSucursal(head));
 
-    const localEnc2 = r.local.replace(/'/g,"\\'");
-    return `<div class="suc-card" id="scard-${r.local.replace(/\W/g,'_')}">
-      <div class="suc-card-head" onclick="toggleSucursal(this)">
-        <div class="suc-left">
-          <div class="suc-name">${r.local}</div>
-          <div class="suc-date">Última: ${formatFecha(r.fecha)}</div>
-        </div>
-        <div class="suc-right">
-          <div>
-            <div class="suc-pct ${colorClass}">${r.porcentaje}%</div>
-            <div class="badge-estado ${badgeClass}">${estado}</div>
-          </div>
-          <span class="suc-chev">▼</span>
-        </div>
-      </div>
-      <div class="suc-detail">
-        ${colabsHTML}
-        <button class="nueva-eval-local" onclick="irAFormulario('${localEnc2}','')">+ Nueva evaluación en este local</button>
-      </div>
-    </div>`;
-  }).join('');
+    const detail = document.createElement('div');
+    detail.className = 'suc-detail';
+
+    colabs.forEach(c => {
+      const { cls:cc } = getEstado(c.porcentaje);
+      const lEnc = encodeURIComponent(c.local);
+      const eEnc = encodeURIComponent(c.evaluado);
+      const row  = document.createElement('div');
+      row.className = 'colab-row';
+      row.innerHTML = `<div class="colab-info"><div class="colab-name">${esc(c.evaluado)}</div><div class="colab-date">${formatFecha(c.fecha)} · ${esc(c.evaluador||'')}</div></div>
+        <div style="display:flex;align-items:center;gap:6px"><span class="colab-pct ${cc}">${c.porcentaje}%</span><span style="color:var(--gray);font-size:11px">›</span></div>`;
+      row.addEventListener('click', () => verEval(c.local, c.evaluado, c.fecha));
+      detail.appendChild(row);
+
+      const acts = document.createElement('div');
+      acts.className = 'colab-actions';
+      const btnRe = document.createElement('button');
+      btnRe.className = 'btn-reeval';
+      btnRe.textContent = '↺ Re-evaluar';
+      btnRe.addEventListener('click', e => { e.stopPropagation(); irAFormulario(c.local, c.evaluado); });
+      acts.appendChild(btnRe);
+      if (isAdmin) {
+        const btnDel = document.createElement('button');
+        btnDel.className = 'btn-del';
+        btnDel.textContent = '🗑';
+        btnDel.addEventListener('click', e => { e.stopPropagation(); eliminarEval(c.local, c.evaluado, c.fecha); });
+        acts.appendChild(btnDel);
+      }
+      detail.appendChild(acts);
+    });
+
+    const btnNueva = document.createElement('button');
+    btnNueva.className = 'nueva-eval-local';
+    btnNueva.textContent = '+ Nueva evaluación en este local';
+    btnNueva.addEventListener('click', () => irAFormulario(r.local, ''));
+    detail.appendChild(btnNueva);
+
+    card.appendChild(head);
+    card.appendChild(detail);
+    frag.appendChild(card);
+  });
+
+  const list = document.getElementById('suc-list');
+  list.innerHTML = '';
+  list.appendChild(frag);
 
   const btn = document.getElementById('ver-mas-btn');
   btn.style.display = hayMas ? 'block' : 'none';
-  btn.textContent = mostrandoTodos ? '▲ Ver menos' : `▼ Ver más sucursales (${filtradas.length - SUCURSALES_MAX} más)`;
+  btn.textContent = mostrarTodos ? '▲ Ver menos' : `▼ Ver más sucursales (${filtradas.length-MAX_SUC} más)`;
 }
 
 function filtrarSucursales() {
-  if (window._sucursalesRender) renderSucursales(window._sucursalesRender);
+  if (window._sucData) renderSucursales(window._sucData);
 }
-
 function toggleVerMas() {
-  mostrandoTodos = !mostrandoTodos;
-  if (window._sucursalesRender) renderSucursales(window._sucursalesRender);
+  mostrarTodos = !mostrarTodos;
+  if (window._sucData) renderSucursales(window._sucData);
 }
-
 function toggleSucursal(head) {
   const detail = head.nextElementSibling;
   const chev   = head.querySelector('.suc-chev');
   const isOpen = detail.classList.contains('open');
-  // cerrar todos
-  document.querySelectorAll('.suc-detail.open').forEach(d => { d.classList.remove('open'); d.previousElementSibling.querySelector('.suc-chev').classList.remove('open'); });
+  document.querySelectorAll('.suc-detail.open').forEach(d => {
+    d.classList.remove('open');
+    d.previousElementSibling.querySelector('.suc-chev').classList.remove('open');
+  });
   if (!isOpen) { detail.classList.add('open'); chev.classList.add('open'); }
 }
 
-async function eliminarEval(e, local, evaluado, fecha) {
-  e.stopPropagation();
-  if (!confirm('¿Eliminar evaluación de ' + evaluado + ' (' + fecha + ')?')) return;
-  showToast('Eliminando...');
-  // Eliminar localmente de inmediato
+async function eliminarEval(local, evaluado, fecha) {
+  if (!confirm(`¿Eliminar evaluación de ${evaluado} (${fecha})?`)) return;
   datosResumen = datosResumen.filter(r => !(r.local===local && r.evaluado===evaluado && r.fecha===fecha));
   renderHome();
-  // Enviar al backend en background
-  fetch(SHEET_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify({ action: 'delete', local, evaluado, fecha })
-  }).then(() => {
-    showToast('✓ Eliminada');
-  }).catch(() => {
-    showToast('✓ Eliminada (sin conexión)');
-  });
+  showToast('✓ Eliminada');
+  apiPostBg({ action:'delete', local, evaluado, fecha });
 }
 
-// ============================================================
-// TENDENCIAS
-// ============================================================
-function renderTendencias() {
-  if (!datosResumen.length) return;
-  const porLocal = {};
-  datosResumen.forEach(r => {
-    if (!porLocal[r.local]) porLocal[r.local] = [];
-    porLocal[r.local].push(r);
-  });
-  const hoy = new Date();
-
-  // riesgos
-  const sinEval   = Object.entries(porLocal).filter(([,ev]) => { const u=ev.sort((a,b)=>b.fecha.localeCompare(a.fecha))[0]; return (hoy-new Date(u.fecha))/86400000>DIAS_ALERTA; });
-  const conCaida  = Object.entries(porLocal).filter(([,ev]) => { if(ev.length<2)return false; ev.sort((a,b)=>b.fecha.localeCompare(a.fecha)); return ev[0].porcentaje<ev[1].porcentaje-10; });
-  const criticos  = Object.entries(porLocal).filter(([,ev]) => { const u=ev.sort((a,b)=>b.fecha.localeCompare(a.fecha))[0]; return u.porcentaje<UMBRAL_OBSERVADO; });
-  const total     = Object.keys(porLocal).length;
-
-  document.getElementById('riesgos-wrap').innerHTML = [
-    { n:sinEval.length,  titulo:`Sin evaluar +${DIAS_ALERTA} días`, desc: sinEval.length ? sinEval.map(([l])=>l).join(', ') : 'Todos al día.', riesgo:sinEval.length>0 },
-    { n:conCaida.length, titulo:'Caída entre evaluaciones', desc: conCaida.length ? conCaida.map(([l])=>l).join(', ') : 'Sin caídas detectadas.', riesgo:conCaida.length>0 },
-    { n:criticos.length, titulo:'Estado crítico (< 60%)', desc: criticos.length ? criticos.map(([l])=>l).join(', ') : 'Ningún local crítico.', riesgo:criticos.length>0 },
-  ].map(r => {
-    const c = r.riesgo ? 'var(--red)' : 'var(--green)';
-    const bg = r.riesgo ? 'var(--red-bg)' : 'var(--green-bg)';
-    return `<div class="riesgo-card" style="background:${bg};border:1px solid ${c}">
-      <div class="riesgo-pct" style="color:${c}">${r.n}/${total}</div>
-      <div class="riesgo-text"><div class="riesgo-title" style="color:${c}">${r.titulo}</div><div class="riesgo-desc">${r.desc}</div></div>
-    </div>`;
-  }).join('');
-
-  // evolución
-  document.getElementById('tend-grid').innerHTML = Object.entries(porLocal).map(([local, evals]) => {
-    evals.sort((a,b)=>a.fecha.localeCompare(b.fecha));
-    const ultima = evals[evals.length-1];
-    const { colorClass, barClass } = getEstado(ultima.porcentaje);
-    const dots = evals.slice(-5).map(e => {
-      const { colorHex } = getEstadoHex(e.porcentaje);
-      return `<div class="tend-dot-wrap"><div class="tend-dot" style="background:${colorHex}">${e.porcentaje}%</div><div class="tend-dot-label">${e.fecha.substring(5,7)}</div></div>`;
-    }).join('');
-    return `<div class="tend-card">
-      <div class="tend-card-header"><div class="tend-card-name">${local}</div><div class="tend-card-pct ${colorClass}">${ultima.porcentaje}%</div></div>
-      <div class="tend-bar-wrap"><div class="tend-bar ${barClass}" style="width:${ultima.porcentaje}%"></div></div>
-      <div class="tend-dates">${dots}</div>
-    </div>`;
-  }).join('');
+// ═══════════════════════════════════════════════════════════
+// AUTOCOMPLETE LOCAL
+// ═══════════════════════════════════════════════════════════
+function filtrarLocales() {
+  const val = document.getElementById('f-local').value.toLowerCase();
+  const list = document.getElementById('local-list');
+  const items = val.length < 1 ? LOCALES : LOCALES.filter(l=>l.toLowerCase().includes(val));
+  if (!items.length) { list.classList.remove('open'); return; }
+  list.innerHTML = items.slice(0,15).map(l =>
+    `<div class="autocomplete-item" onclick="seleccionarLocal(this)">${esc(l)}</div>`
+  ).join('');
+  list.classList.add('open');
 }
+function seleccionarLocal(el) {
+  document.getElementById('f-local').value = el.textContent;
+  document.getElementById('local-list').classList.remove('open');
+  updateFormMeta();
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.autocomplete-wrap')) document.getElementById('local-list').classList.remove('open');
+});
 
-// ============================================================
-// FORMULARIO
-// ============================================================
+// ═══════════════════════════════════════════════════════════
+// FORMULARIO — BUILD
+// ═══════════════════════════════════════════════════════════
 function buildForm() {
-  // Fecha: hoy, mín hace 7 días
-  const hoy = new Date();
-  const min = new Date(hoy); min.setDate(min.getDate()-7);
+  // Fecha
+  const hoy = new Date(), min = new Date(hoy);
+  min.setDate(min.getDate()-7);
   const toISO = d => d.toISOString().split('T')[0];
-  const fechaEl = document.getElementById('f-fecha');
-  fechaEl.max = toISO(hoy);
-  fechaEl.min = toISO(min);
-  fechaEl.value = toISO(hoy);
+  const fEl = document.getElementById('f-fecha');
+  fEl.max = toISO(hoy); fEl.min = toISO(min); fEl.value = toISO(hoy);
 
-  // Precargar local/evaluado si viene de re-evaluar
-  if (precargarLocal) {
-    document.getElementById('f-local').value = precargarLocal;
-    updateFormMeta();
-  }
-  if (precargarEvaluado) {
-    document.getElementById('f-evaluado').value = precargarEvaluado;
-    updateFormMeta();
-  }
+  if (preLocal)    { document.getElementById('f-local').value   = preLocal;    updateFormMeta(); }
+  if (preEvaluado) { document.getElementById('f-evaluado').value= preEvaluado; updateFormMeta(); }
 
-  // Resetear respuestas si es nueva
-  if (!precargarLocal && !precargarEvaluado) {
+  if (!preLocal && !preEvaluado) {
     respuestas = {};
-    document.getElementById('f-evaluado').value = '';
-    document.getElementById('f-local').value = '';
-    document.getElementById('f-tipo').selectedIndex = 0;
-    document.getElementById('f-rol').selectedIndex = 0;
-    document.getElementById('f-antiguedad').selectedIndex = 0;
+    ['f-evaluado','f-local'].forEach(id => document.getElementById(id).value='');
+    ['f-tipo','f-rol','f-antiguedad'].forEach(id => document.getElementById(id).selectedIndex=0);
   }
 
   const body = document.getElementById('form-body');
-  body.innerHTML = '';
+  const frag = document.createDocumentFragment();
 
   MODS.forEach(mod => {
-    if (!activeModulos[mod.id]) return;
+    if (!activeMods[mod.id]) return;
 
-    // Banner hospitalidad antes del módulo 7
     if (mod.id === 'mod7') {
       const banner = document.createElement('div');
       banner.className = 'hosp-banner';
@@ -1159,179 +988,156 @@ function buildForm() {
         <div class="hosp-title">NUESTRO PROPÓSITO ES<br>CREAR MOMENTOS<br>DE FELICIDAD</div>
         <div class="hosp-sub">El propósito vence la tarea</div>
         <div class="hosp-line"></div>`;
-      body.appendChild(banner);
+      frag.appendChild(banner);
     }
 
     const block = document.createElement('div');
-    block.className = 'modulo-block';
-    block.id = 'fmod-' + mod.id;
-    block.innerHTML = `<div class="modulo-header">
-      <div class="modulo-num">${mod.num}</div>
-      <div class="modulo-title">${mod.nombre}</div>
-      ${mod.tag ? `<span class="modulo-tag">· ${mod.tag}</span>` : ''}
-    </div>`;
+    block.className = 'modulo-block'; block.id = 'fmod-'+mod.id;
+    const hdr = document.createElement('div');
+    hdr.className = 'modulo-header';
+    hdr.innerHTML = `<div class="modulo-num">${mod.num}</div><div class="modulo-title">${esc(mod.nombre)}</div>${mod.tag?`<span class="modulo-tag">· ${mod.tag}</span>`:''}`;
+    block.appendChild(hdr);
 
     mod.items.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'item-card';
-      card.id = 'card-' + item.id;
-
-      let guiaHTML = '';
-      if (item.guia && item.guia.length) {
-        const items = [];
-        for (let i = 0; i < item.guia.length; i += 2) {
-          const pregunta = item.guia[i];
-          const resp = item.guia[i+1] || '';
-          items.push(`<li>${pregunta}${resp ? `<span class="guide-resp">${resp}</span>` : ''}</li>`);
-        }
-        guiaHTML = `<button class="guide-toggle" onclick="togglePanel('gp-${item.id}',this)">💡 Ver guía técnica</button>
-          <div class="guide-panel" id="gp-${item.id}">
-            <div class="guide-title">Preguntas guía — solo capacitador</div>
-            <ul>${items.join('')}</ul>
-          </div>`;
-      }
-
-      let hospHTML = '';
-      if (item.hosp) {
-        hospHTML = `<button class="hosp-toggle" onclick="togglePanel('hp-${item.id}',this)">🤝 Hospitalidad — ¿qué observar?</button>
-          <div class="hosp-panel" id="hp-${item.id}">${item.hosp}</div>`;
-      }
-
-      card.innerHTML = `
-        <div class="item-num">Ítem ${item.id}</div>
-        <div class="item-label">${item.label}</div>
-        <div style="display:flex;align-items:center;gap:4px">
-          <div class="score-btns" style="flex:1">
-            ${[1,2,3,4].map(n=>`<button class="score-btn" onclick="setScore('${item.id}',${n},this)">${n}</button>`).join('')}
-            <button class="score-btn na-base" onclick="setScore('${item.id}','NA',this)">NA</button>
-          </div>
-          <button class="item-comment-btn" onclick="togglePanel('ic-${item.id}',this)" title="Agregar comentario">💬</button>
-        </div>
-        <div class="score-labels">
-          <span class="score-label">Inicial</span><span class="score-label">En proceso</span>
-          <span class="score-label">Logrado</span><span class="score-label">Destacado</span>
-          <span class="score-label">N/A</span><span class="score-label"></span>
-        </div>
-        ${guiaHTML}
-        ${hospHTML}
-        <div class="item-comment-wrap" id="ic-${item.id}">
-          <textarea placeholder="Observación sobre este ítem..." id="ict-${item.id}"></textarea>
-        </div>`;
-
+      const card = buildItemCard(item, respuestas[item.id]);
       block.appendChild(card);
     });
 
-    // Obs hospitalidad al final del mod 7
     if (mod.id === 'mod7') {
       const obsDiv = document.createElement('div');
-      obsDiv.className = 'obs-hosp-wrap';
+      obsDiv.className = 'obs-hosp';
       obsDiv.innerHTML = `<div class="obs-hosp-label">🤝 Observación de Hospitalidad</div>
-        <textarea id="obs-hospitalidad" placeholder="Observaciones generales sobre la actitud hospitalaria del colaborador..."></textarea>`;
+        <textarea id="obs-hospitalidad" placeholder="Observaciones generales sobre la actitud hospitalaria..."></textarea>`;
       block.appendChild(obsDiv);
     }
 
-    body.appendChild(block);
+    frag.appendChild(block);
   });
 
+  body.innerHTML = '';
+  body.appendChild(frag);
   updateProgress();
 }
 
-function toggleMod(btn, modId) {
-  activeModulos[modId] = !activeModulos[modId];
+function buildItemCard(item, curVal) {
+  const card = document.createElement('div');
+  card.className = 'item-card' + (curVal !== undefined ? ' answered' : '');
+  card.id = 'card-' + item.id;
+
+  let guiaHTML = '';
+  if (item.guia && item.guia.length) {
+    const lis = [];
+    for (let i=0; i<item.guia.length; i+=2) {
+      const p = item.guia[i], r = item.guia[i+1]||'';
+      lis.push(`<li>${esc(p)}${r?`<span class="guide-resp">${esc(r)}</span>`:''}</li>`);
+    }
+    guiaHTML = `<button class="guide-toggle" onclick="togglePanel('gp-${item.id}')">💡 Ver guía técnica</button>
+      <div class="guide-panel" id="gp-${item.id}"><div class="guide-panel-title">Preguntas guía — solo capacitador</div><ul>${lis.join('')}</ul></div>`;
+  }
+
+  let hospHTML = '';
+  if (item.hosp) {
+    hospHTML = `<button class="hosp-toggle" onclick="togglePanel('hp-${item.id}')">🤝 Hospitalidad — ¿qué observar?</button>
+      <div class="hosp-panel" id="hp-${item.id}">${esc(item.hosp)}</div>`;
+  }
+
+  const scoreHTML = [1,2,3,4].map(n =>
+    `<button class="score-btn${curVal==n?' sel-'+n:''}" onclick="setScore('${item.id}',${n},this)">${n}</button>`
+  ).join('') + `<button class="score-btn${curVal==='NA'?' sel-na':''} na-btn" onclick="setScore('${item.id}','NA',this)">NA</button>`;
+
+  card.innerHTML = `
+    <div class="item-id">Ítem ${item.id}</div>
+    <div class="item-label">${item.label}</div>
+    <div class="score-row">
+      <div class="score-btns">${scoreHTML}</div>
+      <button class="comment-btn" onclick="togglePanel('ic-${item.id}')" title="Agregar comentario">💬</button>
+    </div>
+    <div class="score-labels">
+      <span class="score-label">Inicial</span><span class="score-label">En proceso</span>
+      <span class="score-label">Logrado</span><span class="score-label">Destacado</span>
+      <span class="score-label">N/A</span>
+    </div>
+    ${guiaHTML}${hospHTML}
+    <div class="comment-wrap" id="ic-${item.id}">
+      <textarea placeholder="Observación sobre este ítem..." id="ict-${item.id}"></textarea>
+    </div>`;
+  return card;
+}
+
+function toggleMod(btn) {
+  const modId = btn.dataset.mod;
+  activeMods[modId] = !activeMods[modId];
   btn.classList.toggle('active');
-  btn.textContent = (activeModulos[modId] ? '✓ ' : '✗ ') + btn.textContent.replace(/^[✓✗] /,'');
-  // reconstruir el body del form sin perder respuestas
+  const label = btn.textContent.replace(/^[✓✗] /,'');
+  btn.textContent = (activeMods[modId] ? '✓ ' : '✗ ') + label;
   buildFormBody();
   updateProgress();
 }
 
 function buildFormBody() {
-  // re-render sin resetear respuestas ni cabecera
   const body = document.getElementById('form-body');
-  body.innerHTML = '';
+  const frag = document.createDocumentFragment();
   MODS.forEach(mod => {
-    if (!activeModulos[mod.id]) return;
+    if (!activeMods[mod.id]) return;
     if (mod.id === 'mod7') {
-      const banner = document.createElement('div');
-      banner.className = 'hosp-banner';
-      banner.innerHTML = `<div class="hosp-org">Lucciano's · Filosofía de Servicio</div><div class="hosp-title">NUESTRO PROPÓSITO ES<br>CREAR MOMENTOS<br>DE FELICIDAD</div><div class="hosp-sub">El propósito vence la tarea</div><div class="hosp-line"></div>`;
-      body.appendChild(banner);
+      const b = document.createElement('div'); b.className='hosp-banner';
+      b.innerHTML=`<div class="hosp-org">Lucciano's · Filosofía de Servicio</div><div class="hosp-title">NUESTRO PROPÓSITO ES<br>CREAR MOMENTOS<br>DE FELICIDAD</div><div class="hosp-sub">El propósito vence la tarea</div><div class="hosp-line"></div>`;
+      frag.appendChild(b);
     }
     const block = document.createElement('div');
-    block.className = 'modulo-block'; block.id = 'fmod-' + mod.id;
-    block.innerHTML = `<div class="modulo-header"><div class="modulo-num">${mod.num}</div><div class="modulo-title">${mod.nombre}</div>${mod.tag?`<span class="modulo-tag">· ${mod.tag}</span>`:''}</div>`;
-    mod.items.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'item-card' + (respuestas[item.id] !== undefined ? ' answered' : '');
-      card.id = 'card-' + item.id;
-      let guiaHTML='',hospHTML='';
-      if(item.guia&&item.guia.length){const its=[];for(let i=0;i<item.guia.length;i+=2){const p=item.guia[i],r=item.guia[i+1]||'';its.push(`<li>${p}${r?`<span class="guide-resp">${r}</span>`:''}</li>`);}guiaHTML=`<button class="guide-toggle" onclick="togglePanel('gp-${item.id}',this)">💡 Ver guía técnica</button><div class="guide-panel" id="gp-${item.id}"><div class="guide-title">Preguntas guía — solo capacitador</div><ul>${its.join('')}</ul></div>`;}
-      if(item.hosp){hospHTML=`<button class="hosp-toggle" onclick="togglePanel('hp-${item.id}',this)">🤝 Hospitalidad — ¿qué observar?</button><div class="hosp-panel" id="hp-${item.id}">${item.hosp}</div>`;}
-      const val = respuestas[item.id];
-      card.innerHTML = `<div class="item-num">Ítem ${item.id}</div><div class="item-label">${item.label}</div>
-        <div style="display:flex;align-items:center;gap:4px">
-          <div class="score-btns" style="flex:1">
-            ${[1,2,3,4].map(n=>`<button class="score-btn${val==n?' sel-'+n:''}" onclick="setScore('${item.id}',${n},this)">${n}</button>`).join('')}
-            <button class="score-btn${val==='NA'?' sel-na':''}" onclick="setScore('${item.id}','NA',this)">NA</button>
-          </div>
-          <button class="item-comment-btn" onclick="togglePanel('ic-${item.id}',this)" title="Agregar comentario">💬</button>
-        </div>
-        <div class="score-labels" style="padding-right:30px"><span class="score-label">Inicial</span><span class="score-label">En proceso</span><span class="score-label">Logrado</span><span class="score-label">Destacado</span><span class="score-label">N/A</span></div>
-        ${guiaHTML}${hospHTML}
-        <div class="item-comment-wrap" id="ic-${item.id}"><textarea placeholder="Observación sobre este ítem..." id="ict-${item.id}"></textarea></div>`;
-      block.appendChild(card);
-    });
-    if(mod.id==='mod7'){const o=document.createElement('div');o.className='obs-hosp-wrap';o.innerHTML=`<div class="obs-hosp-label">🤝 Observación de Hospitalidad</div><textarea id="obs-hospitalidad" placeholder="Observaciones generales..."></textarea>`;block.appendChild(o);}
-    body.appendChild(block);
+    block.className='modulo-block'; block.id='fmod-'+mod.id;
+    block.innerHTML=`<div class="modulo-header"><div class="modulo-num">${mod.num}</div><div class="modulo-title">${esc(mod.nombre)}</div>${mod.tag?`<span class="modulo-tag">· ${mod.tag}</span>`:''}</div>`;
+    mod.items.forEach(item => block.appendChild(buildItemCard(item, respuestas[item.id])));
+    if (mod.id==='mod7') {
+      const o=document.createElement('div'); o.className='obs-hosp';
+      o.innerHTML=`<div class="obs-hosp-label">🤝 Observación de Hospitalidad</div><textarea id="obs-hospitalidad" placeholder="Observaciones generales..."></textarea>`;
+      block.appendChild(o);
+    }
+    frag.appendChild(block);
   });
+  body.innerHTML=''; body.appendChild(frag);
 }
 
 function setScore(id, val, btn) {
   respuestas[id] = val;
-  const card = document.getElementById('card-' + id);
+  const card = document.getElementById('card-'+id);
   card.classList.add('answered');
+  card.classList.remove('pending-highlight');
   card.querySelectorAll('.score-btn').forEach(b => {
-    b.className = 'score-btn';
-    if (b === btn) b.classList.add(val==='NA'?'sel-na':'sel-'+val);
+    b.className = 'score-btn' + (b.classList.contains('na-btn') ? ' na-btn' : '');
+    if (b===btn) b.classList.add(val==='NA'?'sel-na':'sel-'+val);
   });
   updateProgress();
 }
 
 function updateProgress() {
-  const activos = MODS.filter(m => activeModulos[m.id]);
-  const total   = activos.reduce((s,m) => s+m.items.length, 0);
-  const resp    = Object.keys(respuestas).filter(k => {
-    // solo contar ítems de módulos activos
-    const mod = MODS.find(m => m.items.some(i => i.id === k));
-    return mod && activeModulos[mod.id];
-  }).length;
-  const pct = total ? Math.round(resp/total*100) : 0;
-  document.getElementById('form-progress-bar').style.width = pct + '%';
-  document.getElementById('form-progress-text').textContent = `${resp} / ${total}`;
+  const activosMods = MODS.filter(m=>activeMods[m.id]);
+  const total = activosMods.reduce((s,m)=>s+m.items.length,0);
+  const resp  = activosMods.reduce((s,m)=>s+m.items.filter(i=>respuestas[i.id]!==undefined).length,0);
+  const pct   = total ? Math.round(resp/total*100) : 0;
+  document.getElementById('prog-bar').style.width  = pct+'%';
+  document.getElementById('prog-text').textContent = `${resp} / ${total}`;
 }
 
 function updateFormMeta() {
-  document.getElementById('form-local-label').textContent  = document.getElementById('f-local').value || '—';
-  document.getElementById('form-evaluado-label').textContent = document.getElementById('f-evaluado').value || '—';
+  document.getElementById('meta-local').textContent   = document.getElementById('f-local').value || '—';
+  document.getElementById('meta-evaluado').textContent= document.getElementById('f-evaluado').value || '—';
 }
 
-function togglePanel(id, btn) {
-  const panel = document.getElementById(id);
-  if (!panel) return;
-  panel.classList.toggle('open');
+function togglePanel(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
 }
 
-
-function scrollAlItemPendiente() {
-  const activos = MODS.filter(m => activeModulos[m.id]);
-  for (const mod of activos) {
+function scrollAlPrimero() {
+  for (const mod of MODS.filter(m=>activeMods[m.id])) {
     for (const item of mod.items) {
       if (respuestas[item.id] === undefined) {
-        const card = document.getElementById('card-' + item.id);
+        const card = document.getElementById('card-'+item.id);
         if (card) {
-          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          card.style.border = '2px solid var(--yellow)';
-          setTimeout(() => { card.style.border = ''; }, 2000);
+          card.scrollIntoView({ behavior:'smooth', block:'center' });
+          card.classList.add('pending-highlight');
+          setTimeout(()=>card.classList.remove('pending-highlight'), 1800);
         }
         return;
       }
@@ -1339,254 +1145,236 @@ function scrollAlItemPendiente() {
   }
 }
 
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 // ENVÍO
-// ============================================================
-async function enviarFormulario() {
+// ═══════════════════════════════════════════════════════════
+function enviarFormulario() {
   if (yaEnviado) { showToast('Esta evaluación ya fue enviada'); return; }
-  const fecha    = document.getElementById('f-fecha').value;
-  const local    = document.getElementById('f-local').value;
-  const evaluado = document.getElementById('f-evaluado').value.trim();
-  const evaluador= document.getElementById('f-evaluador').value;
-  const tipo     = document.getElementById('f-tipo').value;
-  const rol      = document.getElementById('f-rol').value;
-  const antiguedad = document.getElementById('f-antiguedad').value;
+
+  const fecha     = document.getElementById('f-fecha').value;
+  const local     = document.getElementById('f-local').value.trim();
+  const evaluado  = document.getElementById('f-evaluado').value.trim();
+  const evaluador = document.getElementById('f-evaluador').value;
+  const tipo      = document.getElementById('f-tipo').value;
+  const rol       = document.getElementById('f-rol').value;
+  const antiguedad= document.getElementById('f-antiguedad').value;
 
   if (!fecha||!local||!evaluado||!evaluador||!tipo||!rol) {
-    showToast('⚠ Completá todos los campos de cabecera'); return;
+    showToast('⚠ Completá todos los campos'); return;
   }
 
-  const activos = MODS.filter(m => activeModulos[m.id]);
-  const totalItems = activos.reduce((s,m)=>s+m.items.length,0);
-  const respondidos = Object.keys(respuestas).filter(k => {
-    const mod = MODS.find(m => m.items.some(i=>i.id===k));
-    return mod && activeModulos[mod.id];
-  }).length;
+  const activosMods = MODS.filter(m=>activeMods[m.id]);
+  const total    = activosMods.reduce((s,m)=>s+m.items.length,0);
+  const resp     = activosMods.reduce((s,m)=>s+m.items.filter(i=>respuestas[i.id]!==undefined).length,0);
 
-  if (respondidos < totalItems) {
-    showToast(`⚠ Faltan ${totalItems-respondidos} ítems — tocá para ir al primero`);
-    setTimeout(scrollAlItemPendiente, 400);
+  if (resp < total) {
+    showToast(`⚠ Faltan ${total-resp} ítems`);
+    setTimeout(scrollAlPrimero, 350);
     return;
   }
 
   const btn = document.getElementById('btn-enviar');
-  btn.textContent = 'Enviando...'; btn.disabled = true;
+  btn.textContent = 'Procesando...'; btn.disabled = true;
 
   const resultado = calcularResultados();
-  ultimoResultado = { local, evaluado, fecha, evaluador, tipo, rol, antiguedad, resultado };
+  ultimoResult = { local, evaluado, fecha, evaluador, tipo, rol, antiguedad, resultado };
 
-  // Payload para Sheets (formato compatible con original)
+  // Construir payload sheets
   const modData = {};
   MODS.forEach((m,idx) => {
     const n = idx+1;
-    if (!activeModulos[m.id]) { modData['s'+n]='No evaluado'; modData['s'+n+'max']='-'; return; }
+    if (!activeMods[m.id]) { modData['s'+n]='No evaluado'; modData['s'+n+'max']='-'; return; }
     let score=0, naCount=0;
     m.items.forEach(item => {
       const v = respuestas[item.id];
-      if (v && v!=='NA') score += v;
+      if (v && v!=='NA') score+=parseInt(v);
       else if (v==='NA') naCount++;
     });
-    const max = (m.items.length - naCount) * 4;
     modData['s'+n] = score;
-    modData['s'+n+'max'] = max;
+    modData['s'+n+'max'] = (m.items.length-naCount)*4;
   });
 
-  const fortalezasArr=[], reforzarArr=[];
+  const fort=[], ref=[];
   MODS.forEach(m => {
-    if (!activeModulos[m.id]) return;
+    if (!activeMods[m.id]) return;
     m.items.forEach(item => {
       const v = respuestas[item.id];
       if (!v || v==='NA') return;
-      const label = v===4?'Destacado':v===3?'Logrado':v===2?'En proceso':'Inicial';
-      const texto = item.label.replace(/<[^>]+>/g,'');
-      if (v>=3) fortalezasArr.push(`[${m.nombre}] ${texto} (${label})`);
-      else reforzarArr.push(`[${m.nombre}] ${texto} (${label})`);
+      const txt = item.label.replace(/<[^>]+>/g,'');
+      const lbl = calcLabel(v);
+      if (parseInt(v)>=3) fort.push(`[${m.nombre}] ${txt} (${lbl})`);
+      else ref.push(`[${m.nombre}] ${txt} (${lbl})`);
     });
   });
 
-  const pct = resultado.total + '%';
-  const band = resultado.total >= UMBRAL_APROBADO ? 'Desempeño Sólido' : resultado.total >= UMBRAL_OBSERVADO ? 'Desempeño Aceptable' : 'Atención Urgente';
-  const payload = { fecha,evaluado,local,evaluador,tipo,rol,antiguedad,...modData,
+  const pct = resultado.total+'%';
+  const band = resultado.total>=UMBRAL_OK?'Desempeño Sólido':resultado.total>=UMBRAL_OBS?'Desempeño Aceptable':'Atención Urgente';
+  const payload = {
+    fecha,evaluado,local,evaluador,tipo,rol,antiguedad,...modData,
     total:String(resultado.totalRaw), totalMax:String(resultado.totalMax),
-    porcentaje:pct, resultado:band + ' — ' + pct,
-    fortalezas:fortalezasArr.join(' | '), reforzar:reforzarArr.join(' | '),
-    observaciones: (document.getElementById('obs-hospitalidad')?.value||'').trim()
+    porcentaje:pct, resultado:band+' — '+pct,
+    fortalezas:fort.join(' | '), reforzar:ref.join(' | '),
+    observaciones:(document.getElementById('obs-hospitalidad')?.value||'').trim()
   };
 
-  // Marcar como enviado inmediatamente — no esperar al backend
+  // Marcar enviado inmediatamente
   yaEnviado = true;
-  const btnEnv = document.getElementById('btn-enviar');
-  btnEnv.textContent = '✓ Enviada'; btnEnv.disabled = true;
-  btnEnv.style.background = '#27ae60'; btnEnv.style.color = 'white';
-  datosResumen.push({ local, evaluado, fecha, evaluador, porcentaje: resultado.total });
+  btn.textContent = '✓ Enviada';
+  btn.style.cssText = 'background:#27ae60;color:white;border-color:#27ae60';
+
+  datosResumen.push({ local, evaluado, fecha, evaluador, porcentaje:resultado.total });
   showToast('✓ Evaluación enviada');
 
-  // Enviar al Sheets en background sin bloquear
-  fetch(SHEET_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify({ action: 'submit', ...payload })
-  }).catch(() => {});
+  // Guardar en cache para ver detalle
+  const cacheKey = `${local}|${evaluado}|${fecha}`;
+  evalCache[cacheKey] = { evaluado, local, fecha, evaluador, tipo, rol, total:resultado.total, modulos:resultado.modulos };
 
-  // Avanzar inmediatamente a resultado
-  mostrarResultado(local, evaluado, resultado, payload);
+  // Enviar al backend en background
+  apiPostBg({ action:'submit', ...payload });
+
+  mostrarResultado(local, evaluado, resultado);
 }
 
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 // CALCULAR
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 function calcularResultados() {
   let grandScore=0, grandMax=0;
   const modulos = MODS.map(m => {
-    if (!activeModulos[m.id]) return { nombre:m.nombre, num:m.num, porcentaje:null, score:0, max:0, items_detalle:[] };
+    if (!activeMods[m.id]) return { nombre:m.nombre, num:m.num, porcentaje:null, score:0, max:0, items_detalle:[] };
     let score=0, naCount=0;
     const items_detalle = [];
     m.items.forEach(item => {
-      const v = respuestas[item.id];
-      const vn = v==='NA' ? 5 : (parseInt(v)||0);
-      if (vn===5) naCount++;
+      const v  = respuestas[item.id];
+      const vn = v==='NA' ? 0 : (parseInt(v)||0);
+      if (v==='NA') naCount++;
       else score += vn;
-      items_detalle.push({ id:item.id, n:item.n, texto: item.label.replace(/<[^>]+>/g,''), val:vn===5?0:vn,
-        comentario: (document.getElementById('ict-'+item.id)?.value||'').trim() });
+      items_detalle.push({
+        id: item.id, n: item.n,
+        texto: item.label.replace(/<[^>]+>/g,''),
+        val: v==='NA' ? 'NA' : vn,
+        comentario: (document.getElementById('ict-'+item.id)?.value||'').trim()
+      });
     });
-    const max = (m.items.length - naCount) * 4;
+    const max = (m.items.length-naCount)*4;
     const pct = max>0 ? Math.round(score/max*100) : null;
-    grandScore += score; grandMax += max;
+    grandScore+=score; grandMax+=max;
     return { nombre:m.nombre, num:m.num, porcentaje:pct, score, max, items_detalle };
   });
   const total = grandMax>0 ? Math.round(grandScore/grandMax*100) : 0;
   return { total, totalRaw:grandScore, totalMax:grandMax, modulos };
 }
 
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 // RESULTADO
-// ============================================================
-function mostrarResultado(local, evaluado, resultado, payload) {
-  try {
-  // Guardar en cache para poder verla después
-  const _fecha    = ultimoResultado ? ultimoResultado.fecha    : '';
-  const _evaluador= ultimoResultado ? ultimoResultado.evaluador: '';
-  const _tipo     = ultimoResultado ? ultimoResultado.tipo     : '';
-  const _rol      = ultimoResultado ? ultimoResultado.rol      : '';
-  const cacheKey  = local + '|' + evaluado + '|' + _fecha;
-  const obsHospVal = (document.getElementById('obs-hospitalidad')?.value||'').trim();
-  guardarEnCache(cacheKey, { evaluado, local, fecha: _fecha, evaluador: _evaluador, tipo: _tipo, rol: _rol, total: resultado.total, modulos: resultado.modulos });
-
+// ═══════════════════════════════════════════════════════════
+function mostrarResultado(local, evaluado, resultado) {
   const { total, modulos } = resultado;
-  const { estado, colorClass, heroClass } = getEstado(total);
+  const { estado, cls, hero } = getEstado(total);
 
-  document.getElementById('resultado-pct').textContent = total + '%';
+  document.getElementById('resultado-pct').textContent    = total+'%';
   document.getElementById('resultado-estado').textContent = estado;
-  document.getElementById('resultado-local').textContent = local + ' · ' + evaluado;
-  document.getElementById('resultado-hero').className = 'resultado-hero ' + heroClass;
+  document.getElementById('resultado-local').textContent  = `${local} · ${evaluado}`;
+  document.getElementById('resultado-hero').className     = 'resultado-hero '+hero;
 
   document.getElementById('resultado-modulos').innerHTML = modulos
-    .filter(m => m.porcentaje !== null)
+    .filter(m=>m.porcentaje!==null)
     .map(m => {
-      const { colorClass:cc, barClass:bc, badgeLabel } = getEstado(m.porcentaje);
-      return `<div class="modulo-result">
-        <div class="modulo-result-pct ${cc}">${m.porcentaje}%</div>
-        <div class="modulo-result-info">
-          <div class="modulo-result-name">${m.num}. ${m.nombre}</div>
-          <div class="modulo-result-bar-outer"><div class="modulo-result-bar ${bc}" style="width:${m.porcentaje}%"></div></div>
-          <div class="modulo-result-badge ${cc}">${badgeLabel}</div>
+      const { cls:cc, barCls:bc, badge } = getEstado(m.porcentaje);
+      const coms = (m.items_detalle||[]).filter(i=>i.comentario).map(i =>
+        `<div style="font-size:10px;color:#aaa;margin-top:2px;padding:2px 6px;background:#1a1a1a;border-left:2px solid var(--gold-dark);border-radius:0 3px 3px 0"><span style="color:var(--gold);font-weight:700">${i.id}:</span> ${esc(i.comentario)}</div>`
+      ).join('');
+      return `<div class="mod-result">
+        <div class="mod-result-pct ${cc}">${m.porcentaje}%</div>
+        <div style="flex:1">
+          <div class="mod-result-name">${m.num}. ${esc(m.nombre)}</div>
+          <div class="mod-bar-outer"><div class="mod-bar ${bc}" style="width:${m.porcentaje}%"></div></div>
+          <div class="mod-badge ${cc}">${badge}</div>
+          ${coms}
         </div>
       </div>`;
     }).join('');
 
   renderHome();
   showTab('resultado');
-  } catch(err) { console.error('Error resultado:', err); showTab('resultado'); }
 }
 
-
-// ============================================================
-// VER EVALUACIÓN GUARDADA
-// ============================================================
-// Cache de evaluaciones completas (solo las que se hacen en esta sesión)
-const evalCache = {};
-
-function guardarEnCache(key, datos) {
-  evalCache[key] = datos;
-}
-
+// ═══════════════════════════════════════════════════════════
+// VER EVALUACIÓN
+// ═══════════════════════════════════════════════════════════
 function verEval(local, evaluado, fecha) {
-  const key = local + '|' + evaluado + '|' + fecha;
+  const key    = `${local}|${evaluado}|${fecha}`;
   const cached = evalCache[key];
-  const body = document.getElementById('ver-body');
+  const body   = document.getElementById('ver-body');
 
   if (!cached) {
-    // Mostrar lo que tenemos del resumen
-    const reg = datosResumen.find(r => r.local===local && r.evaluado===evaluado && r.fecha===fecha);
+    const reg = datosResumen.find(r=>r.local===local&&r.evaluado===evaluado&&r.fecha===fecha);
     const pct = reg ? reg.porcentaje : '—';
-    const { estado, colorClass } = reg ? getEstado(reg.porcentaje) : { estado:'—', colorClass:'' };
+    const { estado, cls } = reg ? getEstado(reg.porcentaje) : { estado:'—', cls:'' };
     body.innerHTML = `
-      <div class="ver-eval-header">
-        <div style="font-family:Montserrat;font-weight:800;font-size:18px;color:var(--gold)">${evaluado}</div>
-        <div class="ver-eval-grid">
-          <div class="ver-eval-field"><div class="ver-eval-label">Local</div><div class="ver-eval-value">${local}</div></div>
-          <div class="ver-eval-field"><div class="ver-eval-label">Fecha</div><div class="ver-eval-value">${formatFecha(fecha)}</div></div>
-          <div class="ver-eval-field"><div class="ver-eval-label">Resultado</div><div class="ver-eval-value ${colorClass}">${pct}%</div></div>
-          <div class="ver-eval-field"><div class="ver-eval-label">Estado</div><div class="ver-eval-value">${estado}</div></div>
+      <div class="ver-header-card">
+        <div style="font-family:Montserrat;font-weight:800;font-size:17px;color:var(--gold)">${esc(evaluado)}</div>
+        <div class="ver-grid">
+          <div><div class="ver-field-label">Local</div><div class="ver-field-value">${esc(local)}</div></div>
+          <div><div class="ver-field-label">Fecha</div><div class="ver-field-value">${formatFecha(fecha)}</div></div>
+          <div><div class="ver-field-label">Resultado</div><div class="ver-field-value ${cls}">${pct}%</div></div>
+          <div><div class="ver-field-label">Estado</div><div class="ver-field-value">${esc(estado)}</div></div>
         </div>
       </div>
-      <div style="background:var(--yellow-bg);border:1px solid var(--yellow);border-radius:var(--radius);padding:16px;text-align:center">
-        <div style="color:var(--yellow);font-weight:700;font-size:13px;margin-bottom:6px">Detalle no disponible</div>
-        <div style="font-size:12px;color:#ccc">Esta evaluación fue cargada en una sesión anterior.<br>Solo se guardaron los totales. Para ver el detalle completo,<br>las próximas evaluaciones se guardarán automáticamente.</div>
+      <div style="background:var(--yellow-bg);border:1px solid var(--yellow);border-radius:var(--r);padding:14px;text-align:center">
+        <div style="color:var(--yellow);font-weight:700;font-size:13px;margin-bottom:5px">Detalle no disponible</div>
+        <div style="font-size:12px;color:#ccc">Esta evaluación fue guardada en una sesión anterior.<br>Las próximas se guardarán automáticamente para ver el detalle.</div>
       </div>`;
-    showTab('ver');
-    return;
+    showTab('ver'); return;
   }
 
-  // Tenemos el detalle completo
-  const scoreLabels = { 1:'✗ Inicial', 2:'⚠ En proceso', 3:'✓ Logrado', 4:'★ Destacado', 'NA':'— N/A' };
-  const scoreClass  = { 1:'s1', 2:'s2', 3:'s3', 4:'s4', 'NA':'sna' };
-  const { estado, colorClass } = getEstado(cached.total);
+  const scoreLabels = { 1:'✗ Inicial', 2:'⚠ En proceso', 3:'✓ Logrado', 4:'★ Destacado', NA:'— N/A' };
+  const scoreClass  = { 1:'ver-s1', 2:'ver-s2', 3:'ver-s3', 4:'ver-s4', NA:'ver-sna' };
+  const { estado, cls } = getEstado(cached.total);
 
-  let html = `<div class="ver-eval-header">
-    <div style="font-family:Montserrat;font-weight:800;font-size:18px;color:var(--gold)">${cached.evaluado}</div>
-    <div class="ver-eval-grid">
-      <div class="ver-eval-field"><div class="ver-eval-label">Local</div><div class="ver-eval-value">${cached.local}</div></div>
-      <div class="ver-eval-field"><div class="ver-eval-label">Fecha</div><div class="ver-eval-value">${formatFecha(cached.fecha)}</div></div>
-      <div class="ver-eval-field"><div class="ver-eval-label">Evaluador</div><div class="ver-eval-value">${cached.evaluador}</div></div>
-      <div class="ver-eval-field"><div class="ver-eval-label">Tipo</div><div class="ver-eval-value">${cached.tipo}</div></div>
+  let html = `
+    <div class="ver-header-card">
+      <div style="font-family:Montserrat;font-weight:800;font-size:17px;color:var(--gold)">${esc(cached.evaluado)}</div>
+      <div class="ver-grid">
+        <div><div class="ver-field-label">Local</div><div class="ver-field-value">${esc(cached.local)}</div></div>
+        <div><div class="ver-field-label">Fecha</div><div class="ver-field-value">${formatFecha(cached.fecha)}</div></div>
+        <div><div class="ver-field-label">Evaluador</div><div class="ver-field-value">${esc(cached.evaluador)}</div></div>
+        <div><div class="ver-field-label">Tipo</div><div class="ver-field-value">${esc(cached.tipo)}</div></div>
+      </div>
     </div>
-  </div>
-  <div class="ver-score-total">
-    <div style="font-family:Montserrat;font-weight:700;font-size:14px">Resultado total</div>
-    <div style="font-family:Montserrat;font-weight:900;font-size:28px" class="${colorClass}">${cached.total}% <span style="font-size:13px;font-weight:600">${estado}</span></div>
-  </div>`;
+    <div class="ver-total">
+      <span style="font-family:Montserrat;font-weight:700;font-size:13px">Resultado</span>
+      <span style="font-family:Montserrat;font-weight:900;font-size:26px" class="${cls}">${cached.total}% <span style="font-size:12px;font-weight:600">${esc(estado)}</span></span>
+    </div>`;
 
-  cached.modulos.filter(m => m.porcentaje !== null).forEach(m => {
-    html += `<div class="ver-mod-block"><div class="ver-mod-title">${m.num}. ${m.nombre}`;
-    if (m.porcentaje !== null) html += ` <span style="float:right;color:var(--gray)">${m.porcentaje}%</span>`;
-    html += `</div>`;
-    m.items_detalle.forEach(it => {
-      if (!it.val && it.val !== 0) return;
-      const sc = it.val === 0 ? 'NA' : it.val;
-      const label = scoreLabels[sc] || sc;
-      const cls   = scoreClass[sc] || 'sna';
+  cached.modulos.filter(m=>m.porcentaje!==null).forEach(m => {
+    html += `<div style="display:flex;flex-direction:column;gap:6px">
+      <div class="ver-mod-title">${m.num}. ${esc(m.nombre)}<span>${m.porcentaje}%</span></div>`;
+    (m.items_detalle||[]).forEach(it => {
+      if (it.val === undefined) return;
+      const sc  = it.val==='NA'?'NA':it.val;
+      const lbl = scoreLabels[sc] || String(sc);
+      const cls2= scoreClass[sc] || 'ver-sna';
       html += `<div class="ver-item">
-        <div class="ver-item-label">${it.texto}</div>
-        <span class="ver-item-score ${cls}">${label}</span>
-        ${it.comentario ? `<div class="ver-item-comment">💬 ${it.comentario}</div>` : ''}
+        <div class="ver-item-label">${esc(it.texto)}</div>
+        <span class="ver-score ${cls2}">${lbl}</span>
+        ${it.comentario ? `<div class="ver-comment">💬 ${esc(it.comentario)}</div>` : ''}
       </div>`;
     });
-    if (m.obsHosp) html += `<div style="background:#1a1500;border:1px solid var(--gold-dark);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;color:#ccc"><span style="color:var(--gold);font-weight:700;font-size:10px;letter-spacing:1px">🤝 HOSPITALIDAD</span><br>${m.obsHosp}</div>`;
-    html += `</div>`;
+    html += '</div>';
   });
 
   body.innerHTML = html;
   showTab('ver');
 }
 
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 // PDF
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 function base64ToBlob(b64, mime) {
-  var bin = atob(b64), arr = new Uint8Array(bin.length);
-  for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
-  return new Blob([arr], { type: mime || 'application/pdf' });
+  const bin = atob(b64), arr = new Uint8Array(bin.length);
+  for (let i=0; i<bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], { type: mime||'application/pdf' });
 }
 
 async function generarPDF() {
@@ -1594,113 +1382,154 @@ async function generarPDF() {
   btn.textContent = '⏳ Generando...'; btn.disabled = true;
   showToast('Generando PDF...');
 
-  if (!ultimoResultado) {
-    showToast('⚠ Sin datos');
+  if (!ultimoResult) {
+    showToast('⚠ Sin datos de evaluación');
     btn.textContent = '⬇ Descargar PDF'; btn.disabled = false;
     return;
   }
 
-  const r = ultimoResultado.resultado;
-  const fortalezas = [], reforzar = [];
-  r.modulos.filter(m => m.porcentaje !== null).forEach(m => {
-    m.items_detalle.forEach(i => {
-      if (!i.val) return;
-      const label = i.val===4?'Destacado':i.val===3?'Logrado':i.val===2?'En proceso':'Inicial';
-      if (i.val >= 3) fortalezas.push({ mod:m.nombre, texto:i.texto, val:i.val, label, comentario:i.comentario, n:i.n });
-      else             reforzar.push({ mod:m.nombre, texto:i.texto, val:i.val, label, comentario:i.comentario, n:i.n });
+  const r = ultimoResult.resultado;
+  const fort=[], ref=[];
+  r.modulos.filter(m=>m.porcentaje!==null).forEach(m => {
+    (m.items_detalle||[]).forEach(i => {
+      if (!i.val || i.val==='NA') return;
+      const lbl = calcLabel(i.val);
+      const obj = { mod:m.nombre, texto:i.texto, val:i.val, label:lbl, comentario:i.comentario, n:i.n };
+      if (parseInt(i.val)>=3) fort.push(obj);
+      else ref.push(obj);
     });
   });
 
-  const pct = r.total + '%';
-  const bandLabel = r.total >= UMBRAL_APROBADO ? 'Desempeño Sólido'
-                  : r.total >= UMBRAL_OBSERVADO ? 'Desempeño Aceptable'
-                  : 'Atención Urgente';
-
+  const pct      = r.total+'%';
+  const bandLabel= r.total>=UMBRAL_OK?'Desempeño Sólido':r.total>=UMBRAL_OBS?'Desempeño Aceptable':'Atención Urgente';
   const comentarios = [];
-  r.modulos.filter(m => m.porcentaje !== null).forEach(m => {
-    m.items_detalle.forEach(i => {
+  r.modulos.filter(m=>m.porcentaje!==null).forEach(m => {
+    (m.items_detalle||[]).forEach(i => {
       if (!i.comentario) return;
-      const abrev = m.nombre.substring(0,2).toUpperCase() + m.num;
-      comentarios.push({ modulo: m.nombre, item: abrev + i.n + ' · ' + i.texto, texto: i.comentario });
+      const abrev = m.nombre.substring(0,2).toUpperCase()+m.num;
+      comentarios.push({ modulo:m.nombre, item:`${abrev}${i.n} · ${i.texto}`, texto:i.comentario });
     });
   });
 
   const payload = {
-    evaluado:   ultimoResultado.evaluado,
-    local:      ultimoResultado.local,
-    evaluador:  ultimoResultado.evaluador,
-    fecha:      ultimoResultado.fecha,
-    tipo:       ultimoResultado.tipo,
-    rol:        ultimoResultado.rol,
-    antiguedad: ultimoResultado.antiguedad,
+    evaluado:   ultimoResult.evaluado,
+    local:      ultimoResult.local,
+    evaluador:  ultimoResult.evaluador,
+    fecha:      ultimoResult.fecha,
+    tipo:       ultimoResult.tipo,
+    rol:        ultimoResult.rol,
+    antiguedad: ultimoResult.antiguedad,
     total:      String(r.totalRaw),
     totalMax:   String(r.totalMax),
-    resultado:  bandLabel + ' — ' + pct,
-    fortalezas: fortalezas.map(f => '[' + f.mod + '] ' + f.texto + ' (' + f.label + ')').join(' | '),
-    reforzar:   reforzar.map(f => '[' + f.mod + '] ' + f.texto + ' (' + f.label + ')' + (f.comentario ? ' | ' + f.comentario : '')).join(' | '),
-    modulos:    r.modulos.filter(m => m.porcentaje !== null).map(m => ({
-      nombre: m.nombre, activo: true, score: m.score, max: m.max
-    })),
+    resultado:  `${bandLabel} — ${pct}`,
+    fortalezas: fort.map(f=>`[${f.mod}] ${f.texto} (${f.label})`).join(' | '),
+    reforzar:   ref.map(f=>`[${f.mod}] ${f.texto} (${f.label})${f.comentario?' | '+f.comentario:''}`).join(' | '),
+    modulos:    r.modulos.filter(m=>m.porcentaje!==null).map(m=>({ nombre:m.nombre, activo:true, score:m.score, max:m.max })),
     comentarios,
-    obsHospitalidad: (document.getElementById('obs-hospitalidad')?.value || '').trim()
+    obsHospitalidad: (document.getElementById('obs-hospitalidad')?.value||'').trim()
   };
 
   try {
-    const res = await fetch(SHEET_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'pdf', payload })
-    });
-    const data = await res.json();
+    const data = await apiPost({ action:'pdf', payload });
     btn.textContent = '⬇ Descargar PDF'; btn.disabled = false;
 
-    if (data.status === 'ok' && data.base64) {
-      // Sistema original: base64 → blob → descarga
-      const blob = base64ToBlob(data.base64, data.mime || 'application/pdf');
+    if (data.status==='ok' && data.html) {
+      // Abrir HTML en ventana nueva → el usuario imprime como PDF
+      const win = window.open('', '_blank');
+      if (win) {
+        win.document.write(data.html);
+        win.document.close();
+        // En desktop trigger print automático, en mobile el usuario lo hace
+        setTimeout(() => { try { win.print(); } catch(e) {} }, 800);
+        showToast('✓ Evaluación lista para imprimir');
+      } else {
+        // Popup bloqueado: descargar como HTML
+        const blob = new Blob([data.html], { type: 'text/html;charset=utf-8' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href=url; a.download=data.nombre||'Evaluacion.html'; a.target='_blank';
+        document.body.appendChild(a); a.click();
+        setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 3000);
+        showToast('✓ Evaluación descargada');
+      }
+    } else if (data.status==='ok' && data.base64) {
+      const blob = base64ToBlob(data.base64, 'application/pdf');
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
-      a.href     = url;
-      a.download = data.nombre || 'Evaluacion.pdf';
-      a.target   = '_blank';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 4000);
+      a.href=url; a.download=data.nombre||'Evaluacion.pdf'; a.target='_blank';
+      document.body.appendChild(a); a.click();
+      setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 4000);
       showToast('✓ PDF descargado');
-    } else if (data.status === 'ok' && data.url) {
-      // Fallback: URL de Drive
+    } else if (data.status==='ok' && data.url) {
       window.open(data.url, '_blank');
       showToast('✓ PDF generado');
     } else {
-      showToast('⚠ ' + (data.msg || 'Error al generar PDF'));
+      showToast('⚠ '+(data.msg||'Error al generar PDF'));
+      console.warn('PDF error:', data);
     }
   } catch(e) {
     btn.textContent = '⬇ Descargar PDF'; btn.disabled = false;
     showToast('⚠ Error de conexión');
+    console.error('PDF fetch error:', e);
   }
 }
 
-// ============================================================
-// HELPERS
-// ============================================================
-function getEstado(pct) {
-  if (pct >= UMBRAL_APROBADO) return { estado:'Aprobado', colorClass:'color-green', barClass:'bar-green', heroClass:'aprobado', badgeLabel:'✓ Aprobado', badgeClass:'badge-aprobado' };
-  if (pct >= UMBRAL_OBSERVADO) return { estado:'Observado', colorClass:'color-yellow', barClass:'bar-yellow', heroClass:'observado', badgeLabel:'⚠ Observado', badgeClass:'badge-observado' };
-  return { estado:'Atención urgente', colorClass:'color-red', barClass:'bar-red', heroClass:'urgente', badgeLabel:'✖ Urgente', badgeClass:'badge-urgente' };
+// ═══════════════════════════════════════════════════════════
+// CONFIGURACIÓN — USUARIOS
+// ═══════════════════════════════════════════════════════════
+function abrirConfig() {
+  if (!currentUser?.isAdmin) { showToast('⚠ Solo el administrador puede acceder'); return; }
+  cargarUsuarios();
+  showTab('config');
 }
-function getEstadoHex(pct) {
-  if (pct>=UMBRAL_APROBADO) return { colorHex:'#2ECC71' };
-  if (pct>=UMBRAL_OBSERVADO) return { colorHex:'#F39C12' };
-  return { colorHex:'#E74C3C' };
+function toggleUserForm() {
+  const f = document.getElementById('user-form');
+  f.classList.toggle('open');
 }
-function formatFecha(str) {
-  if (!str) return '—';
-  const [y,m,d] = str.split('-');
-  return `${d}/${m}/${y}`;
+async function cargarUsuarios() {
+  const lista = document.getElementById('usuarios-lista');
+  lista.innerHTML = '<div class="spinner-wrap"><div class="spinner"></div></div>';
+  try {
+    const data = await apiGet({ action:'getUsuarios' });
+    if (data.usuarios?.length) {
+      lista.innerHTML = data.usuarios.map(u => `
+        <div class="user-row">
+          <div><div class="user-name">${esc(u.nombre)}</div><div class="user-handle">@${esc(u.usuario)}</div></div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="user-status ${u.estado==='activo'?'status-active':'status-inactive'}">${u.estado==='activo'?'✓ Activo':'✗ Inactivo'}</span>
+            <button class="toggle-user-btn" onclick="toggleUsuario('${esc(u.usuario)}','${esc(u.estado)}')">${u.estado==='activo'?'Desactivar':'Activar'}</button>
+          </div>
+        </div>`).join('');
+    } else {
+      lista.innerHTML = '<div style="color:var(--gray);font-size:13px;padding:10px">Sin usuarios registrados.</div>';
+    }
+  } catch(e) {
+    lista.innerHTML = '<div style="color:var(--gray);font-size:13px;padding:10px">Error al cargar usuarios.</div>';
+  }
 }
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 3000);
+async function crearUsuario() {
+  const nombre = document.getElementById('nu-nombre').value.trim();
+  const user   = document.getElementById('nu-user').value.trim().toLowerCase();
+  const pass   = document.getElementById('nu-pass').value.trim();
+  if (!nombre||!user||!pass) { showToast('⚠ Completá todos los campos'); return; }
+  showToast('Creando...');
+  try {
+    const data = await apiPost({ action:'createUser', nombre, user, pass, estado:'activo' });
+    if (data.status==='ok') {
+      showToast('✓ Usuario creado');
+      ['nu-nombre','nu-user','nu-pass'].forEach(id=>document.getElementById(id).value='');
+      document.getElementById('user-form').classList.remove('open');
+      cargarUsuarios();
+    } else { showToast('⚠ '+(data.msg||'Error')); }
+  } catch(e) { showToast('⚠ Error de conexión'); }
+}
+async function toggleUsuario(usuario, estadoActual) {
+  const nuevoEstado = estadoActual==='activo'?'inactivo':'activo';
+  try {
+    await apiPost({ action:'updateUser', usuario, estado:nuevoEstado });
+    showToast('✓ Usuario '+nuevoEstado);
+    cargarUsuarios();
+  } catch(e) { showToast('⚠ Error'); }
 }
 </script>
 </body>
