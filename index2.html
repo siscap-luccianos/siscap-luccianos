@@ -534,6 +534,8 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 // CONFIG
 // ═══════════════════════════════════════════════════════════
 const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbyxNW32ZN20cyB9C3sP7Qw1s5rlGnTIl_oSzfSFf7amDlN8fyprDgwyAnTs7aVe0JWg4g/exec';
+// Backend original para PDF (probado y funciona)
+const PDF_URL = 'https://script.google.com/macros/s/AKfycbyI_kUHwWjRTdbKzE0NbCVe8zkk382JkoUstnND3Xv-LfPKbFFzb_O1FHvZ4FjA2rCj/exec';
 const UMBRAL_OK   = 80;
 const UMBRAL_OBS  = 60;
 const DIAS_ALERTA = 30;
@@ -1430,7 +1432,13 @@ async function generarPDF() {
   };
 
   try {
-    const data = await apiPost({ action:'pdf', payload });
+    // Usar el backend original del index1 que genera PDF base64 correctamente
+    const res2 = await fetch(PDF_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'pdf', payload })
+    });
+    const data = await res2.json();
     btn.textContent = '⬇ Descargar PDF'; btn.disabled = false;
 
     if (data.status==='ok' && data.html) {
