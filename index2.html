@@ -533,7 +533,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 // ═══════════════════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════════════════
-const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbyxNW32ZN20cyB9C3sP7Qw1s5rlGnTIl_oSzfSFf7amDlN8fyprDgwyAnTs7aVe0JWg4g/exec';
+const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbwdudQzPnKYV_sZlRTNDRiAAlpR0y00lpt3IRrCGMFte7z8a4H-LT5GtzVJF0D87NtZOQ/exec';
 const UMBRAL_OK   = 80;
 const UMBRAL_OBS  = 60;
 const DIAS_ALERTA = 30;
@@ -1599,23 +1599,31 @@ async function generarPDF() {
     btn.textContent = '⬇ Descargar PDF'; btn.disabled = false;
 
     if (data.status === 'ok' && data.base64) {
-      const mime = data.mime || 'application/pdf';
-      const isPDF = mime.includes('pdf');
-      const blob = base64ToBlob(data.base64, mime);
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement('a');
-      a.href     = url;
-      a.download = data.nombre || (isPDF ? 'Evaluacion.pdf' : 'Evaluacion.html');
-      a.target   = '_blank';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 5000);
-      showToast(isPDF ? '✓ PDF descargado' : '✓ Descargado — abrí e imprimí como PDF');
+      const mime   = data.mime || 'application/pdf';
+      const isPDF  = mime.includes('pdf');
+      const nombre = data.nombre || (isPDF ? 'Evaluacion.pdf' : 'Evaluacion.html');
+
+      // iOS Safari no soporta bien createObjectURL con PDF → usar URL de Drive
+      const isIOS    = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+      if ((isIOS || isSafari) && isPDF && data.url) {
+        window.open(data.url, '_blank');
+        showToast('\u2713 PDF abierto');
+      } else {
+        const blob = base64ToBlob(data.base64, mime);
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href = url; a.download = nombre; a.target = '_blank';
+        document.body.appendChild(a); a.click();
+        setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 5000);
+        showToast(isPDF ? '\u2713 PDF descargado' : '\u2713 Descargado');
+      }
     } else if (data.status === 'ok' && data.url) {
       window.open(data.url, '_blank');
-      showToast('✓ PDF listo');
+      showToast('\u2713 PDF listo');
     } else {
-      showToast('⚠ ' + (data.msg || 'Error al generar PDF'));
+      showToast('\u26A0 ' + (data.msg || 'Error al generar PDF'));
       console.error('PDF error:', data);
     }
   } catch(e) {
