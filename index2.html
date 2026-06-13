@@ -534,8 +534,6 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 // CONFIG
 // ═══════════════════════════════════════════════════════════
 const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbyxNW32ZN20cyB9C3sP7Qw1s5rlGnTIl_oSzfSFf7amDlN8fyprDgwyAnTs7aVe0JWg4g/exec';
-// Backend original para PDF (probado y funciona)
-const PDF_URL = 'https://script.google.com/macros/s/AKfycbyI_kUHwWjRTdbKzE0NbCVe8zkk382JkoUstnND3Xv-LfPKbFFzb_O1FHvZ4FjA2rCj/exec';
 const UMBRAL_OK   = 80;
 const UMBRAL_OBS  = 60;
 const DIAS_ALERTA = 30;
@@ -1379,37 +1377,200 @@ function base64ToBlob(b64, mime) {
   return new Blob([arr], { type: mime||'application/pdf' });
 }
 
+function construirHTMLInforme() {
+  if (!ultimoResult) return null;
+  const d = ultimoResult;
+  const r = d.resultado;
+  const pct = r.total + '%';
+  const bandLabel = r.total>=UMBRAL_OK ? 'Desempeño Sólido'
+                  : r.total>=UMBRAL_OBS ? 'Desempeño Aceptable'
+                  : 'Atención Urgente';
+
+  // Color según resultado
+  const pctColor = r.total>=UMBRAL_OK ? '#27ae60'
+                 : r.total>=UMBRAL_OBS ? '#f39c12'
+                 : '#c0392b';
+  const pctBg = r.total>=UMBRAL_OK ? '#f0faf5'
+              : r.total>=UMBRAL_OBS ? '#fff8e8'
+              : '#fdf0f0';
+
+  // Tabla módulos
+  let modsHTML = '';
+  r.modulos.filter(m=>m.porcentaje!==null).forEach(m => {
+    const mp = m.porcentaje;
+    const mc = mp>=UMBRAL_OK?'#e8f8ee':mp>=UMBRAL_OBS?'#fff8e8':'#fdf0f0';
+    const mcc= mp>=UMBRAL_OK?'#27ae60':mp>=UMBRAL_OBS?'#d35400':'#c0392b';
+    modsHTML += `<tr>
+      <td style="padding:8px 12px;border:1px solid #ddd;font-size:12px">${esc(m.nombre)}</td>
+      <td style="padding:8px 12px;border:1px solid #ddd;text-align:center;font-weight:700;background:${mc};color:${mcc}">${mp}%</td>
+    </tr>`;
+  });
+
+  // Fortalezas y reforzar agrupadas por módulo
+  const fort = {}, ref = {};
+  r.modulos.filter(m=>m.porcentaje!==null).forEach(m => {
+    (m.items_detalle||[]).forEach(i => {
+      if (!i.val || i.val==='NA') return;
+      const vn = parseInt(i.val);
+      if (isNaN(vn)) return;
+      const label = vn===4?'★ Destacado':vn===3?'✓ Logrado':vn===2?'⚠ En proceso':'✗ Inicial';
+      const color = vn>=3?'#27ae60':vn===2?'#d35400':'#c0392b';
+      const item = { texto: esc(i.texto), label, color };
+      if (vn>=3) { if(!fort[m.nombre]) fort[m.nombre]=[]; fort[m.nombre].push(item); }
+      else       { if(!ref[m.nombre])  ref[m.nombre]=[]; ref[m.nombre].push(item); }
+    });
+  });
+
+  const renderGroup = (grupos) => {
+    let html = '';
+    Object.entries(grupos).forEach(([mod, items]) => {
+      html += `<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#666;margin:8px 0 4px">${esc(mod)}</div>`;
+      items.forEach(it => {
+        html += `<div style="font-size:12px;margin-bottom:3px;line-height:1.5">${it.texto} <span style="color:${it.color};font-size:10px;font-weight:700">${it.label}</span></div>`;
+      });
+    });
+    return html || '<span style="color:#aaa;font-size:12px">Sin ítems en esta categoría.</span>';
+  };
+
+  // Comentarios
+  let comsHTML = '';
+  const tieneComs = r.modulos.some(m => (m.items_detalle||[]).some(i=>i.comentario));
+  if (tieneComs) {
+    r.modulos.filter(m=>m.porcentaje!==null).forEach(m => {
+      (m.items_detalle||[]).forEach(i => {
+        if (!i.comentario) return;
+        const abrev = m.nombre.substring(0,2).toUpperCase()+m.num;
+        comsHTML += `<tr>
+          <td style="padding:7px 12px;border:1px solid #ddd;font-size:11px;color:#555;width:30%">
+            ${esc(m.nombre)}<br><span style="color:#888;font-size:10px">${abrev}${i.n}</span>
+          </td>
+          <td style="padding:7px 12px;border:1px solid #ddd;font-size:12px">${esc(i.comentario)}</td>
+        </tr>`;
+      });
+    });
+  }
+
+  // Obs hospitalidad
+  const obsHosp = (document.getElementById('obs-hospitalidad')?.value||'').trim();
+
+  // Fecha formateada
+  const fechaFmt = d.fecha ? d.fecha.split('-').reverse().join('/') : '';
+
+  return `<!doctype html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Evaluacion_${esc(d.evaluado)}_${d.fecha||''}</title>
+<style>
+@page{size:A4;margin:14mm}
+*{box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;font-size:13px;margin:0;background:white}
+h1{font-size:20px;font-weight:700;margin:0 0 4px}
+table{width:100%;border-collapse:collapse}
+@media print{
+  body{margin:0}
+  button{display:none!important}
+}
+</style></head><body>
+<div style="background:#0D0D0D;color:white;padding:18px 22px;margin-bottom:16px">
+  <div style="font-size:9px;color:#888;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px">L U C C I A N O ' S — S I S C A P · E V A L U A C I Ó N D E C A P A C I T A C I Ó N</div>
+  <h1 style="color:#C9A84C">Evaluación de Capacitación</h1>
+  <div style="font-size:11px;color:#888;margin-top:3px">Escala 1 a 4 · NA = No aplica · Puntaje sobre ítems aplicables</div>
+</div>
+<table style="margin-bottom:16px;border:1px solid #ddd">
+  <tr>
+    <td style="padding:8px 12px;border:1px solid #ddd;font-size:10px;font-weight:700;text-transform:uppercase;color:#666;width:20%">Evaluado</td>
+    <td style="padding:8px 12px;border:1px solid #ddd;font-weight:600;width:30%">${esc(d.evaluado)}</td>
+    <td style="padding:8px 12px;border:1px solid #ddd;font-size:10px;font-weight:700;text-transform:uppercase;color:#666;width:20%">Local</td>
+    <td style="padding:8px 12px;border:1px solid #ddd;width:30%">${esc(d.local)}</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 12px;border:1px solid #ddd;font-size:10px;font-weight:700;text-transform:uppercase;color:#666">Evaluador</td>
+    <td style="padding:8px 12px;border:1px solid #ddd">${esc(d.evaluador)}</td>
+    <td style="padding:8px 12px;border:1px solid #ddd;font-size:10px;font-weight:700;text-transform:uppercase;color:#666">Fecha</td>
+    <td style="padding:8px 12px;border:1px solid #ddd">${fechaFmt}</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 12px;border:1px solid #ddd;font-size:10px;font-weight:700;text-transform:uppercase;color:#666">Tipo</td>
+    <td style="padding:8px 12px;border:1px solid #ddd">${esc(d.tipo||'')}</td>
+    <td style="padding:8px 12px;border:1px solid #ddd;font-size:10px;font-weight:700;text-transform:uppercase;color:#666">Antigüedad</td>
+    <td style="padding:8px 12px;border:1px solid #ddd">${esc(d.antiguedad||'')}</td>
+  </tr>
+</table>
+<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#444;margin-bottom:6px">Resumen por Módulo</div>
+<table style="margin-bottom:16px">
+  <tr style="background:#f2f2f2">
+    <th style="padding:8px 12px;border:1px solid #ddd;text-align:left;font-size:11px">Módulo</th>
+    <th style="padding:8px 12px;border:1px solid #ddd;font-size:11px">%</th>
+  </tr>${modsHTML}
+</table>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+  <div style="border:1px solid #a9dfbf;border-radius:6px;padding:12px;background:#f0faf0">
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#27ae60;margin-bottom:7px">Fortalezas</div>
+    <div style="font-size:12px;line-height:1.7">${renderGroup(fort)}</div>
+  </div>
+  <div style="border:1px solid #f9ca78;border-radius:6px;padding:12px;background:#fff8f0">
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#d35400;margin-bottom:7px">Aspectos a Reforzar</div>
+    <div style="font-size:12px;line-height:1.7">${renderGroup(ref)}</div>
+  </div>
+</div>
+${tieneComs ? `
+<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#444;margin-bottom:6px">Comentarios y Observaciones</div>
+<table style="width:100%;border-collapse:collapse;margin-bottom:16px">
+  <tr style="background:#f2f2f2">
+    <th style="padding:8px 12px;border:1px solid #ddd;text-align:left;width:30%;font-size:11px">Ítem</th>
+    <th style="padding:8px 12px;border:1px solid #ddd;text-align:left;font-size:11px">Observación</th>
+  </tr>${comsHTML}
+</table>` : ''}
+${obsHosp ? `
+<div style="background:#0d2e22;border:1px solid #2a6b50;border-radius:6px;padding:14px 16px;margin-bottom:16px">
+  <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#1D9E75;margin-bottom:6px">🤝 Observación de Hospitalidad</div>
+  <div style="font-size:12px;line-height:1.7;color:#b0ddd0">${esc(obsHosp)}</div>
+</div>` : ''}
+<div style="background:#0D0D0D;color:white;padding:14px 20px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+  <div>
+    <div style="font-size:11px;color:#888;margin-bottom:4px">Puntaje Total · Escala máxima 4 por criterio</div>
+    <div style="font-size:16px;font-weight:700;color:#C9A84C">${esc(bandLabel)} — ${pct}</div>
+  </div>
+  <div style="background:#1a1a1a;border:2px solid #C9A84C;border-radius:8px;padding:10px 20px;text-align:center;min-width:80px">
+    <div style="font-size:36px;font-weight:700;color:${pctColor};line-height:1">${pct}</div>
+  </div>
+</div>
+<div style="font-size:10px;color:#aaa;text-align:right;margin-top:8px">Generado por SisCap v2.0 · ${fechaFmt}</div>
+</body></html>`;
+}
+
 async function generarPDF() {
   const btn = document.getElementById('btn-pdf');
   btn.textContent = '⏳ Generando...'; btn.disabled = true;
-  showToast('Generando PDF...');
+  showToast('Generando PDF...', 10000);
 
   if (!ultimoResult) {
-    showToast('⚠ Sin datos de evaluación');
+    showToast('⚠ Primero completá una evaluación');
     btn.textContent = '⬇ Descargar PDF'; btn.disabled = false;
     return;
   }
 
   const r = ultimoResult.resultado;
-  const fort=[], ref=[];
-  r.modulos.filter(m=>m.porcentaje!==null).forEach(m => {
-    (m.items_detalle||[]).forEach(i => {
-      if (!i.val || i.val==='NA') return;
+  const fort = [], ref = [];
+  r.modulos.filter(m => m.porcentaje !== null).forEach(m => {
+    (m.items_detalle || []).forEach(i => {
+      if (!i.val || i.val === 'NA') return;
       const lbl = calcLabel(i.val);
-      const obj = { mod:m.nombre, texto:i.texto, val:i.val, label:lbl, comentario:i.comentario, n:i.n };
-      if (parseInt(i.val)>=3) fort.push(obj);
-      else ref.push(obj);
+      if (parseInt(i.val) >= 3) fort.push(`[${m.nombre}] ${i.texto} (${lbl})`);
+      else ref.push(`[${m.nombre}] ${i.texto} (${lbl})`);
     });
   });
 
-  const pct      = r.total+'%';
-  const bandLabel= r.total>=UMBRAL_OK?'Desempeño Sólido':r.total>=UMBRAL_OBS?'Desempeño Aceptable':'Atención Urgente';
+  const pct = r.total + '%';
+  const bandLabel = r.total >= UMBRAL_OK ? 'Desempeño Sólido'
+                  : r.total >= UMBRAL_OBS ? 'Desempeño Aceptable'
+                  : 'Atención Urgente';
+
   const comentarios = [];
-  r.modulos.filter(m=>m.porcentaje!==null).forEach(m => {
-    (m.items_detalle||[]).forEach(i => {
+  r.modulos.filter(m => m.porcentaje !== null).forEach(m => {
+    (m.items_detalle || []).forEach(i => {
       if (!i.comentario) return;
-      const abrev = m.nombre.substring(0,2).toUpperCase()+m.num;
-      comentarios.push({ modulo:m.nombre, item:`${abrev}${i.n} · ${i.texto}`, texto:i.comentario });
+      const abrev = m.nombre.substring(0,2).toUpperCase() + m.num;
+      comentarios.push({ modulo: m.nombre, item: `${abrev}${i.n} · ${i.texto}`, texto: i.comentario });
     });
   });
 
@@ -1424,60 +1585,42 @@ async function generarPDF() {
     total:      String(r.totalRaw),
     totalMax:   String(r.totalMax),
     resultado:  `${bandLabel} — ${pct}`,
-    fortalezas: fort.map(f=>`[${f.mod}] ${f.texto} (${f.label})`).join(' | '),
-    reforzar:   ref.map(f=>`[${f.mod}] ${f.texto} (${f.label})${f.comentario?' | '+f.comentario:''}`).join(' | '),
-    modulos:    r.modulos.filter(m=>m.porcentaje!==null).map(m=>({ nombre:m.nombre, activo:true, score:m.score, max:m.max })),
+    fortalezas: fort.join(' | '),
+    reforzar:   ref.join(' | '),
+    modulos:    r.modulos.filter(m => m.porcentaje !== null).map(m => ({
+      nombre: m.nombre, activo: true, score: m.score, max: m.max
+    })),
     comentarios,
-    obsHospitalidad: (document.getElementById('obs-hospitalidad')?.value||'').trim()
+    obsHospitalidad: (document.getElementById('obs-hospitalidad')?.value || '').trim()
   };
 
   try {
-    // Usar el backend original del index1 que genera PDF base64 correctamente
-    const res2 = await fetch(PDF_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'pdf', payload })
-    });
-    const data = await res2.json();
+    const data = await apiPost({ action: 'pdf', payload });
     btn.textContent = '⬇ Descargar PDF'; btn.disabled = false;
 
-    if (data.status==='ok' && data.html) {
-      // Abrir HTML en ventana nueva → el usuario imprime como PDF
-      const win = window.open('', '_blank');
-      if (win) {
-        win.document.write(data.html);
-        win.document.close();
-        // En desktop trigger print automático, en mobile el usuario lo hace
-        setTimeout(() => { try { win.print(); } catch(e) {} }, 800);
-        showToast('✓ Evaluación lista para imprimir');
-      } else {
-        // Popup bloqueado: descargar como HTML
-        const blob = new Blob([data.html], { type: 'text/html;charset=utf-8' });
-        const url  = URL.createObjectURL(blob);
-        const a    = document.createElement('a');
-        a.href=url; a.download=data.nombre||'Evaluacion.html'; a.target='_blank';
-        document.body.appendChild(a); a.click();
-        setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 3000);
-        showToast('✓ Evaluación descargada');
-      }
-    } else if (data.status==='ok' && data.base64) {
-      const blob = base64ToBlob(data.base64, 'application/pdf');
+    if (data.status === 'ok' && data.base64) {
+      const mime = data.mime || 'application/pdf';
+      const isPDF = mime.includes('pdf');
+      const blob = base64ToBlob(data.base64, mime);
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
-      a.href=url; a.download=data.nombre||'Evaluacion.pdf'; a.target='_blank';
-      document.body.appendChild(a); a.click();
-      setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 4000);
-      showToast('✓ PDF descargado');
-    } else if (data.status==='ok' && data.url) {
+      a.href     = url;
+      a.download = data.nombre || (isPDF ? 'Evaluacion.pdf' : 'Evaluacion.html');
+      a.target   = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 5000);
+      showToast(isPDF ? '✓ PDF descargado' : '✓ Descargado — abrí e imprimí como PDF');
+    } else if (data.status === 'ok' && data.url) {
       window.open(data.url, '_blank');
-      showToast('✓ PDF generado');
+      showToast('✓ PDF listo');
     } else {
-      showToast('⚠ '+(data.msg||'Error al generar PDF'));
-      console.warn('PDF error:', data);
+      showToast('⚠ ' + (data.msg || 'Error al generar PDF'));
+      console.error('PDF error:', data);
     }
   } catch(e) {
     btn.textContent = '⬇ Descargar PDF'; btn.disabled = false;
-    showToast('⚠ Error de conexión');
+    showToast('⚠ Error de conexión con el servidor');
     console.error('PDF fetch error:', e);
   }
 }
