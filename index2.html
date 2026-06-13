@@ -161,6 +161,10 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 .colab-actions{display:flex;gap:6px}
 .btn-reeval{flex:1;padding:8px;background:var(--gold);color:var(--black);font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;border:none;border-radius:var(--rs);cursor:pointer}
 .btn-del{padding:8px 14px;background:var(--red-bg);color:var(--red);font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;border:1px solid var(--red);border-radius:var(--rs);cursor:pointer}
+.icon-btn{background:none;border:none;cursor:pointer;font-size:17px;padding:3px;border-radius:6px;transition:transform .15s;line-height:1}
+.icon-btn:active{transform:scale(.85)}
+.del-btn{opacity:.7}
+.del-btn:hover{opacity:1}
 .nueva-eval-local{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;color:var(--gold);font-size:12px;font-weight:600;border:1px dashed var(--gold-dark);border-radius:var(--rs);cursor:pointer;width:100%;background:transparent}
 .ver-mas-btn{text-align:center;padding:10px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;letter-spacing:1px;text-transform:uppercase}
 
@@ -214,11 +218,11 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 .modulo-tag{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-left:4px}
 
 /* ── BANNER HOSPITALIDAD ────────────────────────────────── */
-.hosp-banner{background:linear-gradient(135deg,#1a1a0a,#2a2500);border:1px solid var(--gold-dark);border-radius:var(--r);padding:22px 18px;text-align:center;margin-bottom:4px}
-.hosp-org{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-dark);margin-bottom:8px}
-.hosp-title{font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;color:var(--gold);line-height:1.15;margin-bottom:7px}
-.hosp-sub{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:10px}
-.hosp-line{width:36px;height:2px;background:var(--gold-dark);margin:0 auto}
+.hosp-banner{background:linear-gradient(135deg,#0a1f18,#0f2d22);border:1px solid #2a6b50;border-radius:var(--r);padding:22px 18px;text-align:center;margin-bottom:4px}
+.hosp-org{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#5DCAA5;margin-bottom:8px}
+.hosp-title{font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;color:#5DCAA5;line-height:1.15;margin-bottom:7px}
+.hosp-sub{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#3aaa85;margin-bottom:10px}
+.hosp-line{width:36px;height:2px;background:#2a6b50;margin:0 auto}
 
 /* ── ITEM CARD ──────────────────────────────────────────── */
 .item-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:13px;transition:border-color .2s}
@@ -385,6 +389,11 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
       <div class="section-title">⚠ Alertas</div>
       <div class="alert-strip"><div class="alert-title">Locales sin evaluar (+30 días)</div><div class="alert-list" id="alert-list"></div></div>
     </div>
+    <!-- Pendientes para gabi -->
+    <div id="pendientes-wrap" style="display:none">
+      <div class="section-title">🔔 Solicitudes de acceso</div>
+      <div id="pendientes-lista" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
     <!-- CTA -->
     <button class="cta-eval" onclick="irAFormulario()">
       <div><div class="cta-text">Nueva evaluación</div><div class="cta-sub">Iniciar formulario completo</div></div>
@@ -533,7 +542,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 // ═══════════════════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════════════════
-const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbwdudQzPnKYV_sZlRTNDRiAAlpR0y00lpt3IRrCGMFte7z8a4H-LT5GtzVJF0D87NtZOQ/exec';
+const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbwrAUQBTaHC8oUG8SPenym5VjIPlaDy41Fv-NpKEs3rd-5yOVz0I6Tq8cIn0ahAvfN65w/exec';
 const UMBRAL_OK   = 80;
 const UMBRAL_OBS  = 60;
 const DIAS_ALERTA = 30;
@@ -549,46 +558,122 @@ const USUARIOS = {
 };
 
 const LOCALES = [
-  "Lucciano's Paso","Lucciano's Gallegos","Lucciano's Martinez",
-  "Lucciano's Constitución","Lucciano's Olivos","Lucciano's San Miguel",
-  "Lucciano's Nordelta","Lucciano's Aguero","Lucciano's Dot",
-  "Lucciano's Barrio Norte","Lucciano's Alto Rosario Shopping",
-  "Lucciano's Abasto","Lucciano's Peatonal","Lucciano's Recoleta",
-  "Lucciano's Calle Corrientes","Lucciano's Aldrey 774","Lucciano's La Imprenta",
-  "Lucciano's Salta","Lucciano's Alem","Lucciano's Alto Noa Salta",
-  "Lucciano's Guemes","Lucciano's Cerro Las Rosas","Lucciano's Posadas",
-  "Lucciano's Patio Bullrich","Lucciano's Distrito Arcos","Lucciano's Obelisco",
-  "Lucciano's Nuevo Centro Shopping Córdoba","Lucciano's Torreón Del Monje",
-  "Luccianos Galerias Pacífico","Lucciano's Agüero","Lucciano's Alto Rosario",
-  "Lucciano's Abasto II","Lucciano's Córdoba","Lucciano's Nuevo Centro Cba",
-  "Lucciano's Galeria","Luccianos Salta NOA","Luccianos Obelisco",
-  "Lucciano's Gondola Galerias","Lucciano's Dot Baires Shopping",
-  "Lucciano's Grand Hotel Imprenta","Lucciano's Aldrey","Lucciano's Varese",
-  "Luccianos Peatonal","Lucciano's Store Fabrica","Lucciano's Campana",
-  "Lucciano's Adrogué","Lucciano's Neuquén","Lucciano's Paseo Neuquen",
-  "Lucciano's Las Lomitas","Lucciano's Avellaneda","Lucciano's Juramento",
-  "Luccianos Puerto Madero","Lucciano's La Plata","Lucciano's Castelar",
-  "Lucciano's Villa Luro","Lucciano's Mendoza","Lucciano's Palmares Mza",
-  "Lucciano's Vista Pueblo","Lucciano's Tucumán","Lucciano's Yerba Buenas",
-  "Lucciano's Caballito","Lucciano's Resistencia","Lucciano's Devoto",
-  "Lucciano's Parque Rivadavia","Lucciano's Cipolletti","Lucciano's Pilar",
-  "Lucciano's Parque Leloir","Lucciano's Mar de las Pampas","Lucciano's Villa Gesell",
-  "Lucciano's Villa Urquiza","Lucciano's Baxar Mercado","Lucciano's City Bell",
-  "Lucciano's Cariló","Lucciano's Pinamar","Lucciano's Palermo","Lucciano's Coghlan",
-  "Lucciano's Tandil","Lucciano's Quilmes","Lucciano's Bahia Blanca",
-  "Lucciano's Ushuaia","Lucciano's Cañitas","Lucciano's Colegiales",
-  "Lucciano's Lanus","Lucciano's Caseros","Lucciano's Belgrano R Vidal",
-  "Lucciano's Nuñez","Lucciano's Gral Roca","Lucciano's San Telmo",
-  "Lucciano's Corrientes","Lucciano's Puerto Madero Dique","Lucciano's Urquiza 2",
-  "Lucciano's Ramos Mejia","Lucciano's Puerto Madryn","Lucciano's San Nicolas",
-  "Lucciano's Gral Pico","Lucciano's Santa Fe Rivera","Lucciano's Catamarca",
-  "Lucciano's Distrito T Gral Rodriguez","Lucciano's Almagro Medrano",
-  "Lucciano's Villa Del Parque","Lucciano's Paseo Pilar 2","Lucciano's Mendoza 4",
-  "Lucciano's Villa Mitre Bahia 2","Lucciano's Paseo del Angel",
-  "Lucciano's Palermo Chico","Lucciano's Bajo Belgrano","Lucciano's Plaza Houssay",
-  "Lucciano's San Fernando","Lucciano's Arcos del Rosedal","Lucciano's Cid Campeador",
-  "Lucciano's Pocitos","Lucciano's Punta Carretas","Lucciano's Punta Carrasco",
-  "Lucciano's Asuncion","Lucciano's Parque Arauco"
+  "Lucciano's Paso",
+  "Lucciano's Gallegos",
+  "Lucciano's Martinez",
+  "Lucciano's Constitución",
+  "Lucciano's Olivos",
+  "Lucciano's San Miguel",
+  "Lucciano's Nordelta",
+  "Lucciano's Aguero",
+  "Lucciano's Dot",
+  "Lucciano's Barrio Norte",
+  "Lucciano's Alto Rosario Shopping",
+  "Lucciano's Abasto",
+  "Lucciano's Peatonal",
+  "Lucciano's Recoleta",
+  "Lucciano's Calle Corrientes",
+  "Lucciano's Aldrey 774",
+  "Lucciano's La Imprenta",
+  "Lucciano's Salta",
+  "Lucciano's Alem",
+  "Lucciano's Alto Noa Salta",
+  "Lucciano's Guemes",
+  "Lucciano's Cerro Las Rosas",
+  "Lucciano's Posadas",
+  "Lucciano's Patio Bullrich",
+  "Lucciano's Distrito Arcos",
+  "Lucciano's Obelisco",
+  "Lucciano's Nuevo Centro Shopping Córdoba",
+  "Lucciano's Torreón Del Monje",
+  "Luccianos Galerias Pacífico",
+  "Lucciano's Aldrey",
+  "Lucciano's Varese",
+  "Luccianos Peatonal",
+  "Lucciano's Store Fabrica",
+  "Lucciano's Agüero",
+  "Lucciano's Alto Rosario",
+  "Lucciano's Abasto II",
+  "Lucciano's Córdoba",
+  "Lucciano's Nuevo Centro Cba",
+  "Lucciano's Galeria",
+  "Luccianos Salta NOA",
+  "Luccianos Obelisco",
+  "Lucciano's Gondola Galerias",
+  "Lucciano's Dot Baires Shopping",
+  "Lucciano's Grand Hotel Imprenta",
+  "Lucciano's Calle Corrientes Microcentro",
+  "Lucciano's Campana",
+  "Lucciano's Adrogué",
+  "Lucciano's Neuquén",
+  "Lucciano's Paseo Neuquen",
+  "Lucciano's Las Lomitas",
+  "Lucciano's Avellaneda",
+  "Lucciano's Juramento",
+  "Luccianos Puerto Madero",
+  "Lucciano's La Plata",
+  "Lucciano's Castelar",
+  "Lucciano's Villa Luro",
+  "Lucciano's Mendoza",
+  "Lucciano's Palmares Mza",
+  "Lucciano's Vista Pueblo",
+  "Lucciano's Tucumán",
+  "Lucciano's Yerba Buenas",
+  "Lucciano's Caballito",
+  "Lucciano's Resistencia",
+  "Lucciano's Devoto",
+  "Lucciano's Parque Rivadavia",
+  "Lucciano's Cipolletti",
+  "Lucciano's Pilar",
+  "Lucciano's Parque Leloir",
+  "Lucciano's Mar de las Pampas",
+  "Lucciano's Villa Gesell",
+  "Lucciano's Villa Urquiza",
+  "Lucciano's Baxar Mercado",
+  "Lucciano's City Bell",
+  "Lucciano's Cariló",
+  "Lucciano's Pinamar",
+  "Lucciano's Palermo",
+  "Lucciano's Coghlan",
+  "Lucciano's Tandil",
+  "Lucciano's Quilmes",
+  "Lucciano's Bahia Blanca",
+  "Lucciano's Ushuaia",
+  "Lucciano's Cañitas",
+  "Lucciano's Colegiales",
+  "Lucciano's Lanus",
+  "Lucciano's Caseros",
+  "Lucciano's Belgrano R Vidal",
+  "Lucciano's Nuñez",
+  "Lucciano's Gral Roca",
+  "Lucciano's San Telmo",
+  "Lucciano's Corrientes",
+  "Lucciano's Puerto Madero Dique",
+  "Lucciano's Urquiza 2",
+  "Lucciano's Ramos Mejia",
+  "Lucciano's Puerto Madryn",
+  "Lucciano's San Nicolas",
+  "Lucciano's Gral Pico",
+  "Lucciano's Santa Fe Rivera",
+  "Lucciano's Catamarca",
+  "Lucciano's Distrito T Gral Rodriguez",
+  "Lucciano's Almagro Medrano",
+  "Lucciano's Villa Del Parque",
+  "Lucciano's Paseo Pilar 2",
+  "Lucciano's Mendoza 4",
+  "Lucciano's Villa Mitre Bahia 2",
+  "Lucciano's Paseo del Angel",
+  "Lucciano's Palermo Chico",
+  "Lucciano's Bajo Belgrano",
+  "Lucciano's Plaza Houssay",
+  "Lucciano's San Fernando",
+  "Lucciano's Arcos del Rosedal",
+  "Lucciano's Cid Campeador",
+  "Lucciano's Pocitos",
+  "Lucciano's Punta Carretas",
+  "Lucciano's Punta Carrasco",
+  "Lucciano's Asuncion",
+  "Lucciano's Parque Arauco"
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -726,6 +811,7 @@ function doLogin() {
   document.getElementById('cfg-btn').style.display = u.isAdmin ? '' : 'none';
   showTab('home');
   cargarDatos();
+  if (currentUser && currentUser.isAdmin) cargarPendientes();
 }
 document.getElementById('login-user').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('login-pass').focus(); });
 document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
@@ -805,9 +891,14 @@ function demoData() {
 // ═══════════════════════════════════════════════════════════
 function renderHome() {
   if (!datosResumen.length) return;
+  // Filtrar según permisos: capacitadores solo ven sus evaluaciones
+  const misEvals = (currentUser && !currentUser.isAdmin)
+    ? datosResumen.filter(r => r.evaluador === currentUser.nombre)
+    : datosResumen;
+
   // última eval por local
   const porLocal = {};
-  datosResumen.forEach(r => {
+  misEvals.forEach(r => {
     if (!porLocal[r.local] || r.fecha > porLocal[r.local].fecha) porLocal[r.local] = r;
   });
   const ultimas = Object.values(porLocal);
@@ -841,7 +932,9 @@ function renderSucursales(lista) {
   const frag = document.createDocumentFragment();
   mostrar.forEach(r => {
     const { estado, cls, badgeCls } = getEstado(r.porcentaje);
-    const colabs = datosResumen.filter(x=>x.local===r.local).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+    const colabs = (currentUser && !currentUser.isAdmin)
+      ? datosResumen.filter(x=>x.local===r.local && x.evaluador===currentUser.nombre).sort((a,b)=>b.fecha.localeCompare(a.fecha))
+      : datosResumen.filter(x=>x.local===r.local).sort((a,b)=>b.fecha.localeCompare(a.fecha));
     const isAdmin = currentUser && currentUser.isAdmin;
 
     const card = document.createElement('div');
@@ -861,30 +954,30 @@ function renderSucursales(lista) {
 
     colabs.forEach(c => {
       const { cls:cc } = getEstado(c.porcentaje);
-      const lEnc = encodeURIComponent(c.local);
-      const eEnc = encodeURIComponent(c.evaluado);
       const row  = document.createElement('div');
       row.className = 'colab-row';
-      row.innerHTML = `<div class="colab-info"><div class="colab-name">${esc(c.evaluado)}</div><div class="colab-date">${formatFecha(c.fecha)} · ${esc(c.evaluador||'')}</div></div>
-        <div style="display:flex;align-items:center;gap:6px"><span class="colab-pct ${cc}">${c.porcentaje}%</span><span style="color:var(--gray);font-size:11px">›</span></div>`;
-      row.addEventListener('click', () => verEval(c.local, c.evaluado, c.fecha));
-      detail.appendChild(row);
 
-      const acts = document.createElement('div');
-      acts.className = 'colab-actions';
-      const btnRe = document.createElement('button');
-      btnRe.className = 'btn-reeval';
-      btnRe.textContent = '↺ Re-evaluar';
-      btnRe.addEventListener('click', e => { e.stopPropagation(); irAFormulario(c.local, c.evaluado); });
-      acts.appendChild(btnRe);
-      if (isAdmin) {
-        const btnDel = document.createElement('button');
-        btnDel.className = 'btn-del';
-        btnDel.textContent = '🗑';
-        btnDel.addEventListener('click', e => { e.stopPropagation(); eliminarEval(c.local, c.evaluado, c.fecha); });
-        acts.appendChild(btnDel);
-      }
-      detail.appendChild(acts);
+      // Determinar si está completa (tiene porcentaje válido > 0)
+      const estaCompleta = c.porcentaje > 0;
+      const estadoIcon   = estaCompleta
+        ? '<span style="color:#2ECC71;font-size:16px;font-weight:900" title="Evaluación completa">✓</span>'
+        : '<span style="color:#E74C3C;font-size:16px;font-weight:900" title="Evaluación incompleta">✗</span>';
+
+      row.innerHTML = `
+        <div class="colab-info">
+          <div class="colab-name">${esc(c.evaluado)}</div>
+          <div class="colab-date">${formatFecha(c.fecha)} · ${esc(c.evaluador||'')}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="colab-pct ${cc}">${c.porcentaje}%</span>
+          ${estadoIcon}
+          <button class="icon-btn" title="Ver evaluación" onclick="event.stopPropagation();verEval('${esc(c.local)}','${esc(c.evaluado)}','${c.fecha}')">👁</button>
+          <button class="icon-btn" title="Descargar PDF" onclick="event.stopPropagation();reimprimirPDF('${esc(c.local)}','${esc(c.evaluado)}','${c.fecha}',${c.porcentaje})">📄</button>
+          ${isAdmin ? `<button class="icon-btn del-btn" title="Eliminar" onclick="event.stopPropagation();eliminarEval('${esc(c.local)}','${esc(c.evaluado)}','${c.fecha}')">🗑</button>` : ''}
+        </div>`;
+
+      row.addEventListener('click', () => irAFormulario(c.local, c.evaluado));
+      detail.appendChild(row);
     });
 
     const btnNueva = document.createElement('button');
@@ -1631,6 +1724,112 @@ async function generarPDF() {
     showToast('⚠ Error de conexión con el servidor');
     console.error('PDF fetch error:', e);
   }
+}
+
+
+// ============================================================
+// REIMPRIMIR PDF DESDE HISTORIAL
+// ============================================================
+async function reimprimirPDF(local, evaluado, fecha, porcentaje) {
+  showToast('Generando PDF...', 10000);
+
+  // Buscar en el cache si tenemos el detalle completo
+  const key    = local + '|' + evaluado + '|' + fecha;
+  const cached = evalCache[key];
+
+  if (!cached) {
+    showToast('⚠ Detalle no disponible — hacé la evaluación primero');
+    return;
+  }
+
+  const fort = [], ref = [];
+  cached.modulos.filter(m => m.porcentaje !== null).forEach(m => {
+    (m.items_detalle || []).forEach(i => {
+      if (!i.val || i.val === 'NA') return;
+      const lbl = calcLabel(i.val);
+      if (parseInt(i.val) >= 3) fort.push('[' + m.nombre + '] ' + i.texto + ' (' + lbl + ')');
+      else ref.push('[' + m.nombre + '] ' + i.texto + ' (' + lbl + ')');
+    });
+  });
+
+  const bandLabel = porcentaje >= UMBRAL_OK ? 'Desempeño Sólido'
+                  : porcentaje >= UMBRAL_OBS ? 'Desempeño Aceptable'
+                  : 'Atención Urgente';
+
+  const comentarios = [];
+  cached.modulos.filter(m => m.porcentaje !== null).forEach(m => {
+    (m.items_detalle || []).forEach(i => {
+      if (!i.comentario) return;
+      const abrev = m.nombre.substring(0,2).toUpperCase() + m.num;
+      comentarios.push({ modulo: m.nombre, item: abrev + i.n + ' · ' + i.texto, texto: i.comentario });
+    });
+  });
+
+  const payload = {
+    evaluado: cached.evaluado, local: cached.local,
+    evaluador: cached.evaluador, fecha: cached.fecha,
+    tipo: cached.tipo || '', rol: cached.rol || '',
+    antiguedad: cached.antiguedad || '',
+    total: String(cached.totalRaw || ''), totalMax: String(cached.totalMax || ''),
+    resultado: bandLabel + ' — ' + porcentaje + '%',
+    fortalezas: fort.join(' | '), reforzar: ref.join(' | '),
+    modulos: cached.modulos.filter(m => m.porcentaje !== null).map(m => ({
+      nombre: m.nombre, activo: true, score: m.score, max: m.max
+    })),
+    comentarios
+  };
+
+  try {
+    const data = await apiPost({ action: 'pdf', payload });
+    if (data.status === 'ok' && data.base64) {
+      const isIOS    = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      if ((isIOS || isSafari) && data.url) {
+        window.open(data.url, '_blank');
+      } else {
+        const blob = base64ToBlob(data.base64, data.mime || 'application/pdf');
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href = url; a.download = data.nombre || 'Evaluacion.pdf'; a.target = '_blank';
+        document.body.appendChild(a); a.click();
+        setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 5000);
+      }
+      showToast('✓ PDF descargado');
+    } else {
+      showToast('⚠ ' + (data.msg || 'Error al generar PDF'));
+    }
+  } catch(e) {
+    showToast('⚠ Error de conexión');
+  }
+}
+
+
+async function cargarPendientes() {
+  try {
+    const data  = await apiGet({ action: 'getPendientes' });
+    const wrap  = document.getElementById('pendientes-wrap');
+    const lista = document.getElementById('pendientes-lista');
+    if (!data.pendientes || !data.pendientes.length) { wrap.style.display='none'; return; }
+    wrap.style.display = 'block';
+    lista.innerHTML = data.pendientes.map(u => `
+      <div style="background:var(--dark2);border:1px solid var(--yellow);border-radius:var(--rs);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div><div style="font-weight:600;font-size:13px">${esc(u.nombre)}</div><div style="font-size:11px;color:var(--gray)">@${esc(u.usuario)} · Solicita acceso</div></div>
+        <div style="display:flex;gap:8px;flex-shrink:0">
+          <button onclick="aprobarUsuario('${esc(u.usuario)}',true)" style="background:var(--green-bg);color:var(--green);border:1px solid var(--green);padding:6px 12px;border-radius:var(--rs);font-size:11px;font-weight:700;cursor:pointer">✓ Aprobar</button>
+          <button onclick="aprobarUsuario('${esc(u.usuario)}',false)" style="background:var(--red-bg);color:var(--red);border:1px solid var(--red);padding:6px 12px;border-radius:var(--rs);font-size:11px;font-weight:700;cursor:pointer">✗ Rechazar</button>
+        </div>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+async function aprobarUsuario(usuario, aprobar) {
+  const estado = aprobar ? 'activo' : 'rechazado';
+  try {
+    await apiPost({ action: 'updateUser', usuario, estado });
+    showToast(aprobar ? '\u2713 Usuario aprobado' : '\u2717 Usuario rechazado');
+    cargarPendientes();
+    if (document.getElementById('screen-config').classList.contains('active')) cargarUsuarios();
+  } catch(e) { showToast('\u26A0 Error'); }
 }
 
 // ═══════════════════════════════════════════════════════════
