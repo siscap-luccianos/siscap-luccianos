@@ -1966,15 +1966,6 @@ async function toggleUsuario(usuario, estadoActual) {
     showToast('✓ Usuario '+nuevoEstado); cargarUsuarios();
   } catch(e) { showToast('⚠ Error'); }
 }
-
-// Toast
-let _toastTimer=null;
-function showToast(msg,dur=2800) {
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  clearTimeout(_toastTimer);
-  _toastTimer=setTimeout(()=>t.classList.remove('show'),dur);
-}
 </script>
 </body>
 </html>
