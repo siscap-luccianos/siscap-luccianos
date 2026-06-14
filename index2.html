@@ -165,6 +165,12 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 .icon-btn:active{transform:scale(.85)}
 .del-btn{opacity:.7}
 .del-btn:hover{opacity:1}
+.suc-tabs{display:flex;gap:0;margin-bottom:8px;border-radius:var(--rs);overflow:hidden;border:1px solid #333}
+.suc-tab{flex:1;padding:8px;background:var(--dark3);color:var(--gray);font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;letter-spacing:1px;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s}
+.suc-tab.active{background:var(--gold);color:var(--black)}
+.suc-tab-content{display:none}
+.suc-tab-content.active{display:flex;flex-direction:column;gap:6px}
+.continuar-btn{flex:1;padding:8px;background:#1a2a3a;color:#5b9bd5;font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;border:1px solid #2a4a6a;border-radius:var(--rs);cursor:pointer}
 .nueva-eval-local{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;color:var(--gold);font-size:12px;font-weight:600;border:1px dashed var(--gold-dark);border-radius:var(--rs);cursor:pointer;width:100%;background:transparent}
 .ver-mas-btn{text-align:center;padding:10px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;letter-spacing:1px;text-transform:uppercase}
 
@@ -442,7 +448,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
     <div class="field">
       <label>Local / Sucursal</label>
       <div class="autocomplete-wrap">
-        <input type="text" id="f-local" placeholder="Buscar sucursal..." autocomplete="off" autocorrect="off" oninput="filtrarLocales()" onfocus="filtrarLocales()"/>
+        <input type="text" id="f-local" placeholder="" autocomplete="off" autocorrect="off" oninput="filtrarLocales()" onfocus="filtrarLocales()"/>
         <div class="autocomplete-list" id="local-list"></div>
       </div>
     </div>
@@ -475,8 +481,9 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
   </div>
 
   <div class="form-body" id="form-body"></div>
-  <div class="form-footer">
+  <div class="form-footer" style="display:flex;flex-direction:column;gap:8px">
     <button class="btn btn-gold" id="btn-enviar" onclick="enviarFormulario()">Enviar evaluación</button>
+    <button class="btn btn-outline" onclick="guardarBorrador()" style="margin:0;padding:10px;font-size:11px">💾 Guardar y continuar después</button>
   </div>
 </div>
 
@@ -542,7 +549,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 // ═══════════════════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════════════════
-const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbwrAUQBTaHC8oUG8SPenym5VjIPlaDy41Fv-NpKEs3rd-5yOVz0I6Tq8cIn0ahAvfN65w/exec';
+const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbyxg-zrMt3hG_ATgk3pbmyIo-BcNdkeKvR9DBzValKhtbOvVLpDKxxjH72q70v7b_CBSQ/exec';
 const UMBRAL_OK   = 80;
 const UMBRAL_OBS  = 60;
 const DIAS_ALERTA = 30;
@@ -558,122 +565,108 @@ const USUARIOS = {
 };
 
 const LOCALES = [
-  "Lucciano's Paso",
-  "Lucciano's Gallegos",
-  "Lucciano's Martinez",
-  "Lucciano's Constitución",
-  "Lucciano's Olivos",
-  "Lucciano's San Miguel",
-  "Lucciano's Nordelta",
-  "Lucciano's Aguero",
-  "Lucciano's Dot",
-  "Lucciano's Barrio Norte",
-  "Lucciano's Alto Rosario Shopping",
-  "Lucciano's Abasto",
-  "Lucciano's Peatonal",
-  "Lucciano's Recoleta",
-  "Lucciano's Calle Corrientes",
-  "Lucciano's Aldrey 774",
-  "Lucciano's La Imprenta",
-  "Lucciano's Salta",
-  "Lucciano's Alem",
+  "Lucciano's Martinez GBA",
+  "Lucciano's Olivos GBA",
+  "Lucciano's Parque Avellaneda Shopping GBA",
+  "Lucciano's Ituzaingo GBA",
+  "Lucciano's Distrito T GBA",
+  "Lucciano's Adrogué GBA",
+  "Lucciano's San Miguel GBA",
+  "Lucciano's Parque Leloir GBA",
+  "Lucciano's Quilmes GBA",
+  "Lucciano's Caseros GBA",
+  "Lucciano's Ramos Mejia GBA",
+  "Lucciano's Shopping Abasto CABA",
+  "Lucciano's La Imprenta Gran Hotel CABA",
+  "Lucciano's Distrito Arcos CABA",
+  "Lucciano's Villa del Parque CABA",
+  "Lucciano's Honduras CABA",
+  "Lucciano's Cid Campeador CABA",
+  "Lucciano's Devoto CABA",
+  "Lucciano's Recoleta CABA",
+  "Lucciano's Dot CABA",
+  "Lucciano's Puerto Madero Dique CABA",
+  "Lucciano's Puerto Madero CABA",
+  "Lucciano's Caballito CABA",
+  "Lucciano's Parque Rivadavia CABA",
+  "Lucciano's Libertador CABA",
+  "Lucciano's Villa Urquiza CABA",
+  "Lucciano's Villa Urquiza II CABA",
+  "Lucciano's Villa Luro CABA",
+  "Lucciano's Coghlan CABA",
+  "Lucciano's Las Cañitas CABA",
+  "Lucciano's Colegiales CABA",
+  "Lucciano's Agüero CABA",
+  "Lucciano's Nuñez CABA",
+  "Lucciano's Belgrano C CABA",
+  "Lucciano's Bajo Belgrano CABA",
+  "Lucciano's Galerias Pacifico CABA",
+  "Lucciano's San Telmo CABA",
+  "Lucciano's Paseo del Angel CABA",
+  "Lucciano's Plaza Houssay CABA",
+  "Lucciano's Palermo Chico CABA",
+  "Lucciano's Patio Bullrich CABA",
+  "Lucciano's Obelisco CABA",
+  "Lucciano's Almagro CABA",
+  "Lucciano's AV Corrientes CABA",
+  "Lucciano's Santa Fe y Parana CABA",
+  "Lucciano's Nordelta Buenos Aires",
+  "Lucciano's Baxar Mercado Buenos Aires",
+  "Lucciano's La Plata Buenos Aires",
+  "Lucciano's Pilar Buenos Aires",
+  "Lucciano's Pilar II Buenos Aires",
+  "Lucciano's City Bell Buenos Aires",
+  "Lucciano's Las Lomitas Buenos Aires",
+  "Lucciano's Lanus Buenos Aires",
+  "Lucciano's San Fernando Buenos Aires",
+  "Lucciano's Campana Buenos Aires",
+  "Lucciano's San Nicolas Buenos Aires",
+  "Lucciano's Tandil Buenos Aires",
+  "Lucciano's Carilo Buenos Aires",
+  "Lucciano's Pinamar Buenos Aires",
+  "Lucciano's Bahia Blanca Buenos Aires",
+  "Lucciano's Bahia Blanca Villa Mitre Buenos Aires",
+  "Lucciano's Cerro De Las Rosas Córdoba",
+  "Lucciano's Nuevocentro Córdoba",
+  "Lucciano's Shopping Rivera Santa Fe",
+  "Lucciano's Rosario Shopping Santa Fe",
+  "Lucciano's Peatonal Sarmiento Mendoza",
+  "Lucciano's Palmares Mendoza",
+  "Lucciano's Chacras de Coria Mendoza",
+  "Lucciano's Shopping Mendoza",
+  "Lucciano's Resistencia Chaco",
+  "Lucciano's Av Argentina Neuquén",
+  "Lucciano's Paseo de la Costa Neuquén",
+  "Lucciano's Cipolletti Rio Negro",
+  "Lucciano's Gral Roca Rio Negro",
+  "Lucciano's Barrio Norte Tucuman",
+  "Lucciano's Yerba Buena Tucuman",
+  "Lucciano's Catamarca Catamarca",
+  "Lucciano's Galerias Salta",
+  "Lucciano's Alto NOA Salta",
+  "Lucciano's Posadas Misiones",
+  "Lucciano's Madryn Chubut",
+  "Lucciano's Ushuaia Tierra del Fuego",
+  "Lucciano's Capital Corrientes",
+  "Lucciano's Paso Buenos Aires",
+  "Lucciano's Gallegos Buenos Aires",
+  "Lucciano's Constitución CABA",
+  "Lucciano's Alem Buenos Aires",
+  "Lucciano's Guemes Salta",
   "Lucciano's Alto Noa Salta",
-  "Lucciano's Guemes",
-  "Lucciano's Cerro Las Rosas",
-  "Lucciano's Posadas",
-  "Lucciano's Patio Bullrich",
-  "Lucciano's Distrito Arcos",
-  "Lucciano's Obelisco",
-  "Lucciano's Nuevo Centro Shopping Córdoba",
-  "Lucciano's Torreón Del Monje",
-  "Luccianos Galerias Pacífico",
-  "Lucciano's Aldrey",
-  "Lucciano's Varese",
-  "Luccianos Peatonal",
-  "Lucciano's Store Fabrica",
-  "Lucciano's Agüero",
-  "Lucciano's Alto Rosario",
-  "Lucciano's Abasto II",
-  "Lucciano's Córdoba",
-  "Lucciano's Nuevo Centro Cba",
-  "Lucciano's Galeria",
-  "Luccianos Salta NOA",
-  "Luccianos Obelisco",
-  "Lucciano's Gondola Galerias",
-  "Lucciano's Dot Baires Shopping",
-  "Lucciano's Grand Hotel Imprenta",
-  "Lucciano's Calle Corrientes Microcentro",
-  "Lucciano's Campana",
-  "Lucciano's Adrogué",
-  "Lucciano's Neuquén",
-  "Lucciano's Paseo Neuquen",
-  "Lucciano's Las Lomitas",
-  "Lucciano's Avellaneda",
-  "Lucciano's Juramento",
-  "Luccianos Puerto Madero",
-  "Lucciano's La Plata",
-  "Lucciano's Castelar",
-  "Lucciano's Villa Luro",
-  "Lucciano's Mendoza",
-  "Lucciano's Palmares Mza",
-  "Lucciano's Vista Pueblo",
-  "Lucciano's Tucumán",
-  "Lucciano's Yerba Buenas",
-  "Lucciano's Caballito",
-  "Lucciano's Resistencia",
-  "Lucciano's Devoto",
-  "Lucciano's Parque Rivadavia",
-  "Lucciano's Cipolletti",
-  "Lucciano's Pilar",
-  "Lucciano's Parque Leloir",
-  "Lucciano's Mar de las Pampas",
-  "Lucciano's Villa Gesell",
-  "Lucciano's Villa Urquiza",
-  "Lucciano's Baxar Mercado",
-  "Lucciano's City Bell",
-  "Lucciano's Cariló",
-  "Lucciano's Pinamar",
-  "Lucciano's Palermo",
-  "Lucciano's Coghlan",
-  "Lucciano's Tandil",
-  "Lucciano's Quilmes",
-  "Lucciano's Bahia Blanca",
-  "Lucciano's Ushuaia",
-  "Lucciano's Cañitas",
-  "Lucciano's Colegiales",
-  "Lucciano's Lanus",
-  "Lucciano's Caseros",
-  "Lucciano's Belgrano R Vidal",
-  "Lucciano's Nuñez",
-  "Lucciano's Gral Roca",
-  "Lucciano's San Telmo",
-  "Lucciano's Corrientes",
-  "Lucciano's Puerto Madero Dique",
-  "Lucciano's Urquiza 2",
-  "Lucciano's Ramos Mejia",
-  "Lucciano's Puerto Madryn",
-  "Lucciano's San Nicolas",
-  "Lucciano's Gral Pico",
-  "Lucciano's Santa Fe Rivera",
-  "Lucciano's Catamarca",
-  "Lucciano's Distrito T Gral Rodriguez",
-  "Lucciano's Almagro Medrano",
-  "Lucciano's Villa Del Parque",
-  "Lucciano's Paseo Pilar 2",
-  "Lucciano's Mendoza 4",
-  "Lucciano's Villa Mitre Bahia 2",
-  "Lucciano's Paseo del Angel",
-  "Lucciano's Palermo Chico",
-  "Lucciano's Bajo Belgrano",
-  "Lucciano's Plaza Houssay",
-  "Lucciano's San Fernando",
-  "Lucciano's Arcos del Rosedal",
-  "Lucciano's Cid Campeador",
-  "Lucciano's Pocitos",
-  "Lucciano's Punta Carretas",
-  "Lucciano's Punta Carrasco",
-  "Lucciano's Asuncion",
-  "Lucciano's Parque Arauco"
+  "Lucciano's Torreón Del Monje Buenos Aires",
+  "Lucciano's Aldrey 774 Buenos Aires",
+  "Lucciano's Varese Buenos Aires",
+  "Lucciano's Store Fabrica Buenos Aires",
+  "Lucciano's Peatonal Buenos Aires",
+  "Lucciano's Juramento Buenos Aires",
+  "Lucciano's Abasto II CABA",
+  "Lucciano's Galerias Pacifico CABA",
+  "Lucciano's Pocitos Uruguay",
+  "Lucciano's Punta Carretas Uruguay",
+  "Lucciano's Punta Carrasco Uruguay",
+  "Lucciano's Asuncion Paraguay",
+  "Lucciano's Parque Arauco Chile"
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -751,6 +744,7 @@ let respuestas     = {};
 let datosResumen   = [];
 let mostrarTodos   = false;
 let ultimoResult   = null;
+const borradores   = {}; // { local: { evaluado, fecha, respuestas, progreso } }
 let preLocal       = null;
 let preEvaluado    = null;
 let yaEnviado      = false;
@@ -785,6 +779,18 @@ function offsetDate(d, dias) {
   const r = new Date(d); r.setDate(r.getDate()-dias);
   return r.toISOString().split('T')[0];
 }
+
+function normalizePct(val) {
+  // Convierte "0.58%", 0.58, "58%", 58 → 58
+  if (val === null || val === undefined || val === '') return 0;
+  var s = String(val).replace('%','').trim();
+  var n = parseFloat(s);
+  if (isNaN(n)) return 0;
+  // Si viene como decimal (0-1) convertir a porcentaje
+  if (n > 0 && n <= 1) return Math.round(n * 100);
+  return Math.round(n);
+}
+
 function calcLabel(v) {
   return v===4?'Destacado':v===3?'Logrado':v===2?'En proceso':'Inicial';
 }
@@ -862,7 +868,14 @@ function apiPostBg(body) {
 async function cargarDatos() {
   try {
     const data = await apiGet({ action:'getResumen' });
-    datosResumen = (data && data.registros) ? data.registros : demoData();
+    if (data && data.registros) {
+      datosResumen = data.registros.map(function(r) {
+        r.porcentaje = normalizePct(r.porcentaje);
+        return r;
+      });
+    } else {
+      datosResumen = demoData();
+    }
   } catch(e) {
     datosResumen = demoData();
   }
@@ -928,58 +941,117 @@ function renderSucursales(lista) {
   const filtradas = q ? lista.filter(r=>r.local.toLowerCase().includes(q)) : lista;
   const mostrar   = mostrarTodos ? filtradas : filtradas.slice(0, MAX_SUC);
   const hayMas    = !q && filtradas.length > MAX_SUC;
+  const isAdmin   = currentUser && currentUser.isAdmin;
 
   const frag = document.createDocumentFragment();
+
   mostrar.forEach(r => {
     const { estado, cls, badgeCls } = getEstado(r.porcentaje);
-    const colabs = (currentUser && !currentUser.isAdmin)
-      ? datosResumen.filter(x=>x.local===r.local && x.evaluador===currentUser.nombre).sort((a,b)=>b.fecha.localeCompare(a.fecha))
-      : datosResumen.filter(x=>x.local===r.local).sort((a,b)=>b.fecha.localeCompare(a.fecha));
-    const isAdmin = currentUser && currentUser.isAdmin;
+
+    // Todos los colabs de este local
+    const todosColabs = (currentUser && !currentUser.isAdmin)
+      ? datosResumen.filter(x=>x.local===r.local && x.evaluador===currentUser.nombre)
+      : datosResumen.filter(x=>x.local===r.local);
+
+    todosColabs.sort((a,b)=>b.fecha.localeCompare(a.fecha));
+
+    // Separar completadas vs en progreso (borradores guardados localmente)
+    const completadas  = todosColabs.filter(x => x.porcentaje > 0);
+    const enProgreso   = borradores[r.local] ? [borradores[r.local]] : [];
 
     const card = document.createElement('div');
     card.className = 'suc-card';
 
+    // Cabecera de la sucursal
     const head = document.createElement('div');
     head.className = 'suc-card-head';
-    head.innerHTML = `<div><div class="suc-name">${esc(r.local)}</div><div class="suc-date">Última: ${formatFecha(r.fecha)}</div></div>
+    head.innerHTML = `
+      <div>
+        <div class="suc-name">${esc(r.local)}</div>
+        <div class="suc-date">Última: ${formatFecha(r.fecha)}</div>
+      </div>
       <div style="display:flex;align-items:center">
-        <div style="text-align:right"><div class="suc-pct ${cls}">${r.porcentaje}%</div><div class="badge ${badgeCls}">${esc(estado)}</div></div>
+        <div style="text-align:right">
+          <div class="suc-pct ${cls}">${r.porcentaje}%</div>
+          <div class="badge ${badgeCls}">${esc(estado)}</div>
+        </div>
         <span class="suc-chev">▼</span>
       </div>`;
     head.addEventListener('click', () => toggleSucursal(head));
 
+    // Detalle con tabs
     const detail = document.createElement('div');
     detail.className = 'suc-detail';
 
-    colabs.forEach(c => {
+    const tabsEl = enProgreso.length > 0 ? `
+      <div class="suc-tabs">
+        <button class="suc-tab active" onclick="switchTab(this,'tab-comp-${r.local.replace(/\W/g,'_')}','tab-prog-${r.local.replace(/\W/g,'_')}')">✓ Completadas (${completadas.length})</button>
+        <button class="suc-tab" onclick="switchTab(this,'tab-prog-${r.local.replace(/\W/g,'_')}','tab-comp-${r.local.replace(/\W/g,'_')}')">⏸ En progreso (${enProgreso.length})</button>
+      </div>` : '';
+
+    detail.innerHTML = tabsEl;
+
+    // Tab completadas
+    const tabComp = document.createElement('div');
+    tabComp.className = 'suc-tab-content active';
+    tabComp.id = 'tab-comp-' + r.local.replace(/\W/g,'_');
+
+    completadas.forEach(c => {
       const { cls:cc } = getEstado(c.porcentaje);
-      const row  = document.createElement('div');
-      row.className = 'colab-row';
-
-      // Determinar si está completa (tiene porcentaje válido > 0)
-      const estaCompleta = c.porcentaje > 0;
-      const estadoIcon   = estaCompleta
-        ? '<span style="color:#2ECC71;font-size:16px;font-weight:900" title="Evaluación completa">✓</span>'
-        : '<span style="color:#E74C3C;font-size:16px;font-weight:900" title="Evaluación incompleta">✗</span>';
-
-      row.innerHTML = `
+      const cRow = document.createElement('div');
+      cRow.className = 'colab-row';
+      cRow.style.cssText = 'cursor:default';
+      cRow.innerHTML = `
         <div class="colab-info">
           <div class="colab-name">${esc(c.evaluado)}</div>
           <div class="colab-date">${formatFecha(c.fecha)} · ${esc(c.evaluador||'')}</div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px">
           <span class="colab-pct ${cc}">${c.porcentaje}%</span>
-          ${estadoIcon}
-          <button class="icon-btn" title="Ver evaluación" onclick="event.stopPropagation();verEval('${esc(c.local)}','${esc(c.evaluado)}','${c.fecha}')">👁</button>
-          <button class="icon-btn" title="Descargar PDF" onclick="event.stopPropagation();reimprimirPDF('${esc(c.local)}','${esc(c.evaluado)}','${c.fecha}',${c.porcentaje})">📄</button>
-          ${isAdmin ? `<button class="icon-btn del-btn" title="Eliminar" onclick="event.stopPropagation();eliminarEval('${esc(c.local)}','${esc(c.evaluado)}','${c.fecha}')">🗑</button>` : ''}
+          <span style="color:#2ECC71;font-size:15px;font-weight:900" title="Completada">✓</span>
+          <button class="icon-btn" title="Ver resultado" onclick="event.stopPropagation();verEval('${esc(c.local)}','${esc(c.evaluado)}','${c.fecha}')">👁</button>
+          <button class="icon-btn" title="Reimprimir PDF" onclick="event.stopPropagation();reimprimirPDF('${esc(c.local)}','${esc(c.evaluado)}','${c.fecha}',${c.porcentaje})">📄</button>
+          ${isAdmin ? `<button class="icon-btn" title="Eliminar" onclick="event.stopPropagation();eliminarEval('${esc(c.local)}','${esc(c.evaluado)}','${c.fecha}')">🗑</button>` : ''}
         </div>`;
-
-      row.addEventListener('click', () => irAFormulario(c.local, c.evaluado));
-      detail.appendChild(row);
+      tabComp.appendChild(cRow);
     });
 
+    if (completadas.length === 0) {
+      const empty = document.createElement('div');
+      empty.style.cssText = 'color:var(--gray);font-size:12px;padding:8px;text-align:center';
+      empty.textContent = 'Sin evaluaciones completadas';
+      tabComp.appendChild(empty);
+    }
+
+    detail.appendChild(tabComp);
+
+    // Tab en progreso (borradores)
+    if (enProgreso.length > 0) {
+      const tabProg = document.createElement('div');
+      tabProg.className = 'suc-tab-content';
+      tabProg.id = 'tab-prog-' + r.local.replace(/\W/g,'_');
+
+      enProgreso.forEach(b => {
+        const bRow = document.createElement('div');
+        bRow.className = 'colab-row';
+        bRow.style.cssText = 'cursor:default';
+        bRow.innerHTML = `
+          <div class="colab-info">
+            <div class="colab-name">${esc(b.evaluado||'Sin nombre')}</div>
+            <div class="colab-date">Guardado: ${formatFecha(b.fecha)} · ${Math.round(b.progreso||0)}% completado</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="color:var(--yellow);font-size:14px;font-weight:900" title="En progreso">⏸</span>
+            <button class="continuar-btn" onclick="event.stopPropagation();continuarBorrador('${esc(r.local)}')">Continuar →</button>
+            <button class="icon-btn" title="Descartar" onclick="event.stopPropagation();descartarBorrador('${esc(r.local)}')">🗑</button>
+          </div>`;
+        tabProg.appendChild(bRow);
+      });
+
+      detail.appendChild(tabProg);
+    }
+
+    // Botón nueva evaluación
     const btnNueva = document.createElement('button');
     btnNueva.className = 'nueva-eval-local';
     btnNueva.textContent = '+ Nueva evaluación en este local';
@@ -997,7 +1069,16 @@ function renderSucursales(lista) {
 
   const btn = document.getElementById('ver-mas-btn');
   btn.style.display = hayMas ? 'block' : 'none';
-  btn.textContent = mostrarTodos ? '▲ Ver menos' : `▼ Ver más sucursales (${filtradas.length-MAX_SUC} más)`;
+  btn.textContent   = mostrarTodos ? '▲ Ver menos' : `▼ Ver más (${filtradas.length - MAX_SUC} más)`;
+}
+
+function switchTab(btn, showId, hideId) {
+  btn.parentElement.querySelectorAll('.suc-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const show = document.getElementById(showId);
+  const hide = document.getElementById(hideId);
+  if (show) show.classList.add('active');
+  if (hide) hide.classList.remove('active');
 }
 
 function filtrarSucursales() {
@@ -1315,7 +1396,7 @@ function enviarFormulario() {
   btn.textContent = '✓ Enviada';
   btn.style.cssText = 'background:#27ae60;color:white;border-color:#27ae60';
 
-  datosResumen.push({ local, evaluado, fecha, evaluador, porcentaje:resultado.total });
+  datosResumen.push({ local, evaluado, fecha, evaluador, porcentaje: normalizePct(resultado.total) });
   showToast('✓ Evaluación enviada');
 
   // Guardar en cache para ver detalle
@@ -1724,6 +1805,75 @@ async function generarPDF() {
     showToast('⚠ Error de conexión con el servidor');
     console.error('PDF fetch error:', e);
   }
+}
+
+
+// ═══════════════════════════════════════════════════════════
+// BORRADORES
+// ═══════════════════════════════════════════════════════════
+function guardarBorrador() {
+  const local    = document.getElementById('f-local').value.trim();
+  const evaluado = document.getElementById('f-evaluado').value.trim();
+  if (!local) { showToast('⚠ Completá el local antes de guardar'); return; }
+
+  const activos   = MODS.filter(m => activeMods[m.id]);
+  const total     = activos.reduce((s,m) => s+m.items.length, 0);
+  const resp      = Object.keys(respuestas).filter(k => {
+    const mod = MODS.find(m => m.items.some(i=>i.id===k));
+    return mod && activeMods[mod.id];
+  }).length;
+
+  borradores[local] = {
+    evaluado,
+    fecha:      document.getElementById('f-fecha').value,
+    evaluador:  document.getElementById('f-evaluador').value,
+    tipo:       document.getElementById('f-tipo').value,
+    rol:        document.getElementById('f-rol').value,
+    antiguedad: document.getElementById('f-antiguedad').value,
+    respuestas: { ...respuestas },
+    activeMods: { ...activeMods },
+    progreso:   total > 0 ? Math.round(resp/total*100) : 0
+  };
+
+  showToast('✓ Borrador guardado — podés continuar después');
+  renderHome();
+  showTab('home');
+}
+
+function continuarBorrador(local) {
+  const b = borradores[local];
+  if (!b) { showToast('⚠ No hay borrador guardado'); return; }
+
+  // Restaurar estado
+  Object.assign(respuestas, b.respuestas);
+  Object.assign(activeMods, b.activeMods);
+
+  preLocal    = local;
+  preEvaluado = b.evaluado;
+  yaEnviado   = false;
+
+  buildForm();
+
+  // Restaurar campo evaluado y demás
+  setTimeout(() => {
+    document.getElementById('f-evaluado').value  = b.evaluado || '';
+    document.getElementById('f-evaluador').value = b.evaluador || '';
+    document.getElementById('f-tipo').value      = b.tipo || '';
+    document.getElementById('f-rol').value       = b.rol || '';
+    document.getElementById('f-antiguedad').value= b.antiguedad || '';
+    updateFormMeta();
+    updateProgress();
+  }, 100);
+
+  showTab('form');
+  showToast('Borrador restaurado — continuá desde donde dejaste');
+}
+
+function descartarBorrador(local) {
+  if (!confirm('¿Descartar el borrador de ' + local + '?')) return;
+  delete borradores[local];
+  renderHome();
+  showToast('Borrador descartado');
 }
 
 
