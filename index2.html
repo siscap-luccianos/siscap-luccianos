@@ -2086,26 +2086,10 @@ async function toggleUsuario(usuario, estadoActual) {
 }
 </script>
 <script>
-// Service Worker — actualización automática sin borrar caché manualmente
+// Desregistrar cualquier Service Worker viejo y forzar recarga limpia
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').then(reg => {
-    // Verificar actualizaciones cada vez que se abre la app
-    reg.update();
-
-    reg.addEventListener('updatefound', () => {
-      const newWorker = reg.installing;
-      newWorker.addEventListener('statechange', () => {
-        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-          // Hay nueva versión disponible — recargar automático
-          newWorker.postMessage({ action: 'skipWaiting' });
-        }
-      });
-    });
-  });
-
-  // Cuando el SW se activa, recargar la página para tener la versión nueva
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    window.location.reload();
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(reg => reg.unregister());
   });
 }
 </script>
