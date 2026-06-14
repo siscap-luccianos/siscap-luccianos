@@ -549,7 +549,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 // ═══════════════════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════════════════
-const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbyxg-zrMt3hG_ATgk3pbmyIo-BcNdkeKvR9DBzValKhtbOvVLpDKxxjH72q70v7b_CBSQ/exec';
+const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbybZR-8f8EGddwMFXNvbApoGaSorz6-17Btba86RdZhwvPdh5gCfr3JLBC_V7rBPvxOvw/exec';
 const UMBRAL_OK   = 80;
 const UMBRAL_OBS  = 60;
 const DIAS_ALERTA = 30;
@@ -608,7 +608,7 @@ const LOCALES = [
   "Lucciano's Patio Bullrich CABA",
   "Lucciano's Obelisco CABA",
   "Lucciano's Almagro CABA",
-  "Lucciano's AV Corrientes CABA",
+  "Lucciano's Calle Corrientes CABA",
   "Lucciano's Santa Fe y Parana CABA",
   "Lucciano's Nordelta Buenos Aires",
   "Lucciano's Baxar Mercado Buenos Aires",
@@ -648,20 +648,6 @@ const LOCALES = [
   "Lucciano's Madryn Chubut",
   "Lucciano's Ushuaia Tierra del Fuego",
   "Lucciano's Capital Corrientes",
-  "Lucciano's Paso Buenos Aires",
-  "Lucciano's Gallegos Buenos Aires",
-  "Lucciano's Constitución CABA",
-  "Lucciano's Alem Buenos Aires",
-  "Lucciano's Guemes Salta",
-  "Lucciano's Alto Noa Salta",
-  "Lucciano's Torreón Del Monje Buenos Aires",
-  "Lucciano's Aldrey 774 Buenos Aires",
-  "Lucciano's Varese Buenos Aires",
-  "Lucciano's Store Fabrica Buenos Aires",
-  "Lucciano's Peatonal Buenos Aires",
-  "Lucciano's Juramento Buenos Aires",
-  "Lucciano's Abasto II CABA",
-  "Lucciano's Galerias Pacifico CABA",
   "Lucciano's Pocitos Uruguay",
   "Lucciano's Punta Carretas Uruguay",
   "Lucciano's Punta Carrasco Uruguay",
@@ -1001,18 +987,41 @@ function renderSucursales(lista) {
       const cRow = document.createElement('div');
       cRow.className = 'colab-row';
       cRow.style.cssText = 'cursor:default';
-      cRow.innerHTML = `
-        <div class="colab-info">
-          <div class="colab-name">${esc(c.evaluado)}</div>
-          <div class="colab-date">${formatFecha(c.fecha)} · ${esc(c.evaluador||'')}</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span class="colab-pct ${cc}">${c.porcentaje}%</span>
-          <span style="color:#2ECC71;font-size:15px;font-weight:900" title="Completada">✓</span>
-          <button class="icon-btn" title="Ver resultado" onclick="event.stopPropagation();verEval('${esc(c.local)}','${esc(c.evaluado)}','${c.fecha}')">👁</button>
-          <button class="icon-btn" title="Reimprimir PDF" onclick="event.stopPropagation();reimprimirPDF('${esc(c.local)}','${esc(c.evaluado)}','${c.fecha}',${c.porcentaje})">📄</button>
-          ${isAdmin ? `<button class="icon-btn" title="Eliminar" onclick="event.stopPropagation();eliminarEval('${esc(c.local)}','${esc(c.evaluado)}','${c.fecha}')">🗑</button>` : ''}
-        </div>`;
+
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'colab-info';
+      infoDiv.innerHTML = '<div class="colab-name">' + esc(c.evaluado) + '</div><div class="colab-date">' + formatFecha(c.fecha) + ' · ' + esc(c.evaluador||'') + '</div>';
+
+      const actsDiv = document.createElement('div');
+      actsDiv.style.cssText = 'display:flex;align-items:center;gap:8px';
+
+      const pctSpan = document.createElement('span');
+      pctSpan.className = 'colab-pct ' + cc;
+      pctSpan.textContent = c.porcentaje + '%';
+
+      const chkSpan = document.createElement('span');
+      chkSpan.style.cssText = 'color:#2ECC71;font-size:15px;font-weight:900';
+      chkSpan.title = 'Completada'; chkSpan.textContent = '\u2713';
+
+      const btnVer = document.createElement('button');
+      btnVer.className = 'icon-btn'; btnVer.title = 'Ver resultado'; btnVer.textContent = '\uD83D\uDC41';
+      btnVer.addEventListener('click', ev => { ev.stopPropagation(); verEval(c.local, c.evaluado, c.fecha); });
+
+      const btnPDF = document.createElement('button');
+      btnPDF.className = 'icon-btn'; btnPDF.title = 'Descargar PDF'; btnPDF.textContent = '\uD83D\uDCC4';
+      btnPDF.addEventListener('click', ev => { ev.stopPropagation(); reimprimirPDF(c.local, c.evaluado, c.fecha, c.porcentaje); });
+
+      actsDiv.appendChild(pctSpan); actsDiv.appendChild(chkSpan);
+      actsDiv.appendChild(btnVer); actsDiv.appendChild(btnPDF);
+
+      if (isAdmin) {
+        const btnDel = document.createElement('button');
+        btnDel.className = 'icon-btn'; btnDel.title = 'Eliminar'; btnDel.textContent = '\uD83D\uDDD1';
+        btnDel.addEventListener('click', ev => { ev.stopPropagation(); eliminarEval(c.local, c.evaluado, c.fecha); });
+        actsDiv.appendChild(btnDel);
+      }
+
+      cRow.appendChild(infoDiv); cRow.appendChild(actsDiv);
       tabComp.appendChild(cRow);
     });
 
