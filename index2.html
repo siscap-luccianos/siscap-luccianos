@@ -563,7 +563,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 // ═══════════════════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════════════════
-const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbzWkk-wY37Pm0k6OOt58ibEOmyUcX6RQFjXKqL0xkjNcHOBG9yXdPAKI6_m5eZzrk5u/exec';
+const SHEET_URL   = 'https://script.google.com/macros/s/AKfycby3YyURLFNfiRY-L8oBXMDTwHDyP-ppd_LoTf3_q1B8VLWToQj9q-vW7MnzfgxhCeGlMQ/exec';
 const UMBRAL_OK   = 80;
 const UMBRAL_OBS  = 60;
 const DIAS_ALERTA = 30;
@@ -804,22 +804,33 @@ async function doLogin() {
   const err  = document.getElementById('login-error');
   const btn  = document.querySelector('#screen-login .btn-gold');
 
+  err.textContent = '';
   if (!user || !pass) { err.textContent = 'Completá usuario y contraseña.'; return; }
 
-  // 1. Primero verificar usuarios hardcodeados (offline, instantáneo)
+  // 1. Usuarios hardcodeados — siempre primero, sin red
   const uLocal = USUARIOS[user];
-  if (uLocal && uLocal.pass === pass) {
-    _loginExitoso(user, uLocal.nombre, uLocal.isAdmin || false);
+  if (uLocal) {
+    if (uLocal.pass === pass) {
+      _loginExitoso(user, uLocal.nombre, uLocal.isAdmin || false);
+    } else {
+      err.textContent = 'Contraseña incorrecta.';
+    }
     return;
   }
 
-  // 2. Si no está en local, consultar Sheets (usuarios creados desde config)
-  err.textContent = '';
+  // 2. Usuario no está hardcodeado → consultar Sheets
   btn.textContent = 'Verificando...';
   btn.disabled = true;
 
   try {
-    const data = await apiGet({ action: 'login', user, pass });
+    // Usar POST para evitar problemas de encoding en GET con caracteres especiales
+    const resp = await fetch(SHEET_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'login', user, pass })
+    });
+    const data = await resp.json();
+
     btn.textContent = 'Ingresar';
     btn.disabled = false;
 
@@ -833,12 +844,8 @@ async function doLogin() {
   } catch(e) {
     btn.textContent = 'Ingresar';
     btn.disabled = false;
-    // Si falla la conexión y el usuario existe local con pass incorrecto
-    if (uLocal) {
-      err.textContent = 'Contraseña incorrecta.';
-    } else {
-      err.textContent = 'Error de conexión. Intentá de nuevo.';
-    }
+    err.textContent = 'Error de conexión. Verificá tu internet.';
+    console.error('Login error:', e);
   }
 }
 
@@ -1049,10 +1056,14 @@ function renderHome() {
   const ultimas = Object.values(porLocal);
 
   // stats
-  document.getElementById('stat-total').textContent    = datosResumen.length;
-  document.getElementById('stat-prom').textContent     = Math.round(ultimas.reduce((s,r)=>s+r.porcentaje,0)/ultimas.length)+'%';
-  document.getElementById('stat-aprobadas').textContent= ultimas.filter(r=>r.porcentaje>=UMBRAL_OK).length;
-  document.getElementById('stat-alertas').textContent  = ultimas.filter(r=>r.porcentaje<UMBRAL_OBS).length;
+  // Solo contar evaluaciones reales (no borradores) en las stats
+  const ultimasReales = ultimas.filter(r => !r.esSoloBorrador);
+  document.getElementById('stat-total').textContent     = datosResumen.length;
+  document.getElementById('stat-prom').textContent      = ultimasReales.length
+    ? Math.round(ultimasReales.reduce((s,r)=>s+r.porcentaje,0)/ultimasReales.length)+'%'
+    : '—';
+  document.getElementById('stat-aprobadas').textContent = ultimasReales.filter(r=>r.porcentaje>=UMBRAL_OK).length;
+  document.getElementById('stat-alertas').textContent   = ultimasReales.filter(r=>r.porcentaje<UMBRAL_OBS).length;
 
   // alertas
   const hoy = new Date();
@@ -1063,7 +1074,34 @@ function renderHome() {
     document.getElementById('alert-list').innerHTML = sinEval.map(r=>`• ${esc(r.local)} (hace ${Math.round((hoy-new Date(r.fecha))/86400000)} días)`).join('<br>');
   } else { aw.style.display = 'none'; }
 
-  ultimas.sort((a,b)=>a.porcentaje-b.porcentaje);
+  // Agregar locales con borrador que no están en la lista
+  // Solo mostrar borradores del evaluador actual (o todos si es admin sin filtro)
+  const localesEnLista = new Set(ultimas.map(r => r.local));
+  Object.keys(borradores).forEach(local => {
+    const b = borradores[local];
+    // Filtrar por evaluador: mostrar solo si es del usuario actual o admin sin filtro
+    const esDelUsuario = !currentUser || currentUser.isAdmin
+      ? (!filtroEval || b.evaluador === filtroEval)
+      : b.evaluador === currentUser.nombre || !b.evaluador;
+    if (!esDelUsuario) return;
+    if (!localesEnLista.has(local)) {
+      ultimas.push({
+        local,
+        evaluado:   b.evaluado || '',
+        fecha:      b.fecha || '',
+        evaluador:  b.evaluador || '',
+        porcentaje: 0,
+        esSoloBorrador: true
+      });
+    }
+  });
+
+  ultimas.sort((a,b) => {
+    // Borradores sin evaluación van al final
+    if (a.esSoloBorrador && !b.esSoloBorrador) return 1;
+    if (!a.esSoloBorrador && b.esSoloBorrador) return -1;
+    return a.porcentaje - b.porcentaje;
+  });
   window._sucData = ultimas;
   renderSucursales(ultimas);
 }
@@ -1100,18 +1138,30 @@ function renderSucursales(lista) {
     // Cabecera de la sucursal
     const head = document.createElement('div');
     head.className = 'suc-card-head';
-    head.innerHTML = `
-      <div>
-        <div class="suc-name">${esc(r.local)}</div>
-        <div class="suc-date">Última: ${formatFecha(r.fecha)}</div>
-      </div>
-      <div style="display:flex;align-items:center">
-        <div style="text-align:right">
-          <div class="suc-pct ${cls}">${r.porcentaje}%</div>
-          <div class="badge ${badgeCls}">${esc(estado)}</div>
+    if (r.esSoloBorrador) {
+      head.innerHTML = `
+        <div>
+          <div class="suc-name">${esc(r.local)}</div>
+          <div class="suc-date" style="color:var(--yellow)">⏸ Evaluación en progreso</div>
         </div>
-        <span class="suc-chev">▼</span>
-      </div>`;
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="color:var(--yellow);font-size:11px;font-weight:700">EN PROGRESO</span>
+          <span class="suc-chev">▼</span>
+        </div>`;
+    } else {
+      head.innerHTML = `
+        <div>
+          <div class="suc-name">${esc(r.local)}</div>
+          <div class="suc-date">Última: ${formatFecha(r.fecha)}</div>
+        </div>
+        <div style="display:flex;align-items:center">
+          <div style="text-align:right">
+            <div class="suc-pct ${cls}">${r.porcentaje}%</div>
+            <div class="badge ${badgeCls}">${esc(estado)}</div>
+          </div>
+          <span class="suc-chev">▼</span>
+        </div>`;
+    }
     head.addEventListener('click', () => toggleSucursal(head));
 
     // Detalle con tabs
@@ -1193,20 +1243,41 @@ function renderSucursales(lista) {
         const bRow = document.createElement('div');
         bRow.className = 'colab-row';
         bRow.style.cssText = 'cursor:default';
-        bRow.innerHTML = `
-          <div class="colab-info">
-            <div class="colab-name">${esc(b.evaluado||'Sin nombre')}</div>
-            <div class="colab-date">Guardado: ${formatFecha(b.fecha)} · ${Math.round(b.progreso||0)}% completado</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="color:var(--yellow);font-size:14px;font-weight:900" title="En progreso">⏸</span>
-            <button class="continuar-btn" onclick="event.stopPropagation();continuarBorrador('${esc(r.local)}')">Continuar →</button>
-            <button class="icon-btn" title="Descartar" onclick="event.stopPropagation();descartarBorrador('${esc(r.local)}')">🗑</button>
-          </div>`;
+
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'colab-info';
+        infoDiv.innerHTML = '<div class="colab-name">' + esc(b.evaluado||'Sin nombre') + '</div>'
+          + '<div class="colab-date">Guardado: ' + formatFecha(b.fecha) + ' · ' + Math.round(b.progreso||0) + '% completado</div>';
+
+        const actsDiv = document.createElement('div');
+        actsDiv.style.cssText = 'display:flex;align-items:center;gap:8px';
+
+        const iconEl = document.createElement('span');
+        iconEl.style.cssText = 'color:var(--yellow);font-size:14px;font-weight:900';
+        iconEl.textContent = '⏸';
+
+        const btnCont = document.createElement('button');
+        btnCont.className = 'continuar-btn';
+        btnCont.textContent = 'Continuar →';
+        const _local = r.local;
+        btnCont.addEventListener('click', ev => { ev.stopPropagation(); continuarBorrador(_local); });
+
+        const btnDesc = document.createElement('button');
+        btnDesc.className = 'icon-btn';
+        btnDesc.title = 'Descartar';
+        btnDesc.textContent = '🗑';
+        btnDesc.addEventListener('click', ev => { ev.stopPropagation(); descartarBorrador(_local); });
+
+        actsDiv.appendChild(iconEl);
+        actsDiv.appendChild(btnCont);
+        actsDiv.appendChild(btnDesc);
+        bRow.appendChild(infoDiv);
+        bRow.appendChild(actsDiv);
         tabProg.appendChild(bRow);
       });
 
-      detail.appendChild(tabProg);
+
+    detail.appendChild(tabProg);
     }
 
     // Botón nueva evaluación
@@ -1224,11 +1295,7 @@ function renderSucursales(lista) {
   const list = document.getElementById('suc-list');
   list.innerHTML = '';
   if (mostrar.length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:32px 20px;color:var(--gray)">' +
-      '<div style="font-size:32px;margin-bottom:12px">📋</div>' +
-      '<div style="font-family:Montserrat;font-weight:700;font-size:14px;color:var(--white);margin-bottom:6px">Sin evaluaciones registradas</div>' +
-      '<div style="font-size:12px">Tocá "Nueva evaluación" para comenzar</div>' +
-      '</div>';
+    list.innerHTML = '<div style="text-align:center;padding:32px 20px;color:var(--gray)"><div style="font-size:32px;margin-bottom:12px">📋</div><div style="font-family:Montserrat;font-weight:700;font-size:14px;color:var(--white);margin-bottom:6px">Sin evaluaciones</div></div>';
   } else {
     list.appendChild(frag);
   }
@@ -1247,22 +1314,19 @@ function switchTab(btn, showId, hideId) {
   if (hide) hide.classList.remove('active');
 }
 
-function filtrarSucursales() {
-  if (window._sucData) renderSucursales(window._sucData);
-}
-function toggleVerMas() {
-  mostrarTodos = !mostrarTodos;
-  if (window._sucData) renderSucursales(window._sucData);
-}
+function filtrarSucursales() { if (window._sucData) renderSucursales(window._sucData); }
+function toggleVerMas() { mostrarTodos = !mostrarTodos; if (window._sucData) renderSucursales(window._sucData); }
+
 function toggleSucursal(head) {
   const detail = head.nextElementSibling;
   const chev   = head.querySelector('.suc-chev');
   const isOpen = detail.classList.contains('open');
   document.querySelectorAll('.suc-detail.open').forEach(d => {
     d.classList.remove('open');
-    d.previousElementSibling.querySelector('.suc-chev').classList.remove('open');
+    const c = d.previousElementSibling.querySelector('.suc-chev');
+    if (c) c.classList.remove('open');
   });
-  if (!isOpen) { detail.classList.add('open'); chev.classList.add('open'); }
+  if (!isOpen) { detail.classList.add('open'); if(chev) chev.classList.add('open'); }
 }
 
 async function eliminarEval(local, evaluado, fecha) {
@@ -1279,7 +1343,6 @@ async function eliminarEval(local, evaluado, fecha) {
 function filtrarLocales() {
   const val = document.getElementById('f-local').value.toLowerCase().trim();
   const list = document.getElementById('local-list');
-  // Solo mostrar si hay al menos 1 caracter
   if (val.length < 2) { list.classList.remove('open'); return; }
   const items = LOCALES.filter(l=>l.toLowerCase().includes(val));
   if (!items.length) { list.classList.remove('open'); return; }
@@ -1301,28 +1364,18 @@ document.addEventListener('click', e => {
 // FORMULARIO — BUILD
 // ═══════════════════════════════════════════════════════════
 function buildForm() {
-  // Fecha
   const hoy = new Date(), min = new Date(hoy);
   min.setDate(min.getDate()-7);
   const toISO = d => d.toISOString().split('T')[0];
   const fEl = document.getElementById('f-fecha');
   fEl.max = toISO(hoy); fEl.min = toISO(min); fEl.value = toISO(hoy);
 
-  // Los campos se setean en irAFormulario, aquí solo actualizamos meta
-  // para que el header del formulario muestre los valores correctos
-
-  if (!preLocal && !preEvaluado) {
-    respuestas = {};
-    ['f-evaluado','f-local'].forEach(id => document.getElementById(id).value='');
-    ['f-tipo','f-rol','f-antiguedad'].forEach(id => document.getElementById(id).selectedIndex=0);
-  }
-
+  // Los campos se setean en irAFormulario
   const body = document.getElementById('form-body');
   const frag = document.createDocumentFragment();
 
   MODS.forEach(mod => {
     if (!activeMods[mod.id]) return;
-
     if (mod.id === 'mod7') {
       const banner = document.createElement('div');
       banner.className = 'hosp-banner';
@@ -1332,19 +1385,16 @@ function buildForm() {
         <div class="hosp-line"></div>`;
       frag.appendChild(banner);
     }
-
     const block = document.createElement('div');
     block.className = 'modulo-block'; block.id = 'fmod-'+mod.id;
     const hdr = document.createElement('div');
     hdr.className = 'modulo-header';
     hdr.innerHTML = `<div class="modulo-num">${mod.num}</div><div class="modulo-title">${esc(mod.nombre)}</div>${mod.tag?`<span class="modulo-tag">· ${mod.tag}</span>`:''}`;
     block.appendChild(hdr);
-
     mod.items.forEach(item => {
       const card = buildItemCard(item, respuestas[item.id]);
       block.appendChild(card);
     });
-
     if (mod.id === 'mod7') {
       const obsDiv = document.createElement('div');
       obsDiv.className = 'obs-hosp';
@@ -1352,7 +1402,6 @@ function buildForm() {
         <textarea id="obs-hospitalidad" placeholder="Observaciones generales sobre la actitud hospitalaria..."></textarea>`;
       block.appendChild(obsDiv);
     }
-
     frag.appendChild(block);
   });
 
@@ -1365,7 +1414,6 @@ function buildItemCard(item, curVal) {
   const card = document.createElement('div');
   card.className = 'item-card' + (curVal !== undefined ? ' answered' : '');
   card.id = 'card-' + item.id;
-
   let guiaHTML = '';
   if (item.guia && item.guia.length) {
     const lis = [];
@@ -1376,33 +1424,23 @@ function buildItemCard(item, curVal) {
     guiaHTML = `<button class="guide-toggle" onclick="togglePanel('gp-${item.id}')">💡 Ver guía técnica</button>
       <div class="guide-panel" id="gp-${item.id}"><div class="guide-panel-title">Preguntas guía — solo capacitador</div><ul>${lis.join('')}</ul></div>`;
   }
-
   let hospHTML = '';
   if (item.hosp) {
-    hospHTML = `<button class="hosp-toggle" onclick="togglePanel('hp-${item.id}')">🤝 Hospitalidad — ¿qué observar?</button>
+    hospHTML = `<button class="hosp-toggle" onclick="togglePanel('hp-${item.id}')">🤝 Hospitalidad</button>
       <div class="hosp-panel" id="hp-${item.id}">${esc(item.hosp)}</div>`;
   }
-
   const scoreHTML = [1,2,3,4].map(n =>
     `<button class="score-btn${curVal==n?' sel-'+n:''}" onclick="setScore('${item.id}',${n},this)">${n}</button>`
   ).join('') + `<button class="score-btn${curVal==='NA'?' sel-na':''} na-btn" onclick="setScore('${item.id}','NA',this)">NA</button>`;
-
   card.innerHTML = `
     <div class="item-id">Ítem ${item.id}</div>
     <div class="item-label">${item.label}</div>
-    <div class="score-row">
-      <div class="score-btns">${scoreHTML}</div>
-      <button class="comment-btn" onclick="togglePanel('ic-${item.id}')" title="Agregar comentario">💬</button>
-    </div>
-    <div class="score-labels">
-      <span class="score-label">Inicial</span><span class="score-label">En proceso</span>
-      <span class="score-label">Logrado</span><span class="score-label">Destacado</span>
-      <span class="score-label">N/A</span>
-    </div>
+    <div class="score-row"><div class="score-btns">${scoreHTML}</div>
+      <button class="comment-btn" onclick="togglePanel('ic-${item.id}')" title="Comentario">💬</button></div>
+    <div class="score-labels"><span class="score-label">Inicial</span><span class="score-label">En proceso</span>
+      <span class="score-label">Logrado</span><span class="score-label">Destacado</span><span class="score-label">N/A</span></div>
     ${guiaHTML}${hospHTML}
-    <div class="comment-wrap" id="ic-${item.id}">
-      <textarea placeholder="Observación sobre este ítem..." id="ict-${item.id}"></textarea>
-    </div>`;
+    <div class="comment-wrap" id="ic-${item.id}"><textarea placeholder="Observación..." id="ict-${item.id}"></textarea></div>`;
   return card;
 }
 
@@ -1412,39 +1450,14 @@ function toggleMod(btn) {
   btn.classList.toggle('active');
   const label = btn.textContent.replace(/^[✓✗] /,'');
   btn.textContent = (activeMods[modId] ? '✓ ' : '✗ ') + label;
-  buildFormBody();
+  buildForm();
   updateProgress();
-}
-
-function buildFormBody() {
-  const body = document.getElementById('form-body');
-  const frag = document.createDocumentFragment();
-  MODS.forEach(mod => {
-    if (!activeMods[mod.id]) return;
-    if (mod.id === 'mod7') {
-      const b = document.createElement('div'); b.className='hosp-banner';
-      b.innerHTML=`<div class="hosp-org">Lucciano's · Filosofía de Servicio</div><div class="hosp-title">NUESTRO PROPÓSITO ES<br>CREAR MOMENTOS<br>DE FELICIDAD</div><div class="hosp-sub">El propósito vence la tarea</div><div class="hosp-line"></div>`;
-      frag.appendChild(b);
-    }
-    const block = document.createElement('div');
-    block.className='modulo-block'; block.id='fmod-'+mod.id;
-    block.innerHTML=`<div class="modulo-header"><div class="modulo-num">${mod.num}</div><div class="modulo-title">${esc(mod.nombre)}</div>${mod.tag?`<span class="modulo-tag">· ${mod.tag}</span>`:''}</div>`;
-    mod.items.forEach(item => block.appendChild(buildItemCard(item, respuestas[item.id])));
-    if (mod.id==='mod7') {
-      const o=document.createElement('div'); o.className='obs-hosp';
-      o.innerHTML=`<div class="obs-hosp-label">🤝 Observación de Hospitalidad</div><textarea id="obs-hospitalidad" placeholder="Observaciones generales..."></textarea>`;
-      block.appendChild(o);
-    }
-    frag.appendChild(block);
-  });
-  body.innerHTML=''; body.appendChild(frag);
 }
 
 function setScore(id, val, btn) {
   respuestas[id] = val;
   const card = document.getElementById('card-'+id);
   card.classList.add('answered');
-  card.classList.remove('pending-highlight');
   card.querySelectorAll('.score-btn').forEach(b => {
     b.className = 'score-btn' + (b.classList.contains('na-btn') ? ' na-btn' : '');
     if (b===btn) b.classList.add(val==='NA'?'sel-na':'sel-'+val);
@@ -1492,36 +1505,27 @@ function scrollAlPrimero() {
 // ═══════════════════════════════════════════════════════════
 function enviarFormulario() {
   if (yaEnviado) { showToast('Esta evaluación ya fue enviada'); return; }
-
   const fecha     = document.getElementById('f-fecha').value;
-  const local     = document.getElementById('f-local').value.trim();
+  const local     = document.getElementById('f-local').value.trim() || preLocal || '';
   const evaluado  = document.getElementById('f-evaluado').value.trim();
   const evaluador = document.getElementById('f-evaluador').value;
   const tipo      = document.getElementById('f-tipo').value;
   const rol       = document.getElementById('f-rol').value;
   const antiguedad= document.getElementById('f-antiguedad').value;
-
   if (!fecha||!local||!evaluado||!evaluador||!tipo||!rol) {
     showToast('⚠ Completá todos los campos'); return;
   }
-
   const activosMods = MODS.filter(m=>activeMods[m.id]);
   const total    = activosMods.reduce((s,m)=>s+m.items.length,0);
   const resp     = activosMods.reduce((s,m)=>s+m.items.filter(i=>respuestas[i.id]!==undefined).length,0);
-
   if (resp < total) {
     showToast(`⚠ Faltan ${total-resp} ítems`);
-    setTimeout(scrollAlPrimero, 350);
-    return;
+    setTimeout(scrollAlPrimero, 350); return;
   }
-
   const btn = document.getElementById('btn-enviar');
   btn.textContent = 'Procesando...'; btn.disabled = true;
-
   const resultado = calcularResultados();
   ultimoResult = { local, evaluado, fecha, evaluador, tipo, rol, antiguedad, resultado };
-
-  // Construir payload sheets
   const modData = {};
   MODS.forEach((m,idx) => {
     const n = idx+1;
@@ -1535,7 +1539,6 @@ function enviarFormulario() {
     modData['s'+n] = score;
     modData['s'+n+'max'] = (m.items.length-naCount)*4;
   });
-
   const fort=[], ref=[];
   MODS.forEach(m => {
     if (!activeMods[m.id]) return;
@@ -1548,7 +1551,6 @@ function enviarFormulario() {
       else ref.push(`[${m.nombre}] ${txt} (${lbl})`);
     });
   });
-
   const pct = resultado.total+'%';
   const band = resultado.total>=UMBRAL_OK?'Desempeño Sólido':resultado.total>=UMBRAL_OBS?'Desempeño Aceptable':'Atención Urgente';
   const payload = {
@@ -1558,34 +1560,25 @@ function enviarFormulario() {
     fortalezas:fort.join(' | '), reforzar:ref.join(' | '),
     observaciones:(document.getElementById('obs-hospitalidad')?.value||'').trim()
   };
-
-  // Marcar enviado inmediatamente
   yaEnviado = true;
   btn.textContent = '✓ Enviada';
   btn.style.cssText = 'background:#27ae60;color:white;border-color:#27ae60';
-
-  datosResumen.push({ local, evaluado, fecha, evaluador, porcentaje: normalizePct(resultado.total) });
+  datosResumen.push({ local, evaluado, fecha, evaluador, porcentaje:normalizePct(resultado.total) });
   showToast('✓ Evaluación enviada');
-
-  // Guardar en cache para ver detalle
   const cacheKey = `${local}|${evaluado}|${fecha}`;
-  evalCache[cacheKey] = { evaluado, local, fecha, evaluador, tipo, rol, total:resultado.total, modulos:resultado.modulos };
-
-  // Construir detalle completo para guardar en Sheets
+  evalCache[cacheKey] = { evaluado, local, fecha, evaluador, tipo, rol, antiguedad, total:resultado.total, modulos:resultado.modulos, tieneDetalle:true };
   const detalleCompleto = {
-    modulos: resultado.modulos.filter(m => m.porcentaje !== null).map(m => ({
-      nombre:       m.nombre,
-      num:          m.num,
-      porcentaje:   m.porcentaje,
-      score:        m.score,
-      max:          m.max,
-      items_detalle: m.items_detalle || []
+    modulos: resultado.modulos.filter(m=>m.porcentaje!==null).map(m=>({
+      nombre:m.nombre, num:m.num, porcentaje:m.porcentaje,
+      score:m.score, max:m.max, items_detalle:m.items_detalle||[]
     }))
   };
-
-  // Enviar al backend en background
   apiPostBg({ action:'submit', ...payload, detalleCompleto });
-
+  // Limpiar borrador si existía
+  if (borradores[local]) {
+    delete borradores[local];
+    try { sessionStorage.removeItem('borrador_' + local); } catch(e) {}
+  }
   mostrarResultado(local, evaluado, resultado);
 }
 
@@ -1604,10 +1597,10 @@ function calcularResultados() {
       if (v==='NA') naCount++;
       else score += vn;
       items_detalle.push({
-        id: item.id, n: item.n,
-        texto: item.label.replace(/<[^>]+>/g,''),
-        val: v==='NA' ? 'NA' : vn,
-        comentario: (document.getElementById('ict-'+item.id)?.value||'').trim()
+        id:item.id, n:item.n,
+        texto:item.label.replace(/<[^>]+>/g,''),
+        val:v==='NA'?'NA':vn,
+        comentario:(document.getElementById('ict-'+item.id)?.value||'').trim()
       });
     });
     const max = (m.items.length-naCount)*4;
@@ -1625,30 +1618,23 @@ function calcularResultados() {
 function mostrarResultado(local, evaluado, resultado) {
   const { total, modulos } = resultado;
   const { estado, cls, hero } = getEstado(total);
-
   document.getElementById('resultado-pct').textContent    = total+'%';
   document.getElementById('resultado-estado').textContent = estado;
   document.getElementById('resultado-local').textContent  = `${local} · ${evaluado}`;
   document.getElementById('resultado-hero').className     = 'resultado-hero '+hero;
-
   document.getElementById('resultado-modulos').innerHTML = modulos
     .filter(m=>m.porcentaje!==null)
     .map(m => {
       const { cls:cc, barCls:bc, badge } = getEstado(m.porcentaje);
-      const coms = (m.items_detalle||[]).filter(i=>i.comentario).map(i =>
-        `<div style="font-size:10px;color:#aaa;margin-top:2px;padding:2px 6px;background:#1a1a1a;border-left:2px solid var(--gold-dark);border-radius:0 3px 3px 0"><span style="color:var(--gold);font-weight:700">${i.id}:</span> ${esc(i.comentario)}</div>`
-      ).join('');
       return `<div class="mod-result">
         <div class="mod-result-pct ${cc}">${m.porcentaje}%</div>
         <div style="flex:1">
           <div class="mod-result-name">${m.num}. ${esc(m.nombre)}</div>
           <div class="mod-bar-outer"><div class="mod-bar ${bc}" style="width:${m.porcentaje}%"></div></div>
           <div class="mod-badge ${cc}">${badge}</div>
-          ${coms}
         </div>
       </div>`;
     }).join('');
-
   renderHome();
   showTab('resultado');
 }
@@ -1660,8 +1646,7 @@ function verEval(local, evaluado, fecha) {
   const key    = `${local}|${evaluado}|${fecha}`;
   const cached = evalCache[key];
   const body   = document.getElementById('ver-body');
-
-  if (!cached) {
+  if (!cached || !cached.tieneDetalle || !cached.modulos || !cached.modulos.length) {
     const reg = datosResumen.find(r=>r.local===local&&r.evaluado===evaluado&&r.fecha===fecha);
     const pct = reg ? reg.porcentaje : '—';
     const { estado, cls } = reg ? getEstado(reg.porcentaje) : { estado:'—', cls:'' };
@@ -1674,12 +1659,7 @@ function verEval(local, evaluado, fecha) {
           <div><div class="ver-field-label">Resultado</div><div class="ver-field-value ${cls}">${pct}%</div></div>
           <div><div class="ver-field-label">Estado</div><div class="ver-field-value">${esc(estado)}</div></div>
         </div>
-      </div>
-      <div style="background:var(--yellow-bg);border:1px solid var(--yellow);border-radius:var(--r);padding:14px;text-align:center">
-        <div style="color:var(--yellow);font-weight:700;font-size:13px;margin-bottom:5px">Detalle no disponible</div>
-        <div style="font-size:12px;color:#ccc">Esta evaluación fue guardada en una sesión anterior.<br>Las próximas se guardarán automáticamente para ver el detalle.</div>
       </div>`;
-    // Mostrar info básica disponible + botón PDF
     if (reg) {
       const { estado:est, cls:cl } = getEstado(reg.porcentaje);
       body.innerHTML += `
@@ -1688,17 +1668,15 @@ function verEval(local, evaluado, fecha) {
           <span class="colab-pct ${cl}" style="font-size:22px;font-weight:900">${reg.porcentaje}% <span style="font-size:12px">${esc(est)}</span></span>
         </div>
         <div style="background:var(--dark2);border-radius:var(--rs);padding:12px;text-align:center;color:var(--gray);font-size:12px;margin-top:8px">
-          El detalle ítem por ítem estará disponible en evaluaciones<br>realizadas desde esta versión del sistema.
+          El detalle ítem por ítem estará disponible en evaluaciones realizadas desde esta versión.
         </div>
         <button class="btn btn-green-solid" style="margin-top:12px" onclick="reimprimirPDF('${esc(local)}','${esc(evaluado)}','${fecha}',${reg.porcentaje||0})">📄 Descargar PDF</button>`;
     }
     showTab('ver'); return;
   }
-
   const scoreLabels = { 1:'✗ Inicial', 2:'⚠ En proceso', 3:'✓ Logrado', 4:'★ Destacado', NA:'— N/A' };
   const scoreClass  = { 1:'ver-s1', 2:'ver-s2', 3:'ver-s3', 4:'ver-s4', NA:'ver-sna' };
   const { estado, cls } = getEstado(cached.total);
-
   let html = `
     <div class="ver-header-card">
       <div style="font-family:Montserrat;font-weight:800;font-size:17px;color:var(--gold)">${esc(cached.evaluado)}</div>
@@ -1713,7 +1691,6 @@ function verEval(local, evaluado, fecha) {
       <span style="font-family:Montserrat;font-weight:700;font-size:13px">Resultado</span>
       <span style="font-family:Montserrat;font-weight:900;font-size:26px" class="${cls}">${cached.total}% <span style="font-size:12px;font-weight:600">${esc(estado)}</span></span>
     </div>`;
-
   cached.modulos.filter(m=>m.porcentaje!==null).forEach(m => {
     html += `<div style="display:flex;flex-direction:column;gap:6px">
       <div class="ver-mod-title">${m.num}. ${esc(m.nombre)}<span>${m.porcentaje}%</span></div>`;
@@ -1730,7 +1707,6 @@ function verEval(local, evaluado, fecha) {
     });
     html += '</div>';
   });
-
   body.innerHTML = html;
   showTab('ver');
 }
@@ -1744,439 +1720,122 @@ function base64ToBlob(b64, mime) {
   return new Blob([arr], { type: mime||'application/pdf' });
 }
 
-function construirHTMLInforme() {
-  if (!ultimoResult) return null;
-  const d = ultimoResult;
-  const r = d.resultado;
-  const pct = r.total + '%';
-  const bandLabel = r.total>=UMBRAL_OK ? 'Desempeño Sólido'
-                  : r.total>=UMBRAL_OBS ? 'Desempeño Aceptable'
-                  : 'Atención Urgente';
-
-  // Color según resultado
-  const pctColor = r.total>=UMBRAL_OK ? '#27ae60'
-                 : r.total>=UMBRAL_OBS ? '#f39c12'
-                 : '#c0392b';
-  const pctBg = r.total>=UMBRAL_OK ? '#f0faf5'
-              : r.total>=UMBRAL_OBS ? '#fff8e8'
-              : '#fdf0f0';
-
-  // Tabla módulos
-  let modsHTML = '';
-  r.modulos.filter(m=>m.porcentaje!==null).forEach(m => {
-    const mp = m.porcentaje;
-    const mc = mp>=UMBRAL_OK?'#e8f8ee':mp>=UMBRAL_OBS?'#fff8e8':'#fdf0f0';
-    const mcc= mp>=UMBRAL_OK?'#27ae60':mp>=UMBRAL_OBS?'#d35400':'#c0392b';
-    modsHTML += `<tr>
-      <td style="padding:8px 12px;border:1px solid #ddd;font-size:12px">${esc(m.nombre)}</td>
-      <td style="padding:8px 12px;border:1px solid #ddd;text-align:center;font-weight:700;background:${mc};color:${mcc}">${mp}%</td>
-    </tr>`;
-  });
-
-  // Fortalezas y reforzar agrupadas por módulo
-  const fort = {}, ref = {};
-  r.modulos.filter(m=>m.porcentaje!==null).forEach(m => {
-    (m.items_detalle||[]).forEach(i => {
-      if (!i.val || i.val==='NA') return;
-      const vn = parseInt(i.val);
-      if (isNaN(vn)) return;
-      const label = vn===4?'★ Destacado':vn===3?'✓ Logrado':vn===2?'⚠ En proceso':'✗ Inicial';
-      const color = vn>=3?'#27ae60':vn===2?'#d35400':'#c0392b';
-      const item = { texto: esc(i.texto), label, color };
-      if (vn>=3) { if(!fort[m.nombre]) fort[m.nombre]=[]; fort[m.nombre].push(item); }
-      else       { if(!ref[m.nombre])  ref[m.nombre]=[]; ref[m.nombre].push(item); }
-    });
-  });
-
-  const renderGroup = (grupos) => {
-    let html = '';
-    Object.entries(grupos).forEach(([mod, items]) => {
-      html += `<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#666;margin:8px 0 4px">${esc(mod)}</div>`;
-      items.forEach(it => {
-        html += `<div style="font-size:12px;margin-bottom:3px;line-height:1.5">${it.texto} <span style="color:${it.color};font-size:10px;font-weight:700">${it.label}</span></div>`;
-      });
-    });
-    return html || '<span style="color:#aaa;font-size:12px">Sin ítems en esta categoría.</span>';
-  };
-
-  // Comentarios
-  let comsHTML = '';
-  const tieneComs = r.modulos.some(m => (m.items_detalle||[]).some(i=>i.comentario));
-  if (tieneComs) {
-    r.modulos.filter(m=>m.porcentaje!==null).forEach(m => {
-      (m.items_detalle||[]).forEach(i => {
-        if (!i.comentario) return;
-        const abrev = m.nombre.substring(0,2).toUpperCase()+m.num;
-        comsHTML += `<tr>
-          <td style="padding:7px 12px;border:1px solid #ddd;font-size:11px;color:#555;width:30%">
-            ${esc(m.nombre)}<br><span style="color:#888;font-size:10px">${abrev}${i.n}</span>
-          </td>
-          <td style="padding:7px 12px;border:1px solid #ddd;font-size:12px">${esc(i.comentario)}</td>
-        </tr>`;
-      });
-    });
-  }
-
-  // Obs hospitalidad
-  const obsHosp = (document.getElementById('obs-hospitalidad')?.value||'').trim();
-
-  // Fecha formateada
-  const fechaFmt = d.fecha ? d.fecha.split('-').reverse().join('/') : '';
-
-  return `<!doctype html><html lang="es"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Evaluacion_${esc(d.evaluado)}_${d.fecha||''}</title>
-<style>
-@page{size:A4;margin:14mm}
-*{box-sizing:border-box}
-body{font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;font-size:13px;margin:0;background:white}
-h1{font-size:20px;font-weight:700;margin:0 0 4px}
-table{width:100%;border-collapse:collapse}
-@media print{
-  body{margin:0}
-  button{display:none!important}
-}
-</style></head><body>
-<div style="background:#0D0D0D;color:white;padding:18px 22px;margin-bottom:16px">
-  <div style="font-size:9px;color:#888;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px">L U C C I A N O ' S — S I S C A P · E V A L U A C I Ó N D E C A P A C I T A C I Ó N</div>
-  <h1 style="color:#C9A84C">Evaluación de Capacitación</h1>
-  <div style="font-size:11px;color:#888;margin-top:3px">Escala 1 a 4 · NA = No aplica · Puntaje sobre ítems aplicables</div>
-</div>
-<table style="margin-bottom:16px;border:1px solid #ddd">
-  <tr>
-    <td style="padding:8px 12px;border:1px solid #ddd;font-size:10px;font-weight:700;text-transform:uppercase;color:#666;width:20%">Evaluado</td>
-    <td style="padding:8px 12px;border:1px solid #ddd;font-weight:600;width:30%">${esc(d.evaluado)}</td>
-    <td style="padding:8px 12px;border:1px solid #ddd;font-size:10px;font-weight:700;text-transform:uppercase;color:#666;width:20%">Local</td>
-    <td style="padding:8px 12px;border:1px solid #ddd;width:30%">${esc(d.local)}</td>
-  </tr>
-  <tr>
-    <td style="padding:8px 12px;border:1px solid #ddd;font-size:10px;font-weight:700;text-transform:uppercase;color:#666">Evaluador</td>
-    <td style="padding:8px 12px;border:1px solid #ddd">${esc(d.evaluador)}</td>
-    <td style="padding:8px 12px;border:1px solid #ddd;font-size:10px;font-weight:700;text-transform:uppercase;color:#666">Fecha</td>
-    <td style="padding:8px 12px;border:1px solid #ddd">${fechaFmt}</td>
-  </tr>
-  <tr>
-    <td style="padding:8px 12px;border:1px solid #ddd;font-size:10px;font-weight:700;text-transform:uppercase;color:#666">Tipo</td>
-    <td style="padding:8px 12px;border:1px solid #ddd">${esc(d.tipo||'')}</td>
-    <td style="padding:8px 12px;border:1px solid #ddd;font-size:10px;font-weight:700;text-transform:uppercase;color:#666">Antigüedad</td>
-    <td style="padding:8px 12px;border:1px solid #ddd">${esc(d.antiguedad||'')}</td>
-  </tr>
-</table>
-<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#444;margin-bottom:6px">Resumen por Módulo</div>
-<table style="margin-bottom:16px">
-  <tr style="background:#f2f2f2">
-    <th style="padding:8px 12px;border:1px solid #ddd;text-align:left;font-size:11px">Módulo</th>
-    <th style="padding:8px 12px;border:1px solid #ddd;font-size:11px">%</th>
-  </tr>${modsHTML}
-</table>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-  <div style="border:1px solid #a9dfbf;border-radius:6px;padding:12px;background:#f0faf0">
-    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#27ae60;margin-bottom:7px">Fortalezas</div>
-    <div style="font-size:12px;line-height:1.7">${renderGroup(fort)}</div>
-  </div>
-  <div style="border:1px solid #f9ca78;border-radius:6px;padding:12px;background:#fff8f0">
-    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#d35400;margin-bottom:7px">Aspectos a Reforzar</div>
-    <div style="font-size:12px;line-height:1.7">${renderGroup(ref)}</div>
-  </div>
-</div>
-${tieneComs ? `
-<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#444;margin-bottom:6px">Comentarios y Observaciones</div>
-<table style="width:100%;border-collapse:collapse;margin-bottom:16px">
-  <tr style="background:#f2f2f2">
-    <th style="padding:8px 12px;border:1px solid #ddd;text-align:left;width:30%;font-size:11px">Ítem</th>
-    <th style="padding:8px 12px;border:1px solid #ddd;text-align:left;font-size:11px">Observación</th>
-  </tr>${comsHTML}
-</table>` : ''}
-${obsHosp ? `
-<div style="background:#0d2e22;border:1px solid #2a6b50;border-radius:6px;padding:14px 16px;margin-bottom:16px">
-  <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#1D9E75;margin-bottom:6px">🤝 Observación de Hospitalidad</div>
-  <div style="font-size:12px;line-height:1.7;color:#b0ddd0">${esc(obsHosp)}</div>
-</div>` : ''}
-<div style="background:#0D0D0D;color:white;padding:14px 20px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-  <div>
-    <div style="font-size:11px;color:#888;margin-bottom:4px">Puntaje Total · Escala máxima 4 por criterio</div>
-    <div style="font-size:16px;font-weight:700;color:#C9A84C">${esc(bandLabel)} — ${pct}</div>
-  </div>
-  <div style="background:#1a1a1a;border:2px solid #C9A84C;border-radius:8px;padding:10px 20px;text-align:center;min-width:80px">
-    <div style="font-size:36px;font-weight:700;color:${pctColor};line-height:1">${pct}</div>
-  </div>
-</div>
-<div style="font-size:10px;color:#aaa;text-align:right;margin-top:8px">Generado por SisCap v2.0 · ${fechaFmt}</div>
-</body></html>`;
-}
-
 async function generarPDF() {
   const btn = document.getElementById('btn-pdf');
   btn.textContent = '⏳ Generando...'; btn.disabled = true;
   showToast('Generando PDF...', 10000);
-
   if (!ultimoResult) {
     showToast('⚠ Primero completá una evaluación');
-    btn.textContent = '⬇ Descargar PDF'; btn.disabled = false;
-    return;
+    btn.textContent = '⬇ Descargar PDF'; btn.disabled = false; return;
   }
-
   const r = ultimoResult.resultado;
-  const fort = [], ref = [];
-  r.modulos.filter(m => m.porcentaje !== null).forEach(m => {
-    (m.items_detalle || []).forEach(i => {
-      if (!i.val || i.val === 'NA') return;
+  const fort=[], ref=[];
+  r.modulos.filter(m=>m.porcentaje!==null).forEach(m => {
+    (m.items_detalle||[]).forEach(i => {
+      if (!i.val || i.val==='NA') return;
       const lbl = calcLabel(i.val);
-      if (parseInt(i.val) >= 3) fort.push(`[${m.nombre}] ${i.texto} (${lbl})`);
+      if (parseInt(i.val)>=3) fort.push(`[${m.nombre}] ${i.texto} (${lbl})`);
       else ref.push(`[${m.nombre}] ${i.texto} (${lbl})`);
     });
   });
-
-  const pct = r.total + '%';
-  const bandLabel = r.total >= UMBRAL_OK ? 'Desempeño Sólido'
-                  : r.total >= UMBRAL_OBS ? 'Desempeño Aceptable'
-                  : 'Atención Urgente';
-
-  const comentarios = [];
-  r.modulos.filter(m => m.porcentaje !== null).forEach(m => {
-    (m.items_detalle || []).forEach(i => {
+  const pct      = r.total+'%';
+  const bandLabel= r.total>=UMBRAL_OK?'Desempeño Sólido':r.total>=UMBRAL_OBS?'Desempeño Aceptable':'Atención Urgente';
+  const comentarios=[];
+  r.modulos.filter(m=>m.porcentaje!==null).forEach(m=>{
+    (m.items_detalle||[]).forEach(i=>{
       if (!i.comentario) return;
-      const abrev = m.nombre.substring(0,2).toUpperCase() + m.num;
-      comentarios.push({ modulo: m.nombre, item: `${abrev}${i.n} · ${i.texto}`, texto: i.comentario });
+      const abrev = m.nombre.substring(0,2).toUpperCase()+m.num;
+      comentarios.push({ modulo:m.nombre, item:`${abrev}${i.n} · ${i.texto}`, texto:i.comentario });
     });
   });
-
-  const payload = {
-    evaluado:   ultimoResult.evaluado,
-    local:      ultimoResult.local,
-    evaluador:  ultimoResult.evaluador,
-    fecha:      ultimoResult.fecha,
-    tipo:       ultimoResult.tipo,
-    rol:        ultimoResult.rol,
-    antiguedad: ultimoResult.antiguedad,
-    total:      String(r.totalRaw),
-    totalMax:   String(r.totalMax),
-    resultado:  `${bandLabel} — ${pct}`,
-    fortalezas: fort.join(' | '),
-    reforzar:   ref.join(' | '),
-    modulos:    r.modulos.filter(m => m.porcentaje !== null).map(m => ({
-      nombre: m.nombre, activo: true, score: m.score, max: m.max
-    })),
+  const payload={
+    evaluado:ultimoResult.evaluado, local:ultimoResult.local,
+    evaluador:ultimoResult.evaluador, fecha:ultimoResult.fecha,
+    tipo:ultimoResult.tipo, rol:ultimoResult.rol, antiguedad:ultimoResult.antiguedad,
+    total:String(r.totalRaw), totalMax:String(r.totalMax),
+    resultado:`${bandLabel} — ${pct}`,
+    fortalezas:fort.join(' | '), reforzar:ref.join(' | '),
+    modulos:r.modulos.filter(m=>m.porcentaje!==null).map(m=>({ nombre:m.nombre, activo:true, score:m.score, max:m.max })),
     comentarios,
-    obsHospitalidad: (document.getElementById('obs-hospitalidad')?.value || '').trim()
+    obsHospitalidad:(document.getElementById('obs-hospitalidad')?.value||'').trim()
   };
-
   try {
-    const data = await apiPost({ action: 'pdf', payload });
+    const data = await apiPost({ action:'pdf', payload });
     btn.textContent = '⬇ Descargar PDF'; btn.disabled = false;
-
-    if (data.status === 'ok' && data.base64) {
-      const mime   = data.mime || 'application/pdf';
-      const isPDF  = mime.includes('pdf');
-      const nombre = data.nombre || (isPDF ? 'Evaluacion.pdf' : 'Evaluacion.html');
-
-      // iOS Safari no soporta bien createObjectURL con PDF → usar URL de Drive
+    if (data.status==='ok' && data.base64) {
       const isIOS    = /iPad|iPhone|iPod/.test(navigator.userAgent);
       const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
-      if ((isIOS || isSafari) && isPDF && data.url) {
-        window.open(data.url, '_blank');
-        showToast('\u2713 PDF abierto');
-      } else {
-        const blob = base64ToBlob(data.base64, mime);
-        const url  = URL.createObjectURL(blob);
-        const a    = document.createElement('a');
-        a.href = url; a.download = nombre; a.target = '_blank';
+      if ((isIOS||isSafari) && data.url) { window.open(data.url,'_blank'); showToast('✓ PDF abierto'); }
+      else {
+        const blob=base64ToBlob(data.base64,data.mime||'application/pdf');
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');
+        a.href=url; a.download=data.nombre||'Evaluacion.pdf'; a.target='_blank';
         document.body.appendChild(a); a.click();
-        setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 5000);
-        showToast(isPDF ? '\u2713 PDF descargado' : '\u2713 Descargado');
+        setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); },5000);
+        showToast('✓ PDF descargado');
       }
-    } else if (data.status === 'ok' && data.url) {
-      window.open(data.url, '_blank');
-      showToast('\u2713 PDF listo');
-    } else {
-      showToast('\u26A0 ' + (data.msg || 'Error al generar PDF'));
-      console.error('PDF error:', data);
-    }
-  } catch(e) {
-    btn.textContent = '⬇ Descargar PDF'; btn.disabled = false;
-    showToast('⚠ Error de conexión con el servidor');
-    console.error('PDF fetch error:', e);
-  }
+    } else { showToast('⚠ '+(data.msg||'Error al generar PDF')); }
+  } catch(e) { btn.textContent='⬇ Descargar PDF'; btn.disabled=false; showToast('⚠ Error de conexión'); }
 }
-
 
 // ═══════════════════════════════════════════════════════════
-// BORRADORES
-// ═══════════════════════════════════════════════════════════
-function guardarBorrador() {
-  // Leer del input; si está vacío usar preLocal (que se setea en irAFormulario)
-  const localInput = (document.getElementById('f-local')?.value || '').trim();
-  const local      = localInput || preLocal || '';
-  const evaluado   = (document.getElementById('f-evaluado')?.value || '').trim() || preEvaluado || '';
-
-  if (!local) {
-    showToast('\u26A0 Completá el local antes de guardar');
-    return;
-  }
-  // Sincronizar el input con el valor real
-  if (document.getElementById('f-local')) document.getElementById('f-local').value = local;
-
-  const activos = MODS.filter(m => activeMods[m.id]);
-  const total   = activos.reduce((s,m) => s + m.items.length, 0);
-  const resp    = activos.reduce((s,m) => s + m.items.filter(i => respuestas[i.id] !== undefined).length, 0);
-
-  // Guardar estado completo
-  const borrador = {
-    evaluado:   evaluado,
-    fecha:      (document.getElementById('f-fecha')?.value || ''),
-    evaluador:  (document.getElementById('f-evaluador')?.value || ''),
-    tipo:       (document.getElementById('f-tipo')?.value || ''),
-    rol:        (document.getElementById('f-rol')?.value || ''),
-    antiguedad: (document.getElementById('f-antiguedad')?.value || ''),
-    respuestas: Object.assign({}, respuestas),
-    activeMods: Object.assign({}, activeMods),
-    progreso:   total > 0 ? Math.round(resp / total * 100) : 0
-  };
-
-  borradores[local] = borrador;
-
-  // Persistir en sessionStorage para sobrevivir recarga
-  try { sessionStorage.setItem('borrador_' + local, JSON.stringify(borrador)); } catch(e) {}
-
-  showToast('\u2713 Borrador guardado');
-  showTab('home');
-  setTimeout(() => renderHome(), 100);
-}
-
-function continuarBorrador(local) {
-  let b = borradores[local];
-  // Intentar recuperar de sessionStorage si no está en memoria
-  if (!b) {
-    try {
-      const stored = sessionStorage.getItem('borrador_' + local);
-      if (stored) b = JSON.parse(stored);
-    } catch(e) {}
-  }
-  if (!b) { showToast('\u26A0 No hay borrador guardado'); return; }
-  borradores[local] = b; // restaurar en memoria
-
-  // Restaurar estado
-  Object.assign(respuestas, b.respuestas);
-  Object.assign(activeMods, b.activeMods);
-
-  preLocal    = local;
-  preEvaluado = b.evaluado;
-  yaEnviado   = false;
-
-  buildForm();
-
-  // Restaurar campo evaluado y demás
-  setTimeout(() => {
-    document.getElementById('f-evaluado').value  = b.evaluado || '';
-    document.getElementById('f-evaluador').value = b.evaluador || '';
-    document.getElementById('f-tipo').value      = b.tipo || '';
-    document.getElementById('f-rol').value       = b.rol || '';
-    document.getElementById('f-antiguedad').value= b.antiguedad || '';
-    updateFormMeta();
-    updateProgress();
-  }, 100);
-
-  showTab('form');
-  showToast('Borrador restaurado — continuá desde donde dejaste');
-}
-
-function descartarBorrador(local) {
-  if (!confirm('\u00BFDescartar el borrador de ' + local + '?')) return;
-  delete borradores[local];
-  try { sessionStorage.removeItem('borrador_' + local); } catch(e) {}
-  renderHome();
-  showToast('Borrador descartado');
-}
-
-
-// ============================================================
 // REIMPRIMIR PDF DESDE HISTORIAL
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 async function reimprimirPDF(local, evaluado, fecha, porcentaje) {
   showToast('Generando PDF...', 10000);
-
-  // Buscar en el cache si tenemos el detalle completo
-  const key    = local + '|' + evaluado + '|' + fecha;
+  const key = local+'|'+evaluado+'|'+fecha;
   const cached = evalCache[key];
-
-  if (!cached) {
-    showToast('⚠ Detalle no disponible — hacé la evaluación primero');
-    return;
+  const fort=[], ref=[];
+  if (cached && cached.modulos) {
+    cached.modulos.filter(m=>m.porcentaje!==null).forEach(m=>{
+      (m.items_detalle||[]).forEach(i=>{
+        if (!i.val||i.val==='NA') return;
+        const lbl=calcLabel(i.val);
+        if (parseInt(i.val)>=3) fort.push(`[${m.nombre}] ${i.texto} (${lbl})`);
+        else ref.push(`[${m.nombre}] ${i.texto} (${lbl})`);
+      });
+    });
   }
-
-  const fort = [], ref = [];
-  cached.modulos.filter(m => m.porcentaje !== null).forEach(m => {
-    (m.items_detalle || []).forEach(i => {
-      if (!i.val || i.val === 'NA') return;
-      const lbl = calcLabel(i.val);
-      if (parseInt(i.val) >= 3) fort.push('[' + m.nombre + '] ' + i.texto + ' (' + lbl + ')');
-      else ref.push('[' + m.nombre + '] ' + i.texto + ' (' + lbl + ')');
-    });
-  });
-
-  const bandLabel = porcentaje >= UMBRAL_OK ? 'Desempeño Sólido'
-                  : porcentaje >= UMBRAL_OBS ? 'Desempeño Aceptable'
-                  : 'Atención Urgente';
-
-  const comentarios = [];
-  cached.modulos.filter(m => m.porcentaje !== null).forEach(m => {
-    (m.items_detalle || []).forEach(i => {
-      if (!i.comentario) return;
-      const abrev = m.nombre.substring(0,2).toUpperCase() + m.num;
-      comentarios.push({ modulo: m.nombre, item: abrev + i.n + ' · ' + i.texto, texto: i.comentario });
-    });
-  });
-
-  const payload = {
-    evaluado: cached.evaluado, local: cached.local,
-    evaluador: cached.evaluador, fecha: cached.fecha,
-    tipo: cached.tipo || '', rol: cached.rol || '',
-    antiguedad: cached.antiguedad || '',
-    total: String(cached.totalRaw || ''), totalMax: String(cached.totalMax || ''),
-    resultado: bandLabel + ' — ' + porcentaje + '%',
-    fortalezas: fort.join(' | '), reforzar: ref.join(' | '),
-    modulos: cached.modulos.filter(m => m.porcentaje !== null).map(m => ({
-      nombre: m.nombre, activo: true, score: m.score, max: m.max
-    })),
-    comentarios
+  const bandLabel=porcentaje>=UMBRAL_OK?'Desempeño Sólido':porcentaje>=UMBRAL_OBS?'Desempeño Aceptable':'Atención Urgente';
+  const payload={
+    evaluado, local, fecha,
+    evaluador:cached?.evaluador||'', tipo:cached?.tipo||'', rol:cached?.rol||'', antiguedad:cached?.antiguedad||'',
+    total:String(cached?.totalRaw||''), totalMax:String(cached?.totalMax||''),
+    resultado:`${bandLabel} — ${porcentaje}%`,
+    fortalezas:fort.join(' | '), reforzar:ref.join(' | '),
+    modulos:(cached?.modulos||[]).filter(m=>m.porcentaje!==null).map(m=>({ nombre:m.nombre, activo:true, score:m.score, max:m.max })),
+    comentarios:[]
   };
-
   try {
-    const data = await apiPost({ action: 'pdf', payload });
-    if (data.status === 'ok' && data.base64) {
-      const isIOS    = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-      if ((isIOS || isSafari) && data.url) {
-        window.open(data.url, '_blank');
-      } else {
-        const blob = base64ToBlob(data.base64, data.mime || 'application/pdf');
-        const url  = URL.createObjectURL(blob);
-        const a    = document.createElement('a');
-        a.href = url; a.download = data.nombre || 'Evaluacion.pdf'; a.target = '_blank';
+    const data=await apiPost({ action:'pdf', payload });
+    if (data.status==='ok'&&data.base64) {
+      const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isSafari=/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      if ((isIOS||isSafari)&&data.url) { window.open(data.url,'_blank'); }
+      else {
+        const blob=base64ToBlob(data.base64,data.mime||'application/pdf');
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');
+        a.href=url; a.download=data.nombre||'Evaluacion.pdf'; a.target='_blank';
         document.body.appendChild(a); a.click();
-        setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 5000);
+        setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); },5000);
       }
       showToast('✓ PDF descargado');
-    } else {
-      showToast('⚠ ' + (data.msg || 'Error al generar PDF'));
-    }
-  } catch(e) {
-    showToast('⚠ Error de conexión');
-  }
+    } else { showToast('⚠ '+(data.msg||'Error')); }
+  } catch(e) { showToast('⚠ Error de conexión'); }
 }
-
 
 async function cargarPendientes() {
   try {
-    const data  = await apiGet({ action: 'getPendientes' });
+    const data  = await apiGet({ action:'getPendientes' });
     const wrap  = document.getElementById('pendientes-wrap');
     const lista = document.getElementById('pendientes-lista');
-    if (!data.pendientes || !data.pendientes.length) { wrap.style.display='none'; return; }
-    wrap.style.display = 'block';
-    lista.innerHTML = data.pendientes.map(u => `
+    if (!data.pendientes||!data.pendientes.length) { wrap.style.display='none'; return; }
+    wrap.style.display='block';
+    lista.innerHTML=data.pendientes.map(u=>`
       <div style="background:var(--dark2);border:1px solid var(--yellow);border-radius:var(--rs);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px">
-        <div><div style="font-weight:600;font-size:13px">${esc(u.nombre)}</div><div style="font-size:11px;color:var(--gray)">@${esc(u.usuario)} · Solicita acceso</div></div>
+        <div><div style="font-weight:600;font-size:13px">${esc(u.nombre)}</div><div style="font-size:11px;color:var(--gray)">@${esc(u.usuario)}</div></div>
         <div style="display:flex;gap:8px;flex-shrink:0">
           <button onclick="aprobarUsuario('${esc(u.usuario)}',true)" style="background:var(--green-bg);color:var(--green);border:1px solid var(--green);padding:6px 12px;border-radius:var(--rs);font-size:11px;font-weight:700;cursor:pointer">✓ Aprobar</button>
           <button onclick="aprobarUsuario('${esc(u.usuario)}',false)" style="background:var(--red-bg);color:var(--red);border:1px solid var(--red);padding:6px 12px;border-radius:var(--rs);font-size:11px;font-weight:700;cursor:pointer">✗ Rechazar</button>
@@ -2186,13 +1845,74 @@ async function cargarPendientes() {
 }
 
 async function aprobarUsuario(usuario, aprobar) {
-  const estado = aprobar ? 'activo' : 'rechazado';
+  const estado=aprobar?'activo':'rechazado';
   try {
-    await apiPost({ action: 'updateUser', usuario, estado });
-    showToast(aprobar ? '\u2713 Usuario aprobado' : '\u2717 Usuario rechazado');
+    await apiPost({ action:'updateUser', usuario, estado });
+    showToast(aprobar?'✓ Usuario aprobado':'✗ Usuario rechazado');
     cargarPendientes();
     if (document.getElementById('screen-config').classList.contains('active')) cargarUsuarios();
-  } catch(e) { showToast('\u26A0 Error'); }
+  } catch(e) { showToast('⚠ Error'); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// BORRADORES
+// ═══════════════════════════════════════════════════════════
+function guardarBorrador() {
+  const localInput = (document.getElementById('f-local')?.value||'').trim();
+  const local      = localInput || preLocal || '';
+  const evaluado   = (document.getElementById('f-evaluado')?.value||'').trim() || preEvaluado || '';
+  if (!local) { showToast('⚠ Completá el local antes de guardar'); return; }
+  if (document.getElementById('f-local')) document.getElementById('f-local').value = local;
+  const activos = MODS.filter(m=>activeMods[m.id]);
+  const total   = activos.reduce((s,m)=>s+m.items.length,0);
+  const resp    = activos.reduce((s,m)=>s+m.items.filter(i=>respuestas[i.id]!==undefined).length,0);
+  const borrador={
+    evaluado, local,
+    fecha:(document.getElementById('f-fecha')?.value||''),
+    evaluador:(document.getElementById('f-evaluador')?.value||'')||(currentUser?currentUser.nombre:''),
+    tipo:(document.getElementById('f-tipo')?.value||''),
+    rol:(document.getElementById('f-rol')?.value||''),
+    antiguedad:(document.getElementById('f-antiguedad')?.value||''),
+    respuestas:Object.assign({},respuestas),
+    activeMods:Object.assign({},activeMods),
+    progreso:total>0?Math.round(resp/total*100):0
+  };
+  borradores[local]=borrador;
+  try { sessionStorage.setItem('borrador_'+local, JSON.stringify(borrador)); } catch(e) {}
+  showToast('✓ Borrador guardado');
+  showTab('home');
+  setTimeout(()=>renderHome(),100);
+}
+
+function continuarBorrador(local) {
+  let b=borradores[local];
+  if (!b) { try { const s=sessionStorage.getItem('borrador_'+local); if(s) b=JSON.parse(s); } catch(e) {} }
+  if (!b) { showToast('⚠ No hay borrador guardado'); return; }
+  borradores[local]=b;
+  respuestas={};
+  Object.assign(respuestas,b.respuestas);
+  Object.assign(activeMods,b.activeMods);
+  preLocal=local; preEvaluado=b.evaluado; yaEnviado=false;
+  buildForm();
+  setTimeout(()=>{
+    document.getElementById('f-local').value    =local;
+    document.getElementById('f-evaluado').value =b.evaluado||'';
+    document.getElementById('f-evaluador').value=b.evaluador||'';
+    if(b.tipo)       document.getElementById('f-tipo').value      =b.tipo;
+    if(b.rol)        document.getElementById('f-rol').value       =b.rol;
+    if(b.antiguedad) document.getElementById('f-antiguedad').value=b.antiguedad;
+    if(b.fecha)      document.getElementById('f-fecha').value     =b.fecha;
+    updateFormMeta(); updateProgress();
+  },150);
+  showTab('form');
+  showToast('Borrador restaurado');
+}
+
+function descartarBorrador(local) {
+  if (!confirm('¿Descartar el borrador de '+local+'?')) return;
+  delete borradores[local];
+  try { sessionStorage.removeItem('borrador_'+local); } catch(e) {}
+  renderHome(); showToast('Borrador descartado');
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -2200,20 +1920,17 @@ async function aprobarUsuario(usuario, aprobar) {
 // ═══════════════════════════════════════════════════════════
 function abrirConfig() {
   if (!currentUser?.isAdmin) { showToast('⚠ Solo el administrador puede acceder'); return; }
-  cargarUsuarios();
-  showTab('config');
+  cargarUsuarios(); showTab('config');
 }
-function toggleUserForm() {
-  const f = document.getElementById('user-form');
-  f.classList.toggle('open');
-}
+function toggleUserForm() { document.getElementById('user-form').classList.toggle('open'); }
+
 async function cargarUsuarios() {
-  const lista = document.getElementById('usuarios-lista');
-  lista.innerHTML = '<div style="text-align:center;padding:40px 20px"><div class="spinner" style="margin:0 auto"></div><div style="color:var(--gray);font-size:12px;margin-top:12px">Cargando evaluaciones...</div></div>';
+  const lista=document.getElementById('usuarios-lista');
+  lista.innerHTML='<div class="spinner-wrap"><div class="spinner"></div></div>';
   try {
-    const data = await apiGet({ action:'getUsuarios' });
+    const data=await apiGet({ action:'getUsuarios' });
     if (data.usuarios?.length) {
-      lista.innerHTML = data.usuarios.map(u => `
+      lista.innerHTML=data.usuarios.map(u=>`
         <div class="user-row">
           <div><div class="user-name">${esc(u.nombre)}</div><div class="user-handle">@${esc(u.usuario)}</div></div>
           <div style="display:flex;align-items:center;gap:8px">
@@ -2221,21 +1938,18 @@ async function cargarUsuarios() {
             <button class="toggle-user-btn" onclick="toggleUsuario('${esc(u.usuario)}','${esc(u.estado)}')">${u.estado==='activo'?'Desactivar':'Activar'}</button>
           </div>
         </div>`).join('');
-    } else {
-      lista.innerHTML = '<div style="color:var(--gray);font-size:13px;padding:10px">Sin usuarios registrados.</div>';
-    }
-  } catch(e) {
-    lista.innerHTML = '<div style="color:var(--gray);font-size:13px;padding:10px">Error al cargar usuarios.</div>';
-  }
+    } else { lista.innerHTML='<div style="color:var(--gray);font-size:13px;padding:10px">Sin usuarios.</div>'; }
+  } catch(e) { lista.innerHTML='<div style="color:var(--gray);font-size:13px;padding:10px">Error al cargar.</div>'; }
 }
+
 async function crearUsuario() {
-  const nombre = document.getElementById('nu-nombre').value.trim();
-  const user   = document.getElementById('nu-user').value.trim().toLowerCase();
-  const pass   = document.getElementById('nu-pass').value.trim();
+  const nombre=document.getElementById('nu-nombre').value.trim();
+  const user  =document.getElementById('nu-user').value.trim().toLowerCase();
+  const pass  =document.getElementById('nu-pass').value.trim();
   if (!nombre||!user||!pass) { showToast('⚠ Completá todos los campos'); return; }
   showToast('Creando...');
   try {
-    const data = await apiPost({ action:'createUser', nombre, user, pass, estado:'activo' });
+    const data=await apiPost({ action:'createUser', nombre, user, pass, estado:'activo' });
     if (data.status==='ok') {
       showToast('✓ Usuario creado');
       ['nu-nombre','nu-user','nu-pass'].forEach(id=>document.getElementById(id).value='');
@@ -2244,13 +1958,22 @@ async function crearUsuario() {
     } else { showToast('⚠ '+(data.msg||'Error')); }
   } catch(e) { showToast('⚠ Error de conexión'); }
 }
+
 async function toggleUsuario(usuario, estadoActual) {
-  const nuevoEstado = estadoActual==='activo'?'inactivo':'activo';
+  const nuevoEstado=estadoActual==='activo'?'inactivo':'activo';
   try {
     await apiPost({ action:'updateUser', usuario, estado:nuevoEstado });
-    showToast('✓ Usuario '+nuevoEstado);
-    cargarUsuarios();
+    showToast('✓ Usuario '+nuevoEstado); cargarUsuarios();
   } catch(e) { showToast('⚠ Error'); }
+}
+
+// Toast
+let _toastTimer=null;
+function showToast(msg,dur=2800) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>t.classList.remove('show'),dur);
 }
 </script>
 </body>
