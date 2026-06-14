@@ -415,7 +415,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
         <span class="search-icon">🔍</span>
         <input class="search-input" id="suc-search" placeholder="Buscar sucursal..." oninput="filtrarSucursales()" autocomplete="off"/>
       </div>
-      <div class="suc-list" id="suc-list"><div class="spinner-wrap"><div class="spinner"></div></div></div>
+      <div class="suc-list" id="suc-list"><div id="suc-empty" style="text-align:center;padding:32px 20px;color:var(--gray)"><div style="font-size:32px;margin-bottom:12px">📋</div><div style="font-family:Montserrat;font-weight:700;font-size:14px;color:var(--white);margin-bottom:6px">Sin evaluaciones aún</div><div style="font-size:12px">Las evaluaciones aparecerán aquí una vez que<br>se registren en el sistema</div><button class="btn btn-gold" style="margin-top:16px;padding:10px 24px;width:auto" onclick="irAFormulario()">Iniciar primera evaluación</button></div></div>
       <div class="ver-mas-btn" id="ver-mas-btn" style="display:none" onclick="toggleVerMas()"></div>
     </div>
   </div>
@@ -448,7 +448,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
     <div class="field">
       <label>Local / Sucursal</label>
       <div class="autocomplete-wrap">
-        <input type="text" id="f-local" placeholder="" autocomplete="off" autocorrect="off" oninput="filtrarLocales()" onfocus="filtrarLocales()"/>
+        <input type="text" id="f-local" placeholder="" autocomplete="off" autocorrect="off" oninput="filtrarLocales()"/>
         <div class="autocomplete-list" id="local-list"></div>
       </div>
     </div>
@@ -549,7 +549,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 // ═══════════════════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════════════════
-const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbybZR-8f8EGddwMFXNvbApoGaSorz6-17Btba86RdZhwvPdh5gCfr3JLBC_V7rBPvxOvw/exec';
+const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbx9VC0i_uZvbnAllbyGgs08qJaPt1gUCin9Ci3b3x4Cxeg2Lsxyxg8yItmEijHQpgTcyg/exec';
 const UMBRAL_OK   = 80;
 const UMBRAL_OBS  = 60;
 const DIAS_ALERTA = 30;
@@ -852,6 +852,18 @@ function apiPostBg(body) {
 // DATOS
 // ═══════════════════════════════════════════════════════════
 async function cargarDatos() {
+  // Restaurar borradores de sessionStorage
+  try {
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const k = sessionStorage.key(i);
+      if (k && k.startsWith('borrador_')) {
+        const local = k.replace('borrador_', '');
+        const b = JSON.parse(sessionStorage.getItem(k));
+        if (b) borradores[local] = b;
+      }
+    }
+  } catch(e) {}
+
   try {
     const data = await apiGet({ action:'getResumen' });
     if (data && data.registros) {
@@ -868,7 +880,7 @@ async function cargarDatos() {
   renderHome();
 }
 function recargarDatos() {
-  document.getElementById('suc-list').innerHTML = '<div class="spinner-wrap"><div class="spinner"></div></div>';
+  document.getElementById('suc-list').innerHTML = '<div style="text-align:center;padding:40px 20px"><div class="spinner" style="margin:0 auto"></div><div style="color:var(--gray);font-size:12px;margin-top:12px">Cargando evaluaciones...</div></div>';
   showToast('Actualizando...');
   cargarDatos();
 }
@@ -889,7 +901,21 @@ function demoData() {
 // RENDER HOME
 // ═══════════════════════════════════════════════════════════
 function renderHome() {
-  if (!datosResumen.length) return;
+  if (!datosResumen.length) {
+    // Mostrar empty state
+    document.getElementById('stat-total').textContent = '0';
+    document.getElementById('stat-prom').textContent = '—';
+    document.getElementById('stat-aprobadas').textContent = '0';
+    document.getElementById('stat-alertas').textContent = '0';
+    document.getElementById('suc-list').innerHTML = `
+  <div style="background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:32px 20px;text-align:center">
+    <div style="font-size:40px;margin-bottom:14px">📊</div>
+    <div style="font-family:Montserrat;font-weight:800;font-size:15px;color:var(--white);margin-bottom:8px">Sin evaluaciones registradas</div>
+    <div style="font-size:12px;color:var(--gray);line-height:1.6;margin-bottom:20px">Todavía no hay evaluaciones en el sistema.<br>Iniciá la primera para ver el resumen aquí.</div>
+    <button class="btn btn-gold" style="padding:12px 28px;width:auto;display:inline-block" onclick="irAFormulario()">+ Iniciar primera evaluación</button>
+  </div>`;
+    return;
+  }
   // Filtrar según permisos: capacitadores solo ven sus evaluaciones
   const misEvals = (currentUser && !currentUser.isAdmin)
     ? datosResumen.filter(r => r.evaluador === currentUser.nombre)
@@ -1074,7 +1100,15 @@ function renderSucursales(lista) {
 
   const list = document.getElementById('suc-list');
   list.innerHTML = '';
-  list.appendChild(frag);
+  if (mostrar.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:32px 20px;color:var(--gray)">' +
+      '<div style="font-size:32px;margin-bottom:12px">📋</div>' +
+      '<div style="font-family:Montserrat;font-weight:700;font-size:14px;color:var(--white);margin-bottom:6px">Sin evaluaciones registradas</div>' +
+      '<div style="font-size:12px">Tocá "Nueva evaluación" para comenzar</div>' +
+      '</div>';
+  } else {
+    list.appendChild(frag);
+  }
 
   const btn = document.getElementById('ver-mas-btn');
   btn.style.display = hayMas ? 'block' : 'none';
@@ -1120,9 +1154,11 @@ async function eliminarEval(local, evaluado, fecha) {
 // AUTOCOMPLETE LOCAL
 // ═══════════════════════════════════════════════════════════
 function filtrarLocales() {
-  const val = document.getElementById('f-local').value.toLowerCase();
+  const val = document.getElementById('f-local').value.toLowerCase().trim();
   const list = document.getElementById('local-list');
-  const items = val.length < 1 ? LOCALES : LOCALES.filter(l=>l.toLowerCase().includes(val));
+  // Solo mostrar si hay al menos 1 caracter
+  if (val.length < 2) { list.classList.remove('open'); return; }
+  const items = LOCALES.filter(l=>l.toLowerCase().includes(val));
   if (!items.length) { list.classList.remove('open'); return; }
   list.innerHTML = items.slice(0,15).map(l =>
     `<div class="autocomplete-item" onclick="seleccionarLocal(this)">${esc(l)}</div>`
@@ -1821,37 +1857,52 @@ async function generarPDF() {
 // BORRADORES
 // ═══════════════════════════════════════════════════════════
 function guardarBorrador() {
-  const local    = document.getElementById('f-local').value.trim();
-  const evaluado = document.getElementById('f-evaluado').value.trim();
-  if (!local) { showToast('⚠ Completá el local antes de guardar'); return; }
+  const local    = (document.getElementById('f-local')?.value || '').trim();
+  const evaluado = (document.getElementById('f-evaluado')?.value || '').trim();
 
-  const activos   = MODS.filter(m => activeMods[m.id]);
-  const total     = activos.reduce((s,m) => s+m.items.length, 0);
-  const resp      = Object.keys(respuestas).filter(k => {
-    const mod = MODS.find(m => m.items.some(i=>i.id===k));
-    return mod && activeMods[mod.id];
-  }).length;
+  if (!local) {
+    showToast('\u26A0 Completá el local antes de guardar');
+    return;
+  }
 
-  borradores[local] = {
-    evaluado,
-    fecha:      document.getElementById('f-fecha').value,
-    evaluador:  document.getElementById('f-evaluador').value,
-    tipo:       document.getElementById('f-tipo').value,
-    rol:        document.getElementById('f-rol').value,
-    antiguedad: document.getElementById('f-antiguedad').value,
-    respuestas: { ...respuestas },
-    activeMods: { ...activeMods },
-    progreso:   total > 0 ? Math.round(resp/total*100) : 0
+  const activos = MODS.filter(m => activeMods[m.id]);
+  const total   = activos.reduce((s,m) => s + m.items.length, 0);
+  const resp    = activos.reduce((s,m) => s + m.items.filter(i => respuestas[i.id] !== undefined).length, 0);
+
+  // Guardar estado completo
+  const borrador = {
+    evaluado:   evaluado,
+    fecha:      (document.getElementById('f-fecha')?.value || ''),
+    evaluador:  (document.getElementById('f-evaluador')?.value || ''),
+    tipo:       (document.getElementById('f-tipo')?.value || ''),
+    rol:        (document.getElementById('f-rol')?.value || ''),
+    antiguedad: (document.getElementById('f-antiguedad')?.value || ''),
+    respuestas: Object.assign({}, respuestas),
+    activeMods: Object.assign({}, activeMods),
+    progreso:   total > 0 ? Math.round(resp / total * 100) : 0
   };
 
-  showToast('✓ Borrador guardado — podés continuar después');
-  renderHome();
+  borradores[local] = borrador;
+
+  // Persistir en sessionStorage para sobrevivir recarga
+  try { sessionStorage.setItem('borrador_' + local, JSON.stringify(borrador)); } catch(e) {}
+
+  showToast('\u2713 Borrador guardado');
   showTab('home');
+  setTimeout(() => renderHome(), 100);
 }
 
 function continuarBorrador(local) {
-  const b = borradores[local];
-  if (!b) { showToast('⚠ No hay borrador guardado'); return; }
+  let b = borradores[local];
+  // Intentar recuperar de sessionStorage si no está en memoria
+  if (!b) {
+    try {
+      const stored = sessionStorage.getItem('borrador_' + local);
+      if (stored) b = JSON.parse(stored);
+    } catch(e) {}
+  }
+  if (!b) { showToast('\u26A0 No hay borrador guardado'); return; }
+  borradores[local] = b; // restaurar en memoria
 
   // Restaurar estado
   Object.assign(respuestas, b.respuestas);
@@ -1879,8 +1930,9 @@ function continuarBorrador(local) {
 }
 
 function descartarBorrador(local) {
-  if (!confirm('¿Descartar el borrador de ' + local + '?')) return;
+  if (!confirm('\u00BFDescartar el borrador de ' + local + '?')) return;
   delete borradores[local];
+  try { sessionStorage.removeItem('borrador_' + local); } catch(e) {}
   renderHome();
   showToast('Borrador descartado');
 }
@@ -2005,7 +2057,7 @@ function toggleUserForm() {
 }
 async function cargarUsuarios() {
   const lista = document.getElementById('usuarios-lista');
-  lista.innerHTML = '<div class="spinner-wrap"><div class="spinner"></div></div>';
+  lista.innerHTML = '<div style="text-align:center;padding:40px 20px"><div class="spinner" style="margin:0 auto"></div><div style="color:var(--gray);font-size:12px;margin-top:12px">Cargando evaluaciones...</div></div>';
   try {
     const data = await apiGet({ action:'getUsuarios' });
     if (data.usuarios?.length) {
