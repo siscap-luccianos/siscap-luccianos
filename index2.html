@@ -394,12 +394,19 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
         <div class="stat-card"><div class="stat-label">Con alerta</div><div class="stat-value color-red" id="stat-alertas">—</div><div class="stat-sub">< 60%</div></div>
       </div>
     </div>
-    <!-- Card mis evaluaciones — solo para capacitadores -->
+    <!-- Cards para capacitadores: Total red + Mis evaluaciones -->
     <div id="mis-evals-wrap" style="display:none;margin-top:12px">
-      <div class="stat-card" style="border-color:var(--teal)">
-        <div class="stat-label">Mis evaluaciones</div>
-        <div class="stat-value" id="stat-mis" style="color:var(--teal)">—</div>
-        <div class="stat-sub" id="stat-mis-sub">de <span id="stat-total-red">—</span> en la red</div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">Evaluaciones totales</div>
+          <div class="stat-value" id="stat-total-red">—</div>
+          <div class="stat-sub">en la red</div>
+        </div>
+        <div class="stat-card" style="border-color:var(--teal)">
+          <div class="stat-label">Mis evaluaciones</div>
+          <div class="stat-value" id="stat-mis" style="color:var(--teal)">—</div>
+          <div class="stat-sub">realizadas por mí</div>
+        </div>
       </div>
     </div>
     <!-- Alertas -->
@@ -480,7 +487,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
       </div>
     </div>
     <div class="field"><label>Nombre del colaborador</label><input type="text" id="f-evaluado" placeholder="Nombre completo" oninput="updateFormMeta()" autocorrect="off"/></div>
-    <div class="field"><label>Capacitador</label><select id="f-evaluador"><option value="">— Seleccioná —</option><option>Gabriel Busquets</option><option>Tomás Ojeda</option><option>Ever Rodríguez</option><option>Lourdes Garcia</option><option>Nicolas Lopez</option><option>Ivan Herrera</option><option>Barbara Riccitelli</option><option>Fabricio</option><option>Carlos Torres</option></select></div>
+    <div class="field"><label>Capacitador</label><input type="text" id="f-evaluador" readonly style="color:var(--gray);cursor:default" placeholder="Tu nombre aparecerá aquí"/></div>
     <div class="field"><label>Tipo</label><select id="f-tipo"><option value="">— Seleccioná —</option><option>Inicial</option><option>Refuerzo</option><option>Seguimiento</option></select></div>
     <div class="field"><label>Rol</label><select id="f-rol"><option value="">— Seleccioná —</option><option>Colaborador</option><option>Responsable</option></select></div>
     <div class="field"><label>Antigüedad</label><select id="f-antiguedad"><option value="">— Seleccioná —</option><option>Menos de 1 mes</option><option>1 a 3 meses</option><option>3 a 6 meses</option><option>Más de 6 meses</option></select></div>
@@ -1080,8 +1087,9 @@ function renderHome() {
   const filtroEval = document.getElementById('filtro-evaluador')?.value || '';
   let misEvals;
   if (currentUser && !currentUser.isAdmin) {
-    // Capacitadores: solo sus evaluaciones
-    misEvals = datosResumen.filter(r => r.evaluador === currentUser.nombre);
+    // Capacitadores: solo sus evaluaciones (comparación case-insensitive)
+    const miNombre = (currentUser.nombre || '').trim().toLowerCase();
+    misEvals = datosResumen.filter(r => (r.evaluador || '').trim().toLowerCase() === miNombre);
   } else if (filtroEval) {
     // Gabi con filtro seleccionado: ver solo ese evaluador
     misEvals = datosResumen.filter(r => r.evaluador === filtroEval);
@@ -1111,8 +1119,9 @@ function renderHome() {
   const misEvalsWrap = document.getElementById('mis-evals-wrap');
   if (currentUser && !currentUser.isAdmin) {
     misEvalsWrap.style.display = 'block';
-    const misEvals = datosResumen.filter(r => r.evaluador === currentUser.nombre);
-    document.getElementById('stat-mis').textContent     = misEvals.length;
+    const miNombreStats = (currentUser.nombre || '').trim().toLowerCase();
+    const misEvalsData  = datosResumen.filter(r => (r.evaluador||'').trim().toLowerCase() === miNombreStats);
+    document.getElementById('stat-mis').textContent      = misEvalsData.length;
     document.getElementById('stat-total-red').textContent = datosResumen.length;
   } else {
     misEvalsWrap.style.display = 'none';
@@ -1174,7 +1183,7 @@ function renderSucursales(lista) {
     // Todos los colabs de este local
     const filtroEv = document.getElementById('filtro-evaluador')?.value || '';
     const todosColabs = (currentUser && !currentUser.isAdmin)
-      ? datosResumen.filter(x=>x.local===r.local && x.evaluador===currentUser.nombre)
+      ? datosResumen.filter(x=>x.local===r.local && (x.evaluador||'').trim().toLowerCase()===(currentUser.nombre||'').trim().toLowerCase())
       : filtroEv
         ? datosResumen.filter(x=>x.local===r.local && x.evaluador===filtroEv)
         : datosResumen.filter(x=>x.local===r.local);
