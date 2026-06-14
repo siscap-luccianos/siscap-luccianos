@@ -860,31 +860,45 @@ function showTab(tab) {
   window.scrollTo(0,0);
 }
 function irAFormulario(local='', evaluado='') {
-  // Resetear estado del formulario siempre
+  // 1. Resetear estado interno
   respuestas = {};
   yaEnviado  = false;
 
-  // Restaurar módulos a activo
+  // 2. Resetear módulos a todos activos
   Object.keys(activeMods).forEach(k => activeMods[k] = true);
+
+  // 3. Guardar valores que vienen por parámetro
+  preLocal    = local  || null;
+  preEvaluado = evaluado || null;
+
+  // 4. Construir el formulario (ítems, guías, etc.)
+  buildForm();
+
+  // 5. Setear campos de cabecera DESPUÉS del buildForm
+  //    buildForm ya setea f-local y f-evaluado si preLocal/preEvaluado existen
+  //    Solo resetear los que NO vienen por parámetro
+  const elLocal    = document.getElementById('f-local');
+  const elEvaluado = document.getElementById('f-evaluado');
+
+  if (local)    { elLocal.value    = local;    }
+  else          { elLocal.value    = '';        }
+  if (evaluado) { elEvaluado.value = evaluado; }
+  else          { elEvaluado.value = '';        }
+
+  // Resetear selects siempre para evaluación nueva
+  document.getElementById('f-tipo').selectedIndex       = 0;
+  document.getElementById('f-rol').selectedIndex        = 0;
+  document.getElementById('f-antiguedad').selectedIndex = 0;
+
+  // 6. Actualizar meta y botones de módulo
   document.querySelectorAll('.mod-toggle').forEach(btn => {
     btn.classList.add('active');
     const label = btn.textContent.replace(/^[✓✗] /, '');
     btn.textContent = '✓ ' + label;
   });
 
-  preLocal    = local || null;
-  preEvaluado = evaluado || null;
-
-  buildForm();
-
-  // Resetear campos de cabecera
-  if (!local)    document.getElementById('f-local').value    = '';
-  if (!evaluado) document.getElementById('f-evaluado').value = '';
-  document.getElementById('f-tipo').selectedIndex      = 0;
-  document.getElementById('f-rol').selectedIndex       = 0;
-  document.getElementById('f-antiguedad').selectedIndex = 0;
-
   updateFormMeta();
+  updateProgress();
   showTab('form');
 }
 function nuevaEvaluacion() {
@@ -1265,8 +1279,8 @@ function buildForm() {
   const fEl = document.getElementById('f-fecha');
   fEl.max = toISO(hoy); fEl.min = toISO(min); fEl.value = toISO(hoy);
 
-  if (preLocal)    { document.getElementById('f-local').value   = preLocal;    updateFormMeta(); }
-  if (preEvaluado) { document.getElementById('f-evaluado').value= preEvaluado; updateFormMeta(); }
+  // Los campos se setean en irAFormulario, aquí solo actualizamos meta
+  // para que el header del formulario muestre los valores correctos
 
   if (!preLocal && !preEvaluado) {
     respuestas = {};
