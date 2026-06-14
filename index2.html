@@ -387,26 +387,25 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
     <!-- Stats -->
     <div>
       <div class="section-title">Resumen</div>
-      <div class="stat-grid">
-        <div class="stat-card gold"><div class="stat-label">Evaluaciones</div><div class="stat-value" id="stat-total">—</div><div class="stat-sub">registradas</div></div>
-        <div class="stat-card"><div class="stat-label">Promedio red</div><div class="stat-value" id="stat-prom">—</div><div class="stat-sub">% general</div></div>
+      <!-- Cards admin (Gabi) -->
+      <div id="cards-admin" class="stat-grid">
+        <div class="stat-card gold"><div class="stat-label">Evaluaciones totales</div><div class="stat-value" id="stat-total">—</div><div class="stat-sub">en la red</div></div>
+        <div class="stat-card"><div class="stat-label">Promedio general</div><div class="stat-value" id="stat-prom">—</div><div class="stat-sub">% de la red</div></div>
         <div class="stat-card"><div class="stat-label">Aprobadas</div><div class="stat-value color-green" id="stat-aprobadas">—</div><div class="stat-sub">≥ 80%</div></div>
         <div class="stat-card"><div class="stat-label">Con alerta</div><div class="stat-value color-red" id="stat-alertas">—</div><div class="stat-sub">< 60%</div></div>
       </div>
-    </div>
-    <!-- Cards para capacitadores: Total red + Mis evaluaciones -->
-    <div id="mis-evals-wrap" style="display:none;margin-top:12px">
-      <div class="stat-grid">
-        <div class="stat-card">
-          <div class="stat-label">Evaluaciones totales</div>
-          <div class="stat-value" id="stat-total-red">—</div>
-          <div class="stat-sub">en la red</div>
+      <!-- Cards capacitador -->
+      <div id="cards-cap" style="display:none;display:flex;flex-direction:column;gap:12px">
+        <div class="stat-grid">
+          <div class="stat-card gold"><div class="stat-label">Evaluaciones totales</div><div class="stat-value" id="stat-total-red">—</div><div class="stat-sub">en la red</div></div>
+          <div class="stat-card" style="border-color:var(--teal)"><div class="stat-label">Mis evaluaciones</div><div class="stat-value" id="stat-mis" style="color:var(--teal)">—</div><div class="stat-sub">realizadas por mí</div></div>
         </div>
-        <div class="stat-card" style="border-color:var(--teal)">
-          <div class="stat-label">Mis evaluaciones</div>
-          <div class="stat-value" id="stat-mis" style="color:var(--teal)">—</div>
-          <div class="stat-sub">realizadas por mí</div>
+        <div class="stat-grid">
+          <div class="stat-card"><div class="stat-label">Promedio general</div><div class="stat-value" id="stat-prom-cap">—</div><div class="stat-sub">% de mis evals</div></div>
+          <div class="stat-card"><div class="stat-label">Aprobadas</div><div class="stat-value color-green" id="stat-aprobadas-cap">—</div><div class="stat-sub">≥ 80%</div></div>
+          <div class="stat-card"><div class="stat-label">Con alerta</div><div class="stat-value color-red" id="stat-alertas-cap">—</div><div class="stat-sub">< 60%</div></div>
         </div>
+      </div>
       </div>
     </div>
     <!-- Alertas -->
@@ -487,7 +486,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
       </div>
     </div>
     <div class="field"><label>Nombre del colaborador</label><input type="text" id="f-evaluado" placeholder="Nombre completo" oninput="updateFormMeta()" autocorrect="off"/></div>
-    <div class="field"><label>Capacitador</label><input type="text" id="f-evaluador" readonly style="color:var(--gray);cursor:default" placeholder="Tu nombre aparecerá aquí"/></div>
+    <div class="field"><label>Capacitador</label><select id="f-evaluador"><option value="">— Seleccioná —</option><option>Gabriel Busquets</option><option>Tomás Ojeda</option><option>Ever Rodríguez</option><option>Lourdes Garcia</option><option>Nicolas Lopez</option><option>Ivan Herrera</option><option>Barbara Riccitelli</option><option>Fabricio</option><option>Carlos Torres</option></select></div>
     <div class="field"><label>Tipo</label><select id="f-tipo"><option value="">— Seleccioná —</option><option>Inicial</option><option>Refuerzo</option><option>Seguimiento</option></select></div>
     <div class="field"><label>Rol</label><select id="f-rol"><option value="">— Seleccioná —</option><option>Colaborador</option><option>Responsable</option></select></div>
     <div class="field"><label>Antigüedad</label><select id="f-antiguedad"><option value="">— Seleccioná —</option><option>Menos de 1 mes</option><option>1 a 3 meses</option><option>3 a 6 meses</option><option>Más de 6 meses</option></select></div>
@@ -575,16 +574,8 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
       <div class="config-section-body" id="usuarios-lista"><div class="spinner-wrap"><div class="spinner"></div></div></div>
       <div style="padding:10px 14px;border-top:1px solid #2a2a2a">
         <div class="section-title" style="margin-bottom:8px">👤 Entrar como otro usuario</div>
-<select id="impersonar-sel" class="filter-eval" style="width:100%;margin-bottom:8px">
+        <select id="impersonar-sel" class="filter-eval" style="width:100%;margin-bottom:8px">
           <option value="">— Seleccioná un usuario —</option>
-          <option value="tomyojeda25">Tomás Ojeda (@tomyojeda25)</option>
-          <option value="ever">Ever Rodríguez (@ever)</option>
-          <option value="lola73">Lourdes Garcia (@lola73)</option>
-          <option value="nico">Nicolas Lopez (@nico)</option>
-          <option value="ivanherrera01">Ivan Herrera (@ivanherrera01)</option>
-          <option value="barbarariccitelli">Barbara Riccitelli (@barbarariccitelli)</option>
-          <option value="fabricio@luccianos.com.ar">Fabricio (@fabricio)</option>
-          <option value="operaciones.franquicias@luccianos.com.ar">Carlos Torres (@operaciones)</option>
         </select>
         <button class="btn btn-outline btn-sm" style="width:100%;padding:10px" onclick="impersonarUsuario()">Entrar como este usuario</button>
       </div>
@@ -1087,9 +1078,8 @@ function renderHome() {
   const filtroEval = document.getElementById('filtro-evaluador')?.value || '';
   let misEvals;
   if (currentUser && !currentUser.isAdmin) {
-    // Capacitadores: solo sus evaluaciones (comparación case-insensitive)
-    const miNombre = (currentUser.nombre || '').trim().toLowerCase();
-    misEvals = datosResumen.filter(r => (r.evaluador || '').trim().toLowerCase() === miNombre);
+    // Capacitadores: solo sus evaluaciones
+    misEvals = datosResumen.filter(r => r.evaluador === currentUser.nombre);
   } else if (filtroEval) {
     // Gabi con filtro seleccionado: ver solo ese evaluador
     misEvals = datosResumen.filter(r => r.evaluador === filtroEval);
@@ -1108,23 +1098,41 @@ function renderHome() {
   // stats
   // Solo contar evaluaciones reales (no borradores) en las stats
   const ultimasReales = ultimas.filter(r => !r.esSoloBorrador);
-  document.getElementById('stat-total').textContent     = datosResumen.length;
-  document.getElementById('stat-prom').textContent      = ultimasReales.length
-    ? Math.round(ultimasReales.reduce((s,r)=>s+r.porcentaje,0)/ultimasReales.length)+'%'
-    : '—';
-  document.getElementById('stat-aprobadas').textContent = ultimasReales.filter(r=>r.porcentaje>=UMBRAL_OK).length;
-  document.getElementById('stat-alertas').textContent   = ultimasReales.filter(r=>r.porcentaje<UMBRAL_OBS).length;
+  const isAdmin = currentUser && currentUser.isAdmin;
 
-  // Card "Mis evaluaciones" — solo para capacitadores (no admin)
-  const misEvalsWrap = document.getElementById('mis-evals-wrap');
-  if (currentUser && !currentUser.isAdmin) {
-    misEvalsWrap.style.display = 'block';
-    const miNombreStats = (currentUser.nombre || '').trim().toLowerCase();
-    const misEvalsData  = datosResumen.filter(r => (r.evaluador||'').trim().toLowerCase() === miNombreStats);
-    document.getElementById('stat-mis').textContent      = misEvalsData.length;
-    document.getElementById('stat-total-red').textContent = datosResumen.length;
+  // Determinar si hay filtro de evaluador activo (solo admin)
+  const filtroActivo = isAdmin
+    ? (document.getElementById('filtro-evaluador')?.value || '')
+    : '';
+
+  // Datos para las stats — filtrados si hay filtro activo
+  const dataStats = filtroActivo
+    ? datosResumen.filter(r => (r.evaluador||'').trim().toLowerCase() === filtroActivo.trim().toLowerCase())
+    : isAdmin ? datosResumen : datosResumen.filter(r => (r.evaluador||'').trim().toLowerCase() === (currentUser?.nombre||'').trim().toLowerCase());
+
+  const ultimasStats = dataStats.filter(r => !r.esSoloBorrador);
+
+  if (isAdmin && !filtroActivo) {
+    // Gabi sin filtro — ver toda la red
+    document.getElementById('cards-admin').style.display = 'grid';
+    document.getElementById('cards-cap').style.display   = 'none';
+    document.getElementById('stat-total').textContent     = datosResumen.length;
+    document.getElementById('stat-prom').textContent      = ultimasReales.length
+      ? Math.round(ultimasReales.reduce((s,r)=>s+r.porcentaje,0)/ultimasReales.length)+'%' : '—';
+    document.getElementById('stat-aprobadas').textContent = ultimasReales.filter(r=>r.porcentaje>=UMBRAL_OK).length;
+    document.getElementById('stat-alertas').textContent   = ultimasReales.filter(r=>r.porcentaje<UMBRAL_OBS).length;
   } else {
-    misEvalsWrap.style.display = 'none';
+    // Capacitador O Gabi con filtro — ver como el capacitador
+    document.getElementById('cards-admin').style.display = 'none';
+    document.getElementById('cards-cap').style.display   = 'flex';
+    const miNombreSel = filtroActivo || (currentUser?.nombre||'');
+    const misEvals = datosResumen.filter(r=>(r.evaluador||'').trim().toLowerCase()===miNombreSel.trim().toLowerCase());
+    document.getElementById('stat-total-red').textContent    = datosResumen.length;
+    document.getElementById('stat-mis').textContent          = misEvals.length;
+    document.getElementById('stat-prom-cap').textContent     = misEvals.length
+      ? Math.round(misEvals.reduce((s,r)=>s+r.porcentaje,0)/misEvals.length)+'%' : '—';
+    document.getElementById('stat-aprobadas-cap').textContent = misEvals.filter(r=>r.porcentaje>=UMBRAL_OK).length;
+    document.getElementById('stat-alertas-cap').textContent   = misEvals.filter(r=>r.porcentaje<UMBRAL_OBS).length;
   }
 
   // alertas
@@ -1183,7 +1191,7 @@ function renderSucursales(lista) {
     // Todos los colabs de este local
     const filtroEv = document.getElementById('filtro-evaluador')?.value || '';
     const todosColabs = (currentUser && !currentUser.isAdmin)
-      ? datosResumen.filter(x=>x.local===r.local && (x.evaluador||'').trim().toLowerCase()===(currentUser.nombre||'').trim().toLowerCase())
+      ? datosResumen.filter(x=>x.local===r.local && x.evaluador===currentUser.nombre)
       : filtroEv
         ? datosResumen.filter(x=>x.local===r.local && x.evaluador===filtroEv)
         : datosResumen.filter(x=>x.local===r.local);
@@ -2086,10 +2094,26 @@ async function toggleUsuario(usuario, estadoActual) {
 }
 </script>
 <script>
+// Service Worker — actualización automática sin borrar caché manualmente
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(regs => {
-    regs.forEach(reg => reg.unregister());
-    if (regs.length) window.location.reload();
+  navigator.serviceWorker.register('./sw.js').then(reg => {
+    // Verificar actualizaciones cada vez que se abre la app
+    reg.update();
+
+    reg.addEventListener('updatefound', () => {
+      const newWorker = reg.installing;
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          // Hay nueva versión disponible — recargar automático
+          newWorker.postMessage({ action: 'skipWaiting' });
+        }
+      });
+    });
+  });
+
+  // Cuando el SW se activa, recargar la página para tener la versión nueva
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload();
   });
 }
 </script>
