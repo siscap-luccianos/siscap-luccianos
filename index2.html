@@ -6,25 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="theme-color" content="#0D0D0D"/>
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-<meta http-equiv="Pragma" content="no-cache"/>
-<meta http-equiv="Expires" content="0"/>
 <title>SisCap 2</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<script>
-// Cache busting — fuerza recarga si la versión cambió
-(function() {
-  var VER = '202606140647';
-  var stored = localStorage.getItem('siscap_version');
-  if (stored && stored !== VER) {
-    localStorage.setItem('siscap_version', VER);
-    // Recargar limpio
-    window.location.reload(true);
-  } else {
-    localStorage.setItem('siscap_version', VER);
-  }
-})();
-</script>
 <style>
 /* ── VARIABLES ──────────────────────────────────────────── */
 :root{
@@ -2023,6 +2006,30 @@ async function toggleUsuario(usuario, estadoActual) {
     await apiPost({ action:'updateUser', usuario, estado:nuevoEstado });
     showToast('✓ Usuario '+nuevoEstado); cargarUsuarios();
   } catch(e) { showToast('⚠ Error'); }
+}
+</script>
+<script>
+// Service Worker — actualización automática sin borrar caché manualmente
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').then(reg => {
+    // Verificar actualizaciones cada vez que se abre la app
+    reg.update();
+
+    reg.addEventListener('updatefound', () => {
+      const newWorker = reg.installing;
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          // Hay nueva versión disponible — recargar automático
+          newWorker.postMessage({ action: 'skipWaiting' });
+        }
+      });
+    });
+  });
+
+  // Cuando el SW se activa, recargar la página para tener la versión nueva
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload();
+  });
 }
 </script>
 </body>
