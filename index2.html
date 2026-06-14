@@ -374,6 +374,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
     <div><div class="logo">SisCap</div><div class="badge-label">v2.0</div></div>
     <div style="display:flex;align-items:center;gap:10px">
       <button class="config-btn" id="cfg-btn" onclick="abrirConfig()" title="Configuración">⚙</button>
+      <button id="btn-volver-admin" class="config-btn" onclick="volverComoAdmin()" title="Volver como admin" style="font-size:14px;display:none;color:var(--gold)">↩ Admin</button>
       <button class="config-btn" onclick="cerrarSesion()" title="Cerrar sesión" style="font-size:16px">⏻</button>
       <div style="display:flex;align-items:center;gap:8px">
         <div class="avatar" id="home-avatar">G</div>
@@ -421,9 +422,12 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
           <option>Gabriel Busquets</option>
           <option>Tomás Ojeda</option>
           <option>Ever Rodríguez</option>
-          <option>Lourdes</option>
-          <option>Nicolás López</option>
-          <option>Iván Herrera</option>
+          <option>Lourdes Garcia</option>
+          <option>Nicolas Lopez</option>
+          <option>Ivan Herrera</option>
+          <option>Barbara Riccitelli</option>
+          <option>Fabricio</option>
+          <option>Carlos Torres</option>
         </select>
       </div>
       <div class="search-wrap" style="margin-bottom:10px">
@@ -468,7 +472,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
       </div>
     </div>
     <div class="field"><label>Nombre del colaborador</label><input type="text" id="f-evaluado" placeholder="Nombre completo" oninput="updateFormMeta()" autocorrect="off"/></div>
-    <div class="field"><label>Capacitador</label><select id="f-evaluador"><option value="">— Seleccioná —</option><option>Gabriel Busquets</option><option>Tomás Ojeda</option><option>Ever Rodríguez</option><option>Lourdes</option><option>Nicolás López</option><option>Iván Herrera</option></select></div>
+    <div class="field"><label>Capacitador</label><select id="f-evaluador"><option value="">— Seleccioná —</option><option>Gabriel Busquets</option><option>Tomás Ojeda</option><option>Ever Rodríguez</option><option>Lourdes Garcia</option><option>Nicolas Lopez</option><option>Ivan Herrera</option><option>Barbara Riccitelli</option><option>Fabricio</option><option>Carlos Torres</option></select></div>
     <div class="field"><label>Tipo</label><select id="f-tipo"><option value="">— Seleccioná —</option><option>Inicial</option><option>Refuerzo</option><option>Seguimiento</option></select></div>
     <div class="field"><label>Rol</label><select id="f-rol"><option value="">— Seleccioná —</option><option>Colaborador</option><option>Responsable</option></select></div>
     <div class="field"><label>Antigüedad</label><select id="f-antiguedad"><option value="">— Seleccioná —</option><option>Menos de 1 mes</option><option>1 a 3 meses</option><option>3 a 6 meses</option><option>Más de 6 meses</option></select></div>
@@ -554,6 +558,13 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
         </div>
       </div>
       <div class="config-section-body" id="usuarios-lista"><div class="spinner-wrap"><div class="spinner"></div></div></div>
+      <div style="padding:10px 14px;border-top:1px solid #2a2a2a">
+        <div class="section-title" style="margin-bottom:8px">👤 Entrar como otro usuario</div>
+        <select id="impersonar-sel" class="filter-eval" style="width:100%;margin-bottom:8px">
+          <option value="">— Seleccioná un usuario —</option>
+        </select>
+        <button class="btn btn-outline btn-sm" style="width:100%;padding:10px" onclick="impersonarUsuario()">Entrar como este usuario</button>
+      </div>
     </div>
   </div>
 </div>
@@ -564,19 +575,22 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 // ═══════════════════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════════════════
-const SHEET_URL   = 'https://script.google.com/macros/s/AKfycby3YyURLFNfiRY-L8oBXMDTwHDyP-ppd_LoTf3_q1B8VLWToQj9q-vW7MnzfgxhCeGlMQ/exec';
+const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbzkLfJYu-1oT3VIuhKmDOkj4xXNlFpn5mYUY3JP7QMqQs9PpUBicSNYsln9pvVMkqt9ww/exec';
 const UMBRAL_OK   = 80;
 const UMBRAL_OBS  = 60;
 const DIAS_ALERTA = 30;
 const MAX_SUC     = 5;
 
 const USUARIOS = {
-  gabi:    { pass:'cap2024', nombre:'Gabriel Busquets', isAdmin:true },
-  tomas:   { pass:'cap2024', nombre:'Tomás Ojeda' },
-  ever:    { pass:'cap2024', nombre:'Ever Rodríguez' },
-  lourdes: { pass:'cap2024', nombre:'Lourdes' },
-  nico:    { pass:'cap2024', nombre:'Nicolás López' },
-  ivan:    { pass:'cap2024', nombre:'Iván Herrera' },
+  gabi:           { pass:'siscap2026',   nombre:'Gabriel Busquets', isAdmin:true },
+  tomyojeda25:    { pass:'Luccianos2021', nombre:'Tomás Ojeda' },
+  ever:           { pass:'123987',        nombre:'Ever Rodríguez' },
+  lola73:         { pass:'Lola2003',      nombre:'Lourdes Garcia' },
+  nico:           { pass:'Luccianos2026.', nombre:'Nicolas Lopez' },
+  ivanherrera01:  { pass:'Otto1234',      nombre:'Ivan Herrera' },
+  barbarariccitelli: { pass:'Luccianos2026', nombre:'Barbara Riccitelli' },
+  'fabricio@luccianos.com.ar': { pass:'Renata2525', nombre:'Fabricio' },
+  'operaciones.franquicias@luccianos.com.ar': { pass:'Luccianos2025', nombre:'Carlos Torres' },
 };
 
 const LOCALES = [
@@ -1937,6 +1951,33 @@ function descartarBorrador(local) {
 // ═══════════════════════════════════════════════════════════
 // CONFIGURACIÓN — USUARIOS
 // ═══════════════════════════════════════════════════════════
+
+
+function impersonarUsuario() {
+  const sel = document.getElementById('impersonar-sel');
+  const user = sel.value;
+  if (!user) { showToast('\u26A0 Seleccioná un usuario'); return; }
+  const u = USUARIOS[user];
+  if (!u) { showToast('\u26A0 Usuario no encontrado'); return; }
+  if (!confirm('\u00BFEntrás como ' + u.nombre + '? Tu sesión actual se cerrará.')) return;
+  // Guardar usuario admin para volver
+  sessionStorage.setItem('admin_backup', JSON.stringify(currentUser));
+  _loginExitoso(user, u.nombre, u.isAdmin || false);
+  const btnVolver = document.getElementById('btn-volver-admin');
+  if (btnVolver) btnVolver.style.display = '';
+  showTab('home');
+  showToast('\u2713 Entraste como ' + u.nombre);
+}
+
+function volverComoAdmin() {
+  const backup = sessionStorage.getItem('admin_backup');
+  if (!backup) return;
+  const admin = JSON.parse(backup);
+  sessionStorage.removeItem('admin_backup');
+  _loginExitoso(admin.username, admin.nombre, true);
+  showTab('home');
+  showToast('\u2713 Volviste como ' + admin.nombre);
+}
 
 function cerrarSesion() {
   if (!confirm('¿Cerrar sesión?')) return;
