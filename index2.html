@@ -11,6 +11,20 @@
 <meta http-equiv="Expires" content="0"/>
 <title>SisCap 2</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script>
+// Cache busting — fuerza recarga si la versión cambió
+(function() {
+  var VER = '202606140647';
+  var stored = localStorage.getItem('siscap_version');
+  if (stored && stored !== VER) {
+    localStorage.setItem('siscap_version', VER);
+    // Recargar limpio
+    window.location.reload(true);
+  } else {
+    localStorage.setItem('siscap_version', VER);
+  }
+})();
+</script>
 <style>
 /* ── VARIABLES ──────────────────────────────────────────── */
 :root{
@@ -277,8 +291,8 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 .hosp-toggle{margin-top:6px;font-size:11px;color:var(--gold);cursor:pointer;display:flex;align-items:center;gap:4px;background:none;border:none;padding:0;font-family:'Inter',sans-serif}
 .hosp-panel{margin-top:7px;background:#1a1500;border-left:2px solid var(--gold-dark);border-radius:0 var(--rs) var(--rs) 0;padding:9px 11px;font-size:12px;color:#ccc;line-height:1.6;display:none}
 .hosp-panel.open{display:block}
-.obs-hosp{background:#1a1500;border:1px solid var(--gold-dark);border-radius:var(--rs);padding:11px;margin-top:8px}
-.obs-hosp-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+.obs-hosp{background:#0a1f18;border:1px solid #2a6b50;border-radius:var(--rs);padding:11px;margin-top:8px}
+.obs-hosp-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#5DCAA5;margin-bottom:5px}
 .obs-hosp textarea{width:100%;background:transparent;border:none;font-family:'Inter',sans-serif;font-size:13px;color:var(--white);resize:vertical;min-height:48px;outline:none}
 
 /* ── FOOTER FORMULARIO ──────────────────────────────────── */
@@ -377,6 +391,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
     <div><div class="logo">SisCap</div><div class="badge-label">v2.0</div></div>
     <div style="display:flex;align-items:center;gap:10px">
       <button class="config-btn" id="cfg-btn" onclick="abrirConfig()" title="Configuración">⚙</button>
+      <button class="config-btn" onclick="cerrarSesion()" title="Cerrar sesión" style="font-size:16px">⏻</button>
       <div style="display:flex;align-items:center;gap:8px">
         <div class="avatar" id="home-avatar">G</div>
         <span style="font-size:13px;color:var(--white);font-weight:500" id="home-name">—</span>
@@ -897,6 +912,14 @@ function irAFormulario(local='', evaluado='') {
   preLocal    = local  || null;
   preEvaluado = evaluado || null;
 
+  // Resetear botón enviar siempre
+  const btnEnv = document.getElementById('btn-enviar');
+  if (btnEnv) {
+    btnEnv.textContent = 'Enviar evaluación';
+    btnEnv.disabled    = false;
+    btnEnv.style.cssText = '';
+  }
+
   // 4. Construir el formulario (ítems, guías, etc.)
   buildForm();
 
@@ -1000,10 +1023,13 @@ async function cargarDatos() {
   }
   renderHome();
 }
-function recargarDatos() {
+async function recargarDatos() {
+  const btn = document.querySelector('[onclick="recargarDatos()"]');
+  if (btn) { btn.textContent = '⏳ Actualizando...'; btn.disabled = true; }
   document.getElementById('suc-list').innerHTML = '<div style="text-align:center;padding:40px 20px"><div class="spinner" style="margin:0 auto"></div><div style="color:var(--gray);font-size:12px;margin-top:12px">Cargando evaluaciones...</div></div>';
-  showToast('Actualizando...');
-  cargarDatos();
+  await cargarDatos();
+  if (btn) { btn.textContent = '↻ Actualizar'; btn.disabled = false; }
+  showToast('✓ Datos actualizados');
 }
 function demoData() {
   const h = new Date();
@@ -1249,8 +1275,9 @@ function renderSucursales(lista) {
 
         const infoDiv = document.createElement('div');
         infoDiv.className = 'colab-info';
-        infoDiv.innerHTML = '<div class="colab-name">' + esc(b.evaluado||'Sin nombre') + '</div>'
-          + '<div class="colab-date">Guardado: ' + formatFecha(b.fecha) + ' · ' + Math.round(b.progreso||0) + '% completado</div>';
+        const nombreBorr = b.evaluado && b.evaluado.trim() ? b.evaluado : 'Sin nombre asignado';
+        infoDiv.innerHTML = '<div class="colab-name">' + esc(nombreBorr) + '</div>'
+          + '<div class="colab-date" style="color:var(--yellow)">⏸ Guardado: ' + formatFecha(b.fecha) + ' · ' + Math.round(b.progreso||0) + '% completado</div>';
 
         const actsDiv = document.createElement('div');
         actsDiv.style.cssText = 'display:flex;align-items:center;gap:8px';
@@ -1402,7 +1429,7 @@ function buildForm() {
       const obsDiv = document.createElement('div');
       obsDiv.className = 'obs-hosp';
       obsDiv.innerHTML = `<div class="obs-hosp-label">🤝 Observación de Hospitalidad</div>
-        <textarea id="obs-hospitalidad" placeholder="Observaciones generales sobre la actitud hospitalaria..."></textarea>`;
+        <textarea id="obs-hospitalidad" placeholder="¿Crea momentos genuinos de conexión con el cliente?"></textarea>`;
       block.appendChild(obsDiv);
     }
     frag.appendChild(block);
@@ -1703,6 +1730,7 @@ function verEval(local, evaluado, fecha) {
       const lbl = scoreLabels[sc] || String(sc);
       const cls2= scoreClass[sc] || 'ver-sna';
       html += `<div class="ver-item">
+        <div style="font-size:9px;color:var(--gold);font-weight:700;margin-bottom:2px">Ítem ${it.n || it.id}</div>
         <div class="ver-item-label">${esc(it.texto)}</div>
         <span class="ver-score ${cls2}">${lbl}</span>
         ${it.comentario ? `<div class="ver-comment">💬 ${esc(it.comentario)}</div>` : ''}
@@ -1768,8 +1796,13 @@ async function generarPDF() {
     if (data.status==='ok' && data.base64) {
       const isIOS    = /iPad|iPhone|iPod/.test(navigator.userAgent);
       const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-      if ((isIOS||isSafari) && data.url) { window.open(data.url,'_blank'); showToast('✓ PDF abierto'); }
-      else {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile && data.url) {
+        // En mobile abrir URL de Drive directamente (más confiable)
+        window.open(data.url, '_blank');
+        showToast('✓ PDF listo — abrí desde Drive');
+      } else {
+        // Desktop: descarga directa via blob
         const blob=base64ToBlob(data.base64,data.mime||'application/pdf');
         const url=URL.createObjectURL(blob);
         const a=document.createElement('a');
@@ -1813,10 +1846,10 @@ async function reimprimirPDF(local, evaluado, fecha, porcentaje) {
   try {
     const data=await apiPost({ action:'pdf', payload });
     if (data.status==='ok'&&data.base64) {
-      const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
-      const isSafari=/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-      if ((isIOS||isSafari)&&data.url) { window.open(data.url,'_blank'); }
-      else {
+      const isMobileR = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobileR && data.url) {
+        window.open(data.url, '_blank');
+      } else {
         const blob=base64ToBlob(data.base64,data.mime||'application/pdf');
         const url=URL.createObjectURL(blob);
         const a=document.createElement('a');
@@ -1921,6 +1954,28 @@ function descartarBorrador(local) {
 // ═══════════════════════════════════════════════════════════
 // CONFIGURACIÓN — USUARIOS
 // ═══════════════════════════════════════════════════════════
+
+function cerrarSesion() {
+  if (!confirm('¿Cerrar sesión?')) return;
+  // Limpiar estado
+  currentUser   = null;
+  datosResumen  = [];
+  ultimoResult  = null;
+  respuestas    = {};
+  yaEnviado     = false;
+  Object.keys(borradores).forEach(k => delete borradores[k]);
+  // Limpiar sessionStorage
+  try { sessionStorage.clear(); } catch(e) {}
+  // Limpiar campos login
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').textContent = '';
+  // Volver al login
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-login').classList.add('active');
+  showToast('Sesión cerrada');
+}
+
 function abrirConfig() {
   if (!currentUser?.isAdmin) { showToast('⚠ Solo el administrador puede acceder'); return; }
   cargarUsuarios(); showTab('config');
