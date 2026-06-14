@@ -549,7 +549,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 // ═══════════════════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════════════════
-const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbx9VC0i_uZvbnAllbyGgs08qJaPt1gUCin9Ci3b3x4Cxeg2Lsxyxg8yItmEijHQpgTcyg/exec';
+const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbzWkk-wY37Pm0k6OOt58ibEOmyUcX6RQFjXKqL0xkjNcHOBG9yXdPAKI6_m5eZzrk5u/exec';
 const UMBRAL_OK   = 80;
 const UMBRAL_OBS  = 60;
 const DIAS_ALERTA = 30;
@@ -784,26 +784,68 @@ function calcLabel(v) {
 // ═══════════════════════════════════════════════════════════
 // AUTH / LOGIN
 // ═══════════════════════════════════════════════════════════
-function doLogin() {
+async function doLogin() {
   const user = document.getElementById('login-user').value.trim().toLowerCase();
   const pass = document.getElementById('login-pass').value.trim();
   const err  = document.getElementById('login-error');
-  const u = USUARIOS[user];
-  if (!u) { err.textContent = 'Usuario no encontrado.'; return; }
-  if (u.pass !== pass) { err.textContent = 'Contraseña incorrecta.'; return; }
-  currentUser = { ...u, username: user };
-  document.getElementById('home-avatar').textContent = u.nombre.charAt(0);
-  document.getElementById('home-name').textContent   = u.nombre.split(' ')[0];
-  // preseleccionar evaluador
-  const sel = document.getElementById('f-evaluador');
-  for (let i=0; i<sel.options.length; i++) {
-    if (sel.options[i].text === u.nombre) { sel.selectedIndex=i; break; }
+  const btn  = document.querySelector('#screen-login .btn-gold');
+
+  if (!user || !pass) { err.textContent = 'Completá usuario y contraseña.'; return; }
+
+  // 1. Primero verificar usuarios hardcodeados (offline, instantáneo)
+  const uLocal = USUARIOS[user];
+  if (uLocal && uLocal.pass === pass) {
+    _loginExitoso(user, uLocal.nombre, uLocal.isAdmin || false);
+    return;
   }
-  // mostrar/ocultar botón config
-  document.getElementById('cfg-btn').style.display = u.isAdmin ? '' : 'none';
+
+  // 2. Si no está en local, consultar Sheets (usuarios creados desde config)
+  err.textContent = '';
+  btn.textContent = 'Verificando...';
+  btn.disabled = true;
+
+  try {
+    const data = await apiGet({ action: 'login', user, pass });
+    btn.textContent = 'Ingresar';
+    btn.disabled = false;
+
+    if (data.status === 'ok') {
+      _loginExitoso(user, data.nombre, data.isAdmin || false);
+    } else if (data.status === 'pendiente') {
+      err.textContent = 'Tu cuenta está pendiente de aprobación. Contactá a Gabi.';
+    } else {
+      err.textContent = 'Usuario o contraseña incorrectos.';
+    }
+  } catch(e) {
+    btn.textContent = 'Ingresar';
+    btn.disabled = false;
+    // Si falla la conexión y el usuario existe local con pass incorrecto
+    if (uLocal) {
+      err.textContent = 'Contraseña incorrecta.';
+    } else {
+      err.textContent = 'Error de conexión. Intentá de nuevo.';
+    }
+  }
+}
+
+function _loginExitoso(user, nombre, isAdmin) {
+  currentUser = { username: user, nombre, isAdmin, pass: '' };
+  document.getElementById('home-avatar').textContent = nombre.charAt(0).toUpperCase();
+  document.getElementById('home-name').textContent   = nombre.split(' ')[0];
+  document.getElementById('login-error').textContent = '';
+
+  // Preseleccionar evaluador en el formulario
+  const sel = document.getElementById('f-evaluador');
+  for (let i = 0; i < sel.options.length; i++) {
+    if (sel.options[i].text === nombre) { sel.selectedIndex = i; break; }
+  }
+
+  // Mostrar/ocultar botón config
+  document.getElementById('cfg-btn').style.display = isAdmin ? '' : 'none';
+
   showTab('home');
   cargarDatos();
-  if (currentUser && currentUser.isAdmin) cargarPendientes();
+  if (isAdmin) cargarPendientes();
 }
 document.getElementById('login-user').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('login-pass').focus(); });
 document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
@@ -818,14 +860,34 @@ function showTab(tab) {
   window.scrollTo(0,0);
 }
 function irAFormulario(local='', evaluado='') {
+  // Resetear estado del formulario siempre
+  respuestas = {};
+  yaEnviado  = false;
+
+  // Restaurar módulos a activo
+  Object.keys(activeMods).forEach(k => activeMods[k] = true);
+  document.querySelectorAll('.mod-toggle').forEach(btn => {
+    btn.classList.add('active');
+    const label = btn.textContent.replace(/^[✓✗] /, '');
+    btn.textContent = '✓ ' + label;
+  });
+
   preLocal    = local || null;
   preEvaluado = evaluado || null;
-  yaEnviado   = false;
+
   buildForm();
+
+  // Resetear campos de cabecera
+  if (!local)    document.getElementById('f-local').value    = '';
+  if (!evaluado) document.getElementById('f-evaluado').value = '';
+  document.getElementById('f-tipo').selectedIndex      = 0;
+  document.getElementById('f-rol').selectedIndex       = 0;
+  document.getElementById('f-antiguedad').selectedIndex = 0;
+
+  updateFormMeta();
   showTab('form');
 }
 function nuevaEvaluacion() {
-  respuestas = {};
   irAFormulario();
 }
 
@@ -869,6 +931,24 @@ async function cargarDatos() {
     if (data && data.registros) {
       datosResumen = data.registros.map(function(r) {
         r.porcentaje = normalizePct(r.porcentaje);
+        // Si el registro trae detalle completo, cargarlo en cache
+        if (r.detalle && r.fecha && r.evaluado && r.local) {
+          const key = r.local + '|' + r.evaluado + '|' + r.fecha;
+          if (!evalCache[key]) {
+            evalCache[key] = {
+              evaluado:  r.evaluado,
+              local:     r.local,
+              fecha:     r.fecha,
+              evaluador: r.evaluador || '',
+              tipo:      r.tipo || '',
+              rol:       r.rol || '',
+              antiguedad:r.antiguedad || '',
+              total:     r.porcentaje,
+              modulos:   r.detalle.modulos || [],
+              id:        r.id || ''
+            };
+          }
+        }
         return r;
       });
     } else {
@@ -1448,8 +1528,20 @@ function enviarFormulario() {
   const cacheKey = `${local}|${evaluado}|${fecha}`;
   evalCache[cacheKey] = { evaluado, local, fecha, evaluador, tipo, rol, total:resultado.total, modulos:resultado.modulos };
 
+  // Construir detalle completo para guardar en Sheets
+  const detalleCompleto = {
+    modulos: resultado.modulos.filter(m => m.porcentaje !== null).map(m => ({
+      nombre:       m.nombre,
+      num:          m.num,
+      porcentaje:   m.porcentaje,
+      score:        m.score,
+      max:          m.max,
+      items_detalle: m.items_detalle || []
+    }))
+  };
+
   // Enviar al backend en background
-  apiPostBg({ action:'submit', ...payload });
+  apiPostBg({ action:'submit', ...payload, detalleCompleto });
 
   mostrarResultado(local, evaluado, resultado);
 }
@@ -1544,6 +1636,10 @@ function verEval(local, evaluado, fecha) {
         <div style="color:var(--yellow);font-weight:700;font-size:13px;margin-bottom:5px">Detalle no disponible</div>
         <div style="font-size:12px;color:#ccc">Esta evaluación fue guardada en una sesión anterior.<br>Las próximas se guardarán automáticamente para ver el detalle.</div>
       </div>`;
+    // Botón para reimprimir PDF si tenemos los datos básicos
+    if (reg) {
+      body.innerHTML += `<button class="btn btn-green-solid" style="margin-top:12px" onclick="reimprimirPDF('${esc(local)}','${esc(evaluado)}','${fecha}',${reg.porcentaje||0})">📄 Descargar PDF de esta evaluación</button>`;
+    }
     showTab('ver'); return;
   }
 
