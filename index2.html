@@ -2086,10 +2086,10 @@ async function toggleUsuario(usuario, estadoActual) {
 }
 </script>
 <script>
-// Desregistrar cualquier Service Worker viejo y forzar recarga limpia
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then(regs => {
     regs.forEach(reg => reg.unregister());
+    if (regs.length) window.location.reload();
   });
 }
 </script>
