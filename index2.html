@@ -173,6 +173,8 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 .continuar-btn{flex:1;padding:8px;background:#1a2a3a;color:#5b9bd5;font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;border:1px solid #2a4a6a;border-radius:var(--rs);cursor:pointer}
 .nueva-eval-local{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;color:var(--gold);font-size:12px;font-weight:600;border:1px dashed var(--gold-dark);border-radius:var(--rs);cursor:pointer;width:100%;background:transparent}
 .ver-mas-btn{text-align:center;padding:10px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;letter-spacing:1px;text-transform:uppercase}
+.filter-eval{background:var(--dark2);border:1px solid #333;border-radius:var(--rs);color:var(--white);padding:8px 12px;font-size:12px;font-family:'Inter',sans-serif;outline:none;cursor:pointer;transition:border-color .2s;-webkit-appearance:none}
+.filter-eval:focus{border-color:var(--gold)}
 
 /* ── AUTOCOMPLETE ───────────────────────────────────────── */
 .autocomplete-wrap{position:relative}
@@ -410,6 +412,18 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
         <div class="section-title" style="margin-bottom:0">Últimas evaluaciones</div>
         <button onclick="recargarDatos()" style="background:none;border:1px solid #333;color:var(--gray);font-size:10px;padding:4px 11px;border-radius:20px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;letter-spacing:1px">↻ Actualizar</button>
+      </div>
+      <!-- Filtro por evaluador — solo visible para Gabi -->
+      <div id="filtro-evaluador-wrap" style="display:none;margin-bottom:10px">
+        <select class="filter-eval" id="filtro-evaluador" onchange="renderHome()" style="width:100%">
+          <option value="">👥 Todos los evaluadores</option>
+          <option>Gabriel Busquets</option>
+          <option>Tomás Ojeda</option>
+          <option>Ever Rodríguez</option>
+          <option>Lourdes</option>
+          <option>Nicolás López</option>
+          <option>Iván Herrera</option>
+        </select>
       </div>
       <div class="search-wrap" style="margin-bottom:10px">
         <span class="search-icon">🔍</span>
@@ -842,6 +856,8 @@ function _loginExitoso(user, nombre, isAdmin) {
 
   // Mostrar/ocultar botón config
   document.getElementById('cfg-btn').style.display = isAdmin ? '' : 'none';
+  const filt = document.getElementById('filtro-evaluador-wrap');
+  if (filt) filt.style.display = isAdmin ? 'block' : 'none';
 
   showTab('home');
   cargarDatos();
@@ -945,21 +961,22 @@ async function cargarDatos() {
     if (data && data.registros) {
       datosResumen = data.registros.map(function(r) {
         r.porcentaje = normalizePct(r.porcentaje);
-        // Si el registro trae detalle completo, cargarlo en cache
-        if (r.detalle && r.fecha && r.evaluado && r.local) {
+        // Cargar en cache — con detalle completo si existe, o básico si no
+        if (r.fecha && r.evaluado && r.local) {
           const key = r.local + '|' + r.evaluado + '|' + r.fecha;
           if (!evalCache[key]) {
             evalCache[key] = {
-              evaluado:  r.evaluado,
-              local:     r.local,
-              fecha:     r.fecha,
-              evaluador: r.evaluador || '',
-              tipo:      r.tipo || '',
-              rol:       r.rol || '',
-              antiguedad:r.antiguedad || '',
-              total:     r.porcentaje,
-              modulos:   r.detalle.modulos || [],
-              id:        r.id || ''
+              evaluado:   r.evaluado,
+              local:      r.local,
+              fecha:      r.fecha,
+              evaluador:  r.evaluador || '',
+              tipo:       r.tipo || '',
+              rol:        r.rol || '',
+              antiguedad: r.antiguedad || '',
+              total:      r.porcentaje,
+              modulos:    (r.detalle && r.detalle.modulos) ? r.detalle.modulos : [],
+              id:         r.id || '',
+              tieneDetalle: !!(r.detalle && r.detalle.modulos && r.detalle.modulos.length)
             };
           }
         }
@@ -1010,10 +1027,19 @@ function renderHome() {
   </div>`;
     return;
   }
-  // Filtrar según permisos: capacitadores solo ven sus evaluaciones
-  const misEvals = (currentUser && !currentUser.isAdmin)
-    ? datosResumen.filter(r => r.evaluador === currentUser.nombre)
-    : datosResumen;
+  // Filtrar según permisos y selector de evaluador (solo admin)
+  const filtroEval = document.getElementById('filtro-evaluador')?.value || '';
+  let misEvals;
+  if (currentUser && !currentUser.isAdmin) {
+    // Capacitadores: solo sus evaluaciones
+    misEvals = datosResumen.filter(r => r.evaluador === currentUser.nombre);
+  } else if (filtroEval) {
+    // Gabi con filtro seleccionado: ver solo ese evaluador
+    misEvals = datosResumen.filter(r => r.evaluador === filtroEval);
+  } else {
+    // Gabi sin filtro: ver todo
+    misEvals = datosResumen;
+  }
 
   // última eval por local
   const porLocal = {};
@@ -1055,9 +1081,12 @@ function renderSucursales(lista) {
     const { estado, cls, badgeCls } = getEstado(r.porcentaje);
 
     // Todos los colabs de este local
+    const filtroEv = document.getElementById('filtro-evaluador')?.value || '';
     const todosColabs = (currentUser && !currentUser.isAdmin)
       ? datosResumen.filter(x=>x.local===r.local && x.evaluador===currentUser.nombre)
-      : datosResumen.filter(x=>x.local===r.local);
+      : filtroEv
+        ? datosResumen.filter(x=>x.local===r.local && x.evaluador===filtroEv)
+        : datosResumen.filter(x=>x.local===r.local);
 
     todosColabs.sort((a,b)=>b.fecha.localeCompare(a.fecha));
 
@@ -1650,9 +1679,18 @@ function verEval(local, evaluado, fecha) {
         <div style="color:var(--yellow);font-weight:700;font-size:13px;margin-bottom:5px">Detalle no disponible</div>
         <div style="font-size:12px;color:#ccc">Esta evaluación fue guardada en una sesión anterior.<br>Las próximas se guardarán automáticamente para ver el detalle.</div>
       </div>`;
-    // Botón para reimprimir PDF si tenemos los datos básicos
+    // Mostrar info básica disponible + botón PDF
     if (reg) {
-      body.innerHTML += `<button class="btn btn-green-solid" style="margin-top:12px" onclick="reimprimirPDF('${esc(local)}','${esc(evaluado)}','${fecha}',${reg.porcentaje||0})">📄 Descargar PDF de esta evaluación</button>`;
+      const { estado:est, cls:cl } = getEstado(reg.porcentaje);
+      body.innerHTML += `
+        <div class="ver-total" style="margin-top:12px">
+          <span style="font-family:Montserrat;font-weight:700;font-size:13px">Resultado</span>
+          <span class="colab-pct ${cl}" style="font-size:22px;font-weight:900">${reg.porcentaje}% <span style="font-size:12px">${esc(est)}</span></span>
+        </div>
+        <div style="background:var(--dark2);border-radius:var(--rs);padding:12px;text-align:center;color:var(--gray);font-size:12px;margin-top:8px">
+          El detalle ítem por ítem estará disponible en evaluaciones<br>realizadas desde esta versión del sistema.
+        </div>
+        <button class="btn btn-green-solid" style="margin-top:12px" onclick="reimprimirPDF('${esc(local)}','${esc(evaluado)}','${fecha}',${reg.porcentaje||0})">📄 Descargar PDF</button>`;
     }
     showTab('ver'); return;
   }
@@ -1967,13 +2005,17 @@ async function generarPDF() {
 // BORRADORES
 // ═══════════════════════════════════════════════════════════
 function guardarBorrador() {
-  const local    = (document.getElementById('f-local')?.value || '').trim();
-  const evaluado = (document.getElementById('f-evaluado')?.value || '').trim();
+  // Leer del input; si está vacío usar preLocal (que se setea en irAFormulario)
+  const localInput = (document.getElementById('f-local')?.value || '').trim();
+  const local      = localInput || preLocal || '';
+  const evaluado   = (document.getElementById('f-evaluado')?.value || '').trim() || preEvaluado || '';
 
   if (!local) {
     showToast('\u26A0 Completá el local antes de guardar');
     return;
   }
+  // Sincronizar el input con el valor real
+  if (document.getElementById('f-local')) document.getElementById('f-local').value = local;
 
   const activos = MODS.filter(m => activeMods[m.id]);
   const total   = activos.reduce((s,m) => s + m.items.length, 0);
