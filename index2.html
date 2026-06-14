@@ -394,6 +394,14 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
         <div class="stat-card"><div class="stat-label">Con alerta</div><div class="stat-value color-red" id="stat-alertas">—</div><div class="stat-sub">< 60%</div></div>
       </div>
     </div>
+    <!-- Card mis evaluaciones — solo para capacitadores -->
+    <div id="mis-evals-wrap" style="display:none;margin-top:12px">
+      <div class="stat-card" style="border-color:var(--teal)">
+        <div class="stat-label">Mis evaluaciones</div>
+        <div class="stat-value" id="stat-mis" style="color:var(--teal)">—</div>
+        <div class="stat-sub" id="stat-mis-sub">de <span id="stat-total-red">—</span> en la red</div>
+      </div>
+    </div>
     <!-- Alertas -->
     <div id="alert-wrap" style="display:none">
       <div class="section-title">⚠ Alertas</div>
@@ -560,8 +568,16 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
       <div class="config-section-body" id="usuarios-lista"><div class="spinner-wrap"><div class="spinner"></div></div></div>
       <div style="padding:10px 14px;border-top:1px solid #2a2a2a">
         <div class="section-title" style="margin-bottom:8px">👤 Entrar como otro usuario</div>
-        <select id="impersonar-sel" class="filter-eval" style="width:100%;margin-bottom:8px">
+<select id="impersonar-sel" class="filter-eval" style="width:100%;margin-bottom:8px">
           <option value="">— Seleccioná un usuario —</option>
+          <option value="tomyojeda25">Tomás Ojeda (@tomyojeda25)</option>
+          <option value="ever">Ever Rodríguez (@ever)</option>
+          <option value="lola73">Lourdes Garcia (@lola73)</option>
+          <option value="nico">Nicolas Lopez (@nico)</option>
+          <option value="ivanherrera01">Ivan Herrera (@ivanherrera01)</option>
+          <option value="barbarariccitelli">Barbara Riccitelli (@barbarariccitelli)</option>
+          <option value="fabricio@luccianos.com.ar">Fabricio (@fabricio)</option>
+          <option value="operaciones.franquicias@luccianos.com.ar">Carlos Torres (@operaciones)</option>
         </select>
         <button class="btn btn-outline btn-sm" style="width:100%;padding:10px" onclick="impersonarUsuario()">Entrar como este usuario</button>
       </div>
@@ -1090,6 +1106,17 @@ function renderHome() {
     : '—';
   document.getElementById('stat-aprobadas').textContent = ultimasReales.filter(r=>r.porcentaje>=UMBRAL_OK).length;
   document.getElementById('stat-alertas').textContent   = ultimasReales.filter(r=>r.porcentaje<UMBRAL_OBS).length;
+
+  // Card "Mis evaluaciones" — solo para capacitadores (no admin)
+  const misEvalsWrap = document.getElementById('mis-evals-wrap');
+  if (currentUser && !currentUser.isAdmin) {
+    misEvalsWrap.style.display = 'block';
+    const misEvals = datosResumen.filter(r => r.evaluador === currentUser.nombre);
+    document.getElementById('stat-mis').textContent     = misEvals.length;
+    document.getElementById('stat-total-red').textContent = datosResumen.length;
+  } else {
+    misEvalsWrap.style.display = 'none';
+  }
 
   // alertas
   const hoy = new Date();
