@@ -58,7 +58,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 /* ── HEADER ─────────────────────────────────────────────── */
 .app-header{
   background:var(--dark);border-bottom:1px solid #2a2a2a;
-  padding:13px 20px;display:flex;align-items:center;justify-content:space-between;
+  padding:calc(env(safe-area-inset-top, 0px) + 13px) 20px 13px;display:flex;align-items:center;justify-content:space-between;
   position:sticky;top:0;z-index:200
 }
 .logo{font-family:'Montserrat',sans-serif;font-weight:900;font-size:22px;color:var(--gold)}
@@ -185,7 +185,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 .autocomplete-item:active{background:var(--dark3);color:var(--gold)}
 
 /* ── FORMULARIO ─────────────────────────────────────────── */
-.form-header-bar{background:var(--dark);border-bottom:1px solid #2a2a2a;padding:11px 18px;position:sticky;top:0;z-index:190}
+.form-header-bar{background:var(--dark);border-bottom:1px solid #2a2a2a;padding:calc(env(safe-area-inset-top,0px) + 11px) 18px 11px;position:sticky;top:0;z-index:190}
 .form-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .form-title{font-family:'Montserrat',sans-serif;font-weight:800;font-size:15px;color:var(--gold)}
 .progress-wrap{display:flex;align-items:center;gap:10px}
@@ -310,6 +310,12 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 .ver-item{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--rs);padding:9px 11px}
 .ver-item-label{font-size:11px;color:#ccc;margin-bottom:5px;line-height:1.4}
 .ver-score{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700}
+.res-badge{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;margin-right:6px}
+.res-b1{background:#3d1010;border:2px solid var(--red);color:var(--red)}
+.res-b2{background:#3d2e0a;border:2px solid var(--yellow);color:var(--yellow)}
+.res-b3{background:#1a3020;border:2px solid #27ae60;color:#27ae60}
+.res-b4{background:var(--green-bg);border:2px solid var(--green);color:var(--green)}
+.res-bna{background:#2a2a3a;border:2px solid #7777aa;color:#aaaadd;font-size:9px}
 .ver-s1{background:#3d1010;color:var(--red);border:1px solid var(--red)}
 .ver-s2{background:#3d2e0a;color:var(--yellow);border:1px solid var(--yellow)}
 .ver-s3{background:#1a3020;color:#27ae60;border:1px solid #27ae60}
@@ -401,7 +407,6 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
           <div class="stat-card" style="border-color:var(--teal)"><div class="stat-label">Mis evaluaciones</div><div class="stat-value" id="stat-mis" style="color:var(--teal)">—</div><div class="stat-sub">realizadas por mí</div></div>
         </div>
         <div class="stat-grid">
-          <div class="stat-card"><div class="stat-label">Promedio general</div><div class="stat-value" id="stat-prom-cap">—</div><div class="stat-sub">% de mis evals</div></div>
           <div class="stat-card"><div class="stat-label">Aprobadas</div><div class="stat-value color-green" id="stat-aprobadas-cap">—</div><div class="stat-sub">≥ 80%</div></div>
           <div class="stat-card"><div class="stat-label">Con alerta</div><div class="stat-value color-red" id="stat-alertas-cap">—</div><div class="stat-sub">< 60%</div></div>
         </div>
@@ -486,7 +491,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
       </div>
     </div>
     <div class="field"><label>Nombre del colaborador</label><input type="text" id="f-evaluado" placeholder="Nombre completo" oninput="updateFormMeta()" autocorrect="off"/></div>
-    <div class="field"><label>Capacitador</label><select id="f-evaluador"><option value="">— Seleccioná —</option><option>Gabriel Busquets</option><option>Tomás Ojeda</option><option>Ever Rodríguez</option><option>Lourdes Garcia</option><option>Nicolas Lopez</option><option>Ivan Herrera</option><option>Barbara Riccitelli</option><option>Fabricio</option><option>Carlos Torres</option></select></div>
+    <div class="field"><label>Capacitador</label><input type="text" id="f-evaluador" readonly style="color:var(--gray);cursor:default" placeholder="Tu nombre"/></div>
     <div class="field"><label>Tipo</label><select id="f-tipo"><option value="">— Seleccioná —</option><option>Inicial</option><option>Refuerzo</option><option>Seguimiento</option></select></div>
     <div class="field"><label>Rol</label><select id="f-rol"><option value="">— Seleccioná —</option><option>Colaborador</option><option>Responsable</option></select></div>
     <div class="field"><label>Antigüedad</label><select id="f-antiguedad"><option value="">— Seleccioná —</option><option>Menos de 1 mes</option><option>1 a 3 meses</option><option>3 a 6 meses</option><option>Más de 6 meses</option></select></div>
