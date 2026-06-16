@@ -1771,270 +1771,344 @@ function _buildPDFFromData(data) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit:'mm', format:'a4', orientation:'portrait' });
   const W = 210, H = 297;
-  const ML = 14, MR = 14, MT = 14;
-  let y = MT;
+  const ML = 16, MR = 16, INNER = W - ML - MR;
+  let y = 0;
 
-  // ── Encabezado negro ──
-  doc.setFillColor(...PDF_DARK);
-  doc.rect(0, 0, W, 28, 'F');
+  // Paleta limpia — fondo blanco, color solo donde importa
+  const C_BLACK  = [20, 20, 20];
+  const C_GOLD   = [180, 140, 50];
+  const C_GRAY1  = [80, 80, 80];     // texto secundario
+  const C_GRAY2  = [140, 140, 140];  // texto terciario / labels
+  const C_GRAY3  = [220, 220, 220];  // bordes / separadores
+  const C_GRAY4  = [248, 248, 248];  // fondo de filas alternas
+  const C_GREEN  = [39, 150, 89];
+  const C_YELLOW = [180, 120, 10];
+  const C_RED    = [190, 50, 40];
+  const C_WHITE  = [255, 255, 255];
 
-  doc.setFont('helvetica','bold');
-  doc.setFontSize(20);
-  doc.setTextColor(...PDF_GOLD);
-  doc.text("SisCap", ML, 12);
+  const colorEstado = data.total >= UMBRAL_OK ? C_GREEN : data.total >= UMBRAL_OBS ? C_YELLOW : C_RED;
+  const labelEstado = data.total >= UMBRAL_OK ? 'Aprobado' : data.total >= UMBRAL_OBS ? 'Observado' : 'Atencion Urgente';
 
-  doc.setFontSize(8);
-  doc.setTextColor(...PDF_GRAY);
-  doc.text("SISTEMA DE CAPACITACION v2", ML, 17);
-
-  doc.setFontSize(9);
-  doc.setTextColor(...PDF_WHITE);
-  doc.text("Evaluacion de Desempeno", W - MR, 12, { align:'right' });
-  doc.setFontSize(8);
-  doc.setTextColor(...PDF_GRAY);
-  doc.text(data.fecha, W - MR, 17, { align:'right' });
-
-  // ── Línea gold ──
-  doc.setDrawColor(...PDF_GOLD);
-  doc.setLineWidth(0.5);
-  doc.line(0, 28, W, 28);
-
-  y = 36;
-
-  // ── Hero: resultado ──
-  const colorEst = _pdfColorEstado(data.total);
-  doc.setFillColor(colorEst[0], colorEst[1], colorEst[2], 0.12);
-  doc.setFillColor(20, 20, 20);
-  doc.roundedRect(ML, y, W - ML - MR, 28, 3, 3, 'F');
-  doc.setDrawColor(...colorEst);
-  doc.setLineWidth(0.4);
-  doc.roundedRect(ML, y, W - ML - MR, 28, 3, 3, 'D');
+  // ── FRANJA SUPERIOR ──────────────────────────────────────
+  doc.setFillColor(...C_BLACK);
+  doc.rect(0, 0, W, 22, 'F');
+  // Acento gold izquierdo
+  doc.setFillColor(...C_GOLD);
+  doc.rect(0, 0, 3, 22, 'F');
 
   doc.setFont('helvetica','bold');
-  doc.setFontSize(28);
-  doc.setTextColor(...colorEst);
-  doc.text(data.total + '%', ML + 8, y + 18);
+  doc.setFontSize(14);
+  doc.setTextColor(...C_GOLD);
+  doc.text("SisCap", ML, 10);
 
-  doc.setFontSize(11);
-  doc.setTextColor(...colorEst);
-  doc.text(_pdfLabelEstado(data.total), ML + 38, y + 12);
-  doc.setFontSize(9);
-  doc.setTextColor(...PDF_GRAY);
-  doc.text(data.bandLabel, ML + 38, y + 18);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(7);
+  doc.setTextColor(160, 160, 160);
+  doc.text("Sistema de Capacitacion v2", ML, 15);
 
-  // Info evaluado
-  doc.setFontSize(8);
-  doc.setTextColor(...PDF_GRAY);
-  doc.text('Colaborador', W - MR - 50, y + 8);
-  doc.setFontSize(10);
-  doc.setFont('helvetica','bold');
-  doc.setTextColor(...PDF_WHITE);
-  const nombreCorto = data.evaluado.length > 22 ? data.evaluado.substring(0,22)+'...' : data.evaluado;
-  doc.text(nombreCorto, W - MR - 50, y + 14);
   doc.setFont('helvetica','normal');
   doc.setFontSize(8);
-  doc.setTextColor(...PDF_GRAY);
-  const localCorto = data.local.length > 28 ? data.local.substring(0,28)+'...' : data.local;
-  doc.text(localCorto, W - MR - 50, y + 20);
+  doc.setTextColor(200, 200, 200);
+  doc.text("Evaluacion de Desempeno", W - MR, 10, { align:'right' });
+  doc.setFontSize(7);
+  doc.setTextColor(130, 130, 130);
+  doc.text(data.fecha, W - MR, 15, { align:'right' });
 
-  y += 34;
+  y = 28;
 
-  // ── Datos cabecera ──
-  const camposBG = [15,15,15];
-  const campos = [
-    ['Evaluador', data.evaluador || '—'],
-    ['Tipo',      data.tipo      || '—'],
-    ['Rol',       data.rol       || '—'],
-    ['Antiguedad',data.antiguedad|| '—'],
-  ];
-  const cW = (W - ML - MR - 6) / 4;
-  campos.forEach((c, i) => {
-    const cx = ML + i * (cW + 2);
-    doc.setFillColor(...camposBG);
-    doc.roundedRect(cx, y, cW, 13, 2, 2, 'F');
-    doc.setFont('helvetica','normal');
-    doc.setFontSize(7);
-    doc.setTextColor(...PDF_GRAY);
-    doc.text(c[0].toUpperCase(), cx + 3, y + 5);
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(8);
-    doc.setTextColor(...PDF_WHITE);
-    const val = String(c[1]).length > 16 ? String(c[1]).substring(0,16)+'.' : String(c[1]);
-    doc.text(val, cx + 3, y + 11);
-  });
+  // ── BLOQUE COLABORADOR + RESULTADO ──────────────────────
+  // Nombre e info del evaluado
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(16);
+  doc.setTextColor(...C_BLACK);
+  doc.text(data.evaluado || '—', ML, y + 7);
 
-  y += 19;
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(8);
+  doc.setTextColor(...C_GRAY2);
+  doc.text(data.local || '—', ML, y + 13);
 
-  // ── Módulos ──
+  // Resultado — alineado a la derecha, solo el número y el label con color
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(26);
+  doc.setTextColor(...colorEstado);
+  doc.text(data.total + '%', W - MR, y + 9, { align:'right' });
+
   doc.setFont('helvetica','bold');
   doc.setFontSize(8);
-  doc.setTextColor(...PDF_GOLD);
-  doc.text('DETALLE POR MODULO', ML, y);
-  y += 5;
+  doc.setTextColor(...colorEstado);
+  doc.text(labelEstado.toUpperCase(), W - MR, y + 15, { align:'right' });
 
-  (data.modulos || []).forEach(m => {
-    if (m.porcentaje === null || m.porcentaje === undefined) return;
-    if (y > H - 30) { doc.addPage(); y = MT; }
+  y += 20;
 
-    const c = _pdfColorEstado(m.porcentaje);
-    // Fondo
-    doc.setFillColor(20, 20, 20);
-    doc.roundedRect(ML, y, W - ML - MR, 11, 2, 2, 'F');
-    doc.setDrawColor(...c);
-    doc.setLineWidth(0.3);
-    doc.roundedRect(ML, y, W - ML - MR, 11, 2, 2, 'D');
+  // Línea separadora
+  doc.setDrawColor(...C_GRAY3);
+  doc.setLineWidth(0.3);
+  doc.line(ML, y, W - MR, y);
+  y += 6;
 
-    // Porcentaje
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(10);
-    doc.setTextColor(...c);
-    doc.text(m.porcentaje + '%', ML + 3, y + 7.5);
-
-    // Nombre módulo
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(8);
-    doc.setTextColor(...PDF_WHITE);
-    doc.text(m.num + '. ' + m.nombre, ML + 22, y + 5);
-
-    // Score raw
+  // ── TABLA DE DATOS (estilo SisCap 1) ───────────────────
+  const celdas = [
+    ['Evaluado',   data.evaluado   || '—', 'Evaluador', data.evaluador  || '—'],
+    ['Local',      data.local      || '—', 'Fecha',     data.fecha      || '—'],
+    ['Tipo',       data.tipo       || '—', 'Rol',       data.rol        || '—'],
+    ['Antiguedad', data.antiguedad || '—', '',          ''],
+  ];
+  const colW = INNER / 2 - 2;
+  celdas.forEach((row, ri) => {
+    const bg = ri % 2 === 0 ? C_GRAY4 : C_WHITE;
+    // celda izquierda
+    doc.setFillColor(...bg);
+    doc.rect(ML, y, colW, 9, 'F');
+    doc.setDrawColor(...C_GRAY3);
+    doc.setLineWidth(0.2);
+    doc.rect(ML, y, colW, 9, 'D');
     doc.setFont('helvetica','normal');
     doc.setFontSize(7);
-    doc.setTextColor(...PDF_GRAY);
-    doc.text(m.score + ' / ' + m.max + ' pts', ML + 22, y + 10);
+    doc.setTextColor(...C_GRAY2);
+    doc.text(row[0], ML + 2, y + 4);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...C_BLACK);
+    const v0 = row[1].length > 30 ? row[1].substring(0,30)+'...' : row[1];
+    doc.text(v0, ML + 2, y + 8);
+    // celda derecha
+    if (row[2]) {
+      const rx = ML + colW + 4;
+      doc.setFillColor(...bg);
+      doc.rect(rx, y, colW, 9, 'F');
+      doc.rect(rx, y, colW, 9, 'D');
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(7);
+      doc.setTextColor(...C_GRAY2);
+      doc.text(row[2], rx + 2, y + 4);
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(8);
+      doc.setTextColor(...C_BLACK);
+      const v1 = row[3].length > 30 ? row[3].substring(0,30)+'...' : row[3];
+      doc.text(v1, rx + 2, y + 8);
+    }
+    y += 9;
+  });
 
-    // Barra de progreso
-    const bX = ML + 90, bW = W - ML - MR - 90 - 3, bH = 3;
-    const bY = y + 4;
-    doc.setFillColor(50, 50, 50);
-    doc.roundedRect(bX, bY, bW, bH, 1, 1, 'F');
-    const filled = Math.max(2, Math.round(bW * m.porcentaje / 100));
-    doc.setFillColor(...c);
-    doc.roundedRect(bX, bY, filled, bH, 1, 1, 'F');
+  y += 8;
 
-    y += 13;
+  // ── RESUMEN POR MÓDULO (tabla compacta) ─────────────────
+  // Header de sección
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(8);
+  doc.setTextColor(...C_GRAY2);
+  doc.text('RESUMEN POR MODULO', ML, y);
+  y += 4;
 
-    // Items detalle
-    (m.items_detalle || []).forEach(it => {
+  // Encabezados de tabla
+  doc.setFillColor(...C_BLACK);
+  doc.rect(ML, y, INNER, 7, 'F');
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(7);
+  doc.setTextColor(...C_WHITE);
+  doc.text('Modulo', ML + 3, y + 4.5);
+  doc.text('Puntaje', ML + INNER * 0.62, y + 4.5);
+  doc.text('%', W - MR - 3, y + 4.5, { align:'right' });
+  y += 7;
+
+  const modsFiltrados = (data.modulos || []).filter(m => m.porcentaje !== null && m.porcentaje !== undefined);
+  modsFiltrados.forEach((m, mi) => {
+    if (y > H - 35) { doc.addPage(); y = 16; }
+    const bg2 = mi % 2 === 0 ? C_WHITE : C_GRAY4;
+    doc.setFillColor(...bg2);
+    doc.rect(ML, y, INNER, 8, 'F');
+    doc.setDrawColor(...C_GRAY3);
+    doc.setLineWidth(0.15);
+    doc.line(ML, y + 8, ML + INNER, y + 8);
+
+    // Nombre módulo
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...C_BLACK);
+    const nomCorto = (m.num + '. ' + m.nombre).length > 35 ? (m.num + '. ' + m.nombre).substring(0,35)+'...' : (m.num + '. ' + m.nombre);
+    doc.text(nomCorto, ML + 3, y + 5.5);
+
+    // Puntaje
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...C_GRAY1);
+    doc.text((m.score || 0) + ' / ' + (m.max || 0), ML + INNER * 0.62, y + 5.5);
+
+    // Porcentaje con color
+    const cMod = m.porcentaje >= UMBRAL_OK ? C_GREEN : m.porcentaje >= UMBRAL_OBS ? C_YELLOW : C_RED;
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...cMod);
+    doc.text(m.porcentaje + '%', W - MR - 3, y + 5.5, { align:'right' });
+
+    y += 8;
+  });
+
+  y += 10;
+
+  // ── DETALLE ÍTEM POR ÍTEM ───────────────────────────────
+  modsFiltrados.forEach(m => {
+    if (!(m.items_detalle && m.items_detalle.length)) return;
+    if (y > H - 40) { doc.addPage(); y = 16; }
+
+    // Cabecera de módulo
+    const cMod2 = m.porcentaje >= UMBRAL_OK ? C_GREEN : m.porcentaje >= UMBRAL_OBS ? C_YELLOW : C_RED;
+    doc.setFillColor(245, 245, 245);
+    doc.rect(ML, y, INNER, 7, 'F');
+    doc.setDrawColor(...C_GRAY3);
+    doc.setLineWidth(0.2);
+    doc.rect(ML, y, INNER, 7, 'D');
+    // Acento izquierdo color-estado
+    doc.setFillColor(...cMod2);
+    doc.rect(ML, y, 2.5, 7, 'F');
+
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...C_BLACK);
+    doc.text(m.num + '. ' + m.nombre, ML + 5, y + 5);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...cMod2);
+    doc.text(m.porcentaje + '%', W - MR - 2, y + 5, { align:'right' });
+    y += 9;
+
+    m.items_detalle.forEach((it, ii) => {
       if (it.val === undefined || it.val === null) return;
-      if (y > H - 20) { doc.addPage(); y = MT; }
+      if (y > H - 22) { doc.addPage(); y = 16; }
 
-      const scoreVal = it.val === 'NA' ? null : parseInt(it.val);
-      const scoreColor = it.val==='NA' ? PDF_GRAY
-        : scoreVal===4 ? PDF_GREEN
-        : scoreVal===3 ? [39,174,96]
-        : scoreVal===2 ? PDF_YELLOW
-        : PDF_RED;
-      const scoreLabel = it.val==='NA' ? 'N/A'
-        : scoreVal===4 ? 'Destacado'
-        : scoreVal===3 ? 'Logrado'
-        : scoreVal===2 ? 'En proceso'
-        : 'Inicial';
+      const sv  = it.val === 'NA' ? null : parseInt(it.val);
+      const cIt = it.val==='NA' ? C_GRAY2 : sv===4 ? C_GREEN : sv===3 ? [60,160,100] : sv===2 ? C_YELLOW : C_RED;
+      const lIt = it.val==='NA' ? 'N/A' : sv===4 ? 'Destacado' : sv===3 ? 'Logrado' : sv===2 ? 'En proceso' : 'Inicial';
 
-      // Punto indicador
-      doc.setFillColor(...scoreColor);
-      doc.circle(ML + 4, y + 3, 1.2, 'F');
+      const bgIt = ii % 2 === 0 ? C_WHITE : C_GRAY4;
+      const rowH = it.comentario ? 14 : 8;
+      doc.setFillColor(...bgIt);
+      doc.rect(ML, y, INNER, rowH, 'F');
+      doc.setDrawColor(...C_GRAY3);
+      doc.setLineWidth(0.1);
+      doc.line(ML, y + rowH, ML + INNER, y + rowH);
+
+      // Bullet con color
+      doc.setFillColor(...cIt);
+      doc.circle(ML + 3.5, y + 4, 1, 'F');
 
       // Texto ítem
       doc.setFont('helvetica','normal');
       doc.setFontSize(7.5);
-      doc.setTextColor(180, 180, 180);
-      const textoCorto = it.texto.length > 72 ? it.texto.substring(0,72)+'...' : it.texto;
-      doc.text(textoCorto, ML + 8, y + 4);
+      doc.setTextColor(...C_GRAY1);
+      const maxLen = 80;
+      const textoIt = it.texto.length > maxLen ? it.texto.substring(0,maxLen)+'...' : it.texto;
+      doc.text(textoIt, ML + 7, y + 5);
 
-      // Badge score
+      // Label score — derecha, negrita, color
       doc.setFont('helvetica','bold');
-      doc.setFontSize(6.5);
-      doc.setTextColor(...scoreColor);
-      doc.text(scoreLabel, W - MR - 1, y + 4, { align:'right' });
+      doc.setFontSize(7);
+      doc.setTextColor(...cIt);
+      doc.text(lIt, W - MR - 2, y + 5, { align:'right' });
 
-      y += 6;
-
-      // Comentario si existe
+      // Observación
       if (it.comentario) {
-        if (y > H - 20) { doc.addPage(); y = MT; }
-        doc.setFillColor(30, 30, 20);
-        doc.roundedRect(ML + 8, y, W - ML - MR - 8, 8, 1, 1, 'F');
         doc.setFont('helvetica','italic');
         doc.setFontSize(6.5);
-        doc.setTextColor(...PDF_GOLD);
-        doc.text('Obs: ', ML + 10, y + 5);
-        doc.setTextColor(180, 180, 140);
-        const obsCorto = it.comentario.length > 90 ? it.comentario.substring(0,90)+'...' : it.comentario;
-        doc.text(obsCorto, ML + 18, y + 5);
-        y += 10;
+        doc.setTextColor(...C_GRAY2);
+        const obsT = 'Obs: ' + (it.comentario.length > 95 ? it.comentario.substring(0,95)+'...' : it.comentario);
+        doc.text(obsT, ML + 7, y + 11);
       }
+
+      y += rowH;
     });
-    y += 2;
+    y += 5;
   });
 
-  // ── Fortalezas y refuerzo ──
-  if (data.fort && data.fort.length) {
-    if (y > H - 40) { doc.addPage(); y = MT; }
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(8);
-    doc.setTextColor(...PDF_GREEN);
-    doc.text('FORTALEZAS', ML, y); y += 5;
-    data.fort.slice(0,6).forEach(f => {
-      if (y > H - 20) { doc.addPage(); y = MT; }
-      doc.setFont('helvetica','normal');
-      doc.setFontSize(7);
-      doc.setTextColor(150, 200, 150);
-      const fCorto = f.length > 95 ? f.substring(0,95)+'...' : f;
-      doc.text('+ ' + fCorto, ML + 2, y); y += 5;
-    });
-    y += 2;
-  }
-  if (data.ref && data.ref.length) {
-    if (y > H - 40) { doc.addPage(); y = MT; }
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(8);
-    doc.setTextColor(...PDF_YELLOW);
-    doc.text('AREAS A REFORZAR', ML, y); y += 5;
-    data.ref.slice(0,6).forEach(r => {
-      if (y > H - 20) { doc.addPage(); y = MT; }
-      doc.setFont('helvetica','normal');
-      doc.setFontSize(7);
-      doc.setTextColor(200, 180, 100);
-      const rCorto = r.length > 95 ? r.substring(0,95)+'...' : r;
-      doc.text('- ' + rCorto, ML + 2, y); y += 5;
-    });
-    y += 2;
+  // ── FORTALEZAS Y AREAS A REFORZAR (2 columnas) ─────────
+  const hasFort = data.fort && data.fort.length;
+  const hasRef  = data.ref  && data.ref.length;
+  if (hasFort || hasRef) {
+    if (y > H - 50) { doc.addPage(); y = 16; }
+
+    const colHalf = INNER / 2 - 2;
+
+    if (hasFort) {
+      doc.setFillColor(240, 250, 244);
+      doc.rect(ML, y, colHalf, 6, 'F');
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(7.5);
+      doc.setTextColor(...C_GREEN);
+      doc.text('FORTALEZAS', ML + 2, y + 4.5);
+    }
+    if (hasRef) {
+      const rx2 = ML + colHalf + 4;
+      doc.setFillColor(254, 248, 236);
+      doc.rect(rx2, y, colHalf, 6, 'F');
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(7.5);
+      doc.setTextColor(...C_YELLOW);
+      doc.text('ASPECTOS A REFORZAR', rx2 + 2, y + 4.5);
+    }
+    y += 8;
+
+    const maxItems = Math.max(hasFort ? data.fort.length : 0, hasRef ? data.ref.length : 0);
+    for (let i = 0; i < Math.min(maxItems, 8); i++) {
+      if (y > H - 18) { doc.addPage(); y = 16; }
+      const rowH2 = 6;
+      if (hasFort && data.fort[i]) {
+        const txt = data.fort[i].replace(/^\[.*?\]\s*/,'');
+        const fCorto = txt.length > 45 ? txt.substring(0,45)+'...' : txt;
+        doc.setFont('helvetica','normal');
+        doc.setFontSize(7);
+        doc.setTextColor(...C_GREEN);
+        doc.text('+ ', ML + 2, y + 4);
+        doc.setTextColor(60, 100, 70);
+        doc.text(fCorto, ML + 6, y + 4);
+      }
+      if (hasRef && data.ref[i]) {
+        const txt2 = data.ref[i].replace(/^\[.*?\]\s*/,'');
+        const rCorto = txt2.length > 45 ? txt2.substring(0,45)+'...' : txt2;
+        const rx3 = ML + colHalf + 4;
+        doc.setFont('helvetica','normal');
+        doc.setFontSize(7);
+        doc.setTextColor(...C_YELLOW);
+        doc.text('- ', rx3 + 2, y + 4);
+        doc.setTextColor(100, 80, 20);
+        doc.text(rCorto, rx3 + 6, y + 4);
+      }
+      y += rowH2;
+    }
+    y += 6;
   }
 
-  // ── Observación hospitalidad ──
+  // ── OBSERVACIÓN HOSPITALIDAD ────────────────────────────
   if (data.obsHosp) {
-    if (y > H - 30) { doc.addPage(); y = MT; }
-    doc.setFillColor(10, 31, 24);
-    doc.roundedRect(ML, y, W-ML-MR, 16, 2, 2, 'F');
-    doc.setDrawColor(...PDF_TEAL);
+    if (y > H - 28) { doc.addPage(); y = 16; }
+    doc.setFillColor(244, 250, 247);
+    doc.setDrawColor(150, 200, 170);
     doc.setLineWidth(0.3);
-    doc.roundedRect(ML, y, W-ML-MR, 16, 2, 2, 'D');
+    doc.roundedRect(ML, y, INNER, 14, 1.5, 1.5, 'FD');
     doc.setFont('helvetica','bold');
     doc.setFontSize(7);
-    doc.setTextColor(...PDF_TEAL);
+    doc.setTextColor(60, 140, 100);
     doc.text('OBSERVACION DE HOSPITALIDAD', ML + 3, y + 5);
     doc.setFont('helvetica','normal');
     doc.setFontSize(7.5);
-    doc.setTextColor(200, 230, 220);
-    const hospCorto = data.obsHosp.length > 110 ? data.obsHosp.substring(0,110)+'...' : data.obsHosp;
-    doc.text(hospCorto, ML + 3, y + 12);
-    y += 20;
+    doc.setTextColor(...C_GRAY1);
+    const hospT = data.obsHosp.length > 110 ? data.obsHosp.substring(0,110)+'...' : data.obsHosp;
+    doc.text(hospT, ML + 3, y + 11);
+    y += 18;
   }
 
-  // ── Footer ──
+  // ── FOOTER EN TODAS LAS PÁGINAS ─────────────────────────
   const totalPages = doc.internal.getNumberOfPages();
   for (let p = 1; p <= totalPages; p++) {
     doc.setPage(p);
-    doc.setFillColor(15,15,15);
-    doc.rect(0, H-10, W, 10, 'F');
-    doc.setDrawColor(...PDF_GOLD);
+    doc.setDrawColor(...C_GRAY3);
     doc.setLineWidth(0.3);
-    doc.line(0, H-10, W, H-10);
+    doc.line(ML, H - 10, W - MR, H - 10);
     doc.setFont('helvetica','normal');
     doc.setFontSize(6.5);
-    doc.setTextColor(...PDF_GRAY);
-    doc.text("SisCap v2 · Lucciano's · Sistema de Capacitacion", ML, H-4);
-    doc.text(`Pagina ${p} de ${totalPages}`, W-MR, H-4, { align:'right' });
+    doc.setTextColor(...C_GRAY2);
+    doc.text("SisCap v2 · Lucciano's · Sistema de Capacitacion", ML, H - 6);
+    doc.text('Pagina ' + p + ' de ' + totalPages, W - MR, H - 6, { align:'right' });
   }
 
   return doc;
