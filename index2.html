@@ -1756,15 +1756,16 @@ const PDF_GRAY   = [136, 136, 136];
 const PDF_WHITE  = [245, 240, 232];
 const PDF_TEAL   = [93, 202, 165];
 
+// Umbrales PDF: >=80 Aprobado | 50-79 En proceso | <50 Critico
 function _pdfColorEstado(pct) {
-  if (pct >= UMBRAL_OK)  return PDF_GREEN;
-  if (pct >= UMBRAL_OBS) return PDF_YELLOW;
-  return PDF_RED;
+  if (pct >= 80) return [39, 150, 89];   // verde
+  if (pct >= 50) return [180, 120, 10];  // amarillo
+  return [190, 50, 40];                  // rojo
 }
 function _pdfLabelEstado(pct) {
-  if (pct >= UMBRAL_OK)  return 'APROBADO';
-  if (pct >= UMBRAL_OBS) return 'OBSERVADO';
-  return 'ATENCION URGENTE';
+  if (pct >= 80) return 'Aprobado';
+  if (pct >= 50) return 'En proceso';
+  return 'Critico';
 }
 
 function _buildPDFFromData(data) {
@@ -1786,8 +1787,8 @@ function _buildPDFFromData(data) {
   const C_RED    = [190, 50, 40];
   const C_WHITE  = [255, 255, 255];
 
-  const colorEstado = data.total >= UMBRAL_OK ? C_GREEN : data.total >= UMBRAL_OBS ? C_YELLOW : C_RED;
-  const labelEstado = data.total >= UMBRAL_OK ? 'Aprobado' : data.total >= UMBRAL_OBS ? 'Observado' : 'Atencion Urgente';
+  const colorEstado = _pdfColorEstado(data.total);
+  const labelEstado = _pdfLabelEstado(data.total);
 
   // ── FRANJA SUPERIOR ──────────────────────────────────────
   doc.setFillColor(...C_BLACK);
@@ -1807,12 +1808,9 @@ function _buildPDFFromData(data) {
   doc.text("Sistema de Capacitacion v2", ML, 15);
 
   doc.setFont('helvetica','normal');
-  doc.setFontSize(8);
-  doc.setTextColor(200, 200, 200);
-  doc.text("Evaluacion de Desempeno", W - MR, 10, { align:'right' });
-  doc.setFontSize(7);
-  doc.setTextColor(130, 130, 130);
-  doc.text(data.fecha, W - MR, 15, { align:'right' });
+  doc.setFontSize(7.5);
+  doc.setTextColor(150, 150, 150);
+  doc.text(data.fecha, W - MR, 13, { align:'right' });
 
   y = 28;
 
@@ -1936,7 +1934,7 @@ function _buildPDFFromData(data) {
     doc.text((m.score || 0) + ' / ' + (m.max || 0), ML + INNER * 0.62, y + 5.5);
 
     // Porcentaje con color
-    const cMod = m.porcentaje >= UMBRAL_OK ? C_GREEN : m.porcentaje >= UMBRAL_OBS ? C_YELLOW : C_RED;
+    const cMod = _pdfColorEstado(m.porcentaje);
     doc.setFont('helvetica','bold');
     doc.setFontSize(8);
     doc.setTextColor(...cMod);
@@ -1953,7 +1951,7 @@ function _buildPDFFromData(data) {
     if (y > H - 40) { doc.addPage(); y = 16; }
 
     // Cabecera de módulo
-    const cMod2 = m.porcentaje >= UMBRAL_OK ? C_GREEN : m.porcentaje >= UMBRAL_OBS ? C_YELLOW : C_RED;
+    const cMod2 = _pdfColorEstado(m.porcentaje);
     doc.setFillColor(245, 245, 245);
     doc.rect(ML, y, INNER, 7, 'F');
     doc.setDrawColor(...C_GRAY3);
