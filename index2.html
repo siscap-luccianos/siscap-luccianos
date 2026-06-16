@@ -389,10 +389,10 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
     <div>
       <div class="section-title">Resumen</div>
       <div class="stat-grid">
-        <div class="stat-card gold"><div class="stat-label">Evaluaciones</div><div class="stat-value" id="stat-total">—</div><div class="stat-sub">registradas</div></div>
-        <div class="stat-card"><div class="stat-label">Promedio red</div><div class="stat-value" id="stat-prom">—</div><div class="stat-sub">% general</div></div>
+        <div class="stat-card gold"><div class="stat-label">Evaluaciones</div><div class="stat-value" id="stat-total">—</div><div class="stat-sub">registradas en la red</div></div>
+        <div class="stat-card"><div class="stat-label">Mis evaluaciones</div><div class="stat-value" id="stat-prom">—</div><div class="stat-sub">registradas por mí</div></div>
         <div class="stat-card"><div class="stat-label">Aprobadas</div><div class="stat-value color-green" id="stat-aprobadas">—</div><div class="stat-sub">≥ 80%</div></div>
-        <div class="stat-card"><div class="stat-label">Con alerta</div><div class="stat-value color-red" id="stat-alertas">—</div><div class="stat-sub">< 60%</div></div>
+        <div class="stat-card"><div class="stat-label">Requieren refuerzo</div><div class="stat-value color-red" id="stat-alertas">—</div><div class="stat-sub">< 50%</div></div>
       </div>
     </div>
     <!-- Alertas -->
@@ -1049,7 +1049,7 @@ function renderHome() {
   if (!datosResumen.length) {
     // Mostrar empty state
     document.getElementById('stat-total').textContent = '0';
-    document.getElementById('stat-prom').textContent = '—';
+    document.getElementById('stat-prom').textContent = '0';
     document.getElementById('stat-aprobadas').textContent = '0';
     document.getElementById('stat-alertas').textContent = '0';
     document.getElementById('suc-list').innerHTML = `
@@ -1086,11 +1086,14 @@ function renderHome() {
   // Solo contar evaluaciones reales (no borradores) en las stats
   const ultimasReales = ultimas.filter(r => !r.esSoloBorrador);
   document.getElementById('stat-total').textContent     = datosResumen.length;
-  document.getElementById('stat-prom').textContent      = ultimasReales.length
-    ? Math.round(ultimasReales.reduce((s,r)=>s+r.porcentaje,0)/ultimasReales.length)+'%'
-    : '—';
+  // "Mis evaluaciones" — las del usuario logueado
+  const misEvalsPropias = currentUser
+    ? datosResumen.filter(r => r.evaluador === currentUser.nombre)
+    : [];
+  document.getElementById('stat-prom').textContent = misEvalsPropias.length || '0';
   document.getElementById('stat-aprobadas').textContent = ultimasReales.filter(r=>r.porcentaje>=UMBRAL_OK).length;
-  document.getElementById('stat-alertas').textContent   = ultimasReales.filter(r=>r.porcentaje<UMBRAL_OBS).length;
+  // Alerta: ahora < 50% (Crítico) en lugar de < 60%
+  document.getElementById('stat-alertas').textContent   = ultimasReales.filter(r=>r.porcentaje<50).length;
 
   // alertas
   const hoy = new Date();
