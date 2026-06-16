@@ -538,7 +538,10 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 <div id="screen-ver" class="screen">
   <div class="app-header">
     <div><div class="logo">SisCap</div><div class="badge-label">Evaluación</div></div>
-    <button class="btn btn-outline btn-sm" onclick="showTab('home')">← Volver</button>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button id="btn-editar-eval" class="btn btn-outline btn-sm" style="display:none;color:var(--gold);border-color:var(--gold-dark)" onclick="editarEvalActual()">✏ Editar</button>
+      <button class="btn btn-outline btn-sm" onclick="showTab('home')">← Volver</button>
+    </div>
   </div>
   <div class="ver-body-inner" id="ver-body"></div>
 </div>
@@ -1621,7 +1624,14 @@ function enviarFormulario() {
       score:m.score, max:m.max, items_detalle:m.items_detalle||[]
     }))
   };
-  apiPostBg({ action:'submit', ...payload, detalleCompleto });
+  // Si estamos en modo edición, usar action 'update' con la key original
+  const isEdicion = !!(window._editandoKey);
+  const submitAction = isEdicion ? 'update' : 'submit';
+  const submitExtra  = isEdicion ? { editKey: window._editandoKey } : {};
+  apiPostBg({ action: submitAction, ...payload, detalleCompleto, ...submitExtra });
+  // Limpiar modo edición
+  window._editandoKey   = null;
+  window._editandoFecha = null;
   // Limpiar borrador si existía
   if (borradores[local]) {
     delete borradores[local];
@@ -1690,10 +1700,18 @@ function mostrarResultado(local, evaluado, resultado) {
 // ═══════════════════════════════════════════════════════════
 // VER EVALUACIÓN
 // ═══════════════════════════════════════════════════════════
+// Contexto de la evaluación siendo vista (para editar)
+let _verCtx = null;
+
 function verEval(local, evaluado, fecha) {
   const key    = `${local}|${evaluado}|${fecha}`;
   const cached = evalCache[key];
   const body   = document.getElementById('ver-body');
+  // Guardar contexto para edición
+  _verCtx = { local, evaluado, fecha, cached };
+  // Mostrar botón editar solo si tiene detalle completo
+  const btnEd = document.getElementById('btn-editar-eval');
+  if (btnEd) btnEd.style.display = (cached && cached.tieneDetalle) ? 'inline-block' : 'none';
   if (!cached || !cached.tieneDetalle || !cached.modulos || !cached.modulos.length) {
     const reg = datosResumen.find(r=>r.local===local&&r.evaluado===evaluado&&r.fecha===fecha);
     const pct = reg ? reg.porcentaje : '—';
@@ -1756,8 +1774,125 @@ function verEval(local, evaluado, fecha) {
     });
     html += '</div>';
   });
+  // Agregar botones al pie
+  html += `
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+      <button class="btn btn-green-solid" onclick="reimprimirPDF('${esc(cached.local)}','${esc(cached.evaluado)}','${cached.fecha}',${cached.total||0})">📄 Descargar PDF</button>
+      <button class="btn btn-outline" onclick="editarEvalActual()" style="color:var(--gold);border-color:var(--gold-dark)">✏ Editar evaluación</button>
+    </div>`;
   body.innerHTML = html;
   showTab('ver');
+}
+
+// ═══════════════════════════════════════════════════════════
+// EDITAR EVALUACIÓN EXISTENTE
+// ═══════════════════════════════════════════════════════════
+function editarEvalActual() {
+  if (!_verCtx || !_verCtx.cached) { showToast('⚠ Sin datos para editar'); return; }
+  const { local, evaluado, fecha, cached } = _verCtx;
+
+  // Limpiar estado
+  respuestas = {};
+  yaEnviado  = false;
+  Object.keys(activeMods).forEach(k => activeMods[k] = true);
+
+  // Cargar respuestas desde items_detalle del cache
+  if (cached.modulos) {
+    cached.modulos.forEach(m => {
+      (m.items_detalle || []).forEach(it => {
+        if (it.val !== undefined && it.val !== null) {
+          respuestas[it.id] = it.val === 0 ? undefined : it.val;
+        }
+      });
+    });
+    // Desactivar módulos que no fueron evaluados
+    cached.modulos.forEach(m => {
+      const modKey = 'mod' + m.num;
+      if (m.porcentaje === null) activeMods[modKey] = false;
+    });
+  }
+
+  preLocal    = local;
+  preEvaluado = evaluado;
+
+  // Marcar como edición — el envío sobreescribirá la fila existente
+  window._editandoKey = `${local}|${evaluado}|${fecha}`;
+  window._editandoFecha = fecha;
+
+  buildForm();
+
+  // Restaurar campos de cabecera
+  setTimeout(() => {
+    document.getElementById('f-local').value    = local;
+    document.getElementById('f-evaluado').value = evaluado;
+    if (cached.evaluador) {
+      const sel = document.getElementById('f-evaluador');
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].text === cached.evaluador) { sel.selectedIndex = i; break; }
+      }
+    }
+    if (cached.tipo) {
+      const sel = document.getElementById('f-tipo');
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].text === cached.tipo) { sel.selectedIndex = i; break; }
+      }
+    }
+    if (cached.rol) {
+      const sel = document.getElementById('f-rol');
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].text === cached.rol) { sel.selectedIndex = i; break; }
+      }
+    }
+    if (cached.antiguedad) {
+      const sel = document.getElementById('f-antiguedad');
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].text === cached.antiguedad) { sel.selectedIndex = i; break; }
+      }
+    }
+    // Fecha original
+    document.getElementById('f-fecha').value = window._editandoFecha || fecha;
+
+    // Restaurar toggles de módulos
+    document.querySelectorAll('.mod-toggle').forEach(btn => {
+      const modId = btn.dataset.mod;
+      if (activeMods[modId]) {
+        btn.classList.add('active');
+        btn.textContent = '✓ ' + btn.textContent.replace(/^[✓✗] /, '');
+      } else {
+        btn.classList.remove('active');
+        btn.textContent = '✗ ' + btn.textContent.replace(/^[✓✗] /, '');
+      }
+    });
+
+    // Restaurar comentarios en los textareas
+    if (cached.modulos) {
+      cached.modulos.forEach(m => {
+        (m.items_detalle || []).forEach(it => {
+          if (it.comentario) {
+            const ta = document.getElementById('ict-' + it.id);
+            if (ta) {
+              ta.value = it.comentario;
+              const wrap = document.getElementById('ic-' + it.id);
+              if (wrap) wrap.classList.add('open');
+            }
+          }
+        });
+      });
+    }
+
+    updateFormMeta();
+    updateProgress();
+  }, 150);
+
+  // Cambiar label del botón enviar
+  const btnEnv = document.getElementById('btn-enviar');
+  if (btnEnv) {
+    btnEnv.textContent = '✓ Guardar corrección';
+    btnEnv.style.cssText = 'background:#1a3a5a;color:#5b9bd5;border:1px solid #2a5a8a';
+  }
+
+  showToast('✏ Modo edición — corregí y reenvía');
+  showTab('form');
 }
 
 // ═══════════════════════════════════════════════════════════
