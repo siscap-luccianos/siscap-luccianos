@@ -196,7 +196,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 .form-meta-bar{display:flex;gap:14px;flex-wrap:wrap;margin-top:5px}
 .form-meta-bar span{font-size:11px;color:var(--gray)}
 .form-meta-bar strong{color:var(--white)}
-.form-cabecera{padding:14px 18px;background:var(--dark2);border-bottom:1px solid #2a2a2a;display:flex;flex-direction:column;gap:10px}
+.form-cabecera{padding:0 18px 14px;background:var(--dark2);display:flex;flex-direction:column;gap:10px}
 
 /* ── MÓDULOS SELECTOR ───────────────────────────────────── */
 .mod-selector{padding:12px 18px;background:var(--dark);border-bottom:1px solid #2a2a2a}
@@ -463,20 +463,27 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
     </div>
   </div>
 
-  <div class="form-cabecera">
-    <div class="field"><label>Fecha</label><input type="date" id="f-fecha"/></div>
-    <div class="field">
-      <label>Local / Sucursal</label>
-      <div class="autocomplete-wrap">
-        <input type="text" id="f-local" placeholder="" autocomplete="off" autocorrect="off" oninput="filtrarLocales()"/>
-        <div class="autocomplete-list" id="local-list"></div>
-      </div>
+  <!-- Cabecera colapsable -->
+  <div style="background:var(--dark2);border-bottom:1px solid #2a2a2a">
+    <div onclick="toggleFormCabecera()" style="padding:10px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none">
+      <span style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold)">Datos de la evaluación</span>
+      <span id="cabecera-chev" style="color:var(--gray);font-size:11px;transition:transform .2s">▼</span>
     </div>
-    <div class="field"><label>Nombre del colaborador</label><input type="text" id="f-evaluado" placeholder="Nombre completo" oninput="updateFormMeta()" autocorrect="off"/></div>
-    <div class="field"><label>Capacitador</label><select id="f-evaluador"><option value="">— Seleccioná —</option><option>Gabriel Busquets</option><option>Tomás Ojeda</option><option>Ever Rodríguez</option><option>Lourdes Garcia</option><option>Nicolas Lopez</option><option>Ivan Herrera</option><option>Barbara Riccitelli</option><option>Fabricio</option><option>Carlos Torres</option></select></div>
-    <div class="field"><label>Tipo</label><select id="f-tipo"><option value="">— Seleccioná —</option><option>Inicial</option><option>Refuerzo</option><option>Seguimiento</option></select></div>
-    <div class="field"><label>Rol</label><select id="f-rol"><option value="">— Seleccioná —</option><option>Colaborador</option><option>Responsable</option></select></div>
-    <div class="field"><label>Antigüedad</label><select id="f-antiguedad"><option value="">— Seleccioná —</option><option>Menos de 1 mes</option><option>1 a 3 meses</option><option>3 a 6 meses</option><option>Más de 6 meses</option></select></div>
+    <div class="form-cabecera" id="form-cabecera-body">
+      <div class="field"><label>Fecha</label><input type="date" id="f-fecha"/></div>
+      <div class="field">
+        <label>Local / Sucursal</label>
+        <div class="autocomplete-wrap">
+          <input type="text" id="f-local" placeholder="" autocomplete="off" autocorrect="off" oninput="filtrarLocales()"/>
+          <div class="autocomplete-list" id="local-list"></div>
+        </div>
+      </div>
+      <div class="field"><label>Nombre del colaborador</label><input type="text" id="f-evaluado" placeholder="Nombre completo" oninput="updateFormMeta()" autocorrect="off"/></div>
+      <div class="field"><label>Capacitador</label><select id="f-evaluador"><option value="">— Seleccioná —</option><option>Gabriel Busquets</option><option>Tomás Ojeda</option><option>Ever Rodríguez</option><option>Lourdes Garcia</option><option>Nicolas Lopez</option><option>Ivan Herrera</option><option>Barbara Riccitelli</option><option>Fabricio</option><option>Carlos Torres</option></select></div>
+      <div class="field"><label>Tipo</label><select id="f-tipo"><option value="">— Seleccioná —</option><option>Inicial</option><option>Refuerzo</option><option>Seguimiento</option></select></div>
+      <div class="field"><label>Rol</label><select id="f-rol"><option value="">— Seleccioná —</option><option>Colaborador</option><option>Responsable</option></select></div>
+      <div class="field"><label>Antigüedad</label><select id="f-antiguedad"><option value="">— Seleccioná —</option><option>Menos de 1 mes</option><option>1 a 3 meses</option><option>3 a 6 meses</option><option>Más de 6 meses</option></select></div>
+    </div>
   </div>
 
   <div class="mod-selector">
@@ -545,10 +552,14 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
   <div class="config-body">
     <div class="section-title">Panel de administración</div>
     <div class="config-section">
-      <div class="config-section-head">
-        <span class="config-section-title">👥 Usuarios</span>
-        <button class="btn btn-gold btn-sm" onclick="toggleUserForm()">+ Nuevo</button>
+      <div class="config-section-head" onclick="toggleUsuariosList()" style="cursor:pointer;user-select:none">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="config-section-title">👥 Usuarios</span>
+          <span id="usuarios-chev" style="color:var(--gray);font-size:11px;transition:transform .2s">▼</span>
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="event.stopPropagation();toggleUserForm()">+ Nuevo</button>
       </div>
+      <div id="usuarios-collapsible" style="display:none">
       <div class="user-form" id="user-form">
         <div class="field" style="margin-bottom:8px"><label>Nombre completo</label><input type="text" id="nu-nombre" placeholder="Ej: Juan Pérez" autocorrect="off"/></div>
         <div class="field" style="margin-bottom:8px"><label>Usuario</label><input type="text" id="nu-user" placeholder="Ej: juan" autocapitalize="none" autocorrect="off"/></div>
@@ -559,6 +570,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
         </div>
       </div>
       <div class="config-section-body" id="usuarios-lista"><div class="spinner-wrap"><div class="spinner"></div></div></div>
+      </div><!-- /usuarios-collapsible -->
       <div style="padding:10px 14px;border-top:1px solid #2a2a2a">
         <div class="section-title" style="margin-bottom:8px">👤 Entrar como otro usuario</div>
         <select id="impersonar-sel" class="filter-eval" style="width:100%;margin-bottom:8px">
@@ -946,6 +958,11 @@ function irAFormulario(local='', evaluado='') {
 
   updateFormMeta();
   updateProgress();
+  // Cabecera: siempre abierta al iniciar nueva evaluación
+  const cb = document.getElementById('form-cabecera-body');
+  const cc = document.getElementById('cabecera-chev');
+  if (cb) cb.style.display = 'flex';
+  if (cc) cc.style.transform = 'rotate(180deg)';
   showTab('form');
 }
 function nuevaEvaluacion() {
@@ -2396,9 +2413,30 @@ function cerrarSesion() {
 
 function abrirConfig() {
   if (!currentUser?.isAdmin) { showToast('⚠ Solo el administrador puede acceder'); return; }
+  // Usuarios: colapsado por defecto al abrir config
+  const uc = document.getElementById('usuarios-collapsible');
+  const ch = document.getElementById('usuarios-chev');
+  if (uc) uc.style.display = 'none';
+  if (ch) ch.style.transform = '';
   cargarUsuarios(); showTab('config');
 }
 function toggleUserForm() { document.getElementById('user-form').classList.toggle('open'); }
+
+function toggleUsuariosList() {
+  const body = document.getElementById('usuarios-collapsible');
+  const chev = document.getElementById('usuarios-chev');
+  const open = body.style.display === 'none' || body.style.display === '';
+  body.style.display = open ? 'block' : 'none';
+  if (chev) chev.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+function toggleFormCabecera() {
+  const body = document.getElementById('form-cabecera-body');
+  const chev = document.getElementById('cabecera-chev');
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'flex';
+  if (chev) chev.style.transform = open ? '' : 'rotate(180deg)';
+}
 
 async function cargarUsuarios() {
   const lista  = document.getElementById('usuarios-lista');
