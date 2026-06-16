@@ -1997,7 +1997,7 @@ function _buildPDFFromData(data) {
 
       const sv  = it.val === 'NA' ? null : parseInt(it.val);
       const cIt = it.val==='NA' ? C_GRAY2 : sv===4 ? C_GREEN : sv===3 ? [60,160,100] : sv===2 ? C_YELLOW : C_RED;
-      const lIt = it.val==='NA' ? 'N/A' : sv===4 ? 'Destacado' : sv===3 ? 'Logrado' : sv===2 ? 'En proceso' : 'Inicial';
+      const lIt = it.val==='NA' ? 'N/A' : sv===4 ? 'Destacado' : sv===3 ? 'Logrado' : sv===2 ? 'Requiere refuerzo' : 'Inicial';
 
       const bgIt = ii % 2 === 0 ? C_WHITE : C_GRAY4;
       const rowH = it.comentario ? 14 : 8;
