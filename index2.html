@@ -8,6 +8,7 @@
 <meta name="theme-color" content="#0D0D0D"/>
 <title>SisCap 2</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 /* ── VARIABLES ──────────────────────────────────────────── */
 :root{
@@ -58,7 +59,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 /* ── HEADER ─────────────────────────────────────────────── */
 .app-header{
   background:var(--dark);border-bottom:1px solid #2a2a2a;
-  padding:calc(env(safe-area-inset-top, 0px) + 13px) 20px 13px;display:flex;align-items:center;justify-content:space-between;
+  padding:13px 20px;display:flex;align-items:center;justify-content:space-between;
   position:sticky;top:0;z-index:200
 }
 .logo{font-family:'Montserrat',sans-serif;font-weight:900;font-size:22px;color:var(--gold)}
@@ -185,7 +186,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 .autocomplete-item:active{background:var(--dark3);color:var(--gold)}
 
 /* ── FORMULARIO ─────────────────────────────────────────── */
-.form-header-bar{background:var(--dark);border-bottom:1px solid #2a2a2a;padding:calc(env(safe-area-inset-top,0px) + 11px) 18px 11px;position:sticky;top:0;z-index:190}
+.form-header-bar{background:var(--dark);border-bottom:1px solid #2a2a2a;padding:11px 18px;position:sticky;top:0;z-index:190}
 .form-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .form-title{font-family:'Montserrat',sans-serif;font-weight:800;font-size:15px;color:var(--gold)}
 .progress-wrap{display:flex;align-items:center;gap:10px}
@@ -310,12 +311,6 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 .ver-item{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--rs);padding:9px 11px}
 .ver-item-label{font-size:11px;color:#ccc;margin-bottom:5px;line-height:1.4}
 .ver-score{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700}
-.res-badge{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;margin-right:6px}
-.res-b1{background:#3d1010;border:2px solid var(--red);color:var(--red)}
-.res-b2{background:#3d2e0a;border:2px solid var(--yellow);color:var(--yellow)}
-.res-b3{background:#1a3020;border:2px solid #27ae60;color:#27ae60}
-.res-b4{background:var(--green-bg);border:2px solid var(--green);color:var(--green)}
-.res-bna{background:#2a2a3a;border:2px solid #7777aa;color:#aaaadd;font-size:9px}
 .ver-s1{background:#3d1010;color:var(--red);border:1px solid var(--red)}
 .ver-s2{background:#3d2e0a;color:var(--yellow);border:1px solid var(--yellow)}
 .ver-s3{background:#1a3020;color:#27ae60;border:1px solid #27ae60}
@@ -393,24 +388,11 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
     <!-- Stats -->
     <div>
       <div class="section-title">Resumen</div>
-      <!-- Cards admin (Gabi) -->
-      <div id="cards-admin" class="stat-grid">
-        <div class="stat-card gold"><div class="stat-label">Evaluaciones totales</div><div class="stat-value" id="stat-total">—</div><div class="stat-sub">en la red</div></div>
-        <div class="stat-card"><div class="stat-label">Promedio general</div><div class="stat-value" id="stat-prom">—</div><div class="stat-sub">% de la red</div></div>
+      <div class="stat-grid">
+        <div class="stat-card gold"><div class="stat-label">Evaluaciones</div><div class="stat-value" id="stat-total">—</div><div class="stat-sub">registradas</div></div>
+        <div class="stat-card"><div class="stat-label">Promedio red</div><div class="stat-value" id="stat-prom">—</div><div class="stat-sub">% general</div></div>
         <div class="stat-card"><div class="stat-label">Aprobadas</div><div class="stat-value color-green" id="stat-aprobadas">—</div><div class="stat-sub">≥ 80%</div></div>
         <div class="stat-card"><div class="stat-label">Con alerta</div><div class="stat-value color-red" id="stat-alertas">—</div><div class="stat-sub">< 60%</div></div>
-      </div>
-      <!-- Cards capacitador -->
-      <div id="cards-cap" style="display:none;display:flex;flex-direction:column;gap:12px">
-        <div class="stat-grid">
-          <div class="stat-card gold"><div class="stat-label">Evaluaciones totales</div><div class="stat-value" id="stat-total-red">—</div><div class="stat-sub">en la red</div></div>
-          <div class="stat-card" style="border-color:var(--teal)"><div class="stat-label">Mis evaluaciones</div><div class="stat-value" id="stat-mis" style="color:var(--teal)">—</div><div class="stat-sub">realizadas por mí</div></div>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-card"><div class="stat-label">Aprobadas</div><div class="stat-value color-green" id="stat-aprobadas-cap">—</div><div class="stat-sub">≥ 80%</div></div>
-          <div class="stat-card"><div class="stat-label">Con alerta</div><div class="stat-value color-red" id="stat-alertas-cap">—</div><div class="stat-sub">< 60%</div></div>
-        </div>
-      </div>
       </div>
     </div>
     <!-- Alertas -->
@@ -491,7 +473,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
       </div>
     </div>
     <div class="field"><label>Nombre del colaborador</label><input type="text" id="f-evaluado" placeholder="Nombre completo" oninput="updateFormMeta()" autocorrect="off"/></div>
-    <div class="field"><label>Capacitador</label><input type="text" id="f-evaluador" readonly style="color:var(--gray);cursor:default" placeholder="Tu nombre"/></div>
+    <div class="field"><label>Capacitador</label><select id="f-evaluador"><option value="">— Seleccioná —</option><option>Gabriel Busquets</option><option>Tomás Ojeda</option><option>Ever Rodríguez</option><option>Lourdes Garcia</option><option>Nicolas Lopez</option><option>Ivan Herrera</option><option>Barbara Riccitelli</option><option>Fabricio</option><option>Carlos Torres</option></select></div>
     <div class="field"><label>Tipo</label><select id="f-tipo"><option value="">— Seleccioná —</option><option>Inicial</option><option>Refuerzo</option><option>Seguimiento</option></select></div>
     <div class="field"><label>Rol</label><select id="f-rol"><option value="">— Seleccioná —</option><option>Colaborador</option><option>Responsable</option></select></div>
     <div class="field"><label>Antigüedad</label><select id="f-antiguedad"><option value="">— Seleccioná —</option><option>Menos de 1 mes</option><option>1 a 3 meses</option><option>3 a 6 meses</option><option>Más de 6 meses</option></select></div>
@@ -1103,42 +1085,12 @@ function renderHome() {
   // stats
   // Solo contar evaluaciones reales (no borradores) en las stats
   const ultimasReales = ultimas.filter(r => !r.esSoloBorrador);
-  const isAdmin = currentUser && currentUser.isAdmin;
-
-  // Determinar si hay filtro de evaluador activo (solo admin)
-  const filtroActivo = isAdmin
-    ? (document.getElementById('filtro-evaluador')?.value || '')
-    : '';
-
-  // Datos para las stats — filtrados si hay filtro activo
-  const dataStats = filtroActivo
-    ? datosResumen.filter(r => (r.evaluador||'').trim().toLowerCase() === filtroActivo.trim().toLowerCase())
-    : isAdmin ? datosResumen : datosResumen.filter(r => (r.evaluador||'').trim().toLowerCase() === (currentUser?.nombre||'').trim().toLowerCase());
-
-  const ultimasStats = dataStats.filter(r => !r.esSoloBorrador);
-
-  if (isAdmin && !filtroActivo) {
-    // Gabi sin filtro — ver toda la red
-    document.getElementById('cards-admin').style.display = 'grid';
-    document.getElementById('cards-cap').style.display   = 'none';
-    document.getElementById('stat-total').textContent     = datosResumen.length;
-    document.getElementById('stat-prom').textContent      = ultimasReales.length
-      ? Math.round(ultimasReales.reduce((s,r)=>s+r.porcentaje,0)/ultimasReales.length)+'%' : '—';
-    document.getElementById('stat-aprobadas').textContent = ultimasReales.filter(r=>r.porcentaje>=UMBRAL_OK).length;
-    document.getElementById('stat-alertas').textContent   = ultimasReales.filter(r=>r.porcentaje<UMBRAL_OBS).length;
-  } else {
-    // Capacitador O Gabi con filtro — ver como el capacitador
-    document.getElementById('cards-admin').style.display = 'none';
-    document.getElementById('cards-cap').style.display   = 'flex';
-    const miNombreSel = filtroActivo || (currentUser?.nombre||'');
-    const misEvals = datosResumen.filter(r=>(r.evaluador||'').trim().toLowerCase()===miNombreSel.trim().toLowerCase());
-    document.getElementById('stat-total-red').textContent    = datosResumen.length;
-    document.getElementById('stat-mis').textContent          = misEvals.length;
-    document.getElementById('stat-prom-cap').textContent     = misEvals.length
-      ? Math.round(misEvals.reduce((s,r)=>s+r.porcentaje,0)/misEvals.length)+'%' : '—';
-    document.getElementById('stat-aprobadas-cap').textContent = misEvals.filter(r=>r.porcentaje>=UMBRAL_OK).length;
-    document.getElementById('stat-alertas-cap').textContent   = misEvals.filter(r=>r.porcentaje<UMBRAL_OBS).length;
-  }
+  document.getElementById('stat-total').textContent     = datosResumen.length;
+  document.getElementById('stat-prom').textContent      = ultimasReales.length
+    ? Math.round(ultimasReales.reduce((s,r)=>s+r.porcentaje,0)/ultimasReales.length)+'%'
+    : '—';
+  document.getElementById('stat-aprobadas').textContent = ultimasReales.filter(r=>r.porcentaje>=UMBRAL_OK).length;
+  document.getElementById('stat-alertas').textContent   = ultimasReales.filter(r=>r.porcentaje<UMBRAL_OBS).length;
 
   // alertas
   const hoy = new Date();
@@ -1642,7 +1594,7 @@ function enviarFormulario() {
   datosResumen.push({ local, evaluado, fecha, evaluador, porcentaje:normalizePct(resultado.total) });
   showToast('✓ Evaluación enviada');
   const cacheKey = `${local}|${evaluado}|${fecha}`;
-  evalCache[cacheKey] = { evaluado, local, fecha, evaluador, tipo, rol, antiguedad, total:resultado.total, modulos:resultado.modulos, tieneDetalle:true };
+  evalCache[cacheKey] = { evaluado, local, fecha, evaluador, tipo, rol, antiguedad, total:resultado.total, totalRaw:resultado.totalRaw, totalMax:resultado.totalMax, modulos:resultado.modulos, tieneDetalle:true };
   const detalleCompleto = {
     modulos: resultado.modulos.filter(m=>m.porcentaje!==null).map(m=>({
       nombre:m.nombre, num:m.num, porcentaje:m.porcentaje,
@@ -1789,123 +1741,441 @@ function verEval(local, evaluado, fecha) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// PDF
+// PDF — GENERACIÓN 100% FRONTEND (jsPDF)
+// El backend ya NO se usa para generar el PDF.
+// El formulario sigue enviándose al Sheet via apiPostBg como siempre.
 // ═══════════════════════════════════════════════════════════
-function base64ToBlob(b64, mime) {
-  const bin = atob(b64), arr = new Uint8Array(bin.length);
-  for (let i=0; i<bin.length; i++) arr[i] = bin.charCodeAt(i);
-  return new Blob([arr], { type: mime||'application/pdf' });
+
+// Colores del sistema
+const PDF_GOLD   = [201, 168, 76];
+const PDF_GREEN  = [46, 204, 113];
+const PDF_YELLOW = [243, 156, 18];
+const PDF_RED    = [231, 76, 60];
+const PDF_DARK   = [26, 26, 26];
+const PDF_GRAY   = [136, 136, 136];
+const PDF_WHITE  = [245, 240, 232];
+const PDF_TEAL   = [93, 202, 165];
+
+function _pdfColorEstado(pct) {
+  if (pct >= UMBRAL_OK)  return PDF_GREEN;
+  if (pct >= UMBRAL_OBS) return PDF_YELLOW;
+  return PDF_RED;
+}
+function _pdfLabelEstado(pct) {
+  if (pct >= UMBRAL_OK)  return 'APROBADO';
+  if (pct >= UMBRAL_OBS) return 'OBSERVADO';
+  return 'ATENCION URGENTE';
+}
+
+function _buildPDFFromData(data) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'mm', format:'a4', orientation:'portrait' });
+  const W = 210, H = 297;
+  const ML = 14, MR = 14, MT = 14;
+  let y = MT;
+
+  // ── Encabezado negro ──
+  doc.setFillColor(...PDF_DARK);
+  doc.rect(0, 0, W, 28, 'F');
+
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(20);
+  doc.setTextColor(...PDF_GOLD);
+  doc.text("SisCap", ML, 12);
+
+  doc.setFontSize(8);
+  doc.setTextColor(...PDF_GRAY);
+  doc.text("SISTEMA DE CAPACITACION v2", ML, 17);
+
+  doc.setFontSize(9);
+  doc.setTextColor(...PDF_WHITE);
+  doc.text("Evaluacion de Desempeno", W - MR, 12, { align:'right' });
+  doc.setFontSize(8);
+  doc.setTextColor(...PDF_GRAY);
+  doc.text(data.fecha, W - MR, 17, { align:'right' });
+
+  // ── Línea gold ──
+  doc.setDrawColor(...PDF_GOLD);
+  doc.setLineWidth(0.5);
+  doc.line(0, 28, W, 28);
+
+  y = 36;
+
+  // ── Hero: resultado ──
+  const colorEst = _pdfColorEstado(data.total);
+  doc.setFillColor(colorEst[0], colorEst[1], colorEst[2], 0.12);
+  doc.setFillColor(20, 20, 20);
+  doc.roundedRect(ML, y, W - ML - MR, 28, 3, 3, 'F');
+  doc.setDrawColor(...colorEst);
+  doc.setLineWidth(0.4);
+  doc.roundedRect(ML, y, W - ML - MR, 28, 3, 3, 'D');
+
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(28);
+  doc.setTextColor(...colorEst);
+  doc.text(data.total + '%', ML + 8, y + 18);
+
+  doc.setFontSize(11);
+  doc.setTextColor(...colorEst);
+  doc.text(_pdfLabelEstado(data.total), ML + 38, y + 12);
+  doc.setFontSize(9);
+  doc.setTextColor(...PDF_GRAY);
+  doc.text(data.bandLabel, ML + 38, y + 18);
+
+  // Info evaluado
+  doc.setFontSize(8);
+  doc.setTextColor(...PDF_GRAY);
+  doc.text('Colaborador', W - MR - 50, y + 8);
+  doc.setFontSize(10);
+  doc.setFont('helvetica','bold');
+  doc.setTextColor(...PDF_WHITE);
+  const nombreCorto = data.evaluado.length > 22 ? data.evaluado.substring(0,22)+'...' : data.evaluado;
+  doc.text(nombreCorto, W - MR - 50, y + 14);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(8);
+  doc.setTextColor(...PDF_GRAY);
+  const localCorto = data.local.length > 28 ? data.local.substring(0,28)+'...' : data.local;
+  doc.text(localCorto, W - MR - 50, y + 20);
+
+  y += 34;
+
+  // ── Datos cabecera ──
+  const camposBG = [15,15,15];
+  const campos = [
+    ['Evaluador', data.evaluador || '—'],
+    ['Tipo',      data.tipo      || '—'],
+    ['Rol',       data.rol       || '—'],
+    ['Antiguedad',data.antiguedad|| '—'],
+  ];
+  const cW = (W - ML - MR - 6) / 4;
+  campos.forEach((c, i) => {
+    const cx = ML + i * (cW + 2);
+    doc.setFillColor(...camposBG);
+    doc.roundedRect(cx, y, cW, 13, 2, 2, 'F');
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(7);
+    doc.setTextColor(...PDF_GRAY);
+    doc.text(c[0].toUpperCase(), cx + 3, y + 5);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...PDF_WHITE);
+    const val = String(c[1]).length > 16 ? String(c[1]).substring(0,16)+'.' : String(c[1]);
+    doc.text(val, cx + 3, y + 11);
+  });
+
+  y += 19;
+
+  // ── Módulos ──
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(8);
+  doc.setTextColor(...PDF_GOLD);
+  doc.text('DETALLE POR MODULO', ML, y);
+  y += 5;
+
+  (data.modulos || []).forEach(m => {
+    if (m.porcentaje === null || m.porcentaje === undefined) return;
+    if (y > H - 30) { doc.addPage(); y = MT; }
+
+    const c = _pdfColorEstado(m.porcentaje);
+    // Fondo
+    doc.setFillColor(20, 20, 20);
+    doc.roundedRect(ML, y, W - ML - MR, 11, 2, 2, 'F');
+    doc.setDrawColor(...c);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(ML, y, W - ML - MR, 11, 2, 2, 'D');
+
+    // Porcentaje
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(10);
+    doc.setTextColor(...c);
+    doc.text(m.porcentaje + '%', ML + 3, y + 7.5);
+
+    // Nombre módulo
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...PDF_WHITE);
+    doc.text(m.num + '. ' + m.nombre, ML + 22, y + 5);
+
+    // Score raw
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(7);
+    doc.setTextColor(...PDF_GRAY);
+    doc.text(m.score + ' / ' + m.max + ' pts', ML + 22, y + 10);
+
+    // Barra de progreso
+    const bX = ML + 90, bW = W - ML - MR - 90 - 3, bH = 3;
+    const bY = y + 4;
+    doc.setFillColor(50, 50, 50);
+    doc.roundedRect(bX, bY, bW, bH, 1, 1, 'F');
+    const filled = Math.max(2, Math.round(bW * m.porcentaje / 100));
+    doc.setFillColor(...c);
+    doc.roundedRect(bX, bY, filled, bH, 1, 1, 'F');
+
+    y += 13;
+
+    // Items detalle
+    (m.items_detalle || []).forEach(it => {
+      if (it.val === undefined || it.val === null) return;
+      if (y > H - 20) { doc.addPage(); y = MT; }
+
+      const scoreVal = it.val === 'NA' ? null : parseInt(it.val);
+      const scoreColor = it.val==='NA' ? PDF_GRAY
+        : scoreVal===4 ? PDF_GREEN
+        : scoreVal===3 ? [39,174,96]
+        : scoreVal===2 ? PDF_YELLOW
+        : PDF_RED;
+      const scoreLabel = it.val==='NA' ? 'N/A'
+        : scoreVal===4 ? 'Destacado'
+        : scoreVal===3 ? 'Logrado'
+        : scoreVal===2 ? 'En proceso'
+        : 'Inicial';
+
+      // Punto indicador
+      doc.setFillColor(...scoreColor);
+      doc.circle(ML + 4, y + 3, 1.2, 'F');
+
+      // Texto ítem
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(7.5);
+      doc.setTextColor(180, 180, 180);
+      const textoCorto = it.texto.length > 72 ? it.texto.substring(0,72)+'...' : it.texto;
+      doc.text(textoCorto, ML + 8, y + 4);
+
+      // Badge score
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(6.5);
+      doc.setTextColor(...scoreColor);
+      doc.text(scoreLabel, W - MR - 1, y + 4, { align:'right' });
+
+      y += 6;
+
+      // Comentario si existe
+      if (it.comentario) {
+        if (y > H - 20) { doc.addPage(); y = MT; }
+        doc.setFillColor(30, 30, 20);
+        doc.roundedRect(ML + 8, y, W - ML - MR - 8, 8, 1, 1, 'F');
+        doc.setFont('helvetica','italic');
+        doc.setFontSize(6.5);
+        doc.setTextColor(...PDF_GOLD);
+        doc.text('Obs: ', ML + 10, y + 5);
+        doc.setTextColor(180, 180, 140);
+        const obsCorto = it.comentario.length > 90 ? it.comentario.substring(0,90)+'...' : it.comentario;
+        doc.text(obsCorto, ML + 18, y + 5);
+        y += 10;
+      }
+    });
+    y += 2;
+  });
+
+  // ── Fortalezas y refuerzo ──
+  if (data.fort && data.fort.length) {
+    if (y > H - 40) { doc.addPage(); y = MT; }
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...PDF_GREEN);
+    doc.text('FORTALEZAS', ML, y); y += 5;
+    data.fort.slice(0,6).forEach(f => {
+      if (y > H - 20) { doc.addPage(); y = MT; }
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(7);
+      doc.setTextColor(150, 200, 150);
+      const fCorto = f.length > 95 ? f.substring(0,95)+'...' : f;
+      doc.text('+ ' + fCorto, ML + 2, y); y += 5;
+    });
+    y += 2;
+  }
+  if (data.ref && data.ref.length) {
+    if (y > H - 40) { doc.addPage(); y = MT; }
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...PDF_YELLOW);
+    doc.text('AREAS A REFORZAR', ML, y); y += 5;
+    data.ref.slice(0,6).forEach(r => {
+      if (y > H - 20) { doc.addPage(); y = MT; }
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(7);
+      doc.setTextColor(200, 180, 100);
+      const rCorto = r.length > 95 ? r.substring(0,95)+'...' : r;
+      doc.text('- ' + rCorto, ML + 2, y); y += 5;
+    });
+    y += 2;
+  }
+
+  // ── Observación hospitalidad ──
+  if (data.obsHosp) {
+    if (y > H - 30) { doc.addPage(); y = MT; }
+    doc.setFillColor(10, 31, 24);
+    doc.roundedRect(ML, y, W-ML-MR, 16, 2, 2, 'F');
+    doc.setDrawColor(...PDF_TEAL);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(ML, y, W-ML-MR, 16, 2, 2, 'D');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(7);
+    doc.setTextColor(...PDF_TEAL);
+    doc.text('OBSERVACION DE HOSPITALIDAD', ML + 3, y + 5);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(7.5);
+    doc.setTextColor(200, 230, 220);
+    const hospCorto = data.obsHosp.length > 110 ? data.obsHosp.substring(0,110)+'...' : data.obsHosp;
+    doc.text(hospCorto, ML + 3, y + 12);
+    y += 20;
+  }
+
+  // ── Footer ──
+  const totalPages = doc.internal.getNumberOfPages();
+  for (let p = 1; p <= totalPages; p++) {
+    doc.setPage(p);
+    doc.setFillColor(15,15,15);
+    doc.rect(0, H-10, W, 10, 'F');
+    doc.setDrawColor(...PDF_GOLD);
+    doc.setLineWidth(0.3);
+    doc.line(0, H-10, W, H-10);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(6.5);
+    doc.setTextColor(...PDF_GRAY);
+    doc.text("SisCap v2 · Lucciano's · Sistema de Capacitacion", ML, H-4);
+    doc.text(`Pagina ${p} de ${totalPages}`, W-MR, H-4, { align:'right' });
+  }
+
+  return doc;
+}
+
+function _descargarPDF(doc, nombre) {
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const isIOS    = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+  if (isIOS) {
+    // iOS: abrir en nueva pestaña (los blobs no se descargan en Safari iOS)
+    const blob = doc.output('blob');
+    const url  = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    showToast('✓ PDF listo — presioná el ícono compartir para guardarlo');
+  } else if (isMobile) {
+    // Android: descarga directa
+    doc.save(nombre);
+    showToast('✓ PDF descargado');
+  } else {
+    // Desktop
+    doc.save(nombre);
+    showToast('✓ PDF descargado');
+  }
 }
 
 async function generarPDF() {
   const btn = document.getElementById('btn-pdf');
   btn.textContent = '⏳ Generando...'; btn.disabled = true;
-  showToast('Generando PDF...', 10000);
+  showToast('Generando PDF...', 6000);
+
   if (!ultimoResult) {
     showToast('⚠ Primero completá una evaluación');
     btn.textContent = '⬇ Descargar PDF'; btn.disabled = false; return;
   }
+  if (!window.jspdf) {
+    showToast('⚠ jsPDF no cargó. Verificá tu conexión.'); 
+    btn.textContent = '⬇ Descargar PDF'; btn.disabled = false; return;
+  }
+
   const r = ultimoResult.resultado;
   const fort=[], ref=[];
   r.modulos.filter(m=>m.porcentaje!==null).forEach(m => {
     (m.items_detalle||[]).forEach(i => {
       if (!i.val || i.val==='NA') return;
       const lbl = calcLabel(i.val);
-      if (parseInt(i.val)>=3) fort.push(`[${m.nombre}] ${i.texto} (${lbl})`);
-      else ref.push(`[${m.nombre}] ${i.texto} (${lbl})`);
+      if (parseInt(i.val)>=3) fort.push('['+m.nombre+'] '+i.texto+' ('+lbl+')');
+      else ref.push('['+m.nombre+'] '+i.texto+' ('+lbl+')');
     });
   });
-  const pct      = r.total+'%';
-  const bandLabel= r.total>=UMBRAL_OK?'Desempeño Sólido':r.total>=UMBRAL_OBS?'Desempeño Aceptable':'Atención Urgente';
-  const comentarios=[];
-  r.modulos.filter(m=>m.porcentaje!==null).forEach(m=>{
-    (m.items_detalle||[]).forEach(i=>{
-      if (!i.comentario) return;
-      const abrev = m.nombre.substring(0,2).toUpperCase()+m.num;
-      comentarios.push({ modulo:m.nombre, item:`${abrev}${i.n} · ${i.texto}`, texto:i.comentario });
-    });
-  });
-  const payload={
-    evaluado:ultimoResult.evaluado, local:ultimoResult.local,
-    evaluador:ultimoResult.evaluador, fecha:ultimoResult.fecha,
-    tipo:ultimoResult.tipo, rol:ultimoResult.rol, antiguedad:ultimoResult.antiguedad,
-    total:String(r.totalRaw), totalMax:String(r.totalMax),
-    resultado:`${bandLabel} — ${pct}`,
-    fortalezas:fort.join(' | '), reforzar:ref.join(' | '),
-    modulos:r.modulos.filter(m=>m.porcentaje!==null).map(m=>({ nombre:m.nombre, activo:true, score:m.score, max:m.max })),
-    comentarios,
-    obsHospitalidad:(document.getElementById('obs-hospitalidad')?.value||'').trim()
+
+  const bandLabel = r.total>=UMBRAL_OK?'Desempeno Solido':r.total>=UMBRAL_OBS?'Desempeno Aceptable':'Atencion Urgente';
+
+  const pdfData = {
+    evaluado:   ultimoResult.evaluado,
+    local:      ultimoResult.local,
+    evaluador:  ultimoResult.evaluador,
+    fecha:      ultimoResult.fecha,
+    tipo:       ultimoResult.tipo || '—',
+    rol:        ultimoResult.rol  || '—',
+    antiguedad: ultimoResult.antiguedad || '—',
+    total:      r.total,
+    bandLabel,
+    modulos:    r.modulos,
+    fort, ref,
+    obsHosp: (document.getElementById('obs-hospitalidad')?.value||'').trim()
   };
+
   try {
-    const data = await apiPost({ action:'pdf', payload });
+    const doc = _buildPDFFromData(pdfData);
+    const nombre = `SisCap_${ultimoResult.evaluado.replace(/\s+/g,'_')}_${ultimoResult.fecha}.pdf`;
+    _descargarPDF(doc, nombre);
     btn.textContent = '⬇ Descargar PDF'; btn.disabled = false;
-    if (data.status==='ok' && data.base64) {
-      const isIOS    = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile && data.url) {
-        // En mobile abrir URL de Drive directamente (más confiable)
-        window.open(data.url, '_blank');
-        showToast('✓ PDF listo — abrí desde Drive');
-      } else {
-        // Desktop: descarga directa via blob
-        const blob=base64ToBlob(data.base64,data.mime||'application/pdf');
-        const url=URL.createObjectURL(blob);
-        const a=document.createElement('a');
-        a.href=url; a.download=data.nombre||'Evaluacion.pdf'; a.target='_blank';
-        document.body.appendChild(a); a.click();
-        setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); },5000);
-        showToast('✓ PDF descargado');
-      }
-    } else { showToast('⚠ '+(data.msg||'Error al generar PDF')); }
-  } catch(e) { btn.textContent='⬇ Descargar PDF'; btn.disabled=false; showToast('⚠ Error de conexión'); }
+
+    // Registrar en Sheet (sin esperar resultado)
+    const payload = {
+      evaluado: ultimoResult.evaluado, local: ultimoResult.local,
+      evaluador: ultimoResult.evaluador, fecha: ultimoResult.fecha,
+      tipo: ultimoResult.tipo, rol: ultimoResult.rol,
+      resultado: bandLabel+' — '+r.total+'%',
+      porcentaje: r.total+'%'
+    };
+    apiPostBg({ action:'pdfLog', payload });
+
+  } catch(e) {
+    console.error('PDF error:', e);
+    btn.textContent = '⬇ Descargar PDF'; btn.disabled = false;
+    showToast('⚠ Error al generar PDF: '+e.message);
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
 // REIMPRIMIR PDF DESDE HISTORIAL
+// FIX: ahora recupera comentarios correctamente del evalCache
 // ═══════════════════════════════════════════════════════════
 async function reimprimirPDF(local, evaluado, fecha, porcentaje) {
-  showToast('Generando PDF...', 10000);
-  const key = local+'|'+evaluado+'|'+fecha;
+  if (!window.jspdf) { showToast('⚠ jsPDF no cargó. Verificá tu conexión.'); return; }
+  showToast('Generando PDF...', 6000);
+
+  const key    = local+'|'+evaluado+'|'+fecha;
   const cached = evalCache[key];
   const fort=[], ref=[];
+
   if (cached && cached.modulos) {
     cached.modulos.filter(m=>m.porcentaje!==null).forEach(m=>{
       (m.items_detalle||[]).forEach(i=>{
         if (!i.val||i.val==='NA') return;
         const lbl=calcLabel(i.val);
-        if (parseInt(i.val)>=3) fort.push(`[${m.nombre}] ${i.texto} (${lbl})`);
-        else ref.push(`[${m.nombre}] ${i.texto} (${lbl})`);
+        if (parseInt(i.val)>=3) fort.push('['+m.nombre+'] '+i.texto+' ('+lbl+')');
+        else ref.push('['+m.nombre+'] '+i.texto+' ('+lbl+')');
       });
     });
   }
-  const bandLabel=porcentaje>=UMBRAL_OK?'Desempeño Sólido':porcentaje>=UMBRAL_OBS?'Desempeño Aceptable':'Atención Urgente';
-  const payload={
-    evaluado, local, fecha,
-    evaluador:cached?.evaluador||'', tipo:cached?.tipo||'', rol:cached?.rol||'', antiguedad:cached?.antiguedad||'',
-    total:String(cached?.totalRaw||''), totalMax:String(cached?.totalMax||''),
-    resultado:`${bandLabel} — ${porcentaje}%`,
-    fortalezas:fort.join(' | '), reforzar:ref.join(' | '),
-    modulos:(cached?.modulos||[]).filter(m=>m.porcentaje!==null).map(m=>({ nombre:m.nombre, activo:true, score:m.score, max:m.max })),
-    comentarios:[]
+
+  const bandLabel = porcentaje>=UMBRAL_OK?'Desempeno Solido':porcentaje>=UMBRAL_OBS?'Desempeno Aceptable':'Atencion Urgente';
+
+  const pdfData = {
+    evaluado,
+    local,
+    fecha,
+    evaluador:  cached?.evaluador  || '—',
+    tipo:       cached?.tipo       || '—',
+    rol:        cached?.rol        || '—',
+    antiguedad: cached?.antiguedad || '—',
+    total:      porcentaje,
+    bandLabel,
+    // FIX: ahora pasa los módulos con items_detalle reales (incluye comentarios)
+    modulos:    cached?.modulos || [],
+    fort, ref,
+    obsHosp: ''
   };
+
   try {
-    const data=await apiPost({ action:'pdf', payload });
-    if (data.status==='ok'&&data.base64) {
-      const isMobileR = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobileR && data.url) {
-        window.open(data.url, '_blank');
-      } else {
-        const blob=base64ToBlob(data.base64,data.mime||'application/pdf');
-        const url=URL.createObjectURL(blob);
-        const a=document.createElement('a');
-        a.href=url; a.download=data.nombre||'Evaluacion.pdf'; a.target='_blank';
-        document.body.appendChild(a); a.click();
-        setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); },5000);
-      }
-      showToast('✓ PDF descargado');
-    } else { showToast('⚠ '+(data.msg||'Error')); }
-  } catch(e) { showToast('⚠ Error de conexión'); }
+    const doc    = _buildPDFFromData(pdfData);
+    const nombre = `SisCap_${evaluado.replace(/\s+/g,'_')}_${fecha}.pdf`;
+    _descargarPDF(doc, nombre);
+  } catch(e) {
+    console.error('PDF error:', e);
+    showToast('⚠ Error al generar PDF: '+e.message);
+  }
 }
 
 async function cargarPendientes() {
@@ -2056,12 +2326,24 @@ function abrirConfig() {
 function toggleUserForm() { document.getElementById('user-form').classList.toggle('open'); }
 
 async function cargarUsuarios() {
-  const lista=document.getElementById('usuarios-lista');
-  lista.innerHTML='<div class="spinner-wrap"><div class="spinner"></div></div>';
+  const lista  = document.getElementById('usuarios-lista');
+  const impSel = document.getElementById('impersonar-sel');
+  lista.innerHTML = '<div class="spinner-wrap"><div class="spinner"></div></div>';
+
+  // FIX: poblar el select de impersonación con usuarios hardcodeados
+  if (impSel) {
+    const opts = ['<option value="">— Seleccioná un usuario —</option>'];
+    Object.entries(USUARIOS).forEach(([key, u]) => {
+      if (u.isAdmin) return;
+      opts.push(`<option value="${key}">${esc(u.nombre)} (@${key})</option>`);
+    });
+    impSel.innerHTML = opts.join('');
+  }
+
   try {
-    const data=await apiGet({ action:'getUsuarios' });
+    const data = await apiGet({ action:'getUsuarios' });
     if (data.usuarios?.length) {
-      lista.innerHTML=data.usuarios.map(u=>`
+      lista.innerHTML = data.usuarios.map(u=>`
         <div class="user-row">
           <div><div class="user-name">${esc(u.nombre)}</div><div class="user-handle">@${esc(u.usuario)}</div></div>
           <div style="display:flex;align-items:center;gap:8px">
@@ -2069,8 +2351,23 @@ async function cargarUsuarios() {
             <button class="toggle-user-btn" onclick="toggleUsuario('${esc(u.usuario)}','${esc(u.estado)}')">${u.estado==='activo'?'Desactivar':'Activar'}</button>
           </div>
         </div>`).join('');
-    } else { lista.innerHTML='<div style="color:var(--gray);font-size:13px;padding:10px">Sin usuarios.</div>'; }
-  } catch(e) { lista.innerHTML='<div style="color:var(--gray);font-size:13px;padding:10px">Error al cargar.</div>'; }
+      // Agregar al select los usuarios de Sheets que no están en USUARIOS local
+      if (impSel) {
+        data.usuarios.forEach(u => {
+          if (!USUARIOS[u.usuario] && u.estado === 'activo') {
+            const opt = document.createElement('option');
+            opt.value = u.usuario;
+            opt.textContent = u.nombre + ' (@' + u.usuario + ')';
+            impSel.appendChild(opt);
+          }
+        });
+      }
+    } else {
+      lista.innerHTML = '<div style="color:var(--gray);font-size:13px;padding:10px">Sin usuarios en Sheets.</div>';
+    }
+  } catch(e) {
+    lista.innerHTML = '<div style="color:var(--gray);font-size:13px;padding:10px">Error al cargar usuarios.</div>';
+  }
 }
 
 async function crearUsuario() {
