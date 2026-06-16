@@ -1,0 +1,2672 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#0D0D0D"/>
+<title>SisCap 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* ── VARIABLES ──────────────────────────────────────────── */
+:root{
+  --gold:#C9A84C; --gold-light:#E2C06A; --gold-dark:#A07830;
+  --black:#0D0D0D; --dark:#1A1A1A; --dark2:#242424; --dark3:#2E2E2E;
+  --white:#F5F0E8; --gray:#888;
+  --green:#2ECC71; --green-bg:#1a3d2b;
+  --yellow:#F39C12; --yellow-bg:#3d2e0a;
+  --red:#E74C3C; --red-bg:#3d1010;
+  --teal:#5DCAA5; --teal-bg:#0F1F18;
+  --r:14px; --rs:8px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+}
+
+/* ── RESET ──────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%;-webkit-text-size-adjust:100%}
+body{min-height:100%;background:var(--black);color:var(--white);font-family:'Inter',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ── SCREENS ────────────────────────────────────────────── */
+.screen{display:none;flex-direction:column;min-height:100dvh;animation:fadeIn .25s ease}
+.screen.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ── TIPOGRAFÍA SHARED ──────────────────────────────────── */
+.font-brand{font-family:'Montserrat',sans-serif}
+.section-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+
+/* ── BOTONES ────────────────────────────────────────────── */
+.btn{display:block;width:100%;padding:14px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;text-transform:uppercase;border:none;border-radius:var(--rs);cursor:pointer;transition:filter .15s,transform .1s;text-align:center}
+.btn:active{transform:scale(.98);filter:brightness(.85)}
+.btn-gold{background:var(--gold);color:var(--black)}
+.btn-outline{background:transparent;color:var(--gold);border:1px solid var(--gold-dark);margin-top:8px}
+.btn-green-solid{background:var(--green-bg);color:var(--green);border:1px solid var(--green);margin-top:8px}
+.btn-sm{padding:7px 14px;font-size:11px;width:auto;display:inline-block;margin:0}
+
+/* ── CAMPOS ─────────────────────────────────────────────── */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--gray);margin-bottom:5px}
+.field input,.field select,.field textarea{
+  width:100%;padding:12px 14px;background:var(--dark2);border:1px solid #333;
+  border-radius:var(--rs);color:var(--white);font-size:15px;font-family:'Inter',sans-serif;
+  outline:none;transition:border-color .2s;-webkit-appearance:none;appearance:none
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold)}
+.field select option{background:var(--dark2)}
+
+/* ── HEADER ─────────────────────────────────────────────── */
+.app-header{
+  background:var(--dark);border-bottom:1px solid #2a2a2a;
+  padding:13px 20px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:200
+}
+.logo{font-family:'Montserrat',sans-serif;font-weight:900;font-size:22px;color:var(--gold)}
+.badge-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gray)}
+.avatar{
+  width:34px;height:34px;border-radius:50%;background:var(--gold-dark);
+  color:var(--black);font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0
+}
+.config-btn{background:none;border:none;color:var(--gray);font-size:20px;cursor:pointer;padding:6px;border-radius:50%;transition:color .2s}
+.config-btn:hover{color:var(--gold)}
+
+/* ── BOTTOM NAV ─────────────────────────────────────────── */
+.bottom-nav{
+  background:var(--dark);border-top:1px solid #2a2a2a;
+  display:flex;position:sticky;bottom:0;
+  padding-bottom:var(--safe-b);z-index:190
+}
+.nav-btn{
+  flex:1;padding:11px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;color:var(--gray);font-size:9px;letter-spacing:1px;text-transform:uppercase;
+  font-weight:600;border:none;background:none;transition:color .2s
+}
+.nav-btn.active{color:var(--gold)}
+.nav-icon{font-size:20px;line-height:1}
+
+/* ── SPINNER / TOAST ────────────────────────────────────── */
+.spinner-wrap{display:flex;align-items:center;justify-content:center;padding:40px}
+.spinner{width:34px;height:34px;border:3px solid #333;border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{
+  position:fixed;bottom:calc(70px + var(--safe-b));left:50%;
+  transform:translateX(-50%) translateY(12px);
+  background:var(--dark3);color:var(--white);padding:10px 20px;
+  border-radius:20px;font-size:13px;opacity:0;transition:all .28s;
+  z-index:999;white-space:nowrap;border:1px solid #3a3a3a;pointer-events:none;
+  max-width:90vw;overflow:hidden;text-overflow:ellipsis
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── CARDS STAT ─────────────────────────────────────────── */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:4px}
+.stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gray)}
+.stat-value{font-family:'Montserrat',sans-serif;font-weight:900;font-size:32px;color:var(--white);line-height:1}
+.stat-sub{font-size:11px;color:var(--gray)}
+.stat-card.gold{border-color:var(--gold-dark)}
+.stat-card.gold .stat-value{color:var(--gold)}
+
+/* ── ALERTAS ────────────────────────────────────────────── */
+.alert-strip{background:var(--yellow-bg);border:1px solid var(--yellow);border-radius:var(--r);padding:13px 15px}
+.alert-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;color:var(--yellow);margin-bottom:4px}
+.alert-list{font-size:12px;color:#ccc;line-height:1.6}
+
+/* ── CTA EVALUAR ────────────────────────────────────────── */
+.cta-eval{
+  background:var(--gold);color:var(--black);border-radius:var(--r);
+  padding:17px 20px;display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;transition:filter .15s;border:none;width:100%;text-align:left
+}
+.cta-eval:active{filter:brightness(.85)}
+.cta-text{font-family:'Montserrat',sans-serif;font-weight:800;font-size:15px}
+.cta-sub{font-size:11px;margin-top:2px;opacity:.7}
+
+/* ── BÚSQUEDA ───────────────────────────────────────────── */
+.search-wrap{position:relative}
+.search-input{
+  width:100%;padding:10px 14px 10px 36px;background:var(--dark2);border:1px solid #333;
+  border-radius:var(--rs);color:var(--white);font-size:14px;font-family:'Inter',sans-serif;
+  outline:none;transition:border-color .2s
+}
+.search-input:focus{border-color:var(--gold)}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray);font-size:14px;pointer-events:none}
+
+/* ── SUCURSALES ─────────────────────────────────────────── */
+.suc-list{display:flex;flex-direction:column;gap:8px}
+.suc-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);overflow:hidden}
+.suc-card-head{padding:13px 15px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.suc-card-head:active{background:var(--dark2)}
+.suc-name{font-weight:600;font-size:14px;color:var(--white)}
+.suc-date{font-size:11px;color:var(--gray);margin-top:2px}
+.suc-pct{font-family:'Montserrat',sans-serif;font-weight:700;font-size:17px}
+.suc-chev{color:var(--gray);font-size:11px;transition:transform .2s;margin-left:6px;flex-shrink:0}
+.suc-chev.open{transform:rotate(180deg)}
+.suc-detail{display:none;border-top:1px solid #2a2a2a;padding:10px 14px;background:var(--dark2);flex-direction:column;gap:8px}
+.suc-detail.open{display:flex}
+.badge{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:20px}
+.badge-aprobado{background:var(--green-bg);color:var(--green);border:1px solid var(--green)}
+.badge-observado{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow)}
+.badge-urgente{background:var(--red-bg);color:var(--red);border:1px solid var(--red)}
+.color-green{color:var(--green)}.color-yellow{color:var(--yellow)}.color-red{color:var(--red)}
+.bar-green{background:var(--green)}.bar-yellow{background:var(--yellow)}.bar-red{background:var(--red)}
+
+/* ── COLABORADORES ──────────────────────────────────────── */
+.colab-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--dark3);border-radius:var(--rs);cursor:pointer}
+.colab-row:active{filter:brightness(1.15)}
+.colab-name{font-size:13px;font-weight:600;color:var(--white)}
+.colab-date{font-size:11px;color:var(--gray)}
+.colab-pct{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px}
+.colab-actions{display:flex;gap:6px}
+.btn-reeval{flex:1;padding:8px;background:var(--gold);color:var(--black);font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;border:none;border-radius:var(--rs);cursor:pointer}
+.btn-del{padding:8px 14px;background:var(--red-bg);color:var(--red);font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;border:1px solid var(--red);border-radius:var(--rs);cursor:pointer}
+.icon-btn{background:none;border:none;cursor:pointer;font-size:17px;padding:3px;border-radius:6px;transition:transform .15s;line-height:1}
+.icon-btn:active{transform:scale(.85)}
+.del-btn{opacity:.7}
+.del-btn:hover{opacity:1}
+.suc-tabs{display:flex;gap:0;margin-bottom:8px;border-radius:var(--rs);overflow:hidden;border:1px solid #333}
+.suc-tab{flex:1;padding:8px;background:var(--dark3);color:var(--gray);font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;letter-spacing:1px;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s}
+.suc-tab.active{background:var(--gold);color:var(--black)}
+.suc-tab-content{display:none}
+.suc-tab-content.active{display:flex;flex-direction:column;gap:6px}
+.continuar-btn{flex:1;padding:8px;background:#1a2a3a;color:#5b9bd5;font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;border:1px solid #2a4a6a;border-radius:var(--rs);cursor:pointer}
+.nueva-eval-local{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;color:var(--gold);font-size:12px;font-weight:600;border:1px dashed var(--gold-dark);border-radius:var(--rs);cursor:pointer;width:100%;background:transparent}
+.ver-mas-btn{text-align:center;padding:10px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;letter-spacing:1px;text-transform:uppercase}
+.filter-eval{background:var(--dark2);border:1px solid #333;border-radius:var(--rs);color:var(--white);padding:8px 12px;font-size:12px;font-family:'Inter',sans-serif;outline:none;cursor:pointer;transition:border-color .2s;-webkit-appearance:none}
+.filter-eval:focus{border-color:var(--gold)}
+
+/* ── AUTOCOMPLETE ───────────────────────────────────────── */
+.autocomplete-wrap{position:relative}
+.autocomplete-list{position:absolute;top:100%;left:0;right:0;background:var(--dark2);border:1px solid var(--gold-dark);border-radius:var(--rs);z-index:300;max-height:200px;overflow-y:auto;display:none}
+.autocomplete-list.open{display:block}
+.autocomplete-item{padding:10px 14px;font-size:14px;cursor:pointer;border-bottom:1px solid #333}
+.autocomplete-item:last-child{border-bottom:none}
+.autocomplete-item:active{background:var(--dark3);color:var(--gold)}
+
+/* ── FORMULARIO ─────────────────────────────────────────── */
+.form-header-bar{background:var(--dark);border-bottom:1px solid #2a2a2a;padding:11px 18px;position:sticky;top:0;z-index:190}
+.form-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.form-title{font-family:'Montserrat',sans-serif;font-weight:800;font-size:15px;color:var(--gold)}
+.progress-wrap{display:flex;align-items:center;gap:10px}
+.progress-outer{flex:1;background:#333;border-radius:4px;height:4px;overflow:hidden}
+.progress-bar{height:100%;border-radius:4px;background:var(--gold);transition:width .35s ease;width:0%}
+.progress-text{font-size:11px;color:var(--gray);white-space:nowrap}
+.form-meta-bar{display:flex;gap:14px;flex-wrap:wrap;margin-top:5px}
+.form-meta-bar span{font-size:11px;color:var(--gray)}
+.form-meta-bar strong{color:var(--white)}
+.form-cabecera{padding:0 18px 14px;background:var(--dark2);display:flex;flex-direction:column;gap:10px}
+
+/* ── MÓDULOS SELECTOR ───────────────────────────────────── */
+.mod-selector{padding:12px 18px;background:var(--dark);border-bottom:1px solid #2a2a2a}
+.mod-selector-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:8px}
+.mod-toggle-wrap{display:flex;flex-wrap:wrap;gap:7px}
+.mod-toggle{
+  padding:7px 13px;border-radius:20px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .18s;border:1.5px solid #444;background:var(--dark2);color:var(--gray);
+  display:inline-flex;align-items:center;gap:4px;-webkit-tap-highlight-color:transparent;user-select:none
+}
+.mod-toggle.active{background:var(--gold);color:var(--black);border-color:var(--gold)}
+
+/* ── LEYENDA ────────────────────────────────────────────── */
+.legend-bar{
+  display:flex;flex-wrap:wrap;gap:7px 14px;background:var(--dark);
+  border-bottom:1px solid #2a2a2a;padding:9px 18px;font-size:11px;color:var(--gray);
+  position:sticky;top:0;z-index:88
+}
+.legend-bar span{display:flex;align-items:center;gap:5px;font-weight:500}
+.lbadge{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;font-size:9px;font-weight:700;color:white;flex-shrink:0}
+
+/* ── ITEMS DEL FORMULARIO ───────────────────────────────── */
+.form-body{padding:16px 18px;display:flex;flex-direction:column;gap:20px;padding-bottom:90px}
+.modulo-block{display:flex;flex-direction:column;gap:8px}
+.modulo-header{background:var(--dark2);border-radius:var(--rs);padding:11px 13px;display:flex;align-items:center;gap:9px}
+.modulo-num{width:26px;height:26px;border-radius:50%;background:var(--teal);color:var(--black);font-family:'Montserrat',sans-serif;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.modulo-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--teal)}
+.modulo-tag{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-left:4px}
+
+/* ── BANNER HOSPITALIDAD ────────────────────────────────── */
+.hosp-banner{background:linear-gradient(135deg,#0a1f18,#0f2d22);border:1px solid #2a6b50;border-radius:var(--r);padding:22px 18px;text-align:center;margin-bottom:4px}
+.hosp-org{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#5DCAA5;margin-bottom:8px}
+.hosp-title{font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;color:#5DCAA5;line-height:1.15;margin-bottom:7px}
+.hosp-sub{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#3aaa85;margin-bottom:10px}
+.hosp-line{width:36px;height:2px;background:#2a6b50;margin:0 auto}
+
+/* ── ITEM CARD ──────────────────────────────────────────── */
+.item-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:13px;transition:border-color .2s}
+.item-card.answered{border-color:#3a3a2a}
+.item-card.pending-highlight{border-color:var(--yellow)!important;animation:pulse-border .6s ease}
+@keyframes pulse-border{0%,100%{border-color:var(--yellow)}50%{border-color:#ff0}}
+.item-id{font-size:9px;color:var(--gold);font-weight:700;margin-bottom:3px;letter-spacing:.5px}
+.item-label{font-size:13px;color:var(--white);margin-bottom:9px;line-height:1.55}
+.item-label strong{font-weight:700}
+.score-row{display:flex;align-items:center;gap:4px}
+.score-btns{display:flex;gap:5px;flex:1}
+.score-btn{
+  flex:1;padding:9px 2px;background:var(--dark2);border:1px solid #333;border-radius:var(--rs);
+  color:var(--gray);font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;
+  cursor:pointer;transition:all .12s;text-align:center;min-width:0
+}
+.score-btn:active{transform:scale(.93)}
+.score-btn.sel-1{background:#3d1010;border-color:var(--red);color:var(--red)}
+.score-btn.sel-2{background:#3d2e0a;border-color:var(--yellow);color:var(--yellow)}
+.score-btn.sel-3{background:#1a3020;border-color:#27ae60;color:#27ae60}
+.score-btn.sel-4{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+.score-btn.sel-na{background:#2a2a3a;border-color:#7777aa;color:#aaaadd;font-weight:900}
+.score-labels{display:flex;gap:5px;margin-top:4px;padding-right:30px}
+.score-label{flex:1;font-size:8px;color:var(--gray);text-align:center}
+.comment-btn{background:none;border:none;cursor:pointer;color:var(--gray);font-size:18px;padding:0 2px;flex-shrink:0;opacity:.5;transition:opacity .2s;line-height:1}
+.comment-btn:hover,.comment-btn:active{opacity:1;color:var(--gold)}
+.comment-wrap{display:none;margin-top:8px}
+.comment-wrap.open{display:block}
+.comment-wrap textarea{width:100%;background:var(--dark2);border:1px solid #333;border-radius:var(--rs);padding:8px 10px;font-family:'Inter',sans-serif;font-size:12px;color:var(--white);resize:vertical;min-height:42px;outline:none;transition:border-color .2s}
+.comment-wrap textarea:focus{border-color:var(--gold)}
+
+/* ── GUÍA TÉCNICA ───────────────────────────────────────── */
+.guide-toggle{margin-top:8px;font-size:11px;color:var(--teal);cursor:pointer;display:flex;align-items:center;gap:4px;background:none;border:none;padding:0;font-family:'Inter',sans-serif}
+.guide-panel{margin-top:7px;background:var(--teal-bg);border-left:2px solid var(--teal);border-radius:0 var(--rs) var(--rs) 0;padding:9px 11px;font-size:12px;color:#9dd;line-height:1.6;display:none}
+.guide-panel.open{display:block}
+.guide-panel-title{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--teal);margin-bottom:5px}
+.guide-panel ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.guide-panel li{font-size:11px;color:#aaa;padding:2px 0;border-bottom:1px solid #1a3028}
+.guide-panel li:last-child{border-bottom:none}
+.guide-resp{font-size:10px;color:var(--teal);font-style:italic;padding-left:10px;display:block;margin-top:2px}
+.hosp-toggle{margin-top:6px;font-size:11px;color:var(--gold);cursor:pointer;display:flex;align-items:center;gap:4px;background:none;border:none;padding:0;font-family:'Inter',sans-serif}
+.hosp-panel{margin-top:7px;background:#1a1500;border-left:2px solid var(--gold-dark);border-radius:0 var(--rs) var(--rs) 0;padding:9px 11px;font-size:12px;color:#ccc;line-height:1.6;display:none}
+.hosp-panel.open{display:block}
+.obs-hosp{background:#0a1f18;border:1px solid #2a6b50;border-radius:var(--rs);padding:11px;margin-top:8px}
+.obs-hosp-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#5DCAA5;margin-bottom:5px}
+.obs-hosp textarea{width:100%;background:transparent;border:none;font-family:'Inter',sans-serif;font-size:13px;color:var(--white);resize:vertical;min-height:48px;outline:none}
+
+/* ── FOOTER FORMULARIO ──────────────────────────────────── */
+.form-footer{position:sticky;bottom:0;left:0;right:0;background:var(--dark);border-top:1px solid #2a2a2a;padding:11px 18px;padding-bottom:calc(11px + var(--safe-b));z-index:190}
+
+/* ── RESULTADO ──────────────────────────────────────────── */
+.resultado-body{padding:18px;flex:1;display:flex;flex-direction:column;gap:14px;padding-bottom:36px}
+.resultado-hero{border-radius:var(--r);padding:22px 18px;text-align:center}
+.resultado-hero.aprobado{background:var(--green-bg);border:1px solid var(--green)}
+.resultado-hero.observado{background:var(--yellow-bg);border:1px solid var(--yellow)}
+.resultado-hero.urgente{background:var(--red-bg);border:1px solid var(--red)}
+.resultado-pct{font-family:'Montserrat',sans-serif;font-weight:900;font-size:62px;line-height:1}
+.resultado-hero.aprobado .resultado-pct{color:var(--green)}
+.resultado-hero.observado .resultado-pct{color:var(--yellow)}
+.resultado-hero.urgente .resultado-pct{color:var(--red)}
+.resultado-estado{font-family:'Montserrat',sans-serif;font-weight:800;font-size:15px;margin-top:7px;margin-bottom:3px}
+.resultado-local{font-size:12px;color:#aaa}
+.mod-result{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:13px 15px;display:flex;align-items:center;gap:12px}
+.mod-result-pct{font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;min-width:54px;text-align:center}
+.mod-result-name{font-weight:600;font-size:12px;color:var(--white);margin-bottom:3px}
+.mod-bar-outer{background:#333;border-radius:4px;height:4px}
+.mod-bar{height:100%;border-radius:4px}
+.mod-badge{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+
+/* ── VER EVALUACIÓN ─────────────────────────────────────── */
+.ver-body-inner{padding:18px;flex:1;display:flex;flex-direction:column;gap:14px;padding-bottom:36px;overflow-y:auto}
+.ver-header-card{background:var(--dark2);border-radius:var(--r);padding:14px}
+.ver-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.ver-field-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray)}
+.ver-field-value{font-size:13px;font-weight:600;color:var(--white)}
+.ver-mod-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;color:var(--teal);padding:7px 11px;background:var(--dark2);border-radius:var(--rs);display:flex;justify-content:space-between}
+.ver-item{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--rs);padding:9px 11px}
+.ver-item-label{font-size:11px;color:#ccc;margin-bottom:5px;line-height:1.4}
+.ver-score{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700}
+.ver-s1{background:#3d1010;color:var(--red);border:1px solid var(--red)}
+.ver-s2{background:#3d2e0a;color:var(--yellow);border:1px solid var(--yellow)}
+.ver-s3{background:#1a3020;color:#27ae60;border:1px solid #27ae60}
+.ver-s4{background:var(--green-bg);color:var(--green);border:1px solid var(--green)}
+.ver-sna{background:#222;color:var(--gray);border:1px solid #555}
+.ver-comment{margin-top:5px;padding:5px 9px;background:#1a1a1a;border-left:2px solid var(--gold-dark);border-radius:0 3px 3px 0;font-size:10px;color:#bbb;font-style:italic}
+.ver-total{background:var(--dark2);border-radius:var(--r);padding:14px;display:flex;align-items:center;justify-content:space-between}
+
+/* ── CONFIGURACIÓN ──────────────────────────────────────── */
+.config-body{padding:18px;flex:1;display:flex;flex-direction:column;gap:16px;padding-bottom:36px}
+.config-section{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);overflow:hidden}
+.config-section-head{background:var(--dark2);padding:13px 15px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2a2a2a}
+.config-section-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--teal)}
+.config-section-body{padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.user-row{background:var(--dark2);border-radius:var(--rs);padding:10px 13px;display:flex;align-items:center;justify-content:space-between}
+.user-name{font-weight:600;font-size:13px}
+.user-handle{font-size:11px;color:var(--gray)}
+.user-status{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px}
+.status-active{background:var(--green-bg);color:var(--green);border:1px solid var(--green)}
+.status-inactive{background:var(--red-bg);color:var(--red);border:1px solid var(--red)}
+.toggle-user-btn{background:none;border:1px solid #444;color:var(--gray);font-size:10px;padding:4px 10px;border-radius:20px;cursor:pointer}
+.user-form{display:none;flex-direction:column;gap:10px;padding:12px 14px;border-top:1px solid #2a2a2a}
+.user-form.open{display:flex}
+
+/* ── LOGIN ──────────────────────────────────────────────── */
+#screen-login{align-items:center;justify-content:center;padding:32px 22px}
+.login-logo{font-family:'Montserrat',sans-serif;font-weight:900;font-size:42px;color:var(--gold);letter-spacing:-1px;margin-bottom:4px}
+.login-sub{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gray);margin-bottom:44px}
+.login-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:26px 22px;width:100%;max-width:380px}
+.login-card h2{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:700;margin-bottom:20px}
+.error-msg{color:var(--red);font-size:12px;margin-top:8px;text-align:center;min-height:18px}
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+@media(max-width:380px){
+  .hosp-title{font-size:20px}
+  .score-btn{font-size:13px;padding:9px 1px}
+  .stat-value{font-size:26px}
+}
+@media(min-width:600px){
+  .form-body,.resultado-body,.ver-body-inner,.config-body,.home-body{max-width:640px;margin-left:auto;margin-right:auto;width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="screen-login" class="screen active">
+  <div class="login-logo">SisCap</div>
+  <div class="login-sub">Sistema de Capacitación v2</div>
+  <div class="login-card">
+    <h2>Iniciar sesión</h2>
+    <div class="field"><label>Usuario</label><input type="text" id="login-user" placeholder="Tu usuario" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"/></div>
+    <div class="field"><label>Contraseña</label><input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"/></div>
+    <button class="btn btn-gold" onclick="doLogin()">Ingresar</button>
+    <div class="error-msg" id="login-error"></div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div id="screen-home" class="screen">
+  <div class="app-header">
+    <div><div class="logo">SisCap</div><div class="badge-label">v2.0</div></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="config-btn" id="cfg-btn" onclick="abrirConfig()" title="Configuración">⚙</button>
+      <button id="btn-volver-admin" class="config-btn" onclick="volverComoAdmin()" title="Volver como admin" style="font-size:14px;display:none;color:var(--gold)">↩ Admin</button>
+      <button class="config-btn" onclick="cerrarSesion()" title="Cerrar sesión" style="font-size:16px">⏻</button>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="avatar" id="home-avatar">G</div>
+        <span style="font-size:13px;color:var(--white);font-weight:500" id="home-name">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-body" style="padding:18px;flex:1;display:flex;flex-direction:column;gap:18px;padding-bottom:72px;overflow-y:auto">
+    <!-- Stats -->
+    <div>
+      <div class="section-title">Resumen</div>
+      <div class="stat-grid">
+        <div class="stat-card gold"><div class="stat-label">Evaluaciones</div><div class="stat-value" id="stat-total">—</div><div class="stat-sub">registradas en la red</div></div>
+        <div class="stat-card"><div class="stat-label">Mis evaluaciones</div><div class="stat-value" id="stat-prom">—</div><div class="stat-sub">registradas por mí</div></div>
+        <div class="stat-card"><div class="stat-label">Aprobadas</div><div class="stat-value color-green" id="stat-aprobadas">—</div><div class="stat-sub">≥ 80%</div></div>
+        <div class="stat-card"><div class="stat-label">Requieren refuerzo</div><div class="stat-value color-red" id="stat-alertas">—</div><div class="stat-sub">< 50%</div></div>
+      </div>
+    </div>
+    <!-- Alertas -->
+    <div id="alert-wrap" style="display:none">
+      <div class="section-title">⚠ Alertas</div>
+      <div class="alert-strip"><div class="alert-title">Locales sin evaluar (+30 días)</div><div class="alert-list" id="alert-list"></div></div>
+    </div>
+    <!-- Pendientes para gabi -->
+    <div id="pendientes-wrap" style="display:none">
+      <div class="section-title">🔔 Solicitudes de acceso</div>
+      <div id="pendientes-lista" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+    <!-- CTA -->
+    <button class="cta-eval" onclick="irAFormulario()">
+      <div><div class="cta-text">Nueva evaluación</div><div class="cta-sub">Iniciar formulario completo</div></div>
+      <span style="font-size:22px">→</span>
+    </button>
+    <!-- Sucursales -->
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="section-title" style="margin-bottom:0">Últimas evaluaciones</div>
+        <button onclick="recargarDatos()" style="background:none;border:1px solid #333;color:var(--gray);font-size:10px;padding:4px 11px;border-radius:20px;cursor:pointer;font-family:Inter,sans-serif;font-weight:600;letter-spacing:1px">↻ Actualizar</button>
+      </div>
+      <!-- Filtro por evaluador — solo visible para Gabi -->
+      <div id="filtro-evaluador-wrap" style="display:none;margin-bottom:10px">
+        <select class="filter-eval" id="filtro-evaluador" onchange="renderHome()" style="width:100%">
+          <option value="">👥 Todos los evaluadores</option>
+          <option>Gabriel Busquets</option>
+          <option>Tomás Ojeda</option>
+          <option>Ever Rodríguez</option>
+          <option>Lourdes Garcia</option>
+          <option>Nicolas Lopez</option>
+          <option>Ivan Herrera</option>
+          <option>Barbara Riccitelli</option>
+          <option>Fabricio</option>
+          <option>Carlos Torres</option>
+        </select>
+      </div>
+      <div class="search-wrap" style="margin-bottom:10px">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" id="suc-search" placeholder="Buscar sucursal..." oninput="filtrarSucursales()" autocomplete="off"/>
+      </div>
+      <div class="suc-list" id="suc-list"><div id="suc-empty" style="text-align:center;padding:32px 20px;color:var(--gray)"><div style="font-size:32px;margin-bottom:12px">📋</div><div style="font-family:Montserrat;font-weight:700;font-size:14px;color:var(--white);margin-bottom:6px">Sin evaluaciones aún</div><div style="font-size:12px">Las evaluaciones aparecerán aquí una vez que<br>se registren en el sistema</div><button class="btn btn-gold" style="margin-top:16px;padding:10px 24px;width:auto" onclick="irAFormulario()">Iniciar primera evaluación</button></div></div>
+      <div class="ver-mas-btn" id="ver-mas-btn" style="display:none" onclick="toggleVerMas()"></div>
+    </div>
+  </div>
+
+  <div class="bottom-nav" style="justify-content:center">
+    <button class="nav-btn active" style="max-width:160px" onclick="showTab('home')"><span class="nav-icon">🏠</span>Inicio</button>
+  </div>
+</div>
+
+<!-- FORMULARIO -->
+<div id="screen-form" class="screen">
+  <div class="form-header-bar">
+    <div class="form-header-top">
+      <button class="btn btn-outline btn-sm" onclick="showTab('home')">← Volver</button>
+      <span class="form-title">Nueva evaluación</span>
+      <div style="width:70px"></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-outer"><div class="progress-bar" id="prog-bar"></div></div>
+      <span class="progress-text" id="prog-text">0 / 44</span>
+    </div>
+    <div class="form-meta-bar">
+      <span>Local: <strong id="meta-local">—</strong></span>
+      <span>Evaluado: <strong id="meta-evaluado">—</strong></span>
+    </div>
+  </div>
+
+  <!-- Cabecera colapsable -->
+  <div style="background:var(--dark2);border-bottom:1px solid #2a2a2a">
+    <div onclick="toggleFormCabecera()" style="padding:10px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none">
+      <span style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold)">Datos de la evaluación</span>
+      <span id="cabecera-chev" style="color:var(--gray);font-size:11px;transition:transform .2s">▼</span>
+    </div>
+    <div class="form-cabecera" id="form-cabecera-body">
+      <div class="field"><label>Fecha</label><input type="date" id="f-fecha"/></div>
+      <div class="field">
+        <label>Local / Sucursal</label>
+        <div class="autocomplete-wrap">
+          <input type="text" id="f-local" placeholder="" autocomplete="off" autocorrect="off" oninput="filtrarLocales()"/>
+          <div class="autocomplete-list" id="local-list"></div>
+        </div>
+      </div>
+      <div class="field"><label>Nombre del colaborador</label><input type="text" id="f-evaluado" placeholder="Nombre completo" oninput="updateFormMeta()" autocorrect="off"/></div>
+      <div class="field"><label>Capacitador</label><select id="f-evaluador"><option value="">— Seleccioná —</option><option>Gabriel Busquets</option><option>Tomás Ojeda</option><option>Ever Rodríguez</option><option>Lourdes Garcia</option><option>Nicolas Lopez</option><option>Ivan Herrera</option><option>Barbara Riccitelli</option><option>Fabricio</option><option>Carlos Torres</option></select></div>
+      <div class="field"><label>Tipo</label><select id="f-tipo"><option value="">— Seleccioná —</option><option>Inicial</option><option>Refuerzo</option><option>Seguimiento</option></select></div>
+      <div class="field"><label>Rol</label><select id="f-rol"><option value="">— Seleccioná —</option><option>Colaborador</option><option>Responsable</option></select></div>
+      <div class="field"><label>Antigüedad</label><select id="f-antiguedad"><option value="">— Seleccioná —</option><option>Menos de 1 mes</option><option>1 a 3 meses</option><option>3 a 6 meses</option><option>Más de 6 meses</option></select></div>
+    </div>
+  </div>
+
+  <div class="mod-selector">
+    <div class="mod-selector-label">Módulos a evaluar — desactivá los que no aplican</div>
+    <div class="mod-toggle-wrap" id="mod-toggles">
+      <button class="mod-toggle active" data-mod="mod1" onclick="toggleMod(this)">✓ 01 · Equipamiento</button>
+      <button class="mod-toggle active" data-mod="mod2" onclick="toggleMod(this)">✓ 02 · Cafetería</button>
+      <button class="mod-toggle active" data-mod="mod3" onclick="toggleMod(this)">✓ 03 · Heladería</button>
+      <button class="mod-toggle active" data-mod="mod4" onclick="toggleMod(this)">✓ 04 · Icepops</button>
+      <button class="mod-toggle active" data-mod="mod5" onclick="toggleMod(this)">✓ 05 · Chocolatería</button>
+      <button class="mod-toggle active" data-mod="mod6" onclick="toggleMod(this)">✓ 06 · Sistema y Caja</button>
+      <button class="mod-toggle active" data-mod="mod7" onclick="toggleMod(this)">✓ 07 · Atención al Cliente</button>
+    </div>
+  </div>
+
+  <div class="legend-bar">
+    <span><span class="lbadge" style="background:#c0392b">1</span> <strong>Inicial</strong> — no lo conoce</span>
+    <span><span class="lbadge" style="background:#d35400">2</span> <strong>En proceso</strong> — necesita acompañamiento</span>
+    <span><span class="lbadge" style="background:#f39c12">3</span> <strong>Logrado</strong> — autónomo</span>
+    <span><span class="lbadge" style="background:#27ae60">4</span> <strong>Destacado</strong> — puede enseñarlo</span>
+    <span><span class="lbadge" style="background:#7f8c8d;font-size:8px">NA</span> <strong>No aplica</strong></span>
+  </div>
+
+  <div class="form-body" id="form-body"></div>
+  <div class="form-footer" style="display:flex;flex-direction:column;gap:8px">
+    <button class="btn btn-gold" id="btn-enviar" onclick="enviarFormulario()">Enviar evaluación</button>
+    <button class="btn btn-outline" onclick="guardarBorrador()" style="margin:0;padding:10px;font-size:11px">💾 Guardar y continuar después</button>
+  </div>
+</div>
+
+<!-- RESULTADO -->
+<div id="screen-resultado" class="screen">
+  <div class="app-header">
+    <div><div class="logo">SisCap</div><div class="badge-label">Resultado</div></div>
+    <button class="btn btn-outline btn-sm" onclick="showTab('home')">Inicio</button>
+  </div>
+  <div class="resultado-body">
+    <div class="resultado-hero" id="resultado-hero">
+      <div class="resultado-pct" id="resultado-pct">—</div>
+      <div class="resultado-estado" id="resultado-estado">—</div>
+      <div class="resultado-local" id="resultado-local">—</div>
+    </div>
+    <div class="section-title">Detalle por módulo</div>
+    <div style="display:flex;flex-direction:column;gap:8px" id="resultado-modulos"></div>
+    <button class="btn btn-green-solid" id="btn-pdf" onclick="generarPDF()">⬇ Descargar PDF</button>
+    <button class="btn btn-gold" onclick="nuevaEvaluacion()" style="margin-top:8px">Nueva evaluación</button>
+    <button class="btn btn-outline" onclick="showTab('home')">Volver al inicio</button>
+  </div>
+</div>
+
+<!-- VER EVALUACIÓN -->
+<div id="screen-ver" class="screen">
+  <div class="app-header">
+    <div><div class="logo">SisCap</div><div class="badge-label">Evaluación</div></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button id="btn-editar-eval" class="btn btn-outline btn-sm" style="display:none;color:var(--gold);border-color:var(--gold-dark)" onclick="editarEvalActual()">✏ Editar</button>
+      <button class="btn btn-outline btn-sm" onclick="showTab('home')">← Volver</button>
+    </div>
+  </div>
+  <div class="ver-body-inner" id="ver-body"></div>
+</div>
+
+<!-- CONFIGURACIÓN -->
+<div id="screen-config" class="screen">
+  <div class="app-header">
+    <div><div class="logo">SisCap</div><div class="badge-label">Configuración</div></div>
+    <button class="btn btn-outline btn-sm" onclick="showTab('home')">← Volver</button>
+  </div>
+  <div class="config-body">
+    <div class="section-title">Panel de administración</div>
+    <div class="config-section">
+      <div class="config-section-head" onclick="toggleUsuariosList()" style="cursor:pointer;user-select:none">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="config-section-title">👥 Usuarios</span>
+          <span id="usuarios-chev" style="color:var(--gray);font-size:11px;transition:transform .2s">▼</span>
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="event.stopPropagation();toggleUserForm()">+ Nuevo</button>
+      </div>
+      <div id="usuarios-collapsible" style="display:none">
+      <div class="user-form" id="user-form">
+        <div class="field" style="margin-bottom:8px"><label>Nombre completo</label><input type="text" id="nu-nombre" placeholder="Ej: Juan Pérez" autocorrect="off"/></div>
+        <div class="field" style="margin-bottom:8px"><label>Usuario</label><input type="text" id="nu-user" placeholder="Ej: juan" autocapitalize="none" autocorrect="off"/></div>
+        <div class="field" style="margin-bottom:8px"><label>Contraseña</label><input type="text" id="nu-pass" placeholder="Contraseña inicial"/></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-gold btn-sm" style="flex:1" onclick="crearUsuario()">Crear</button>
+          <button class="btn btn-outline btn-sm" style="flex:1" onclick="toggleUserForm()">Cancelar</button>
+        </div>
+      </div>
+      <div class="config-section-body" id="usuarios-lista"><div class="spinner-wrap"><div class="spinner"></div></div></div>
+      </div><!-- /usuarios-collapsible -->
+      <div style="padding:10px 14px;border-top:1px solid #2a2a2a">
+        <div class="section-title" style="margin-bottom:8px">👤 Entrar como otro usuario</div>
+        <select id="impersonar-sel" class="filter-eval" style="width:100%;margin-bottom:8px">
+          <option value="">— Seleccioná un usuario —</option>
+        </select>
+        <button class="btn btn-outline btn-sm" style="width:100%;padding:10px" onclick="impersonarUsuario()">Entrar como este usuario</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════════
+const SHEET_URL   = 'https://script.google.com/macros/s/AKfycbzkLfJYu-1oT3VIuhKmDOkj4xXNlFpn5mYUY3JP7QMqQs9PpUBicSNYsln9pvVMkqt9ww/exec';
+const UMBRAL_OK   = 80;
+const UMBRAL_OBS  = 60;
+const DIAS_ALERTA = 30;
+const MAX_SUC     = 5;
+
+const USUARIOS = {
+  gabi:           { pass:'siscap2026',   nombre:'Gabriel Busquets', isAdmin:true },
+  tomyojeda25:    { pass:'Luccianos2021', nombre:'Tomás Ojeda' },
+  ever:           { pass:'123987',        nombre:'Ever Rodríguez' },
+  lola73:         { pass:'Lola2003',      nombre:'Lourdes Garcia' },
+  nico:           { pass:'Luccianos2026.', nombre:'Nicolas Lopez' },
+  ivanherrera01:  { pass:'Otto1234',      nombre:'Ivan Herrera' },
+  barbarariccitelli: { pass:'Luccianos2026', nombre:'Barbara Riccitelli' },
+  'fabricio@luccianos.com.ar': { pass:'Renata2525', nombre:'Fabricio' },
+  'operaciones.franquicias@luccianos.com.ar': { pass:'Luccianos2025', nombre:'Carlos Torres' },
+};
+
+const LOCALES = [
+  "Lucciano's Martinez GBA",
+  "Lucciano's Olivos GBA",
+  "Lucciano's Parque Avellaneda Shopping GBA",
+  "Lucciano's Ituzaingo GBA",
+  "Lucciano's Distrito T GBA",
+  "Lucciano's Adrogué GBA",
+  "Lucciano's San Miguel GBA",
+  "Lucciano's Parque Leloir GBA",
+  "Lucciano's Quilmes GBA",
+  "Lucciano's Caseros GBA",
+  "Lucciano's Ramos Mejia GBA",
+  "Lucciano's Shopping Abasto CABA",
+  "Lucciano's La Imprenta Gran Hotel CABA",
+  "Lucciano's Distrito Arcos CABA",
+  "Lucciano's Villa del Parque CABA",
+  "Lucciano's Honduras CABA",
+  "Lucciano's Cid Campeador CABA",
+  "Lucciano's Devoto CABA",
+  "Lucciano's Recoleta CABA",
+  "Lucciano's Dot CABA",
+  "Lucciano's Puerto Madero Dique CABA",
+  "Lucciano's Puerto Madero CABA",
+  "Lucciano's Caballito CABA",
+  "Lucciano's Parque Rivadavia CABA",
+  "Lucciano's Libertador CABA",
+  "Lucciano's Villa Urquiza CABA",
+  "Lucciano's Villa Urquiza II CABA",
+  "Lucciano's Villa Luro CABA",
+  "Lucciano's Coghlan CABA",
+  "Lucciano's Las Cañitas CABA",
+  "Lucciano's Colegiales CABA",
+  "Lucciano's Agüero CABA",
+  "Lucciano's Nuñez CABA",
+  "Lucciano's Belgrano C CABA",
+  "Lucciano's Bajo Belgrano CABA",
+  "Lucciano's Galerias Pacifico CABA",
+  "Lucciano's San Telmo CABA",
+  "Lucciano's Paseo del Angel CABA",
+  "Lucciano's Plaza Houssay CABA",
+  "Lucciano's Palermo Chico CABA",
+  "Lucciano's Patio Bullrich CABA",
+  "Lucciano's Obelisco CABA",
+  "Lucciano's Almagro CABA",
+  "Lucciano's Calle Corrientes CABA",
+  "Lucciano's Santa Fe y Parana CABA",
+  "Lucciano's Nordelta Buenos Aires",
+  "Lucciano's Baxar Mercado Buenos Aires",
+  "Lucciano's La Plata Buenos Aires",
+  "Lucciano's Pilar Buenos Aires",
+  "Lucciano's Pilar II Buenos Aires",
+  "Lucciano's City Bell Buenos Aires",
+  "Lucciano's Las Lomitas Buenos Aires",
+  "Lucciano's Lanus Buenos Aires",
+  "Lucciano's San Fernando Buenos Aires",
+  "Lucciano's Campana Buenos Aires",
+  "Lucciano's San Nicolas Buenos Aires",
+  "Lucciano's Tandil Buenos Aires",
+  "Lucciano's Carilo Buenos Aires",
+  "Lucciano's Pinamar Buenos Aires",
+  "Lucciano's Bahia Blanca Buenos Aires",
+  "Lucciano's Bahia Blanca Villa Mitre Buenos Aires",
+  "Lucciano's Cerro De Las Rosas Córdoba",
+  "Lucciano's Nuevocentro Córdoba",
+  "Lucciano's Shopping Rivera Santa Fe",
+  "Lucciano's Rosario Shopping Santa Fe",
+  "Lucciano's Peatonal Sarmiento Mendoza",
+  "Lucciano's Palmares Mendoza",
+  "Lucciano's Chacras de Coria Mendoza",
+  "Lucciano's Shopping Mendoza",
+  "Lucciano's Resistencia Chaco",
+  "Lucciano's Av Argentina Neuquén",
+  "Lucciano's Paseo de la Costa Neuquén",
+  "Lucciano's Cipolletti Rio Negro",
+  "Lucciano's Gral Roca Rio Negro",
+  "Lucciano's Barrio Norte Tucuman",
+  "Lucciano's Yerba Buena Tucuman",
+  "Lucciano's Catamarca Catamarca",
+  "Lucciano's Galerias Salta",
+  "Lucciano's Alto NOA Salta",
+  "Lucciano's Posadas Misiones",
+  "Lucciano's Madryn Chubut",
+  "Lucciano's Ushuaia Tierra del Fuego",
+  "Lucciano's Capital Corrientes",
+  "Lucciano's Pocitos Uruguay",
+  "Lucciano's Punta Carretas Uruguay",
+  "Lucciano's Punta Carrasco Uruguay",
+  "Lucciano's Asuncion Paraguay",
+  "Lucciano's Parque Arauco Chile"
+];
+
+// ═══════════════════════════════════════════════════════════
+// MÓDULOS E ÍTEMS
+// ═══════════════════════════════════════════════════════════
+const MODS = [
+  { num:1, id:'mod1', nombre:'Equipamiento', tag:'', items:[
+    { id:'M1I1', n:1, label:'Identifica y opera correctamente las <strong>máquinas del sector</strong>', guia:['¿Qué máquinas hay en el sector? Pedile que las nombre.','¿Para qué sirve cada una?','¿Cómo se enciende y apaga cada máquina?'] },
+    { id:'M1I2', n:2, label:'Conoce y aplica los <strong>estándares de limpieza</strong> de cada equipo', guia:['¿Cómo se realiza la limpieza profunda de las vitrinas?','¿Cómo se limpia la máquina de cafetería?','¿Cada cuánto se limpian los armarios y el freezer?'] },
+    { id:'M1I3', n:3, label:'Mantiene el <strong>orden del sector</strong> durante la operación', guia:[] },
+    { id:'M1I4', n:4, label:'Conoce y aplica las <strong>normas de cuidado y seguridad</strong>', guia:[] },
+  ]},
+  { num:2, id:'mod2', nombre:'Cafetería', tag:'', items:[
+    { id:'M2I1', n:5,  label:'Conoce cuál es la <strong>variedad de café que ofrecemos</strong>', guia:['¿Qué variedades de café ofrecemos?','Esperado: espresso, espresso lungo, caffè latte, cappuccino y cafés especiales','¿En qué orden se le presenta al cliente?','Primero el tamaño, luego cómo lo quiere'] },
+    { id:'M2I2', n:6,  label:'Identifica y reconoce qué son y <strong>cómo se hacen los especiales</strong>', guia:['¿Qué es un café especial?','Un caffè latte que lleva dos push de salsa','¿Qué pasa si la receta lleva dos salsas distintas?','Un push de cada una'] },
+    { id:'M2I3', n:7,  label:'Conoce y aplica los procesos de <strong>bollería, pastería y rotación de productos</strong>', guia:['¿Cuándo se saca la bollería?','Un día antes para que leude','¿Conoce los vencimientos?','Tortas 5 días — medialunas y croissant diario — roles y pain cada 2 días','¿Cuándo se coloca el almíbar?','Cuando está caliente para que se adhiera mejor'] },
+    { id:'M2I4', n:8,  label:'Utiliza correctamente <strong>vajilla, bandeja y elementos de trabajo</strong>', guia:[] },
+    { id:'M2I5', n:9,  label:'Respeta el <strong>orden de preparación y tiempos de servicio</strong>', guia:[] },
+    { id:'M2I6', n:10, label:'Limpia correctamente la <strong>cafetera y el sector</strong> al finalizar', guia:[] },
+  ]},
+  { num:3, id:'mod3', nombre:'Heladería', tag:'', items:[
+    { id:'M3I1',  n:11, label:'Prepara <strong>cucuruchos, vasos y potes</strong> con gramajes correctos', guia:['¿Sabe los gramajes por tamaño?','Vaso chico 120-130g — mediano 140-150g — grande 170-180g — cucurucho 190-200g'] },
+    { id:'M3I2',  n:12, label:'Conoce y prepara <strong>batidos, smoothies, milkshakes y gelato shakes</strong>', guia:['¿Qué es un smoothie?','2 bochas frutales al agua y 200ml de soda','¿Qué es un milkshake?','2 bochas a elección, 200ml de leche, salsa y crema','¿Qué es un gelato shake?','Helado, leche, café y crema — 100ml de leche y espresso ristretto'] },
+    { id:'M3I3',  n:13, label:'Conoce y aplica correctamente el <strong>proceso de pase de helado</strong>', guia:['Pedile que describa el proceso paso a paso.','Si lo explica correctamente solo → 3. Si puede enseñárselo a otro → 4'] },
+    { id:'M3I4',  n:14, label:'Identifica sabores con <strong>variegatos y fruta decorativa</strong>', guia:['¿Qué helados llevan dulce de leche natural?','Banana split dulce, peanut caramel, tramontana','¿Cuánto se fracciona el crumble de pistacho?','200 gramos'] },
+    { id:'M3I5',  n:15, label:'Utiliza <strong>guantes, vaquetas y trapo específico</strong> correctamente', guia:['¿Qué elementos usa durante el pase?','Guantes, mesada limpia, trapo específico, armario ordenado'] },
+    { id:'M3I6',  n:16, label:'Demuestra <strong>baño de chocolate y peinado de sabores</strong>', guia:['¿Cómo se hace el baño de chocolate?','¿Cuál es la temperatura ideal?','Entre 30 y 40 grados','¿Cómo se llama el chocolate?','Mapricoa','¿Cómo se hace el peinado?','3 olas y una pequeña al final'] },
+    { id:'M3I7',  n:17, label:'Realiza el <strong>guardado correcto post pase</strong>', guia:['¿Cómo se guarda la vaqueta al finalizar?','Dentro del armario con bolsa o domo'] },
+    { id:'M3I8',  n:18, label:'Identifica <strong>vasos de cortesía y cialdinos</strong>', guia:['¿Cuántos vasitos de cortesía van con cada presentación?','2 cucuruchos o 4 vasitos por kilo — 1 cucurucho o 2 vasitos por medio kilo','¿Qué son los cialdinos?','Obleas de uso exclusivo para cucuruchos'] },
+    { id:'M3I9',  n:19, label:'Comprende el impacto de <strong>no anticiparse al rush</strong>', guia:['¿Qué pasa si no se reponen las vaquetas Dubai con tiempo?','Saldrán duras, generando demoras','¿Qué pasa si no hay icepops a mano?','Hay que ir a la cámara, generando demora'] },
+    { id:'M3I10', n:20, label:'Conoce los sabores <strong>Kosher: Dayri/Crema y Parve/Vegano</strong>', guia:[] },
+  ]},
+  { num:4, id:'mod4', nombre:'Icepops', tag:'', items:[
+    { id:'M4I1', n:21, label:'Identifica variedad de <strong>icepops, cannolis y geladots</strong>', guia:['Pedí 2 o 3 icepops al azar — que dé categoría y detalle.','Ej: Peanut → maní con DDL y caramelo, cubierto en chocolate con leche y maní salado','¿Qué son los cannolis?','Obleas rellenas de helado cubiertas en chocolate','¿Qué son los geladots?','Bombones helados cubiertos en chocolate'] },
+    { id:'M4I2', n:22, label:'Conoce el <strong>formato de mini icepops y presentación geladots</strong>', guia:['¿Cómo vienen los mini icepops?','4 unidades por caja, 6 variedades','¿En qué presentaciones vienen los geladots?','Mediano 18 unidades — grande 32 unidades'] },
+    { id:'M4I3', n:23, label:'Comprende y aplica el criterio de <strong>rotación al reponer la exhibición</strong> de icepops', guia:['¿Cómo ordenás los icepops cuando reposés la vitrina?','Primero entra primero sale — los nuevos van atrás, los más antiguos al frente'] },
+    { id:'M4I4', n:24, label:'Identifica y sabe explicar qué son los <strong>productos gluten free y veganos</strong>', guia:['¿Qué son los gluten free?','Potes individuales de un solo sabor, 190g — hay 8 variedades','¿Cuáles son los veganos?','Sorbete dark y sorbete Patagonia'] },
+    { id:'M4I5', n:25, label:'Conoce el <strong>contenido de azúcar</strong> en helados y excepciones', guia:['¿Todos los productos tienen azúcar?','Sí, pero se puede ofrecer la opción cero% sin azúcar añadida y las tabletas'] },
+  ]},
+  { num:5, id:'mod5', nombre:'Chocolatería', tag:'', items:[
+    { id:'M5I1', n:26, label:'Identifica variedad de <strong>alfajores, conitos y vieneses</strong>', guia:['¿Cuántas variedades de alfajores hay?','6 variedades — unidad, caja de 6, caja de 10, mini alfajor surtidos y pistacho x12','¿Qué son los vieneses?','Obleas rellenas de crema cubiertas en chocolate — vainilla, pistacho y fondente'] },
+    { id:'M5I2', n:27, label:'Conoce y sabe armar <strong>orden de cajas mixtas</strong>', guia:['¿Cómo se arma una caja mixta de 6?','¿Cómo se arma una caja mixta de 10?'] },
+    { id:'M5I3', n:28, label:'Identifica <strong>tabletas, avellas y frascos de DDL</strong>', guia:['¿Cuántas tabletas tenemos?','16 — que mencione dos de leche y dos de chocolate blanco que no sean las clásicas','¿Qué otros productos vendemos?','También dulce de leche en frascos'] },
+    { id:'M5I4', n:29, label:'Conoce y sabe usar <strong>la rotuladora</strong>', guia:['¿Cuál es el vencimiento de los alfajores y conitos clásicos?','Alfajores 70 días — conitos 55 días','¿Y los pink y pistacho?','Alfajores 60 días — conitos 45 días'] },
+    { id:'M5I5', n:30, label:'Arma <strong>pack por 6</strong> y conoce pack Dubai', guia:['¿Las tabletas del pack vienen con orden preestablecido?','Orden establecido — caja blanca y caja negra. El cliente puede personalizar si compra 6'] },
+    { id:'M5I6', n:31, label:'Conoce la <strong>lata corazón con bombones y lata carrusel</strong>', guia:['¿Qué tiene la lata corazón?','12 bombones de chocolate con leche rellenos de DDL','¿Cuántas variedades de lata carrusel hay?','3 variedades — verde (pistacho), bordo (clásica), negra (dark)'] },
+  ]},
+  { num:6, id:'mod6', nombre:'Sistema y Caja', tag:'', items:[
+    { id:'M6I1', n:32, label:'Navega y <strong>busca productos en el sistema</strong> correctamente', guia:[] },
+    { id:'M6I2', n:33, label:'Factura en <strong>efectivo, tarjeta y QR</strong>', guia:[] },
+    { id:'M6I3', n:34, label:'Gestiona <strong>cobros divididos, sin cargo, gift card, venta online y factura A</strong>', guia:['¿Sabe hacer un cobro dividido?','¿Sabe gestionar un sin cargo?','¿Sabe operar con gift card?','¿Sabe gestionar venta online?','¿Sabe emitir factura A?'] },
+    { id:'M6I4', n:35, label:'Opera <strong>apertura, cierre y arqueo de caja</strong>', guia:[] },
+    { id:'M6I5', n:36, label:'Conoce y aplica el <strong>uso manual de Mercado Pago</strong> ante imprevistos', guia:['Un cliente está pagando y el sistema se cierra. ¿Qué hacés?','Abrir el sistema, marcar los mismos ítems, ir a Mercado Pago, poner manual y cargar el código'] },
+    { id:'M6I6', n:37, label:'Gestiona <strong>nota de crédito, modificación de comprobante y devoluciones MP</strong>', guia:['¿Qué hace una nota de crédito?','Cancela el comprobante','¿Cómo se gestiona una devolución por Mercado Pago?','Se devuelve el efectivo — ajuste de caja con leyenda "devolución por MP y nº de ticket" — NC — se adjunta todo'] },
+    { id:'M6I7', n:38, label:'Comprende la <strong>integración con PedidosYa</strong>', guia:['¿Para qué sirve la integración con PedidosYa?','Para visualizar y reimprimir órdenes','Llegan 5 pedidos y los cadetes no llegan. ¿Qué hacés?','Dar el preparado al cadete para que le llegue la información'] },
+  ]},
+  { num:7, id:'mod7', nombre:'Atención al Cliente', tag:'HOSPITALIDAD', items:[
+    { id:'M7I1', n:39, label:'Recibe al cliente con <strong>actitud cordial y contacto visual</strong>', guia:['¿Cómo recibís a un cliente cuando entra?','Usa bienvenida como sandwich — "hola, ¿cómo estás? bienvenido, ¿cómo te ayudo?"'], hosp:'Observar si crea un momento genuino de conexión, no solo si cumple el protocolo. ¿El cliente se siente visto?' },
+    { id:'M7I2', n:40, label:'Escucha activamente e <strong>interpreta necesidades</strong>', guia:['El cliente ya viene a comprar — ¿cómo lo acompañás hasta que cierra?','Usa preguntas cortas — ¿en vasito o cucurucho? ¿con baño de chocolate?'], hosp:'¿Demuestra curiosidad genuina por lo que el cliente necesita? ¿O solo ejecuta el pedido?' },
+    { id:'M7I3', n:41, label:'Demuestra <strong>conocimiento del producto y venta sugestiva</strong>', guia:['Si un cliente pide un vaso chico — ¿qué hacés?','Mostrar tamaños con la mano y mencionar que por $500 más puede tener un mediano','Si un cliente pide cualquier vaso — ¿qué sumás?','"¿Lo querés bañado en chocolate?"','¿Cómo cerrás la venta?','Confirmar y ofrecer sumar alfajor, conito o vienesi'], hosp:'¿La sugerencia se siente natural y genuina o mecánica?' },
+    { id:'M7I4', n:42, label:'Responde dudas con <strong>seguridad y resuelve problemas</strong>', guia:[], hosp:'¿Maneja situaciones difíciles con calma? ¿El cliente se va con una solución o con una disculpa?' },
+    { id:'M7I5', n:43, label:'Mantiene <strong>orden y limpieza</strong> durante la atención', guia:[], hosp:'El orden y la limpieza comunican respeto al cliente. ¿El espacio refleja los valores de la marca?' },
+    { id:'M7I6', n:44, label:'Agradece y <strong>solicita reseña</strong> al finalizar', guia:[], hosp:'¿El cierre invita al cliente a volver? ¿Hay un momento de calidez genuino antes de despedirse?' },
+  ]},
+];
+
+// ═══════════════════════════════════════════════════════════
+// ESTADO GLOBAL
+// ═══════════════════════════════════════════════════════════
+const activeMods = { mod1:true, mod2:true, mod3:true, mod4:true, mod5:true, mod6:true, mod7:true };
+const evalCache  = {};
+
+let currentUser    = null;
+let respuestas     = {};
+let datosResumen   = [];
+let mostrarTodos   = false;
+let ultimoResult   = null;
+const borradores   = {}; // { local: { evaluado, fecha, respuestas, progreso } }
+let preLocal       = null;
+let preEvaluado    = null;
+let yaEnviado      = false;
+
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+function getEstado(pct) {
+  if (pct >= UMBRAL_OK)  return { estado:'Aprobado',         cls:'color-green',  barCls:'bar-green',  hero:'aprobado',  badge:'✓ Aprobado',  badgeCls:'badge-aprobado' };
+  if (pct >= UMBRAL_OBS) return { estado:'Observado',        cls:'color-yellow', barCls:'bar-yellow', hero:'observado', badge:'⚠ Observado', badgeCls:'badge-observado' };
+  return                        { estado:'Atención urgente', cls:'color-red',    barCls:'bar-red',    hero:'urgente',   badge:'✖ Urgente',   badgeCls:'badge-urgente' };
+}
+function getEstadoHex(pct) {
+  return pct >= UMBRAL_OK ? '#2ECC71' : pct >= UMBRAL_OBS ? '#F39C12' : '#E74C3C';
+}
+function formatFecha(s) {
+  if (!s) return '—';
+  const [y,m,d] = s.split('-');
+  return `${d}/${m}/${y}`;
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+let _toastTimer = null;
+function showToast(msg, dur=2800) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => t.classList.remove('show'), dur);
+}
+function offsetDate(d, dias) {
+  const r = new Date(d); r.setDate(r.getDate()-dias);
+  return r.toISOString().split('T')[0];
+}
+
+function normalizePct(val) {
+  // Convierte "0.58%", 0.58, "58%", 58 → 58
+  if (val === null || val === undefined || val === '') return 0;
+  var s = String(val).replace('%','').trim();
+  var n = parseFloat(s);
+  if (isNaN(n)) return 0;
+  // Si viene como decimal (0-1) convertir a porcentaje
+  if (n > 0 && n <= 1) return Math.round(n * 100);
+  return Math.round(n);
+}
+
+function calcLabel(v) {
+  return v===4?'Destacado':v===3?'Logrado':v===2?'En proceso':'Inicial';
+}
+
+// ═══════════════════════════════════════════════════════════
+// AUTH / LOGIN
+// ═══════════════════════════════════════════════════════════
+async function doLogin() {
+  const user = document.getElementById('login-user').value.trim().toLowerCase();
+  const pass = document.getElementById('login-pass').value.trim();
+  const err  = document.getElementById('login-error');
+  const btn  = document.querySelector('#screen-login .btn-gold');
+
+  err.textContent = '';
+  if (!user || !pass) { err.textContent = 'Completá usuario y contraseña.'; return; }
+
+  // 1. Usuarios hardcodeados — siempre primero, sin red
+  const uLocal = USUARIOS[user];
+  if (uLocal) {
+    if (uLocal.pass === pass) {
+      _loginExitoso(user, uLocal.nombre, uLocal.isAdmin || false);
+    } else {
+      err.textContent = 'Contraseña incorrecta.';
+    }
+    return;
+  }
+
+  // 2. Usuario no está hardcodeado → consultar Sheets
+  btn.textContent = 'Verificando...';
+  btn.disabled = true;
+
+  try {
+    // Usar POST para evitar problemas de encoding en GET con caracteres especiales
+    const resp = await fetch(SHEET_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'login', user, pass })
+    });
+    const data = await resp.json();
+
+    btn.textContent = 'Ingresar';
+    btn.disabled = false;
+
+    if (data.status === 'ok') {
+      _loginExitoso(user, data.nombre, data.isAdmin || false);
+    } else if (data.status === 'pendiente') {
+      err.textContent = 'Tu cuenta está pendiente de aprobación. Contactá a Gabi.';
+    } else {
+      err.textContent = 'Usuario o contraseña incorrectos.';
+    }
+  } catch(e) {
+    btn.textContent = 'Ingresar';
+    btn.disabled = false;
+    err.textContent = 'Error de conexión. Verificá tu internet.';
+    console.error('Login error:', e);
+  }
+}
+
+function _loginExitoso(user, nombre, isAdmin) {
+  currentUser = { username: user, nombre, isAdmin, pass: '' };
+  document.getElementById('home-avatar').textContent = nombre.charAt(0).toUpperCase();
+  document.getElementById('home-name').textContent   = nombre.split(' ')[0];
+  document.getElementById('login-error').textContent = '';
+
+  // Preseleccionar evaluador en el formulario
+  const sel = document.getElementById('f-evaluador');
+  for (let i = 0; i < sel.options.length; i++) {
+    if (sel.options[i].text === nombre) { sel.selectedIndex = i; break; }
+  }
+
+  // Mostrar/ocultar botón config
+  document.getElementById('cfg-btn').style.display = isAdmin ? '' : 'none';
+  const filt = document.getElementById('filtro-evaluador-wrap');
+  if (filt) filt.style.display = isAdmin ? 'block' : 'none';
+
+  showTab('home');
+  cargarDatos();
+  if (isAdmin) cargarPendientes();
+}
+document.getElementById('login-user').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('login-pass').focus(); });
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+// ═══════════════════════════════════════════════════════════
+// NAVEGACIÓN
+// ═══════════════════════════════════════════════════════════
+function showTab(tab) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('screen-' + tab);
+  if (el) el.classList.add('active');
+  window.scrollTo(0,0);
+}
+function irAFormulario(local='', evaluado='') {
+  // 1. Resetear estado interno
+  respuestas = {};
+  yaEnviado  = false;
+
+  // 2. Resetear módulos a todos activos
+  Object.keys(activeMods).forEach(k => activeMods[k] = true);
+
+  // 3. Guardar valores que vienen por parámetro
+  preLocal    = local  || null;
+  preEvaluado = evaluado || null;
+
+  // Resetear botón enviar siempre
+  const btnEnv = document.getElementById('btn-enviar');
+  if (btnEnv) {
+    btnEnv.textContent = 'Enviar evaluación';
+    btnEnv.disabled    = false;
+    btnEnv.style.cssText = '';
+  }
+
+  // 4. Construir el formulario (ítems, guías, etc.)
+  buildForm();
+
+  // 5. Setear campos de cabecera DESPUÉS del buildForm
+  //    buildForm ya setea f-local y f-evaluado si preLocal/preEvaluado existen
+  //    Solo resetear los que NO vienen por parámetro
+  const elLocal    = document.getElementById('f-local');
+  const elEvaluado = document.getElementById('f-evaluado');
+
+  if (local)    { elLocal.value    = local;    }
+  else          { elLocal.value    = '';        }
+  if (evaluado) { elEvaluado.value = evaluado; }
+  else          { elEvaluado.value = '';        }
+
+  // Resetear selects siempre para evaluación nueva
+  document.getElementById('f-tipo').selectedIndex       = 0;
+  document.getElementById('f-rol').selectedIndex        = 0;
+  document.getElementById('f-antiguedad').selectedIndex = 0;
+
+  // 6. Actualizar meta y botones de módulo
+  document.querySelectorAll('.mod-toggle').forEach(btn => {
+    btn.classList.add('active');
+    const label = btn.textContent.replace(/^[✓✗] /, '');
+    btn.textContent = '✓ ' + label;
+  });
+
+  updateFormMeta();
+  updateProgress();
+  // Cabecera: siempre abierta al iniciar nueva evaluación
+  const cb = document.getElementById('form-cabecera-body');
+  const cc = document.getElementById('cabecera-chev');
+  if (cb) cb.style.display = 'flex';
+  if (cc) cc.style.transform = 'rotate(180deg)';
+  showTab('form');
+}
+function nuevaEvaluacion() {
+  irAFormulario();
+}
+
+// ═══════════════════════════════════════════════════════════
+// API FETCH HELPERS
+// ═══════════════════════════════════════════════════════════
+async function apiGet(params) {
+  const url = SHEET_URL + '?' + new URLSearchParams(params);
+  const res = await fetch(url);
+  return res.json();
+}
+async function apiPost(body) {
+  const res = await fetch(SHEET_URL, {
+    method:'POST', headers:{'Content-Type':'text/plain'},
+    body: JSON.stringify(body)
+  });
+  return res.json();
+}
+function apiPostBg(body) {
+  fetch(SHEET_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(body) }).catch(()=>{});
+}
+
+// ═══════════════════════════════════════════════════════════
+// DATOS
+// ═══════════════════════════════════════════════════════════
+async function cargarDatos() {
+  // Restaurar borradores de sessionStorage
+  try {
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const k = sessionStorage.key(i);
+      if (k && k.startsWith('borrador_')) {
+        const local = k.replace('borrador_', '');
+        const b = JSON.parse(sessionStorage.getItem(k));
+        if (b) borradores[local] = b;
+      }
+    }
+  } catch(e) {}
+
+  try {
+    const data = await apiGet({ action:'getResumen' });
+    if (data && data.registros) {
+      datosResumen = data.registros.map(function(r) {
+        r.porcentaje = normalizePct(r.porcentaje);
+        // Cargar en cache — con detalle completo si existe, o básico si no
+        if (r.fecha && r.evaluado && r.local) {
+          const key = r.local + '|' + r.evaluado + '|' + r.fecha;
+          if (!evalCache[key]) {
+            evalCache[key] = {
+              evaluado:   r.evaluado,
+              local:      r.local,
+              fecha:      r.fecha,
+              evaluador:  r.evaluador || '',
+              tipo:       r.tipo || '',
+              rol:        r.rol || '',
+              antiguedad: r.antiguedad || '',
+              total:      r.porcentaje,
+              modulos:    (r.detalle && r.detalle.modulos) ? r.detalle.modulos : [],
+              id:         r.id || '',
+              tieneDetalle: !!(r.detalle && r.detalle.modulos && r.detalle.modulos.length)
+            };
+          }
+        }
+        return r;
+      });
+    } else {
+      datosResumen = demoData();
+    }
+  } catch(e) {
+    datosResumen = demoData();
+  }
+  renderHome();
+}
+async function recargarDatos() {
+  const btn = document.querySelector('[onclick="recargarDatos()"]');
+  if (btn) { btn.textContent = '⏳ Actualizando...'; btn.disabled = true; }
+  document.getElementById('suc-list').innerHTML = '<div style="text-align:center;padding:40px 20px"><div class="spinner" style="margin:0 auto"></div><div style="color:var(--gray);font-size:12px;margin-top:12px">Cargando evaluaciones...</div></div>';
+  await cargarDatos();
+  if (btn) { btn.textContent = '↻ Actualizar'; btn.disabled = false; }
+  showToast('✓ Datos actualizados');
+}
+function demoData() {
+  const h = new Date();
+  return [
+    { local:"Lucciano's Recoleta",  evaluado:'Ana García',   porcentaje:72, fecha:offsetDate(h,5),  evaluador:'Gabriel Busquets' },
+    { local:"Lucciano's Olivos",    evaluado:'Luis Pérez',   porcentaje:88, fecha:offsetDate(h,10), evaluador:'Tomás Ojeda' },
+    { local:"Lucciano's Nordelta",  evaluado:'María López',  porcentaje:91, fecha:offsetDate(h,35), evaluador:'Gabriel Busquets' },
+    { local:"Lucciano's Palermo",   evaluado:'Carlos Ruiz',  porcentaje:65, fecha:offsetDate(h,22), evaluador:'Ever Rodríguez' },
+    { local:"Lucciano's Belgrano",  evaluado:'Sofía Castro', porcentaje:83, fecha:offsetDate(h,8),  evaluador:'Gabriel Busquets' },
+    { local:"Lucciano's Quilmes",   evaluado:'Pablo Méndez', porcentaje:57, fecha:offsetDate(h,45), evaluador:'Iván Herrera' },
+    { local:"Lucciano's Recoleta",  evaluado:'Juan Torres',  porcentaje:78, fecha:offsetDate(h,2),  evaluador:'Gabriel Busquets' },
+  ];
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER HOME
+// ═══════════════════════════════════════════════════════════
+function renderHome() {
+  if (!datosResumen.length) {
+    // Mostrar empty state
+    document.getElementById('stat-total').textContent = '0';
+    document.getElementById('stat-prom').textContent = '0';
+    document.getElementById('stat-aprobadas').textContent = '0';
+    document.getElementById('stat-alertas').textContent = '0';
+    document.getElementById('suc-list').innerHTML = `
+  <div style="background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:32px 20px;text-align:center">
+    <div style="font-size:40px;margin-bottom:14px">📊</div>
+    <div style="font-family:Montserrat;font-weight:800;font-size:15px;color:var(--white);margin-bottom:8px">Sin evaluaciones registradas</div>
+    <div style="font-size:12px;color:var(--gray);line-height:1.6;margin-bottom:20px">Todavía no hay evaluaciones en el sistema.<br>Iniciá la primera para ver el resumen aquí.</div>
+    <button class="btn btn-gold" style="padding:12px 28px;width:auto;display:inline-block" onclick="irAFormulario()">+ Iniciar primera evaluación</button>
+  </div>`;
+    return;
+  }
+  // Filtrar según permisos y selector de evaluador (solo admin)
+  const filtroEval = document.getElementById('filtro-evaluador')?.value || '';
+  let misEvals;
+  if (currentUser && !currentUser.isAdmin) {
+    // Capacitadores: solo sus evaluaciones
+    misEvals = datosResumen.filter(r => r.evaluador === currentUser.nombre);
+  } else if (filtroEval) {
+    // Gabi con filtro seleccionado: ver solo ese evaluador
+    misEvals = datosResumen.filter(r => r.evaluador === filtroEval);
+  } else {
+    // Gabi sin filtro: ver todo
+    misEvals = datosResumen;
+  }
+
+  // última eval por local
+  const porLocal = {};
+  misEvals.forEach(r => {
+    if (!porLocal[r.local] || r.fecha > porLocal[r.local].fecha) porLocal[r.local] = r;
+  });
+  const ultimas = Object.values(porLocal);
+
+  // stats
+  // Solo contar evaluaciones reales (no borradores) en las stats
+  const ultimasReales = ultimas.filter(r => !r.esSoloBorrador);
+  document.getElementById('stat-total').textContent     = datosResumen.length;
+  // "Mis evaluaciones" — las del usuario logueado
+  const misEvalsPropias = currentUser
+    ? datosResumen.filter(r => r.evaluador === currentUser.nombre)
+    : [];
+  document.getElementById('stat-prom').textContent = misEvalsPropias.length || '0';
+  document.getElementById('stat-aprobadas').textContent = ultimasReales.filter(r=>r.porcentaje>=UMBRAL_OK).length;
+  // Alerta: ahora < 50% (Crítico) en lugar de < 60%
+  document.getElementById('stat-alertas').textContent   = ultimasReales.filter(r=>r.porcentaje<50).length;
+
+  // alertas
+  const hoy = new Date();
+  const sinEval = ultimas.filter(r=>(hoy-new Date(r.fecha))/86400000>DIAS_ALERTA);
+  const aw = document.getElementById('alert-wrap');
+  if (sinEval.length) {
+    aw.style.display = 'block';
+    document.getElementById('alert-list').innerHTML = sinEval.map(r=>`• ${esc(r.local)} (hace ${Math.round((hoy-new Date(r.fecha))/86400000)} días)`).join('<br>');
+  } else { aw.style.display = 'none'; }
+
+  // Agregar locales con borrador que no están en la lista
+  // Solo mostrar borradores del evaluador actual (o todos si es admin sin filtro)
+  const localesEnLista = new Set(ultimas.map(r => r.local));
+  Object.keys(borradores).forEach(local => {
+    const b = borradores[local];
+    // Filtrar por evaluador: mostrar solo si es del usuario actual o admin sin filtro
+    const esDelUsuario = !currentUser || currentUser.isAdmin
+      ? (!filtroEval || b.evaluador === filtroEval)
+      : b.evaluador === currentUser.nombre || !b.evaluador;
+    if (!esDelUsuario) return;
+    if (!localesEnLista.has(local)) {
+      ultimas.push({
+        local,
+        evaluado:   b.evaluado || '',
+        fecha:      b.fecha || '',
+        evaluador:  b.evaluador || '',
+        porcentaje: 0,
+        esSoloBorrador: true
+      });
+    }
+  });
+
+  ultimas.sort((a,b) => {
+    // Borradores sin evaluación van al final
+    if (a.esSoloBorrador && !b.esSoloBorrador) return 1;
+    if (!a.esSoloBorrador && b.esSoloBorrador) return -1;
+    return a.porcentaje - b.porcentaje;
+  });
+  window._sucData = ultimas;
+  renderSucursales(ultimas);
+}
+
+function renderSucursales(lista) {
+  const q = (document.getElementById('suc-search').value||'').toLowerCase().trim();
+  const filtradas = q ? lista.filter(r=>r.local.toLowerCase().includes(q)) : lista;
+  const mostrar   = mostrarTodos ? filtradas : filtradas.slice(0, MAX_SUC);
+  const hayMas    = !q && filtradas.length > MAX_SUC;
+  const isAdmin   = currentUser && currentUser.isAdmin;
+
+  const frag = document.createDocumentFragment();
+
+  mostrar.forEach(r => {
+    const { estado, cls, badgeCls } = getEstado(r.porcentaje);
+
+    // Todos los colabs de este local
+    const filtroEv = document.getElementById('filtro-evaluador')?.value || '';
+    const todosColabs = (currentUser && !currentUser.isAdmin)
+      ? datosResumen.filter(x=>x.local===r.local && x.evaluador===currentUser.nombre)
+      : filtroEv
+        ? datosResumen.filter(x=>x.local===r.local && x.evaluador===filtroEv)
+        : datosResumen.filter(x=>x.local===r.local);
+
+    todosColabs.sort((a,b)=>b.fecha.localeCompare(a.fecha));
+
+    // Separar completadas vs en progreso (borradores guardados localmente)
+    const completadas  = todosColabs.filter(x => x.porcentaje > 0);
+    const enProgreso   = borradores[r.local] ? [borradores[r.local]] : [];
+
+    const card = document.createElement('div');
+    card.className = 'suc-card';
+
+    // Cabecera de la sucursal
+    const head = document.createElement('div');
+    head.className = 'suc-card-head';
+    if (r.esSoloBorrador) {
+      head.innerHTML = `
+        <div>
+          <div class="suc-name">${esc(r.local)}</div>
+          <div class="suc-date" style="color:var(--yellow)">⏸ Evaluación en progreso</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="color:var(--yellow);font-size:11px;font-weight:700">EN PROGRESO</span>
+          <span class="suc-chev">▼</span>
+        </div>`;
+    } else {
+      head.innerHTML = `
+        <div>
+          <div class="suc-name">${esc(r.local)}</div>
+          <div class="suc-date">Última: ${formatFecha(r.fecha)}</div>
+        </div>
+        <div style="display:flex;align-items:center">
+          <div style="text-align:right">
+            <div class="suc-pct ${cls}">${r.porcentaje}%</div>
+            <div class="badge ${badgeCls}">${esc(estado)}</div>
+          </div>
+          <span class="suc-chev">▼</span>
+        </div>`;
+    }
+    head.addEventListener('click', () => toggleSucursal(head));
+
+    // Detalle con tabs
+    const detail = document.createElement('div');
+    detail.className = 'suc-detail';
+
+    const tabsEl = enProgreso.length > 0 ? `
+      <div class="suc-tabs">
+        <button class="suc-tab active" onclick="switchTab(this,'tab-comp-${r.local.replace(/\W/g,'_')}','tab-prog-${r.local.replace(/\W/g,'_')}')">✓ Completadas (${completadas.length})</button>
+        <button class="suc-tab" onclick="switchTab(this,'tab-prog-${r.local.replace(/\W/g,'_')}','tab-comp-${r.local.replace(/\W/g,'_')}')">⏸ En progreso (${enProgreso.length})</button>
+      </div>` : '';
+
+    detail.innerHTML = tabsEl;
+
+    // Tab completadas
+    const tabComp = document.createElement('div');
+    tabComp.className = 'suc-tab-content active';
+    tabComp.id = 'tab-comp-' + r.local.replace(/\W/g,'_');
+
+    completadas.forEach(c => {
+      const { cls:cc } = getEstado(c.porcentaje);
+      const cRow = document.createElement('div');
+      cRow.className = 'colab-row';
+      cRow.style.cssText = 'cursor:default';
+
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'colab-info';
+      infoDiv.innerHTML = '<div class="colab-name">' + esc(c.evaluado) + '</div><div class="colab-date">' + formatFecha(c.fecha) + ' · ' + esc(c.evaluador||'') + '</div>';
+
+      const actsDiv = document.createElement('div');
+      actsDiv.style.cssText = 'display:flex;align-items:center;gap:8px';
+
+      const pctSpan = document.createElement('span');
+      pctSpan.className = 'colab-pct ' + cc;
+      pctSpan.textContent = c.porcentaje + '%';
+
+      const chkSpan = document.createElement('span');
+      chkSpan.style.cssText = 'color:#2ECC71;font-size:15px;font-weight:900';
+      chkSpan.title = 'Completada'; chkSpan.textContent = '\u2713';
+
+      const btnVer = document.createElement('button');
+      btnVer.className = 'icon-btn'; btnVer.title = 'Ver resultado'; btnVer.textContent = '\uD83D\uDC41';
+      btnVer.addEventListener('click', ev => { ev.stopPropagation(); verEval(c.local, c.evaluado, c.fecha); });
+
+      const btnPDF = document.createElement('button');
+      btnPDF.className = 'icon-btn'; btnPDF.title = 'Descargar PDF'; btnPDF.textContent = '\uD83D\uDCC4';
+      btnPDF.addEventListener('click', ev => { ev.stopPropagation(); reimprimirPDF(c.local, c.evaluado, c.fecha, c.porcentaje); });
+
+      actsDiv.appendChild(pctSpan); actsDiv.appendChild(chkSpan);
+      actsDiv.appendChild(btnVer); actsDiv.appendChild(btnPDF);
+
+      if (isAdmin) {
+        const btnDel = document.createElement('button');
+        btnDel.className = 'icon-btn'; btnDel.title = 'Eliminar'; btnDel.textContent = '\uD83D\uDDD1';
+        btnDel.addEventListener('click', ev => { ev.stopPropagation(); eliminarEval(c.local, c.evaluado, c.fecha); });
+        actsDiv.appendChild(btnDel);
+      }
+
+      cRow.appendChild(infoDiv); cRow.appendChild(actsDiv);
+      tabComp.appendChild(cRow);
+    });
+
+    if (completadas.length === 0) {
+      const empty = document.createElement('div');
+      empty.style.cssText = 'color:var(--gray);font-size:12px;padding:8px;text-align:center';
+      empty.textContent = 'Sin evaluaciones completadas';
+      tabComp.appendChild(empty);
+    }
+
+    detail.appendChild(tabComp);
+
+    // Tab en progreso (borradores)
+    if (enProgreso.length > 0) {
+      const tabProg = document.createElement('div');
+      tabProg.className = 'suc-tab-content';
+      tabProg.id = 'tab-prog-' + r.local.replace(/\W/g,'_');
+
+      enProgreso.forEach(b => {
+        const bRow = document.createElement('div');
+        bRow.className = 'colab-row';
+        bRow.style.cssText = 'cursor:default';
+
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'colab-info';
+        const nombreBorr = b.evaluado && b.evaluado.trim() ? b.evaluado : 'Sin nombre asignado';
+        infoDiv.innerHTML = '<div class="colab-name">' + esc(nombreBorr) + '</div>'
+          + '<div class="colab-date" style="color:var(--yellow)">⏸ Guardado: ' + formatFecha(b.fecha) + ' · ' + Math.round(b.progreso||0) + '% completado</div>';
+
+        const actsDiv = document.createElement('div');
+        actsDiv.style.cssText = 'display:flex;align-items:center;gap:8px';
+
+        const iconEl = document.createElement('span');
+        iconEl.style.cssText = 'color:var(--yellow);font-size:14px;font-weight:900';
+        iconEl.textContent = '⏸';
+
+        const btnCont = document.createElement('button');
+        btnCont.className = 'continuar-btn';
+        btnCont.textContent = 'Continuar →';
+        const _local = r.local;
+        btnCont.addEventListener('click', ev => { ev.stopPropagation(); continuarBorrador(_local); });
+
+        const btnDesc = document.createElement('button');
+        btnDesc.className = 'icon-btn';
+        btnDesc.title = 'Descartar';
+        btnDesc.textContent = '🗑';
+        btnDesc.addEventListener('click', ev => { ev.stopPropagation(); descartarBorrador(_local); });
+
+        actsDiv.appendChild(iconEl);
+        actsDiv.appendChild(btnCont);
+        actsDiv.appendChild(btnDesc);
+        bRow.appendChild(infoDiv);
+        bRow.appendChild(actsDiv);
+        tabProg.appendChild(bRow);
+      });
+
+
+    detail.appendChild(tabProg);
+    }
+
+    // Botón nueva evaluación
+    const btnNueva = document.createElement('button');
+    btnNueva.className = 'nueva-eval-local';
+    btnNueva.textContent = '+ Nueva evaluación en este local';
+    btnNueva.addEventListener('click', () => irAFormulario(r.local, ''));
+    detail.appendChild(btnNueva);
+
+    card.appendChild(head);
+    card.appendChild(detail);
+    frag.appendChild(card);
+  });
+
+  const list = document.getElementById('suc-list');
+  list.innerHTML = '';
+  if (mostrar.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:32px 20px;color:var(--gray)"><div style="font-size:32px;margin-bottom:12px">📋</div><div style="font-family:Montserrat;font-weight:700;font-size:14px;color:var(--white);margin-bottom:6px">Sin evaluaciones</div></div>';
+  } else {
+    list.appendChild(frag);
+  }
+
+  const btn = document.getElementById('ver-mas-btn');
+  btn.style.display = hayMas ? 'block' : 'none';
+  btn.textContent   = mostrarTodos ? '▲ Ver menos' : `▼ Ver más (${filtradas.length - MAX_SUC} más)`;
+}
+
+function switchTab(btn, showId, hideId) {
+  btn.parentElement.querySelectorAll('.suc-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const show = document.getElementById(showId);
+  const hide = document.getElementById(hideId);
+  if (show) show.classList.add('active');
+  if (hide) hide.classList.remove('active');
+}
+
+function filtrarSucursales() { if (window._sucData) renderSucursales(window._sucData); }
+function toggleVerMas() { mostrarTodos = !mostrarTodos; if (window._sucData) renderSucursales(window._sucData); }
+
+function toggleSucursal(head) {
+  const detail = head.nextElementSibling;
+  const chev   = head.querySelector('.suc-chev');
+  const isOpen = detail.classList.contains('open');
+  document.querySelectorAll('.suc-detail.open').forEach(d => {
+    d.classList.remove('open');
+    const c = d.previousElementSibling.querySelector('.suc-chev');
+    if (c) c.classList.remove('open');
+  });
+  if (!isOpen) { detail.classList.add('open'); if(chev) chev.classList.add('open'); }
+}
+
+async function eliminarEval(local, evaluado, fecha) {
+  if (!confirm(`¿Eliminar evaluación de ${evaluado} (${fecha})?`)) return;
+  datosResumen = datosResumen.filter(r => !(r.local===local && r.evaluado===evaluado && r.fecha===fecha));
+  renderHome();
+  showToast('✓ Eliminada');
+  apiPostBg({ action:'delete', local, evaluado, fecha });
+}
+
+// ═══════════════════════════════════════════════════════════
+// AUTOCOMPLETE LOCAL
+// ═══════════════════════════════════════════════════════════
+function filtrarLocales() {
+  const val = document.getElementById('f-local').value.toLowerCase().trim();
+  const list = document.getElementById('local-list');
+  if (val.length < 2) { list.classList.remove('open'); return; }
+  const items = LOCALES.filter(l=>l.toLowerCase().includes(val));
+  if (!items.length) { list.classList.remove('open'); return; }
+  list.innerHTML = items.slice(0,15).map(l =>
+    `<div class="autocomplete-item" onclick="seleccionarLocal(this)">${esc(l)}</div>`
+  ).join('');
+  list.classList.add('open');
+}
+function seleccionarLocal(el) {
+  document.getElementById('f-local').value = el.textContent;
+  document.getElementById('local-list').classList.remove('open');
+  updateFormMeta();
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.autocomplete-wrap')) document.getElementById('local-list').classList.remove('open');
+});
+
+// ═══════════════════════════════════════════════════════════
+// FORMULARIO — BUILD
+// ═══════════════════════════════════════════════════════════
+function buildForm() {
+  const hoy = new Date(), min = new Date(hoy);
+  min.setDate(min.getDate()-7);
+  const toISO = d => d.toISOString().split('T')[0];
+  const fEl = document.getElementById('f-fecha');
+  fEl.max = toISO(hoy); fEl.min = toISO(min); fEl.value = toISO(hoy);
+
+  // Los campos se setean en irAFormulario
+  const body = document.getElementById('form-body');
+  const frag = document.createDocumentFragment();
+
+  MODS.forEach(mod => {
+    if (!activeMods[mod.id]) return;
+    if (mod.id === 'mod7') {
+      const banner = document.createElement('div');
+      banner.className = 'hosp-banner';
+      banner.innerHTML = `<div class="hosp-org">Lucciano's · Filosofía de Servicio</div>
+        <div class="hosp-title">NUESTRO PROPÓSITO ES<br>CREAR MOMENTOS<br>DE FELICIDAD</div>
+        <div class="hosp-sub">El propósito vence la tarea</div>
+        <div class="hosp-line"></div>`;
+      frag.appendChild(banner);
+    }
+    const block = document.createElement('div');
+    block.className = 'modulo-block'; block.id = 'fmod-'+mod.id;
+    const hdr = document.createElement('div');
+    hdr.className = 'modulo-header';
+    hdr.innerHTML = `<div class="modulo-num">${mod.num}</div><div class="modulo-title">${esc(mod.nombre)}</div>${mod.tag?`<span class="modulo-tag">· ${mod.tag}</span>`:''}`;
+    block.appendChild(hdr);
+    mod.items.forEach(item => {
+      const card = buildItemCard(item, respuestas[item.id]);
+      block.appendChild(card);
+    });
+    if (mod.id === 'mod7') {
+      const obsDiv = document.createElement('div');
+      obsDiv.className = 'obs-hosp';
+      obsDiv.innerHTML = `<div class="obs-hosp-label">🤝 Observación de Hospitalidad</div>
+        <textarea id="obs-hospitalidad" placeholder="¿Crea momentos genuinos de conexión con el cliente?"></textarea>`;
+      block.appendChild(obsDiv);
+    }
+    frag.appendChild(block);
+  });
+
+  body.innerHTML = '';
+  body.appendChild(frag);
+  updateProgress();
+}
+
+function buildItemCard(item, curVal) {
+  const card = document.createElement('div');
+  card.className = 'item-card' + (curVal !== undefined ? ' answered' : '');
+  card.id = 'card-' + item.id;
+  let guiaHTML = '';
+  if (item.guia && item.guia.length) {
+    const lis = [];
+    for (let i=0; i<item.guia.length; i+=2) {
+      const p = item.guia[i], r = item.guia[i+1]||'';
+      lis.push(`<li>${esc(p)}${r?`<span class="guide-resp">${esc(r)}</span>`:''}</li>`);
+    }
+    guiaHTML = `<button class="guide-toggle" onclick="togglePanel('gp-${item.id}')">💡 Ver guía técnica</button>
+      <div class="guide-panel" id="gp-${item.id}"><div class="guide-panel-title">Preguntas guía — solo capacitador</div><ul>${lis.join('')}</ul></div>`;
+  }
+  let hospHTML = '';
+  if (item.hosp) {
+    hospHTML = `<button class="hosp-toggle" onclick="togglePanel('hp-${item.id}')">🤝 Hospitalidad</button>
+      <div class="hosp-panel" id="hp-${item.id}">${esc(item.hosp)}</div>`;
+  }
+  const scoreHTML = [1,2,3,4].map(n =>
+    `<button class="score-btn${curVal==n?' sel-'+n:''}" onclick="setScore('${item.id}',${n},this)">${n}</button>`
+  ).join('') + `<button class="score-btn${curVal==='NA'?' sel-na':''} na-btn" onclick="setScore('${item.id}','NA',this)">NA</button>`;
+  card.innerHTML = `
+    <div class="item-id">Ítem ${item.id}</div>
+    <div class="item-label">${item.label}</div>
+    <div class="score-row"><div class="score-btns">${scoreHTML}</div>
+      <button class="comment-btn" onclick="togglePanel('ic-${item.id}')" title="Comentario">💬</button></div>
+    <div class="score-labels"><span class="score-label">Inicial</span><span class="score-label">En proceso</span>
+      <span class="score-label">Logrado</span><span class="score-label">Destacado</span><span class="score-label">N/A</span></div>
+    ${guiaHTML}${hospHTML}
+    <div class="comment-wrap" id="ic-${item.id}"><textarea placeholder="Observación..." id="ict-${item.id}"></textarea></div>`;
+  return card;
+}
+
+function toggleMod(btn) {
+  const modId = btn.dataset.mod;
+  activeMods[modId] = !activeMods[modId];
+  btn.classList.toggle('active');
+  const label = btn.textContent.replace(/^[✓✗] /,'');
+  btn.textContent = (activeMods[modId] ? '✓ ' : '✗ ') + label;
+  buildForm();
+  updateProgress();
+}
+
+function setScore(id, val, btn) {
+  respuestas[id] = val;
+  const card = document.getElementById('card-'+id);
+  card.classList.add('answered');
+  card.querySelectorAll('.score-btn').forEach(b => {
+    b.className = 'score-btn' + (b.classList.contains('na-btn') ? ' na-btn' : '');
+    if (b===btn) b.classList.add(val==='NA'?'sel-na':'sel-'+val);
+  });
+  updateProgress();
+}
+
+function updateProgress() {
+  const activosMods = MODS.filter(m=>activeMods[m.id]);
+  const total = activosMods.reduce((s,m)=>s+m.items.length,0);
+  const resp  = activosMods.reduce((s,m)=>s+m.items.filter(i=>respuestas[i.id]!==undefined).length,0);
+  const pct   = total ? Math.round(resp/total*100) : 0;
+  document.getElementById('prog-bar').style.width  = pct+'%';
+  document.getElementById('prog-text').textContent = `${resp} / ${total}`;
+}
+
+function updateFormMeta() {
+  document.getElementById('meta-local').textContent   = document.getElementById('f-local').value || '—';
+  document.getElementById('meta-evaluado').textContent= document.getElementById('f-evaluado').value || '—';
+}
+
+function togglePanel(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+
+function scrollAlPrimero() {
+  for (const mod of MODS.filter(m=>activeMods[m.id])) {
+    for (const item of mod.items) {
+      if (respuestas[item.id] === undefined) {
+        const card = document.getElementById('card-'+item.id);
+        if (card) {
+          card.scrollIntoView({ behavior:'smooth', block:'center' });
+          card.classList.add('pending-highlight');
+          setTimeout(()=>card.classList.remove('pending-highlight'), 1800);
+        }
+        return;
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// ENVÍO
+// ═══════════════════════════════════════════════════════════
+function enviarFormulario() {
+  if (yaEnviado) { showToast('Esta evaluación ya fue enviada'); return; }
+  const fecha     = document.getElementById('f-fecha').value;
+  const local     = document.getElementById('f-local').value.trim() || preLocal || '';
+  const evaluado  = document.getElementById('f-evaluado').value.trim();
+  const evaluador = document.getElementById('f-evaluador').value;
+  const tipo      = document.getElementById('f-tipo').value;
+  const rol       = document.getElementById('f-rol').value;
+  const antiguedad= document.getElementById('f-antiguedad').value;
+  if (!fecha||!local||!evaluado||!evaluador||!tipo||!rol) {
+    showToast('⚠ Completá todos los campos'); return;
+  }
+  const activosMods = MODS.filter(m=>activeMods[m.id]);
+  const total    = activosMods.reduce((s,m)=>s+m.items.length,0);
+  const resp     = activosMods.reduce((s,m)=>s+m.items.filter(i=>respuestas[i.id]!==undefined).length,0);
+  if (resp < total) {
+    showToast(`⚠ Faltan ${total-resp} ítems`);
+    setTimeout(scrollAlPrimero, 350); return;
+  }
+  const btn = document.getElementById('btn-enviar');
+  btn.textContent = 'Procesando...'; btn.disabled = true;
+  const resultado = calcularResultados();
+  ultimoResult = { local, evaluado, fecha, evaluador, tipo, rol, antiguedad, resultado };
+  const modData = {};
+  MODS.forEach((m,idx) => {
+    const n = idx+1;
+    if (!activeMods[m.id]) { modData['s'+n]='No evaluado'; modData['s'+n+'max']='-'; return; }
+    let score=0, naCount=0;
+    m.items.forEach(item => {
+      const v = respuestas[item.id];
+      if (v && v!=='NA') score+=parseInt(v);
+      else if (v==='NA') naCount++;
+    });
+    modData['s'+n] = score;
+    modData['s'+n+'max'] = (m.items.length-naCount)*4;
+  });
+  const fort=[], ref=[];
+  MODS.forEach(m => {
+    if (!activeMods[m.id]) return;
+    m.items.forEach(item => {
+      const v = respuestas[item.id];
+      if (!v || v==='NA') return;
+      const txt = item.label.replace(/<[^>]+>/g,'');
+      const lbl = calcLabel(v);
+      if (parseInt(v)>=3) fort.push(`[${m.nombre}] ${txt} (${lbl})`);
+      else ref.push(`[${m.nombre}] ${txt} (${lbl})`);
+    });
+  });
+  const pct = resultado.total+'%';
+  const band = resultado.total>=UMBRAL_OK?'Desempeño Sólido':resultado.total>=UMBRAL_OBS?'Desempeño Aceptable':'Atención Urgente';
+  const payload = {
+    fecha,evaluado,local,evaluador,tipo,rol,antiguedad,...modData,
+    total:String(resultado.totalRaw), totalMax:String(resultado.totalMax),
+    porcentaje:pct, resultado:band+' — '+pct,
+    fortalezas:fort.join(' | '), reforzar:ref.join(' | '),
+    observaciones:(document.getElementById('obs-hospitalidad')?.value||'').trim()
+  };
+  yaEnviado = true;
+  btn.textContent = '✓ Enviada';
+  btn.style.cssText = 'background:#27ae60;color:white;border-color:#27ae60';
+  datosResumen.push({ local, evaluado, fecha, evaluador, porcentaje:normalizePct(resultado.total) });
+  showToast('✓ Evaluación enviada');
+  const cacheKey = `${local}|${evaluado}|${fecha}`;
+  evalCache[cacheKey] = { evaluado, local, fecha, evaluador, tipo, rol, antiguedad, total:resultado.total, totalRaw:resultado.totalRaw, totalMax:resultado.totalMax, modulos:resultado.modulos, tieneDetalle:true };
+  const detalleCompleto = {
+    modulos: resultado.modulos.filter(m=>m.porcentaje!==null).map(m=>({
+      nombre:m.nombre, num:m.num, porcentaje:m.porcentaje,
+      score:m.score, max:m.max, items_detalle:m.items_detalle||[]
+    }))
+  };
+  // Si estamos en modo edición, usar action 'update' con la key original
+  const isEdicion = !!(window._editandoKey);
+  const submitAction = isEdicion ? 'update' : 'submit';
+  const submitExtra  = isEdicion ? { editKey: window._editandoKey } : {};
+  apiPostBg({ action: submitAction, ...payload, detalleCompleto, ...submitExtra });
+  // Limpiar modo edición
+  window._editandoKey   = null;
+  window._editandoFecha = null;
+  // Limpiar borrador si existía
+  if (borradores[local]) {
+    delete borradores[local];
+    try { sessionStorage.removeItem('borrador_' + local); } catch(e) {}
+  }
+  mostrarResultado(local, evaluado, resultado);
+}
+
+// ═══════════════════════════════════════════════════════════
+// CALCULAR
+// ═══════════════════════════════════════════════════════════
+function calcularResultados() {
+  let grandScore=0, grandMax=0;
+  const modulos = MODS.map(m => {
+    if (!activeMods[m.id]) return { nombre:m.nombre, num:m.num, porcentaje:null, score:0, max:0, items_detalle:[] };
+    let score=0, naCount=0;
+    const items_detalle = [];
+    m.items.forEach(item => {
+      const v  = respuestas[item.id];
+      const vn = v==='NA' ? 0 : (parseInt(v)||0);
+      if (v==='NA') naCount++;
+      else score += vn;
+      items_detalle.push({
+        id:item.id, n:item.n,
+        texto:item.label.replace(/<[^>]+>/g,''),
+        val:v==='NA'?'NA':vn,
+        comentario:(document.getElementById('ict-'+item.id)?.value||'').trim()
+      });
+    });
+    const max = (m.items.length-naCount)*4;
+    const pct = max>0 ? Math.round(score/max*100) : null;
+    grandScore+=score; grandMax+=max;
+    return { nombre:m.nombre, num:m.num, porcentaje:pct, score, max, items_detalle };
+  });
+  const total = grandMax>0 ? Math.round(grandScore/grandMax*100) : 0;
+  return { total, totalRaw:grandScore, totalMax:grandMax, modulos };
+}
+
+// ═══════════════════════════════════════════════════════════
+// RESULTADO
+// ═══════════════════════════════════════════════════════════
+function mostrarResultado(local, evaluado, resultado) {
+  const { total, modulos } = resultado;
+  const { estado, cls, hero } = getEstado(total);
+  document.getElementById('resultado-pct').textContent    = total+'%';
+  document.getElementById('resultado-estado').textContent = estado;
+  document.getElementById('resultado-local').textContent  = `${local} · ${evaluado}`;
+  document.getElementById('resultado-hero').className     = 'resultado-hero '+hero;
+  document.getElementById('resultado-modulos').innerHTML = modulos
+    .filter(m=>m.porcentaje!==null)
+    .map(m => {
+      const { cls:cc, barCls:bc, badge } = getEstado(m.porcentaje);
+      return `<div class="mod-result">
+        <div class="mod-result-pct ${cc}">${m.porcentaje}%</div>
+        <div style="flex:1">
+          <div class="mod-result-name">${m.num}. ${esc(m.nombre)}</div>
+          <div class="mod-bar-outer"><div class="mod-bar ${bc}" style="width:${m.porcentaje}%"></div></div>
+          <div class="mod-badge ${cc}">${badge}</div>
+        </div>
+      </div>`;
+    }).join('');
+  renderHome();
+  showTab('resultado');
+}
+
+// ═══════════════════════════════════════════════════════════
+// VER EVALUACIÓN
+// ═══════════════════════════════════════════════════════════
+// Contexto de la evaluación siendo vista (para editar)
+let _verCtx = null;
+
+function verEval(local, evaluado, fecha) {
+  const key    = `${local}|${evaluado}|${fecha}`;
+  const cached = evalCache[key];
+  const body   = document.getElementById('ver-body');
+  // Guardar contexto para edición
+  _verCtx = { local, evaluado, fecha, cached };
+  // Mostrar botón editar solo si tiene detalle completo
+  const btnEd = document.getElementById('btn-editar-eval');
+  if (btnEd) btnEd.style.display = (cached && cached.tieneDetalle) ? 'inline-block' : 'none';
+  if (!cached || !cached.tieneDetalle || !cached.modulos || !cached.modulos.length) {
+    const reg = datosResumen.find(r=>r.local===local&&r.evaluado===evaluado&&r.fecha===fecha);
+    const pct = reg ? reg.porcentaje : '—';
+    const { estado, cls } = reg ? getEstado(reg.porcentaje) : { estado:'—', cls:'' };
+    body.innerHTML = `
+      <div class="ver-header-card">
+        <div style="font-family:Montserrat;font-weight:800;font-size:17px;color:var(--gold)">${esc(evaluado)}</div>
+        <div class="ver-grid">
+          <div><div class="ver-field-label">Local</div><div class="ver-field-value">${esc(local)}</div></div>
+          <div><div class="ver-field-label">Fecha</div><div class="ver-field-value">${formatFecha(fecha)}</div></div>
+          <div><div class="ver-field-label">Resultado</div><div class="ver-field-value ${cls}">${pct}%</div></div>
+          <div><div class="ver-field-label">Estado</div><div class="ver-field-value">${esc(estado)}</div></div>
+        </div>
+      </div>`;
+    if (reg) {
+      const { estado:est, cls:cl } = getEstado(reg.porcentaje);
+      body.innerHTML += `
+        <div class="ver-total" style="margin-top:12px">
+          <span style="font-family:Montserrat;font-weight:700;font-size:13px">Resultado</span>
+          <span class="colab-pct ${cl}" style="font-size:22px;font-weight:900">${reg.porcentaje}% <span style="font-size:12px">${esc(est)}</span></span>
+        </div>
+        <div style="background:#1a1a0a;border:1px solid var(--gold-dark);border-radius:var(--r);padding:14px 16px;margin-top:8px">
+          <div style="font-family:Montserrat;font-weight:700;font-size:11px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">📁 Evaluación registrada en SisCap 1</div>
+          <div style="font-size:12px;color:var(--gray);line-height:1.6">El detalle ítem por ítem no está disponible en esta versión. Solo se conserva el resumen por módulo.</div>
+        </div>
+        <button class="btn btn-green-solid" style="margin-top:12px" onclick="reimprimirPDF('${esc(local)}','${esc(evaluado)}','${fecha}',${reg.porcentaje||0})">📄 Descargar PDF</button>`;
+    }
+    showTab('ver'); return;
+  }
+  const scoreLabels = { 1:'✗ Inicial', 2:'⚠ En proceso', 3:'✓ Logrado', 4:'★ Destacado', NA:'— N/A' };
+  const scoreClass  = { 1:'ver-s1', 2:'ver-s2', 3:'ver-s3', 4:'ver-s4', NA:'ver-sna' };
+  const { estado, cls } = getEstado(cached.total);
+  let html = `
+    <div class="ver-header-card">
+      <div style="font-family:Montserrat;font-weight:800;font-size:17px;color:var(--gold)">${esc(cached.evaluado)}</div>
+      <div class="ver-grid">
+        <div><div class="ver-field-label">Local</div><div class="ver-field-value">${esc(cached.local)}</div></div>
+        <div><div class="ver-field-label">Fecha</div><div class="ver-field-value">${formatFecha(cached.fecha)}</div></div>
+        <div><div class="ver-field-label">Evaluador</div><div class="ver-field-value">${esc(cached.evaluador)}</div></div>
+        <div><div class="ver-field-label">Tipo</div><div class="ver-field-value">${esc(cached.tipo)}</div></div>
+      </div>
+    </div>
+    <div class="ver-total">
+      <span style="font-family:Montserrat;font-weight:700;font-size:13px">Resultado</span>
+      <span style="font-family:Montserrat;font-weight:900;font-size:26px" class="${cls}">${cached.total}% <span style="font-size:12px;font-weight:600">${esc(estado)}</span></span>
+    </div>`;
+  cached.modulos.filter(m=>m.porcentaje!==null).forEach(m => {
+    html += `<div style="display:flex;flex-direction:column;gap:6px">
+      <div class="ver-mod-title">${m.num}. ${esc(m.nombre)}<span>${m.porcentaje}%</span></div>`;
+    (m.items_detalle||[]).forEach(it => {
+      if (it.val === undefined) return;
+      const sc  = it.val==='NA'?'NA':it.val;
+      const lbl = scoreLabels[sc] || String(sc);
+      const cls2= scoreClass[sc] || 'ver-sna';
+      html += `<div class="ver-item">
+        <div style="font-size:9px;color:var(--gold);font-weight:700;margin-bottom:2px">Ítem ${it.n || it.id}</div>
+        <div class="ver-item-label">${esc(it.texto)}</div>
+        <span class="ver-score ${cls2}">${lbl}</span>
+        ${it.comentario ? `<div class="ver-comment">💬 ${esc(it.comentario)}</div>` : ''}
+      </div>`;
+    });
+    html += '</div>';
+  });
+  // Agregar botones al pie
+  html += `
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+      <button class="btn btn-green-solid" onclick="reimprimirPDF('${esc(cached.local)}','${esc(cached.evaluado)}','${cached.fecha}',${cached.total||0})">📄 Descargar PDF</button>
+      <button class="btn btn-outline" onclick="editarEvalActual()" style="color:var(--gold);border-color:var(--gold-dark)">✏ Editar evaluación</button>
+    </div>`;
+  body.innerHTML = html;
+  showTab('ver');
+}
+
+// ═══════════════════════════════════════════════════════════
+// EDITAR EVALUACIÓN EXISTENTE
+// ═══════════════════════════════════════════════════════════
+function editarEvalActual() {
+  if (!_verCtx || !_verCtx.cached) { showToast('⚠ Sin datos para editar'); return; }
+  const { local, evaluado, fecha, cached } = _verCtx;
+
+  // Limpiar estado
+  respuestas = {};
+  yaEnviado  = false;
+  Object.keys(activeMods).forEach(k => activeMods[k] = true);
+
+  // Cargar respuestas desde items_detalle del cache
+  if (cached.modulos) {
+    cached.modulos.forEach(m => {
+      (m.items_detalle || []).forEach(it => {
+        if (it.val !== undefined && it.val !== null) {
+          respuestas[it.id] = it.val === 0 ? undefined : it.val;
+        }
+      });
+    });
+    // Desactivar módulos que no fueron evaluados
+    cached.modulos.forEach(m => {
+      const modKey = 'mod' + m.num;
+      if (m.porcentaje === null) activeMods[modKey] = false;
+    });
+  }
+
+  preLocal    = local;
+  preEvaluado = evaluado;
+
+  // Marcar como edición — el envío sobreescribirá la fila existente
+  window._editandoKey = `${local}|${evaluado}|${fecha}`;
+  window._editandoFecha = fecha;
+
+  buildForm();
+
+  // Restaurar campos de cabecera
+  setTimeout(() => {
+    document.getElementById('f-local').value    = local;
+    document.getElementById('f-evaluado').value = evaluado;
+    if (cached.evaluador) {
+      const sel = document.getElementById('f-evaluador');
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].text === cached.evaluador) { sel.selectedIndex = i; break; }
+      }
+    }
+    if (cached.tipo) {
+      const sel = document.getElementById('f-tipo');
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].text === cached.tipo) { sel.selectedIndex = i; break; }
+      }
+    }
+    if (cached.rol) {
+      const sel = document.getElementById('f-rol');
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].text === cached.rol) { sel.selectedIndex = i; break; }
+      }
+    }
+    if (cached.antiguedad) {
+      const sel = document.getElementById('f-antiguedad');
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].text === cached.antiguedad) { sel.selectedIndex = i; break; }
+      }
+    }
+    // Fecha original
+    document.getElementById('f-fecha').value = window._editandoFecha || fecha;
+
+    // Restaurar toggles de módulos
+    document.querySelectorAll('.mod-toggle').forEach(btn => {
+      const modId = btn.dataset.mod;
+      if (activeMods[modId]) {
+        btn.classList.add('active');
+        btn.textContent = '✓ ' + btn.textContent.replace(/^[✓✗] /, '');
+      } else {
+        btn.classList.remove('active');
+        btn.textContent = '✗ ' + btn.textContent.replace(/^[✓✗] /, '');
+      }
+    });
+
+    // Restaurar comentarios en los textareas
+    if (cached.modulos) {
+      cached.modulos.forEach(m => {
+        (m.items_detalle || []).forEach(it => {
+          if (it.comentario) {
+            const ta = document.getElementById('ict-' + it.id);
+            if (ta) {
+              ta.value = it.comentario;
+              const wrap = document.getElementById('ic-' + it.id);
+              if (wrap) wrap.classList.add('open');
+            }
+          }
+        });
+      });
+    }
+
+    updateFormMeta();
+    updateProgress();
+  }, 150);
+
+  // Cambiar label del botón enviar
+  const btnEnv = document.getElementById('btn-enviar');
+  if (btnEnv) {
+    btnEnv.textContent = '✓ Guardar corrección';
+    btnEnv.style.cssText = 'background:#1a3a5a;color:#5b9bd5;border:1px solid #2a5a8a';
+  }
+
+  showToast('✏ Modo edición — corregí y reenvía');
+  showTab('form');
+}
+
+// ═══════════════════════════════════════════════════════════
+// PDF — GENERACIÓN 100% FRONTEND (jsPDF)
+// El backend ya NO se usa para generar el PDF.
+// El formulario sigue enviándose al Sheet via apiPostBg como siempre.
+// ═══════════════════════════════════════════════════════════
+
+// Colores del sistema
+const PDF_GOLD   = [201, 168, 76];
+const PDF_GREEN  = [46, 204, 113];
+const PDF_YELLOW = [243, 156, 18];
+const PDF_RED    = [231, 76, 60];
+const PDF_DARK   = [26, 26, 26];
+const PDF_GRAY   = [136, 136, 136];
+const PDF_WHITE  = [245, 240, 232];
+const PDF_TEAL   = [93, 202, 165];
+
+// Umbrales PDF: >=80 Aprobado | 50-79 En proceso | <50 Critico
+function _pdfColorEstado(pct) {
+  if (pct >= 80) return [39, 150, 89];   // verde
+  if (pct >= 50) return [180, 120, 10];  // amarillo
+  return [190, 50, 40];                  // rojo
+}
+function _pdfLabelEstado(pct) {
+  if (pct >= 80) return 'Aprobado';
+  if (pct >= 50) return 'Requiere refuerzo';
+  return 'Critico';
+}
+
+function _buildPDFFromData(data) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'mm', format:'a4', orientation:'portrait' });
+  const W = 210, H = 297;
+  const ML = 16, MR = 16, INNER = W - ML - MR;
+  let y = 0;
+
+  // Paleta limpia — fondo blanco, color solo donde importa
+  const C_BLACK  = [20, 20, 20];
+  const C_GOLD   = [180, 140, 50];
+  const C_GRAY1  = [80, 80, 80];     // texto secundario
+  const C_GRAY2  = [140, 140, 140];  // texto terciario / labels
+  const C_GRAY3  = [220, 220, 220];  // bordes / separadores
+  const C_GRAY4  = [248, 248, 248];  // fondo de filas alternas
+  const C_GREEN  = [39, 150, 89];
+  const C_YELLOW = [180, 120, 10];
+  const C_RED    = [190, 50, 40];
+  const C_WHITE  = [255, 255, 255];
+
+  const colorEstado = _pdfColorEstado(data.total);
+  const labelEstado = _pdfLabelEstado(data.total);
+
+  // ── FRANJA SUPERIOR ──────────────────────────────────────
+  doc.setFillColor(...C_BLACK);
+  doc.rect(0, 0, W, 22, 'F');
+  // Acento gold izquierdo
+  doc.setFillColor(...C_GOLD);
+  doc.rect(0, 0, 3, 22, 'F');
+
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(14);
+  doc.setTextColor(...C_GOLD);
+  doc.text("SisCap", ML, 10);
+
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(7);
+  doc.setTextColor(160, 160, 160);
+  doc.text("Sistema de Capacitacion v2", ML, 15);
+
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(7.5);
+  doc.setTextColor(150, 150, 150);
+  doc.text(data.fecha, W - MR, 13, { align:'right' });
+
+  y = 28;
+
+  // ── BLOQUE COLABORADOR + RESULTADO ──────────────────────
+  // Nombre e info del evaluado
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(16);
+  doc.setTextColor(...C_BLACK);
+  doc.text(data.evaluado || '—', ML, y + 7);
+
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(8);
+  doc.setTextColor(...C_GRAY2);
+  doc.text(data.local || '—', ML, y + 13);
+
+  // Resultado — alineado a la derecha, solo el número y el label con color
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(26);
+  doc.setTextColor(...colorEstado);
+  doc.text(data.total + '%', W - MR, y + 9, { align:'right' });
+
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(8);
+  doc.setTextColor(...colorEstado);
+  doc.text(labelEstado.toUpperCase(), W - MR, y + 15, { align:'right' });
+
+  y += 20;
+
+  // Línea separadora
+  doc.setDrawColor(...C_GRAY3);
+  doc.setLineWidth(0.3);
+  doc.line(ML, y, W - MR, y);
+  y += 6;
+
+  // ── TABLA DE DATOS (estilo SisCap 1) ───────────────────
+  const celdas = [
+    ['Evaluado',   data.evaluado   || '—', 'Evaluador', data.evaluador  || '—'],
+    ['Local',      data.local      || '—', 'Fecha',     data.fecha      || '—'],
+    ['Tipo',       data.tipo       || '—', 'Rol',       data.rol        || '—'],
+    ['Antiguedad', data.antiguedad || '—', '',          ''],
+  ];
+  const colW = INNER / 2 - 2;
+  celdas.forEach((row, ri) => {
+    const bg = ri % 2 === 0 ? C_GRAY4 : C_WHITE;
+    // celda izquierda
+    doc.setFillColor(...bg);
+    doc.rect(ML, y, colW, 9, 'F');
+    doc.setDrawColor(...C_GRAY3);
+    doc.setLineWidth(0.2);
+    doc.rect(ML, y, colW, 9, 'D');
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(7);
+    doc.setTextColor(...C_GRAY2);
+    doc.text(row[0], ML + 2, y + 4);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...C_BLACK);
+    const v0 = row[1].length > 30 ? row[1].substring(0,30)+'...' : row[1];
+    doc.text(v0, ML + 2, y + 8);
+    // celda derecha
+    if (row[2]) {
+      const rx = ML + colW + 4;
+      doc.setFillColor(...bg);
+      doc.rect(rx, y, colW, 9, 'F');
+      doc.rect(rx, y, colW, 9, 'D');
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(7);
+      doc.setTextColor(...C_GRAY2);
+      doc.text(row[2], rx + 2, y + 4);
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(8);
+      doc.setTextColor(...C_BLACK);
+      const v1 = row[3].length > 30 ? row[3].substring(0,30)+'...' : row[3];
+      doc.text(v1, rx + 2, y + 8);
+    }
+    y += 9;
+  });
+
+  y += 8;
+
+  // ── RESUMEN POR MÓDULO (tabla compacta) ─────────────────
+  // Header de sección
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(8);
+  doc.setTextColor(...C_GRAY2);
+  doc.text('RESUMEN POR MODULO', ML, y);
+  y += 4;
+
+  // Encabezados de tabla
+  doc.setFillColor(...C_BLACK);
+  doc.rect(ML, y, INNER, 7, 'F');
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(7);
+  doc.setTextColor(...C_WHITE);
+  doc.text('Modulo', ML + 3, y + 4.5);
+  doc.text('Puntaje', ML + INNER * 0.62, y + 4.5);
+  doc.text('%', W - MR - 3, y + 4.5, { align:'right' });
+  y += 7;
+
+  const modsFiltrados = (data.modulos || []).filter(m => m.porcentaje !== null && m.porcentaje !== undefined);
+  modsFiltrados.forEach((m, mi) => {
+    if (y > H - 35) { doc.addPage(); y = 16; }
+    const bg2 = mi % 2 === 0 ? C_WHITE : C_GRAY4;
+    doc.setFillColor(...bg2);
+    doc.rect(ML, y, INNER, 8, 'F');
+    doc.setDrawColor(...C_GRAY3);
+    doc.setLineWidth(0.15);
+    doc.line(ML, y + 8, ML + INNER, y + 8);
+
+    // Nombre módulo
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...C_BLACK);
+    const nomCorto = (m.num + '. ' + m.nombre).length > 35 ? (m.num + '. ' + m.nombre).substring(0,35)+'...' : (m.num + '. ' + m.nombre);
+    doc.text(nomCorto, ML + 3, y + 5.5);
+
+    // Puntaje
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...C_GRAY1);
+    doc.text((m.score || 0) + ' / ' + (m.max || 0), ML + INNER * 0.62, y + 5.5);
+
+    // Porcentaje con color
+    const cMod = _pdfColorEstado(m.porcentaje);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...cMod);
+    doc.text(m.porcentaje + '%', W - MR - 3, y + 5.5, { align:'right' });
+
+    y += 8;
+  });
+
+  y += 10;
+
+  // ── DETALLE ÍTEM POR ÍTEM ───────────────────────────────
+  modsFiltrados.forEach(m => {
+    if (!(m.items_detalle && m.items_detalle.length)) return;
+    if (y > H - 40) { doc.addPage(); y = 16; }
+
+    // Cabecera de módulo
+    const cMod2 = _pdfColorEstado(m.porcentaje);
+    doc.setFillColor(245, 245, 245);
+    doc.rect(ML, y, INNER, 7, 'F');
+    doc.setDrawColor(...C_GRAY3);
+    doc.setLineWidth(0.2);
+    doc.rect(ML, y, INNER, 7, 'D');
+    // Acento izquierdo color-estado
+    doc.setFillColor(...cMod2);
+    doc.rect(ML, y, 2.5, 7, 'F');
+
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...C_BLACK);
+    doc.text(m.num + '. ' + m.nombre, ML + 5, y + 5);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...cMod2);
+    doc.text(m.porcentaje + '%', W - MR - 2, y + 5, { align:'right' });
+    y += 9;
+
+    m.items_detalle.forEach((it, ii) => {
+      if (it.val === undefined || it.val === null) return;
+      if (y > H - 22) { doc.addPage(); y = 16; }
+
+      const sv  = it.val === 'NA' ? null : parseInt(it.val);
+      const cIt = it.val==='NA' ? C_GRAY2 : sv===4 ? C_GREEN : sv===3 ? [60,160,100] : sv===2 ? C_YELLOW : C_RED;
+      const lIt = it.val==='NA' ? 'N/A' : sv===4 ? 'Destacado' : sv===3 ? 'Logrado' : sv===2 ? 'Requiere refuerzo' : 'Inicial';
+
+      const bgIt = ii % 2 === 0 ? C_WHITE : C_GRAY4;
+      const rowH = it.comentario ? 14 : 8;
+      doc.setFillColor(...bgIt);
+      doc.rect(ML, y, INNER, rowH, 'F');
+      doc.setDrawColor(...C_GRAY3);
+      doc.setLineWidth(0.1);
+      doc.line(ML, y + rowH, ML + INNER, y + rowH);
+
+      // Bullet con color
+      doc.setFillColor(...cIt);
+      doc.circle(ML + 3.5, y + 4, 1, 'F');
+
+      // Texto ítem
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(7.5);
+      doc.setTextColor(...C_GRAY1);
+      const maxLen = 80;
+      const textoIt = it.texto.length > maxLen ? it.texto.substring(0,maxLen)+'...' : it.texto;
+      doc.text(textoIt, ML + 7, y + 5);
+
+      // Label score — derecha, negrita, color
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(7);
+      doc.setTextColor(...cIt);
+      doc.text(lIt, W - MR - 2, y + 5, { align:'right' });
+
+      // Observación
+      if (it.comentario) {
+        doc.setFont('helvetica','italic');
+        doc.setFontSize(6.5);
+        doc.setTextColor(...C_GRAY2);
+        const obsT = 'Obs: ' + (it.comentario.length > 95 ? it.comentario.substring(0,95)+'...' : it.comentario);
+        doc.text(obsT, ML + 7, y + 11);
+      }
+
+      y += rowH;
+    });
+    y += 5;
+  });
+
+  // ── FORTALEZAS Y AREAS A REFORZAR (2 columnas) ─────────
+  const hasFort = data.fort && data.fort.length;
+  const hasRef  = data.ref  && data.ref.length;
+  if (hasFort || hasRef) {
+    if (y > H - 50) { doc.addPage(); y = 16; }
+
+    const colHalf = INNER / 2 - 2;
+
+    if (hasFort) {
+      doc.setFillColor(240, 250, 244);
+      doc.rect(ML, y, colHalf, 6, 'F');
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(7.5);
+      doc.setTextColor(...C_GREEN);
+      doc.text('FORTALEZAS', ML + 2, y + 4.5);
+    }
+    if (hasRef) {
+      const rx2 = ML + colHalf + 4;
+      doc.setFillColor(254, 248, 236);
+      doc.rect(rx2, y, colHalf, 6, 'F');
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(7.5);
+      doc.setTextColor(...C_YELLOW);
+      doc.text('ASPECTOS A REFORZAR', rx2 + 2, y + 4.5);
+    }
+    y += 8;
+
+    const maxItems = Math.max(hasFort ? data.fort.length : 0, hasRef ? data.ref.length : 0);
+    for (let i = 0; i < Math.min(maxItems, 8); i++) {
+      if (y > H - 18) { doc.addPage(); y = 16; }
+      const rowH2 = 6;
+      if (hasFort && data.fort[i]) {
+        const txt = data.fort[i].replace(/^\[.*?\]\s*/,'');
+        const fCorto = txt.length > 45 ? txt.substring(0,45)+'...' : txt;
+        doc.setFont('helvetica','normal');
+        doc.setFontSize(7);
+        doc.setTextColor(...C_GREEN);
+        doc.text('+ ', ML + 2, y + 4);
+        doc.setTextColor(60, 100, 70);
+        doc.text(fCorto, ML + 6, y + 4);
+      }
+      if (hasRef && data.ref[i]) {
+        const txt2 = data.ref[i].replace(/^\[.*?\]\s*/,'');
+        const rCorto = txt2.length > 45 ? txt2.substring(0,45)+'...' : txt2;
+        const rx3 = ML + colHalf + 4;
+        doc.setFont('helvetica','normal');
+        doc.setFontSize(7);
+        doc.setTextColor(...C_YELLOW);
+        doc.text('- ', rx3 + 2, y + 4);
+        doc.setTextColor(100, 80, 20);
+        doc.text(rCorto, rx3 + 6, y + 4);
+      }
+      y += rowH2;
+    }
+    y += 6;
+  }
+
+  // ── OBSERVACIÓN HOSPITALIDAD ────────────────────────────
+  if (data.obsHosp) {
+    if (y > H - 28) { doc.addPage(); y = 16; }
+    doc.setFillColor(244, 250, 247);
+    doc.setDrawColor(150, 200, 170);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(ML, y, INNER, 14, 1.5, 1.5, 'FD');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(7);
+    doc.setTextColor(60, 140, 100);
+    doc.text('OBSERVACION DE HOSPITALIDAD', ML + 3, y + 5);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(7.5);
+    doc.setTextColor(...C_GRAY1);
+    const hospT = data.obsHosp.length > 110 ? data.obsHosp.substring(0,110)+'...' : data.obsHosp;
+    doc.text(hospT, ML + 3, y + 11);
+    y += 18;
+  }
+
+  // ── FOOTER EN TODAS LAS PÁGINAS ─────────────────────────
+  const totalPages = doc.internal.getNumberOfPages();
+  for (let p = 1; p <= totalPages; p++) {
+    doc.setPage(p);
+    doc.setDrawColor(...C_GRAY3);
+    doc.setLineWidth(0.3);
+    doc.line(ML, H - 10, W - MR, H - 10);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(6.5);
+    doc.setTextColor(...C_GRAY2);
+    doc.text("SisCap v2 · Lucciano's · Sistema de Capacitacion", ML, H - 6);
+    doc.text('Pagina ' + p + ' de ' + totalPages, W - MR, H - 6, { align:'right' });
+  }
+
+  return doc;
+}
+
+function _descargarPDF(doc, nombre) {
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const isIOS    = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+  if (isIOS) {
+    // iOS: abrir en nueva pestaña (los blobs no se descargan en Safari iOS)
+    const blob = doc.output('blob');
+    const url  = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    showToast('✓ PDF listo — presioná el ícono compartir para guardarlo');
+  } else if (isMobile) {
+    // Android: descarga directa
+    doc.save(nombre);
+    showToast('✓ PDF descargado');
+  } else {
+    // Desktop
+    doc.save(nombre);
+    showToast('✓ PDF descargado');
+  }
+}
+
+async function generarPDF() {
+  const btn = document.getElementById('btn-pdf');
+  btn.textContent = '⏳ Generando...'; btn.disabled = true;
+  showToast('Generando PDF...', 6000);
+
+  if (!ultimoResult) {
+    showToast('⚠ Primero completá una evaluación');
+    btn.textContent = '⬇ Descargar PDF'; btn.disabled = false; return;
+  }
+  if (!window.jspdf) {
+    showToast('⚠ jsPDF no cargó. Verificá tu conexión.'); 
+    btn.textContent = '⬇ Descargar PDF'; btn.disabled = false; return;
+  }
+
+  const r = ultimoResult.resultado;
+  const fort=[], ref=[];
+  r.modulos.filter(m=>m.porcentaje!==null).forEach(m => {
+    (m.items_detalle||[]).forEach(i => {
+      if (!i.val || i.val==='NA') return;
+      const lbl = calcLabel(i.val);
+      if (parseInt(i.val)>=3) fort.push('['+m.nombre+'] '+i.texto+' ('+lbl+')');
+      else ref.push('['+m.nombre+'] '+i.texto+' ('+lbl+')');
+    });
+  });
+
+  const bandLabel = r.total>=UMBRAL_OK?'Desempeno Solido':r.total>=UMBRAL_OBS?'Desempeno Aceptable':'Atencion Urgente';
+
+  const pdfData = {
+    evaluado:   ultimoResult.evaluado,
+    local:      ultimoResult.local,
+    evaluador:  ultimoResult.evaluador,
+    fecha:      ultimoResult.fecha,
+    tipo:       ultimoResult.tipo || '—',
+    rol:        ultimoResult.rol  || '—',
+    antiguedad: ultimoResult.antiguedad || '—',
+    total:      r.total,
+    bandLabel,
+    modulos:    r.modulos,
+    fort, ref,
+    obsHosp: (document.getElementById('obs-hospitalidad')?.value||'').trim()
+  };
+
+  try {
+    const doc = _buildPDFFromData(pdfData);
+    const nombre = `SisCap_${ultimoResult.evaluado.replace(/\s+/g,'_')}_${ultimoResult.fecha}.pdf`;
+    _descargarPDF(doc, nombre);
+    btn.textContent = '⬇ Descargar PDF'; btn.disabled = false;
+
+    // Registrar en Sheet (sin esperar resultado)
+    const payload = {
+      evaluado: ultimoResult.evaluado, local: ultimoResult.local,
+      evaluador: ultimoResult.evaluador, fecha: ultimoResult.fecha,
+      tipo: ultimoResult.tipo, rol: ultimoResult.rol,
+      resultado: bandLabel+' — '+r.total+'%',
+      porcentaje: r.total+'%'
+    };
+    apiPostBg({ action:'pdfLog', payload });
+
+  } catch(e) {
+    console.error('PDF error:', e);
+    btn.textContent = '⬇ Descargar PDF'; btn.disabled = false;
+    showToast('⚠ Error al generar PDF: '+e.message);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// REIMPRIMIR PDF DESDE HISTORIAL
+// FIX: ahora recupera comentarios correctamente del evalCache
+// ═══════════════════════════════════════════════════════════
+async function reimprimirPDF(local, evaluado, fecha, porcentaje) {
+  if (!window.jspdf) { showToast('⚠ jsPDF no cargó. Verificá tu conexión.'); return; }
+  showToast('Generando PDF...', 6000);
+
+  const key    = local+'|'+evaluado+'|'+fecha;
+  const cached = evalCache[key];
+  const fort=[], ref=[];
+
+  if (cached && cached.modulos) {
+    cached.modulos.filter(m=>m.porcentaje!==null).forEach(m=>{
+      (m.items_detalle||[]).forEach(i=>{
+        if (!i.val||i.val==='NA') return;
+        const lbl=calcLabel(i.val);
+        if (parseInt(i.val)>=3) fort.push('['+m.nombre+'] '+i.texto+' ('+lbl+')');
+        else ref.push('['+m.nombre+'] '+i.texto+' ('+lbl+')');
+      });
+    });
+  }
+
+  const bandLabel = porcentaje>=UMBRAL_OK?'Desempeno Solido':porcentaje>=UMBRAL_OBS?'Desempeno Aceptable':'Atencion Urgente';
+
+  const pdfData = {
+    evaluado,
+    local,
+    fecha,
+    evaluador:  cached?.evaluador  || '—',
+    tipo:       cached?.tipo       || '—',
+    rol:        cached?.rol        || '—',
+    antiguedad: cached?.antiguedad || '—',
+    total:      porcentaje,
+    bandLabel,
+    // FIX: ahora pasa los módulos con items_detalle reales (incluye comentarios)
+    modulos:    cached?.modulos || [],
+    fort, ref,
+    obsHosp: ''
+  };
+
+  try {
+    const doc    = _buildPDFFromData(pdfData);
+    const nombre = `SisCap_${evaluado.replace(/\s+/g,'_')}_${fecha}.pdf`;
+    _descargarPDF(doc, nombre);
+  } catch(e) {
+    console.error('PDF error:', e);
+    showToast('⚠ Error al generar PDF: '+e.message);
+  }
+}
+
+async function cargarPendientes() {
+  try {
+    const data  = await apiGet({ action:'getPendientes' });
+    const wrap  = document.getElementById('pendientes-wrap');
+    const lista = document.getElementById('pendientes-lista');
+    if (!data.pendientes||!data.pendientes.length) { wrap.style.display='none'; return; }
+    wrap.style.display='block';
+    lista.innerHTML=data.pendientes.map(u=>`
+      <div style="background:var(--dark2);border:1px solid var(--yellow);border-radius:var(--rs);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div><div style="font-weight:600;font-size:13px">${esc(u.nombre)}</div><div style="font-size:11px;color:var(--gray)">@${esc(u.usuario)}</div></div>
+        <div style="display:flex;gap:8px;flex-shrink:0">
+          <button onclick="aprobarUsuario('${esc(u.usuario)}',true)" style="background:var(--green-bg);color:var(--green);border:1px solid var(--green);padding:6px 12px;border-radius:var(--rs);font-size:11px;font-weight:700;cursor:pointer">✓ Aprobar</button>
+          <button onclick="aprobarUsuario('${esc(u.usuario)}',false)" style="background:var(--red-bg);color:var(--red);border:1px solid var(--red);padding:6px 12px;border-radius:var(--rs);font-size:11px;font-weight:700;cursor:pointer">✗ Rechazar</button>
+        </div>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+async function aprobarUsuario(usuario, aprobar) {
+  const estado=aprobar?'activo':'rechazado';
+  try {
+    await apiPost({ action:'updateUser', usuario, estado });
+    showToast(aprobar?'✓ Usuario aprobado':'✗ Usuario rechazado');
+    cargarPendientes();
+    if (document.getElementById('screen-config').classList.contains('active')) cargarUsuarios();
+  } catch(e) { showToast('⚠ Error'); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// BORRADORES
+// ═══════════════════════════════════════════════════════════
+function guardarBorrador() {
+  const localInput = (document.getElementById('f-local')?.value||'').trim();
+  const local      = localInput || preLocal || '';
+  const evaluado   = (document.getElementById('f-evaluado')?.value||'').trim() || preEvaluado || '';
+  if (!local) { showToast('⚠ Completá el local antes de guardar'); return; }
+  if (document.getElementById('f-local')) document.getElementById('f-local').value = local;
+  const activos = MODS.filter(m=>activeMods[m.id]);
+  const total   = activos.reduce((s,m)=>s+m.items.length,0);
+  const resp    = activos.reduce((s,m)=>s+m.items.filter(i=>respuestas[i.id]!==undefined).length,0);
+  const borrador={
+    evaluado, local,
+    fecha:(document.getElementById('f-fecha')?.value||''),
+    evaluador:(document.getElementById('f-evaluador')?.value||'')||(currentUser?currentUser.nombre:''),
+    tipo:(document.getElementById('f-tipo')?.value||''),
+    rol:(document.getElementById('f-rol')?.value||''),
+    antiguedad:(document.getElementById('f-antiguedad')?.value||''),
+    respuestas:Object.assign({},respuestas),
+    activeMods:Object.assign({},activeMods),
+    progreso:total>0?Math.round(resp/total*100):0
+  };
+  borradores[local]=borrador;
+  try { sessionStorage.setItem('borrador_'+local, JSON.stringify(borrador)); } catch(e) {}
+  showToast('✓ Borrador guardado');
+  showTab('home');
+  setTimeout(()=>renderHome(),100);
+}
+
+function continuarBorrador(local) {
+  let b=borradores[local];
+  if (!b) { try { const s=sessionStorage.getItem('borrador_'+local); if(s) b=JSON.parse(s); } catch(e) {} }
+  if (!b) { showToast('⚠ No hay borrador guardado'); return; }
+  borradores[local]=b;
+  respuestas={};
+  Object.assign(respuestas,b.respuestas);
+  Object.assign(activeMods,b.activeMods);
+  preLocal=local; preEvaluado=b.evaluado; yaEnviado=false;
+  buildForm();
+  setTimeout(()=>{
+    document.getElementById('f-local').value    =local;
+    document.getElementById('f-evaluado').value =b.evaluado||'';
+    document.getElementById('f-evaluador').value=b.evaluador||'';
+    if(b.tipo)       document.getElementById('f-tipo').value      =b.tipo;
+    if(b.rol)        document.getElementById('f-rol').value       =b.rol;
+    if(b.antiguedad) document.getElementById('f-antiguedad').value=b.antiguedad;
+    if(b.fecha)      document.getElementById('f-fecha').value     =b.fecha;
+    updateFormMeta(); updateProgress();
+  },150);
+  showTab('form');
+  showToast('Borrador restaurado');
+}
+
+function descartarBorrador(local) {
+  if (!confirm('¿Descartar el borrador de '+local+'?')) return;
+  delete borradores[local];
+  try { sessionStorage.removeItem('borrador_'+local); } catch(e) {}
+  renderHome(); showToast('Borrador descartado');
+}
+
+// ═══════════════════════════════════════════════════════════
+// CONFIGURACIÓN — USUARIOS
+// ═══════════════════════════════════════════════════════════
+
+
+function impersonarUsuario() {
+  const sel = document.getElementById('impersonar-sel');
+  const user = sel.value;
+  if (!user) { showToast('\u26A0 Seleccioná un usuario'); return; }
+  const u = USUARIOS[user];
+  if (!u) { showToast('\u26A0 Usuario no encontrado'); return; }
+  if (!confirm('\u00BFEntrás como ' + u.nombre + '? Tu sesión actual se cerrará.')) return;
+  // Guardar usuario admin para volver
+  sessionStorage.setItem('admin_backup', JSON.stringify(currentUser));
+  _loginExitoso(user, u.nombre, u.isAdmin || false);
+  const btnVolver = document.getElementById('btn-volver-admin');
+  if (btnVolver) btnVolver.style.display = '';
+  showTab('home');
+  showToast('\u2713 Entraste como ' + u.nombre);
+}
+
+function volverComoAdmin() {
+  const backup = sessionStorage.getItem('admin_backup');
+  if (!backup) return;
+  const admin = JSON.parse(backup);
+  sessionStorage.removeItem('admin_backup');
+  _loginExitoso(admin.username, admin.nombre, true);
+  showTab('home');
+  showToast('\u2713 Volviste como ' + admin.nombre);
+}
+
+function cerrarSesion() {
+  if (!confirm('¿Cerrar sesión?')) return;
+  // Limpiar estado
+  currentUser   = null;
+  datosResumen  = [];
+  ultimoResult  = null;
+  respuestas    = {};
+  yaEnviado     = false;
+  Object.keys(borradores).forEach(k => delete borradores[k]);
+  // Limpiar sessionStorage
+  try { sessionStorage.clear(); } catch(e) {}
+  // Limpiar campos login
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').textContent = '';
+  // Volver al login
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-login').classList.add('active');
+  showToast('Sesión cerrada');
+}
+
+function abrirConfig() {
+  if (!currentUser?.isAdmin) { showToast('⚠ Solo el administrador puede acceder'); return; }
+  // Usuarios: colapsado por defecto al abrir config
+  const uc = document.getElementById('usuarios-collapsible');
+  const ch = document.getElementById('usuarios-chev');
+  if (uc) uc.style.display = 'none';
+  if (ch) ch.style.transform = '';
+  cargarUsuarios(); showTab('config');
+}
+function toggleUserForm() { document.getElementById('user-form').classList.toggle('open'); }
+
+function toggleUsuariosList() {
+  const body = document.getElementById('usuarios-collapsible');
+  const chev = document.getElementById('usuarios-chev');
+  const open = body.style.display === 'none' || body.style.display === '';
+  body.style.display = open ? 'block' : 'none';
+  if (chev) chev.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+function toggleFormCabecera() {
+  const body = document.getElementById('form-cabecera-body');
+  const chev = document.getElementById('cabecera-chev');
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'flex';
+  if (chev) chev.style.transform = open ? '' : 'rotate(180deg)';
+}
+
+async function cargarUsuarios() {
+  const lista  = document.getElementById('usuarios-lista');
+  const impSel = document.getElementById('impersonar-sel');
+  lista.innerHTML = '<div class="spinner-wrap"><div class="spinner"></div></div>';
+
+  // FIX: poblar el select de impersonación con usuarios hardcodeados
+  if (impSel) {
+    const opts = ['<option value="">— Seleccioná un usuario —</option>'];
+    Object.entries(USUARIOS).forEach(([key, u]) => {
+      if (u.isAdmin) return;
+      opts.push(`<option value="${key}">${esc(u.nombre)} (@${key})</option>`);
+    });
+    impSel.innerHTML = opts.join('');
+  }
+
+  try {
+    const data = await apiGet({ action:'getUsuarios' });
+    if (data.usuarios?.length) {
+      lista.innerHTML = data.usuarios.map(u=>`
+        <div class="user-row">
+          <div><div class="user-name">${esc(u.nombre)}</div><div class="user-handle">@${esc(u.usuario)}</div></div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="user-status ${u.estado==='activo'?'status-active':'status-inactive'}">${u.estado==='activo'?'✓ Activo':'✗ Inactivo'}</span>
+            <button class="toggle-user-btn" onclick="toggleUsuario('${esc(u.usuario)}','${esc(u.estado)}')">${u.estado==='activo'?'Desactivar':'Activar'}</button>
+          </div>
+        </div>`).join('');
+      // Agregar al select los usuarios de Sheets que no están en USUARIOS local
+      if (impSel) {
+        data.usuarios.forEach(u => {
+          if (!USUARIOS[u.usuario] && u.estado === 'activo') {
+            const opt = document.createElement('option');
+            opt.value = u.usuario;
+            opt.textContent = u.nombre + ' (@' + u.usuario + ')';
+            impSel.appendChild(opt);
+          }
+        });
+      }
+    } else {
+      lista.innerHTML = '<div style="color:var(--gray);font-size:13px;padding:10px">Sin usuarios en Sheets.</div>';
+    }
+  } catch(e) {
+    lista.innerHTML = '<div style="color:var(--gray);font-size:13px;padding:10px">Error al cargar usuarios.</div>';
+  }
+}
+
+async function crearUsuario() {
+  const nombre=document.getElementById('nu-nombre').value.trim();
+  const user  =document.getElementById('nu-user').value.trim().toLowerCase();
+  const pass  =document.getElementById('nu-pass').value.trim();
+  if (!nombre||!user||!pass) { showToast('⚠ Completá todos los campos'); return; }
+  showToast('Creando...');
+  try {
+    const data=await apiPost({ action:'createUser', nombre, user, pass, estado:'activo' });
+    if (data.status==='ok') {
+      showToast('✓ Usuario creado');
+      ['nu-nombre','nu-user','nu-pass'].forEach(id=>document.getElementById(id).value='');
+      document.getElementById('user-form').classList.remove('open');
+      cargarUsuarios();
+    } else { showToast('⚠ '+(data.msg||'Error')); }
+  } catch(e) { showToast('⚠ Error de conexión'); }
+}
+
+async function toggleUsuario(usuario, estadoActual) {
+  const nuevoEstado=estadoActual==='activo'?'inactivo':'activo';
+  try {
+    await apiPost({ action:'updateUser', usuario, estado:nuevoEstado });
+    showToast('✓ Usuario '+nuevoEstado); cargarUsuarios();
+  } catch(e) { showToast('⚠ Error'); }
+}
+</script>
+<script>
+// Service Worker — actualización automática sin borrar caché manualmente
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').then(reg => {
+    // Verificar actualizaciones cada vez que se abre la app
+    reg.update();
+
+    reg.addEventListener('updatefound', () => {
+      const newWorker = reg.installing;
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          // Hay nueva versión disponible — recargar automático
+          newWorker.postMessage({ action: 'skipWaiting' });
+        }
+      });
+    });
+  });
+
+  // Cuando el SW se activa, recargar la página para tener la versión nueva
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload();
+  });
+}
+</script>
+</body>
+</html>
