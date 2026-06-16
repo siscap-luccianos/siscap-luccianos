@@ -886,11 +886,14 @@ function _loginExitoso(user, nombre, isAdmin) {
   document.getElementById('home-name').textContent   = nombre.split(' ')[0];
   document.getElementById('login-error').textContent = '';
 
-  // Preseleccionar evaluador en el formulario
+  // Preseleccionar evaluador y bloquear si no es admin
   const sel = document.getElementById('f-evaluador');
   for (let i = 0; i < sel.options.length; i++) {
     if (sel.options[i].text === nombre) { sel.selectedIndex = i; break; }
   }
+  sel.disabled = !isAdmin;
+  sel.style.opacity = isAdmin ? '' : '0.6';
+  sel.title = isAdmin ? '' : 'Solo el administrador puede cambiar el capacitador';
 
   // Mostrar/ocultar botón config
   document.getElementById('cfg-btn').style.display = isAdmin ? '' : 'none';
@@ -932,6 +935,24 @@ function irAFormulario(local='', evaluado='') {
     btnEnv.disabled    = false;
     btnEnv.style.cssText = '';
   }
+  // Limpiar modo edición y desbloquear campos
+  window._editandoKey   = null;
+  window._editandoFecha = null;
+  ['f-fecha','f-local','f-evaluado','f-evaluador'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.disabled = false; el.style.cssText = ''; }
+    const wrap = el && el.closest('.autocomplete-wrap');
+    if (wrap) wrap.style.cssText = '';
+  });
+  // Bloquear evaluador si no es admin
+  const selEv = document.getElementById('f-evaluador');
+  if (selEv && currentUser && !currentUser.isAdmin) {
+    selEv.disabled = true;
+    selEv.style.opacity = '0.6';
+  }
+  // Quitar aviso de edición si existe
+  const notice = document.querySelector('.edit-notice');
+  if (notice) notice.remove();
 
   // 4. Construir el formulario (ítems, guías, etc.)
   buildForm();
@@ -1883,6 +1904,29 @@ function editarEvalActual() {
 
     updateFormMeta();
     updateProgress();
+
+    // Bloquear campos de identidad — no se pueden cambiar en edición
+    const lockStyle = 'opacity:0.55;pointer-events:none;cursor:not-allowed';
+    const lockFields = ['f-fecha','f-local','f-evaluado','f-evaluador'];
+    lockFields.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.disabled = true;
+        el.style.cssText = lockStyle;
+        // Bloquear también el wrapper del autocomplete si aplica
+        const wrap = el.closest('.autocomplete-wrap');
+        if (wrap) wrap.style.cssText = lockStyle;
+      }
+    });
+    // Mostrar aviso visual en la cabecera
+    const cabeceraBody = document.getElementById('form-cabecera-body');
+    if (cabeceraBody && !cabeceraBody.querySelector('.edit-notice')) {
+      const notice = document.createElement('div');
+      notice.className = 'edit-notice';
+      notice.style.cssText = 'background:#1a1a0a;border:1px solid var(--gold-dark);border-radius:var(--rs);padding:9px 12px;font-size:11px;color:var(--gold);margin-bottom:4px';
+      notice.textContent = '✏ Modo edición — solo podés modificar Tipo, Rol y Antigüedad';
+      cabeceraBody.insertBefore(notice, cabeceraBody.firstChild);
+    }
   }, 150);
 
   // Cambiar label del botón enviar
@@ -1892,7 +1936,7 @@ function editarEvalActual() {
     btnEnv.style.cssText = 'background:#1a3a5a;color:#5b9bd5;border:1px solid #2a5a8a';
   }
 
-  showToast('✏ Modo edición — corregí y reenvía');
+  showToast('✏ Modo edición — modificá Tipo, Rol o Antigüedad');
   showTab('form');
 }
 
