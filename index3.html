@@ -349,6 +349,19 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
   .score-btn{font-size:13px;padding:9px 1px}
   .stat-value{font-size:26px}
 }
+.guia-tab{flex:1;padding:10px 6px;background:none;border:none;border-bottom:2px solid transparent;color:var(--gray);font-size:11px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.guia-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.guia-section{animation:fadeIn .2s ease}
+.prop-row{display:grid;grid-template-columns:1fr auto auto;padding:9px 12px;border-top:1px solid #222;font-size:12px;color:var(--white);align-items:center}
+.prop-pct{min-width:36px;text-align:center;font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px}
+.cafe-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:8px;margin-bottom:4px}
+.cafe-var{font-size:13px;color:var(--white);display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px solid #222}
+.cafe-var:last-child{border-bottom:none}
+.cafe-esp{font-size:12px;color:var(--white);display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid #1a1a1a}
+.cafe-esp:last-child{border-bottom:none}
+.cafe-tag{font-size:10px;color:var(--gray);text-align:right;flex-shrink:0;max-width:55%}
+.paso-cook{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:var(--white)}
+.paso-num{width:22px;height:22px;border-radius:50%;background:var(--gold);color:var(--black);font-family:'Montserrat',sans-serif;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
 @media(min-width:600px){
   .form-body,.resultado-body,.ver-body-inner,.config-body,.home-body{max-width:640px;margin-left:auto;margin-right:auto;width:100%}
 }
@@ -440,8 +453,9 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
     </div>
   </div>
 
-  <div class="bottom-nav" style="justify-content:center">
-    <button class="nav-btn active" style="max-width:160px" onclick="showTab('home')"><span class="nav-icon">🏠</span>Inicio</button>
+  <div class="bottom-nav">
+    <button class="nav-btn active" id="nav-home" onclick="showTab('home');setActiveNav('nav-home')"><span class="nav-icon">🏠</span>Inicio</button>
+    <button class="nav-btn" id="nav-guia" onclick="showTab('guia');setActiveNav('nav-guia')"><span class="nav-icon">📚</span>Guías</button>
   </div>
 </div>
 
@@ -584,6 +598,294 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
     </div>
   </div>
 </div>
+
+
+<!-- GUÍAS DE SERVICIO -->
+<div id="screen-guia" class="screen">
+  <div class="app-header">
+    <div><div class="logo">SisCap</div><div class="badge-label">Guías</div></div>
+  </div>
+
+  <!-- Tabs de sección -->
+  <div style="display:flex;background:var(--dark);border-bottom:1px solid #2a2a2a;position:sticky;top:0;z-index:100">
+    <button class="guia-tab active" id="gtab-cafe" onclick="switchGuiaTab('cafe')">☕ Cafetería</button>
+    <button class="guia-tab" id="gtab-heladeria" onclick="switchGuiaTab('heladeria')">🍦 Heladería</button>
+    <button class="guia-tab" id="gtab-pasteleria" onclick="switchGuiaTab('pasteleria')">🥐 Pastelería</button>
+  </div>
+
+  <div style="overflow-y:auto;flex:1;padding-bottom:80px">
+
+    <!-- ══════════ CAFETERÍA ══════════ -->
+    <div id="guia-cafe" class="guia-section">
+
+      <!-- Resumen de proporciones -->
+      <div style="padding:14px 16px 0">
+        <div class="section-title">Proporciones base</div>
+        <div style="background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);overflow:hidden;margin-bottom:14px">
+          <div style="display:grid;grid-template-columns:1fr auto auto;padding:8px 12px;background:var(--dark2);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray)">
+            <span>Variante</span><span style="text-align:center">☕</span><span style="text-align:center;margin-left:8px">🥛</span>
+          </div>
+          <div class="prop-row"><span>Negro</span><span class="prop-pct" style="color:var(--gold)">100%</span><span class="prop-pct" style="color:var(--gray)">—</span></div>
+          <div class="prop-row"><span>Cortado</span><span class="prop-pct" style="color:var(--gold)">70%</span><span class="prop-pct" style="color:#a0c4ff">30%</span></div>
+          <div class="prop-row"><span>Mitad y Mitad</span><span class="prop-pct" style="color:var(--gold)">50%</span><span class="prop-pct" style="color:#a0c4ff">50%</span></div>
+          <div class="prop-row"><span>Latte</span><span class="prop-pct" style="color:var(--gold)">30%</span><span class="prop-pct" style="color:#a0c4ff">70%</span></div>
+          <div class="prop-row"><span>Lágrima</span><span class="prop-pct" style="color:var(--gold)">5%</span><span class="prop-pct" style="color:#a0c4ff">95%</span></div>
+          <div class="prop-row"><span>Macchiato</span><span class="prop-pct" style="color:var(--gray);font-size:10px" colspan="2">café + espuma</span><span></span></div>
+          <div class="prop-row"><span>Americano</span><span class="prop-pct" style="color:var(--gray);font-size:10px" colspan="2">café + agua</span><span></span></div>
+        </div>
+      </div>
+
+      <!-- Vasos visuales -->
+      <div style="padding:0 16px">
+        <div class="section-title">Visualización</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px" id="vasos-container">
+          <!-- Se renderizan con JS -->
+        </div>
+      </div>
+
+      <!-- Espresso (Cod 75) -->
+      <div style="padding:0 16px">
+        <div class="section-title">Espresso · Cód. 75 · Chico</div>
+        <div class="cafe-card">
+          <div class="cafe-var">Negro <span class="cafe-tag">solo café</span></div>
+          <div class="cafe-var">Cortado <span class="cafe-tag">70% café · 30% leche</span></div>
+          <div class="cafe-var">Lágrima <span class="cafe-tag">95% leche · 5% café</span></div>
+          <div class="cafe-var">Mitad y Mitad <span class="cafe-tag">50% · 50%</span></div>
+        </div>
+      </div>
+
+      <!-- Espresso Lungo (Cod 76) -->
+      <div style="padding:0 16px;margin-top:10px">
+        <div class="section-title">Espresso Lungo · Cód. 76 · Mediano</div>
+        <div class="cafe-card">
+          <div class="cafe-var">Negro <span class="cafe-tag">solo café</span></div>
+          <div class="cafe-var">Cortado <span class="cafe-tag">70% café · 30% leche</span></div>
+          <div class="cafe-var">Lágrima <span class="cafe-tag">95% leche · 5% café</span></div>
+          <div class="cafe-var">Mitad y Mitad <span class="cafe-tag">50% · 50%</span></div>
+          <div class="cafe-var">Macchiato <span class="cafe-tag">café cortado con espuma</span></div>
+          <div class="cafe-var">Americano <span class="cafe-tag">espresso + agua</span></div>
+        </div>
+      </div>
+
+      <!-- Café Latte (Cod 79) -->
+      <div style="padding:0 16px;margin-top:10px">
+        <div class="section-title">Café Latte / Doble · Cód. 79 · Grande</div>
+        <div class="cafe-card">
+          <div class="cafe-var">Negro <span class="cafe-tag">café doble solo</span></div>
+          <div class="cafe-var">Cortado <span class="cafe-tag">70% café · 30% leche</span></div>
+          <div class="cafe-var">Lágrima <span class="cafe-tag">95% leche · 5% café</span></div>
+          <div class="cafe-var">Café con leche <span class="cafe-tag">50% · 50%</span></div>
+          <div class="cafe-var">Latte <span class="cafe-tag">70% leche · 30% café</span></div>
+        </div>
+      </div>
+
+      <!-- Cappuccino -->
+      <div style="padding:0 16px;margin-top:10px">
+        <div class="section-title">Cappuccino · Cód. 36 · Grande</div>
+        <div class="cafe-card">
+          <div class="cafe-var">Preparación <span class="cafe-tag">50% café · 50% leche + crema + cacao</span></div>
+          <div style="font-size:11px;color:var(--gold);padding:6px 0 2px">⚠ Crema y cacao siempre — no se preguntan</div>
+        </div>
+      </div>
+
+      <!-- Especiales -->
+      <div style="padding:0 16px;margin-top:10px;margin-bottom:16px">
+        <div class="section-title">Cafés especiales</div>
+        <div class="cafe-card">
+          <div class="cafe-esp">Caramel Choco Style <span class="cafe-tag">1 push choco + 1 push caramelo + Latte</span></div>
+          <div class="cafe-esp">Temptation <span class="cafe-tag">1 push choco + 1 push DDL + Latte</span></div>
+          <div class="cafe-esp">Vainilla Macchiato <span class="cafe-tag">2 push syrup vainilla + Latte</span></div>
+          <div class="cafe-esp">Mocca Latte <span class="cafe-tag">2 push salsa chocolate + Latte</span></div>
+          <div class="cafe-esp">Iced Cappuccino <span class="cafe-tag">hielo + Latte + crema + cacao</span></div>
+          <div class="cafe-esp">Affogato <span class="cafe-tag">1 bocha helado + Espresso</span></div>
+          <div class="cafe-esp">Espresso Pistacho <span class="cafe-tag">10g Avella Pistacho + ristretto + crema</span></div>
+          <div class="cafe-esp">Espresso Gianduia <span class="cafe-tag">10g Avella Gianduia + ristretto + crema</span></div>
+        </div>
+      </div>
+
+      <!-- Bebidas frías -->
+      <div style="padding:0 16px;margin-bottom:16px">
+        <div class="section-title">Bebidas frías</div>
+        <div class="cafe-card">
+          <div class="cafe-esp">Limonada <span class="cafe-tag">3 limones · 500ml agua · 120g azúcar · hielo · licuar</span></div>
+          <div class="cafe-esp">Limonada c/ Menta <span class="cafe-tag">ídem + 6 hojas de menta</span></div>
+          <div class="cafe-esp">Jugo de Naranja <span class="cafe-tag">naranjas frescas · exprimir al momento</span></div>
+        </div>
+      </div>
+
+    </div><!-- /guia-cafe -->
+
+    <!-- ══════════ HELADERÍA ══════════ -->
+    <div id="guia-heladeria" class="guia-section" style="display:none">
+      <div style="padding:14px 16px">
+
+        <div class="section-title">Gramajes</div>
+        <div style="background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);overflow:hidden;margin-bottom:14px">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);padding:8px 10px;background:var(--dark2);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray);gap:4px">
+            <span>Chico</span><span>Mediano</span><span>Grande</span><span>Cucurucho</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);padding:10px;font-size:13px;font-weight:700;color:var(--gold);font-family:Montserrat,sans-serif;gap:4px">
+            <span>120–130g</span><span>140–150g</span><span>170–180g</span><span>190–200g</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);padding:8px 10px;background:var(--dark2);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray);border-top:1px solid #333">
+            <span>¼ kg</span><span>½ kg</span><span>1 kg</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);padding:10px;font-size:13px;font-weight:700;color:var(--gold);font-family:Montserrat,sans-serif">
+            <span>250g</span><span>500g</span><span>1000g</span>
+          </div>
+        </div>
+
+        <div class="section-title">Batidos</div>
+        <div class="cafe-card" style="margin-bottom:14px">
+          <div class="cafe-esp">Smoothie <span class="cafe-tag">2 bochas frutales + 200ml soda</span></div>
+          <div class="cafe-esp">Milk Shake <span class="cafe-tag">2 bochas + 200ml leche + salsa + crema</span></div>
+          <div class="cafe-esp">Gelato Shake <span class="cafe-tag">helado + 100ml leche + 1 espresso ristretto</span></div>
+        </div>
+
+        <div class="section-title">Variegatos</div>
+        <div class="cafe-card" style="margin-bottom:14px">
+          <div class="cafe-esp">Stracciatella <span class="cafe-tag">calentar 10–20 seg · usar en DDL granizado, banana split, menta granizada, peanut caramel</span></div>
+          <div class="cafe-esp">DDL Repostero <span class="cafe-tag">manga en heladera · aplicar en gota grande sobre los picos · usar en dulce c/ leche, peanut caramel, tramontana, banana split</span></div>
+        </div>
+
+        <div class="section-title">Chocolatera · Baño</div>
+        <div class="cafe-card" style="margin-bottom:14px">
+          <div style="font-size:12px;color:var(--white)">Marca: <strong>Mapricoa</strong> · Temperatura ideal: <span style="color:var(--gold);font-weight:700">30–40°C</span></div>
+          <div style="font-size:11px;color:var(--gray);margin-top:4px">Si no se adhiere → posiblemente hay que cambiar el chocolate</div>
+        </div>
+
+        <div class="section-title">Icepops — 3 reglas</div>
+        <div class="cafe-card" style="margin-bottom:14px">
+          <div style="font-size:12px;color:var(--white);line-height:1.7">
+            <div style="margin-bottom:6px"><span style="color:var(--gold);font-weight:700">1.</span> En la mayoría de los casos el nombre es su sabor.</div>
+            <div style="margin-bottom:6px"><span style="color:var(--gold);font-weight:700">2.</span> Se describe <strong>de adentro hacia afuera</strong>: primero el helado, luego la cubierta.</div>
+            <div><span style="color:var(--gold);font-weight:700">3.</span> Cubiertas: blanco · chocolate con leche · chocolate negro. Todo lo que tiene tinte de color = chocolate blanco.</div>
+          </div>
+        </div>
+
+        <div class="section-title">Icepops con nombre distinto</div>
+        <div class="cafe-card" style="margin-bottom:14px">
+          <div class="cafe-esp">King Bianco <span class="cafe-tag">avellanas con veteado, cubierto en chocolate blanco</span></div>
+          <div class="cafe-esp">Peanut Caramel <span class="cafe-tag">maní + DDL + chocolate, cubierto en chocolate c/ leche y maní salado</span></div>
+          <div class="cafe-esp">Sorbete Patagonia <span class="cafe-tag">frutos rojos (frutilla, frambuesa, moras, arándanos), cubierto en choco blanco</span></div>
+          <div class="cafe-esp">Vito Crema del Cielo <span class="cafe-tag">chantilly con tinte celeste, cubierto en choco blanco y granas</span></div>
+          <div class="cafe-esp">Oli Platino <span class="cafe-tag">chocolate semiamargo y con leche — suave pero intenso</span></div>
+          <div class="cafe-esp">Oli King / Doble Choco / Minion <span class="cafe-tag">mismo relleno: chocolate blanco con veteado de avellanas</span></div>
+        </div>
+
+        <div class="section-title">Mini Icepops · 4 u. por caja · 6 variedades</div>
+        <div class="cafe-card" style="margin-bottom:14px">
+          <div style="font-size:12px;color:var(--white);line-height:1.8">Avellana y Chocolate · Dulce de Leche · Chocolate · Cookies & Cream · Dulce de Leche & Cookies · Pistacho</div>
+        </div>
+
+        <div class="section-title">Geladots</div>
+        <div class="cafe-card" style="margin-bottom:14px">
+          <div style="font-size:12px;color:var(--white);margin-bottom:6px">Bombones rellenos de helado cubiertos en chocolate.</div>
+          <div style="font-size:11px;color:var(--gray);margin-bottom:8px">8 variedades: Frutilla · King Bianco · Frambuesa · Chocolate Dark 72% · Pistacho · Sambayón · DDL · Gianduia</div>
+          <div style="font-size:11px;color:var(--gold)">Presentaciones: mediano (12u) · grande (32u) — cliente puede combinar</div>
+        </div>
+
+        <div class="section-title">Cannolis</div>
+        <div class="cafe-card" style="margin-bottom:14px">
+          <div style="font-size:12px;color:var(--white);margin-bottom:6px">Obleas rellenas de helado, cubiertas en chocolate.</div>
+          <div style="font-size:11px;color:var(--gray)">Pistacho · DDL Helado · DDL Repostero · Gianduia · Alfajor · Yogurt de Frutilla</div>
+        </div>
+
+        <div class="section-title" style="color:var(--red)">⚠ Sin azúcar</div>
+        <div class="cafe-card" style="margin-bottom:14px;border-color:var(--red)">
+          <div style="font-size:12px;color:var(--white);line-height:1.7">"Todos nuestros productos contienen azúcar. Sin embargo, puedo ofrecerte un icepop sin azúcar añadida de chocolate con leche, y también contamos con 2 tabletas sin azúcar añadida."</div>
+          <div style="font-size:11px;color:var(--gray);margin-top:6px">Chocolate con Leche s/azúcar · Chocolate Blanco s/azúcar</div>
+        </div>
+
+        <div class="section-title">Gluten free</div>
+        <div class="cafe-card" style="margin-bottom:14px">
+          <div style="font-size:12px;color:var(--white);line-height:1.7">"Sí, vienen en pote individual de 1 solo sabor, 190g, y contamos con 8 variedades, de las cuales 2 son veganas."</div>
+          <div style="font-size:11px;color:var(--gray);margin-top:6px">Choco Lucciano's · Cookies & Cream · Dulce con Dulce · Choco Blanco y Avellanas · Mascarpone Frutos Rojos · Sorbete Patagonia (vegano) · Sorbete Dark (vegano) · Pistacho</div>
+        </div>
+
+      </div>
+    </div><!-- /guia-heladeria -->
+
+    <!-- ══════════ PASTELERÍA ══════════ -->
+    <div id="guia-pasteleria" class="guia-section" style="display:none">
+      <div style="padding:14px 16px">
+
+        <div class="section-title">Tortas · vencimiento 4 días</div>
+        <div class="cafe-card" style="margin-bottom:14px">
+          <div class="cafe-esp">Red Velvet <span class="cafe-tag">capas húmedas, cheese frosting, migas rojas</span></div>
+          <div class="cafe-esp">Carrot Cake <span class="cafe-tag">zanahoria, cheese frosting, nuez crocante</span></div>
+          <div class="cafe-esp">Mousse de Chocolate <span class="cafe-tag">mousse aireado, base húmeda, ganache brillante</span></div>
+          <div class="cafe-esp">Brownie c/ DDL <span class="cafe-tag">dulce de leche, merengue italiano flambeado</span></div>
+          <div class="cafe-esp">Rogel <span class="cafe-tag">capas crocantes, dulce de leche, merengue</span></div>
+          <div class="cafe-esp">Crumble de Manzana <span class="cafe-tag">sableé, manzanas con canela, crumble crocante</span></div>
+          <div class="cafe-esp">Chocotorta <span class="cafe-tag">DDL y queso crema, galletitas c/ almíbar de café</span></div>
+          <div class="cafe-esp">Oreo Cake <span class="cafe-tag">galletitas, DDL y queso crema, ganache blanca</span></div>
+          <div class="cafe-esp">Lemon Pie <span class="cafe-tag">sableé, crema de limón, merengue flambeado + menta</span></div>
+          <div class="cafe-esp">Cheesecake <span class="cafe-tag">sableé, crema de queso, salsa frutos rojos + menta</span></div>
+          <div class="cafe-esp">Torta de Coco <span class="cafe-tag">sableé, DDL, crumble de coco + coco rallado</span></div>
+          <div style="font-size:11px;color:var(--gold);margin-top:8px">Decoración: Lemon Pie y Cheesecake → 2–3 hojas menta. Torta de Coco → coco rallado.</div>
+        </div>
+
+        <div class="section-title">Pastelería fresca</div>
+        <div class="cafe-card" style="margin-bottom:14px">
+          <div class="cafe-esp">Budín de Limón <span class="cafe-tag">semillas de amapola + glaseado de jugo de limón</span></div>
+          <div class="cafe-esp">Budín Marmolado <span class="cafe-tag">vainilla y chocolate + glaseado de chocolate</span></div>
+          <div class="cafe-esp">Tostadas de Pan Casero <span class="cafe-tag">dip de queso crema, mermelada o DDL · 3u (2 con promo)</span></div>
+        </div>
+
+        <div class="section-title">Panificados · vencimientos</div>
+        <div style="background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);overflow:hidden;margin-bottom:14px">
+          <div style="display:grid;grid-template-columns:1fr auto;padding:8px 12px;background:var(--dark2);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray)">
+            <span>Producto</span><span>Vence</span>
+          </div>
+          <div class="prop-row"><span>Medialunas y Croissant</span><span style="color:var(--red);font-weight:700;font-size:11px">Diario</span></div>
+          <div class="prop-row"><span>Rolls y Pains</span><span style="color:var(--yellow);font-weight:700;font-size:11px">2 días</span></div>
+          <div class="prop-row"><span>Tortas</span><span style="color:var(--green);font-weight:700;font-size:11px">4 días</span></div>
+        </div>
+
+        <div class="section-title">Procedimiento de cocción</div>
+        <div class="cafe-card" style="margin-bottom:14px">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div class="paso-cook"><span class="paso-num">1</span><div><strong>Recepción</strong><div style="font-size:11px;color:var(--gray)">Conservar en freezer a –18°C. No romper cadena de frío.</div></div></div>
+            <div class="paso-cook"><span class="paso-num">2</span><div><strong>Descongelado</strong><div style="font-size:11px;color:var(--gray)">Heladera (4–6°C): 8–10 hs · Ambiente (18–22°C): 1 hora · No usar calor directo.</div></div></div>
+            <div class="paso-cook"><span class="paso-num">3</span><div><strong>Decisión</strong><div style="font-size:11px;color:var(--gray)">Si hornear: continuar. Si guardar: refrigerar a 4°C, hornear dentro del día.</div></div></div>
+            <div class="paso-cook"><span class="paso-num">4</span><div><strong>Preparación</strong><div style="font-size:11px;color:var(--gray)">Dulces: pincelar con huevo batido (2 huevos + 50cc leche). Saladas/grasa: sin tratamiento.</div></div></div>
+            <div class="paso-cook"><span class="paso-num">5</span><div><strong>Horneado</strong><div style="font-size:11px;color:var(--gray)">Precalentar a 200°C → bajar a 175°C · 15 min, girar, 10–15 min más hasta dorado.</div></div></div>
+            <div class="paso-cook"><span class="paso-num">6</span><div><strong>Post horneado</strong><div style="font-size:11px;color:var(--gray)">Dulces: 2 pinceladas de almíbar al salir. Saladas: enfriar sin adiciones. Enfriar 10–15 min en placa.</div></div></div>
+          </div>
+        </div>
+
+        <div class="section-title">Alfajores · 80g · 6 variedades</div>
+        <div class="cafe-card" style="margin-bottom:14px">
+          <div style="font-size:12px;color:var(--white);margin-bottom:8px">Semiamargo · Blanco · Dark · Blanco y Nuez · Pistacho · Frutos Rojos</div>
+          <div style="font-size:11px;color:var(--gray);margin-bottom:6px">Caja x6 mixta: 2 semi · 2 blancos · 1 dark · 1 nuez</div>
+          <div style="font-size:11px;color:var(--gray);margin-bottom:6px">Caja x10 mixta: 3 semi · 3 blancos · 2 dark · 2 nuez</div>
+          <div style="font-size:11px;color:var(--gold)">Vencimiento clásicos: 70 días · Pistacho/Frutos Rojos: 60 días</div>
+        </div>
+
+        <div class="section-title">Tabletas · 16 variedades</div>
+        <div class="cafe-card" style="margin-bottom:14px">
+          <div style="font-size:11px;color:var(--gray);line-height:1.8">
+            <span style="color:var(--gold);font-weight:700">Con leche:</span> Chocolate con Leche · c/ DDL · c/ Almendras · c/ Avellanas · s/ Azúcar · Dubai<br>
+            <span style="color:var(--gold);font-weight:700">Dark:</span> Dark 70% · 54% c/ Avellanas · Dubai Semiamargo · Frutos del Bosque<br>
+            <span style="color:var(--gold);font-weight:700">Blanco:</span> Chocolate Blanco · s/ Azúcar · c/ Caramelo y Avellanas · c/ Avella Latte Crock<br>
+            <span style="color:var(--gold);font-weight:700">Pistacho:</span> c/ granella · c/ Avella Pistacho
+          </div>
+        </div>
+
+        <div class="section-title">Latas Carrusel</div>
+        <div class="cafe-card" style="margin-bottom:16px">
+          <div class="cafe-esp">Lata Verde (Pistacho) <span class="cafe-tag">4 mini Alf. Pistacho · 3 Conitos Pistacho · 3 Viennesi Pistacho · 2+2 Squares Pistacho</span></div>
+          <div class="cafe-esp">Lata Bordo (Clásica) <span class="cafe-tag">2 mini Alf. Semi · 2 Blanco · 2 Nuez · 2 Conitos Blanco · 1 Conito Semi · 2+2 Squares</span></div>
+          <div class="cafe-esp">Lata Negra (Dark) <span class="cafe-tag">4 mini Alf. Dark · 3 Conitos Semi · 3 Viennesi Fondente · 2+2 Squares Dark</span></div>
+          <div style="font-size:11px;color:var(--red);margin-top:8px">⚠ La unidad exhibida NO se vende — entregar del stock disponible.</div>
+        </div>
+
+      </div>
+    </div><!-- /guia-pasteleria -->
+
+  </div><!-- /overflow -->
+</div><!-- /screen-guia -->
 
 <div class="toast" id="toast"></div>
 
@@ -2689,6 +2991,69 @@ async function toggleUsuario(usuario, estadoActual) {
 }
 </script>
 <script>
+// ═══════════════════════════════════════════════════════════
+// GUÍAS DE SERVICIO
+// ═══════════════════════════════════════════════════════════
+function setActiveNav(id) {
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+
+function switchGuiaTab(tab) {
+  document.querySelectorAll('.guia-section').forEach(s => s.style.display = 'none');
+  document.querySelectorAll('.guia-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('guia-' + tab).style.display = 'block';
+  document.getElementById('gtab-' + tab).classList.add('active');
+}
+
+// Vasos visuales — renderizar al cargar la sección
+const VASOS = [
+  { nombre:'Negro',        cafe:100, leche:0,  espuma:0  },
+  { nombre:'Cortado',      cafe:70,  leche:30, espuma:0  },
+  { nombre:'Mitad y Mitad',cafe:50,  leche:50, espuma:0  },
+  { nombre:'Latte',        cafe:30,  leche:70, espuma:0  },
+  { nombre:'Lágrima',      cafe:5,   leche:95, espuma:0  },
+  { nombre:'Cappuccino',   cafe:40,  leche:30, espuma:30 },
+];
+
+function renderVasos() {
+  const cont = document.getElementById('vasos-container');
+  if (!cont || cont.dataset.rendered) return;
+  cont.dataset.rendered = '1';
+  cont.innerHTML = VASOS.map(v => {
+    const cafeH   = v.cafe;
+    const lecheH  = v.leche;
+    const espumaH = v.espuma;
+    return \`<div style="background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:14px">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+        <div style="width:64px;height:4px;background:#444;border-radius:2px 2px 0 0"></div>
+        <div style="width:60px;height:90px;border:2px solid #444;border-top:none;border-radius:0 0 10px 10px;overflow:hidden;display:flex;flex-direction:column-reverse">
+          \${espumaH > 0 ? \`<div style="height:\${espumaH}%;background:#f0ede8;flex-shrink:0"></div>\` : ''}
+          \${lecheH > 0  ? \`<div style="height:\${lecheH}%;background:#c8a882;flex-shrink:0"></div>\` : ''}
+          \${cafeH > 0   ? \`<div style="height:\${cafeH}%;background:#3B1A08;flex-shrink:0"></div>\` : ''}
+        </div>
+        <div style="font-size:10px;color:var(--gray)">\${v.nombre}</div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:8px">\${v.nombre}</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          \${v.cafe > 0   ? \`<div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--gray)"><div style="width:10px;height:10px;border-radius:50%;background:#3B1A08;flex-shrink:0"></div>Café <span style="margin-left:auto;font-family:Montserrat,sans-serif;font-weight:700;color:var(--gold)">\${v.cafe}%</span></div>\` : ''}
+          \${v.leche > 0  ? \`<div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--gray)"><div style="width:10px;height:10px;border-radius:50%;background:#c8a882;flex-shrink:0"></div>Leche <span style="margin-left:auto;font-family:Montserrat,sans-serif;font-weight:700;color:#a0c4ff">\${v.leche}%</span></div>\` : ''}
+          \${espumaH > 0 ? \`<div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--gray)"><div style="width:10px;height:10px;border-radius:50%;background:#f0ede8;flex-shrink:0"></div>Espuma <span style="margin-left:auto;font-family:Montserrat,sans-serif;font-weight:700;color:#ccc">\${espumaH}%</span></div>\` : ''}
+        </div>
+      </div>
+    </div>\`;
+  }).join('');
+}
+
+// Renderizar vasos cuando se abre la sección
+const _origShowTab = showTab;
+function showTab(tab) {
+  _origShowTab(tab);
+  if (tab === 'guia') setTimeout(renderVasos, 100);
+}
+
 // Service Worker — actualización automática sin borrar caché manualmente
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').then(reg => {
