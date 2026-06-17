@@ -3347,25 +3347,25 @@ function renderVasos() {
     const cafeH   = v.cafe;
     const lecheH  = v.leche;
     const espumaH = v.espuma;
-    return \`<div style="background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:14px">
+    return `<div style="background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:14px">
       <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
         <div style="width:64px;height:4px;background:#444;border-radius:2px 2px 0 0"></div>
         <div style="width:60px;height:90px;border:2px solid #444;border-top:none;border-radius:0 0 10px 10px;overflow:hidden;display:flex;flex-direction:column-reverse">
-          \${espumaH > 0 ? \`<div style="height:\${espumaH}%;background:#f0ede8;flex-shrink:0"></div>\` : ''}
-          \${lecheH > 0  ? \`<div style="height:\${lecheH}%;background:#c8a882;flex-shrink:0"></div>\` : ''}
-          \${cafeH > 0   ? \`<div style="height:\${cafeH}%;background:#3B1A08;flex-shrink:0"></div>\` : ''}
+          ${espumaH > 0 ? `<div style="height:${espumaH}%;background:#f0ede8;flex-shrink:0"></div>` : ''}
+          ${lecheH > 0  ? `<div style="height:${lecheH}%;background:#c8a882;flex-shrink:0"></div>` : ''}
+          ${cafeH > 0   ? `<div style="height:${cafeH}%;background:#3B1A08;flex-shrink:0"></div>` : ''}
         </div>
-        <div style="font-size:10px;color:var(--gray)">\${v.nombre}</div>
+        <div style="font-size:10px;color:var(--gray)">${v.nombre}</div>
       </div>
       <div style="flex:1">
-        <div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:8px">\${v.nombre}</div>
+        <div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:8px">${v.nombre}</div>
         <div style="display:flex;flex-direction:column;gap:5px">
-          \${v.cafe > 0   ? \`<div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--gray)"><div style="width:10px;height:10px;border-radius:50%;background:#3B1A08;flex-shrink:0"></div>Café <span style="margin-left:auto;font-family:Montserrat,sans-serif;font-weight:700;color:var(--gold)">\${v.cafe}%</span></div>\` : ''}
-          \${v.leche > 0  ? \`<div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--gray)"><div style="width:10px;height:10px;border-radius:50%;background:#c8a882;flex-shrink:0"></div>Leche <span style="margin-left:auto;font-family:Montserrat,sans-serif;font-weight:700;color:#a0c4ff">\${v.leche}%</span></div>\` : ''}
-          \${espumaH > 0 ? \`<div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--gray)"><div style="width:10px;height:10px;border-radius:50%;background:#f0ede8;flex-shrink:0"></div>Espuma <span style="margin-left:auto;font-family:Montserrat,sans-serif;font-weight:700;color:#ccc">\${espumaH}%</span></div>\` : ''}
+          ${v.cafe > 0   ? `<div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--gray)"><div style="width:10px;height:10px;border-radius:50%;background:#3B1A08;flex-shrink:0"></div>Café <span style="margin-left:auto;font-family:Montserrat,sans-serif;font-weight:700;color:var(--gold)">${v.cafe}%</span></div>` : ''}
+          ${v.leche > 0  ? `<div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--gray)"><div style="width:10px;height:10px;border-radius:50%;background:#c8a882;flex-shrink:0"></div>Leche <span style="margin-left:auto;font-family:Montserrat,sans-serif;font-weight:700;color:#a0c4ff">${v.leche}%</span></div>` : ''}
+          ${espumaH > 0 ? `<div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--gray)"><div style="width:10px;height:10px;border-radius:50%;background:#f0ede8;flex-shrink:0"></div>Espuma <span style="margin-left:auto;font-family:Montserrat,sans-serif;font-weight:700;color:#ccc">${espumaH}%</span></div>` : ''}
         </div>
       </div>
-    </div>\`;
+    </div>`;
   }).join('');
 }
 
