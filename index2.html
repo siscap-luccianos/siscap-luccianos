@@ -3370,12 +3370,12 @@ function renderVasos() {
 }
 
 
-// Renderizar vasos cuando se abre la sección
-const _origShowTab = showTab;
-function showTab(tab) {
-  _origShowTab(tab);
+// Renderizar vasos cuando se abre la sección — patch sin recursión
+const _showTabOrig = showTab;
+showTab = function(tab) {
+  _showTabOrig(tab);
   if (tab === 'guia') setTimeout(renderVasos, 100);
-}
+};
 
 
 // Service Worker — actualización automática sin borrar caché manualmente
