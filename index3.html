@@ -29,7 +29,7 @@ html{height:100%;-webkit-text-size-adjust:100%}
 body{min-height:100%;background:var(--black);color:var(--white);font-family:'Inter',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 
 /* ── SCREENS ────────────────────────────────────────────── */
-.screen{display:none;flex-direction:column;min-height:100dvh;animation:fadeIn .25s ease}
+.screen{display:none;flex-direction:column;height:100dvh;max-height:100dvh;overflow:hidden;animation:fadeIn .25s ease}
 .screen.active{display:flex}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
@@ -219,7 +219,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 .lbadge{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;font-size:9px;font-weight:700;color:white;flex-shrink:0}
 
 /* ── ITEMS DEL FORMULARIO ───────────────────────────────── */
-.form-body{padding:16px 18px;display:flex;flex-direction:column;gap:20px;padding-bottom:90px}
+.form-body{padding:16px 18px;display:flex;flex-direction:column;gap:20px;padding-bottom:90px;overflow-y:auto}
 .modulo-block{display:flex;flex-direction:column;gap:8px}
 .modulo-header{background:var(--dark2);border-radius:var(--rs);padding:11px 13px;display:flex;align-items:center;gap:9px}
 .modulo-num{width:26px;height:26px;border-radius:50%;background:var(--teal);color:var(--black);font-family:'Montserrat',sans-serif;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -283,7 +283,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 .form-footer{position:sticky;bottom:0;left:0;right:0;background:var(--dark);border-top:1px solid #2a2a2a;padding:11px 18px;padding-bottom:calc(11px + var(--safe-b));z-index:190}
 
 /* ── RESULTADO ──────────────────────────────────────────── */
-.resultado-body{padding:18px;flex:1;display:flex;flex-direction:column;gap:14px;padding-bottom:36px}
+.resultado-body{padding:18px;flex:1;display:flex;flex-direction:column;gap:14px;padding-bottom:36px;overflow-y:auto}
 .resultado-hero{border-radius:var(--r);padding:22px 18px;text-align:center}
 .resultado-hero.aprobado{background:var(--green-bg);border:1px solid var(--green)}
 .resultado-hero.observado{background:var(--yellow-bg);border:1px solid var(--yellow)}
@@ -320,7 +320,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 .ver-total{background:var(--dark2);border-radius:var(--r);padding:14px;display:flex;align-items:center;justify-content:space-between}
 
 /* ── CONFIGURACIÓN ──────────────────────────────────────── */
-.config-body{padding:18px;flex:1;display:flex;flex-direction:column;gap:16px;padding-bottom:36px}
+.config-body{padding:18px;flex:1;display:flex;flex-direction:column;gap:16px;padding-bottom:36px;overflow-y:auto}
 .config-section{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);overflow:hidden}
 .config-section-head{background:var(--dark2);padding:13px 15px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2a2a2a}
 .config-section-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;color:var(--teal)}
@@ -613,7 +613,7 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
     <button class="guia-tab" id="gtab-pasteleria" onclick="switchGuiaTab('pasteleria')">🥐 Pastelería</button>
   </div>
 
-  <div style="overflow-y:auto;flex:1;padding-bottom:80px">
+  <div style="overflow-y:auto;flex:1;padding-bottom:80px;-webkit-overflow-scrolling:touch">
 
     <!-- ══════════ CAFETERÍA ══════════ -->
     <div id="guia-cafe" class="guia-section">
