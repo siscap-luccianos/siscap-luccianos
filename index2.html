@@ -4611,10 +4611,10 @@ function exportarDashPDF() {
   // ── Colaboradores HTML ──
   const colabsHTML = colabs.map(c => {
     const col = cC(c.porcentaje);
-    const n   = c.evaluado.split(' ').slice(0,2).join(' ');
-    return `<div style="text-align:center;min-width:70px;flex:1">
+    const col = cC(c.porcentaje);
+    return `<div style="text-align:center;min-width:80px;flex:1">
       <div style="font-size:14px;font-weight:800;color:${col}">${c.porcentaje}%</div>
-      <div style="font-size:9px;color:#1a1a2e;font-weight:600;margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px">${esc(tr(n,12))}</div>
+      <div style="font-size:9px;color:#1a1a2e;font-weight:600;margin:2px 0;line-height:1.3">${esc(c.evaluado)}</div>
       <div style="font-size:8px;color:#fff;background:${col};border-radius:10px;padding:1px 6px;font-weight:700">${lP(c.porcentaje)}</div>
     </div>`;
   }).join('');
