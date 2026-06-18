@@ -3723,7 +3723,7 @@ function generarDashboard(local) {
         <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:15px;color:var(--white)">${esc(local)}</div>
         <div style="font-size:11px;color:var(--gray);margin-top:2px">${colabs.length} colaborador${colabs.length!==1?'es':''} evaluado${colabs.length!==1?'s':''} · ${esc(evaluador)}</div>
       </div>
-      <button onclick="exportarDashPDF('${esc(local)}')" style="background:var(--green-bg);color:var(--green);border:1px solid var(--green);padding:8px 14px;border-radius:var(--rs);font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;cursor:pointer">⬇ PDF</button>
+      <button onclick="exportarDashPDF()" style="background:var(--green-bg);color:var(--green);border:1px solid var(--green);padding:8px 14px;border-radius:var(--rs);font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;cursor:pointer">⬇ PDF</button>
     </div>
 
     <!-- KPIs -->
@@ -3851,7 +3851,9 @@ function generarAcciones(modOrdenados, colabs) {
 }
 
 // ── EXPORTAR PDF DEL DASHBOARD ──────────────────────────
-function exportarDashPDF(local) {
+function exportarDashPDF() {
+  const local = window._dashData ? window._dashData.local : '';
+  if (!local) { showToast("⚠ Generá el dashboard primero"); return; }
   if (!window.jspdf) { showToast('⚠ jsPDF no disponible'); return; }
   const d = window._dashData;
   if (!d) { showToast('⚠ Generá el dashboard primero'); return; }
