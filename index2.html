@@ -831,19 +831,280 @@ body::-webkit-scrollbar{display:none}
     <div style="font-size:11px;color:#a07030;letter-spacing:1px">Recetas · Especiales · Cápsulas · Bebidas</div>
   </div>
 
-  <!-- RECETARIO -->
-  <div style="padding:18px 16px 0">
-    <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:12px">Recetario de Cafés</div>
-    <div style="border-radius:var(--r);overflow:hidden;margin-bottom:8px;background:#000;cursor:zoom-in" onclick="abrirImagen('recetario_cafe_9.png')">
-      <img src="recetario_cafe_9.png" alt="Recetario de Cafés Lucciano's" style="width:100%;border-radius:8px;display:block"/>
+  <!-- RECETARIO HTML -->
+  <div style="padding:0 16px 0">
+
+    <!-- Título -->
+    <div style="text-align:center;padding:18px 0 14px;border-bottom:1px solid #3a2000;margin-bottom:16px">
+      <div style="font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">Lucciano's</div>
+      <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:18px;color:var(--white);letter-spacing:2px">RECETARIO DE CAFÉS</div>
     </div>
-    <div style="font-size:10px;color:var(--gold);text-align:center;margin-bottom:18px;display:flex;align-items:center;justify-content:center;gap:4px">
-      Tocá para ampliar
+
+    <!-- ── ESPRESSO ── -->
+    <div style="background:#110800;border:1px solid #3a2000;border-radius:12px;padding:14px;margin-bottom:10px">
+      <div style="text-align:center;margin-bottom:12px">
+        <span style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:12px;color:var(--gold);letter-spacing:1.5px">ESPRESSO</span>
+        <span style="font-size:10px;color:#666;margin-left:8px">· Cód. 75 · Chico</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">
+
+        <!-- Ristretto -->
+        <div style="text-align:center">
+          <div style="font-size:9px;font-weight:700;color:var(--white);margin-bottom:6px">Ristretto</div>
+          <div style="height:44px;border-radius:6px;overflow:hidden;border:1px solid #3a2000;background:#1a0800">
+            <div style="height:100%;background:linear-gradient(180deg,#3d1800 0%,#1a0800 100%)"></div>
+          </div>
+          <div style="font-size:8px;color:#c8860a;margin-top:4px;line-height:1.3">Un shot<br>de café</div>
+        </div>
+
+        <!-- Negro -->
+        <div style="text-align:center">
+          <div style="font-size:9px;font-weight:700;color:var(--white);margin-bottom:6px">Negro</div>
+          <div style="height:44px;border-radius:6px;overflow:hidden;border:1px solid #3a2000">
+            <div style="height:100%;background:linear-gradient(180deg,#2a0e00 0%,#1a0800 100%)"></div>
+          </div>
+          <div style="font-size:8px;color:#c8860a;margin-top:4px">100% café</div>
+        </div>
+
+        <!-- Cortado -->
+        <div style="text-align:center">
+          <div style="font-size:9px;font-weight:700;color:var(--white);margin-bottom:6px">Cortado</div>
+          <div style="height:44px;border-radius:6px;overflow:hidden;border:1px solid #3a2000">
+            <div style="height:30%;background:#d4a060"></div>
+            <div style="height:70%;background:linear-gradient(180deg,#2a0e00 0%,#1a0800 100%)"></div>
+          </div>
+          <div style="font-size:8px;color:#c8860a;margin-top:4px;line-height:1.3">70% café<br>30% leche</div>
+        </div>
+
+        <!-- Mitad y Mitad -->
+        <div style="text-align:center">
+          <div style="font-size:9px;font-weight:700;color:var(--white);margin-bottom:6px;line-height:1.2">Mitad<br>Mitad</div>
+          <div style="height:44px;border-radius:6px;overflow:hidden;border:1px solid #3a2000">
+            <div style="height:50%;background:#d4a060"></div>
+            <div style="height:50%;background:linear-gradient(180deg,#2a0e00 0%,#1a0800 100%)"></div>
+          </div>
+          <div style="font-size:8px;color:#c8860a;margin-top:4px;line-height:1.3">50% café<br>50% leche</div>
+        </div>
+
+        <!-- Lágrima -->
+        <div style="text-align:center">
+          <div style="font-size:9px;font-weight:700;color:var(--white);margin-bottom:6px">Lágrima</div>
+          <div style="height:44px;border-radius:6px;overflow:hidden;border:1px solid #3a2000">
+            <div style="height:95%;background:#d4a060"></div>
+            <div style="height:5%;background:linear-gradient(180deg,#2a0e00 0%,#1a0800 100%)"></div>
+          </div>
+          <div style="font-size:8px;color:#c8860a;margin-top:4px;line-height:1.3">5% café<br>95% leche</div>
+        </div>
+
+      </div>
     </div>
-    <div id="img-overlay" onclick="cerrarImagen()" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.95);z-index:9999;overflow:auto;-webkit-overflow-scrolling:touch;align-items:center;justify-content:center">
-      <img id="img-overlay-src" src="" style="width:100%;max-width:none;display:block;touch-action:pinch-zoom"/>
-      <div style="position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;background:rgba(0,0,0,.6);color:white;border:1px solid #555;border-radius:20px;padding:6px 14px;font-size:12px;font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer" onclick="cerrarImagen()">Cerrar</div>
+
+    <!-- ── ESPRESSO LUNGO ── -->
+    <div style="background:#110800;border:1px solid #3a2000;border-radius:12px;padding:14px;margin-bottom:10px">
+      <div style="text-align:center;margin-bottom:12px">
+        <span style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:12px;color:var(--gold);letter-spacing:1.5px">ESPRESSO LUNGO</span>
+        <span style="font-size:10px;color:#666;margin-left:8px">· Cód. 76 · Mediano</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:5px">
+
+        <div style="text-align:center">
+          <div style="font-size:8px;font-weight:700;color:var(--white);margin-bottom:6px">Negro</div>
+          <div style="height:44px;border-radius:6px;overflow:hidden;border:1px solid #3a2000">
+            <div style="height:100%;background:linear-gradient(180deg,#2a0e00,#1a0800)"></div>
+          </div>
+          <div style="font-size:7px;color:#c8860a;margin-top:4px">100% café</div>
+        </div>
+
+        <div style="text-align:center">
+          <div style="font-size:8px;font-weight:700;color:var(--white);margin-bottom:6px">Cortado</div>
+          <div style="height:44px;border-radius:6px;overflow:hidden;border:1px solid #3a2000">
+            <div style="height:30%;background:#d4a060"></div>
+            <div style="height:70%;background:linear-gradient(180deg,#2a0e00,#1a0800)"></div>
+          </div>
+          <div style="font-size:7px;color:#c8860a;margin-top:4px;line-height:1.3">70% café<br>30% leche</div>
+        </div>
+
+        <div style="text-align:center">
+          <div style="font-size:8px;font-weight:700;color:var(--white);margin-bottom:6px;line-height:1.2">Mitad<br>Mitad</div>
+          <div style="height:44px;border-radius:6px;overflow:hidden;border:1px solid #3a2000">
+            <div style="height:50%;background:#d4a060"></div>
+            <div style="height:50%;background:linear-gradient(180deg,#2a0e00,#1a0800)"></div>
+          </div>
+          <div style="font-size:7px;color:#c8860a;margin-top:4px;line-height:1.3">50% café<br>50% leche</div>
+        </div>
+
+        <div style="text-align:center">
+          <div style="font-size:8px;font-weight:700;color:var(--white);margin-bottom:6px">Lágrima</div>
+          <div style="height:44px;border-radius:6px;overflow:hidden;border:1px solid #3a2000">
+            <div style="height:95%;background:#d4a060"></div>
+            <div style="height:5%;background:linear-gradient(180deg,#2a0e00,#1a0800)"></div>
+          </div>
+          <div style="font-size:7px;color:#c8860a;margin-top:4px;line-height:1.3">5% café<br>95% leche</div>
+        </div>
+
+        <div style="text-align:center">
+          <div style="font-size:8px;font-weight:700;color:var(--white);margin-bottom:6px">Macchiato</div>
+          <div style="height:44px;border-radius:6px;overflow:hidden;border:1px solid #3a2000">
+            <div style="height:10%;background:#f0f0f0"></div>
+            <div style="height:90%;background:linear-gradient(180deg,#2a0e00,#1a0800)"></div>
+          </div>
+          <div style="font-size:7px;color:#c8860a;margin-top:4px;line-height:1.3">90% café<br>10% espuma</div>
+        </div>
+
+        <div style="text-align:center">
+          <div style="font-size:8px;font-weight:700;color:var(--white);margin-bottom:6px">Americano</div>
+          <div style="height:44px;border-radius:6px;overflow:hidden;border:1px solid #3a2000">
+            <div style="height:60%;background:#c8dde8"></div>
+            <div style="height:40%;background:linear-gradient(180deg,#2a0e00,#1a0800)"></div>
+          </div>
+          <div style="font-size:7px;color:#c8860a;margin-top:4px;line-height:1.3">40% café<br>60% agua</div>
+        </div>
+
+      </div>
     </div>
+
+    <!-- ── CAPPUCCINO + TÉ ── -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+
+      <!-- Cappuccino -->
+      <div style="background:#110800;border:1px solid #3a2000;border-radius:12px;padding:14px">
+        <div style="text-align:center;margin-bottom:10px">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:11px;color:var(--gold);letter-spacing:1px">CAPPUCCINO</div>
+          <div style="font-size:9px;color:#666">Cód. 36 · Grande</div>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:8px">
+          <div style="flex:1">
+            <div style="height:70px;border-radius:8px;overflow:hidden;border:1px solid #3a2000">
+              <div style="height:12%;background:#f5f0e8;display:flex;align-items:center;justify-content:center">
+                <span style="font-size:6px;color:#333;font-weight:700">CREMA+CACAO</span>
+              </div>
+              <div style="height:44%;background:#d4a060"></div>
+              <div style="height:44%;background:linear-gradient(180deg,#2a0e00,#1a0800)"></div>
+            </div>
+          </div>
+          <div style="flex:1;font-size:8px;color:#aaa;line-height:1.8">
+            <div><span style="color:#f5f0e8">▪</span> Crema + Cacao</div>
+            <div><span style="color:#d4a060">▪</span> 50% leche caliente</div>
+            <div><span style="color:#6b3010">▪</span> 50% café (largo)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Té -->
+      <div style="background:#110800;border:1px solid #3a2000;border-radius:12px;padding:14px">
+        <div style="text-align:center;margin-bottom:10px">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:11px;color:var(--gold);letter-spacing:1px">TÉ</div>
+          <div style="font-size:9px;color:#666">Cód. 334 · Taza Mediana</div>
+        </div>
+        <div style="height:70px;border-radius:8px;overflow:hidden;border:1px solid #2a3a4a;background:#0a1520;display:flex;align-items:center;justify-content:center;margin-bottom:8px">
+          <div style="text-align:center">
+            <div style="font-size:20px">🍵</div>
+            <div style="font-size:8px;color:#6ab0d0;font-weight:700">100% Agua Caliente</div>
+          </div>
+        </div>
+        <div style="font-size:9px;color:#aaa;text-align:center;line-height:1.4">1 saquito a elección<br>del cliente</div>
+      </div>
+
+    </div>
+
+    <!-- ── CAFÉ LATTE / DOBLE ── -->
+    <div style="background:#110800;border:1px solid #3a2000;border-radius:12px;padding:14px;margin-bottom:10px">
+      <div style="text-align:center;margin-bottom:12px">
+        <span style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:12px;color:var(--gold);letter-spacing:1.5px">CAFÉ LATTE / DOBLE</span>
+        <span style="font-size:10px;color:#666;margin-left:8px">· Cód. 79 · Grande</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px">
+
+        <div style="text-align:center">
+          <div style="font-size:8px;font-weight:700;color:var(--white);margin-bottom:6px">Negro</div>
+          <div style="height:50px;border-radius:6px;overflow:hidden;border:1px solid #3a2000">
+            <div style="height:100%;background:linear-gradient(180deg,#2a0e00,#1a0800)"></div>
+          </div>
+          <div style="font-size:7px;color:#c8860a;margin-top:4px">100% café</div>
+        </div>
+
+        <div style="text-align:center">
+          <div style="font-size:8px;font-weight:700;color:var(--white);margin-bottom:6px">Cortado</div>
+          <div style="height:50px;border-radius:6px;overflow:hidden;border:1px solid #3a2000">
+            <div style="height:30%;background:#d4a060"></div>
+            <div style="height:70%;background:linear-gradient(180deg,#2a0e00,#1a0800)"></div>
+          </div>
+          <div style="font-size:7px;color:#c8860a;margin-top:4px;line-height:1.3">70% café<br>30% leche</div>
+        </div>
+
+        <div style="text-align:center">
+          <div style="font-size:8px;font-weight:700;color:var(--white);margin-bottom:6px;line-height:1.2">Café con<br>Leche</div>
+          <div style="height:50px;border-radius:6px;overflow:hidden;border:1px solid #3a2000">
+            <div style="height:50%;background:#d4a060"></div>
+            <div style="height:50%;background:linear-gradient(180deg,#2a0e00,#1a0800)"></div>
+          </div>
+          <div style="font-size:7px;color:#c8860a;margin-top:4px;line-height:1.3">50% café<br>50% leche</div>
+        </div>
+
+        <div style="text-align:center">
+          <div style="font-size:8px;font-weight:700;color:var(--white);margin-bottom:6px">Latte</div>
+          <div style="height:50px;border-radius:6px;overflow:hidden;border:1px solid #3a2000">
+            <div style="height:70%;background:#d4a060"></div>
+            <div style="height:30%;background:linear-gradient(180deg,#2a0e00,#1a0800)"></div>
+          </div>
+          <div style="font-size:7px;color:#c8860a;margin-top:4px;line-height:1.3">30% café<br>70% leche</div>
+        </div>
+
+        <div style="text-align:center">
+          <div style="font-size:8px;font-weight:700;color:var(--white);margin-bottom:6px">Lágrima</div>
+          <div style="height:50px;border-radius:6px;overflow:hidden;border:1px solid #3a2000">
+            <div style="height:95%;background:#d4a060"></div>
+            <div style="height:5%;background:linear-gradient(180deg,#2a0e00,#1a0800)"></div>
+          </div>
+          <div style="font-size:7px;color:#c8860a;margin-top:4px;line-height:1.3">5% café<br>95% leche</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── CÁPSULAS ── -->
+    <div style="background:#0a0a0a;border:1px solid #3a2000;border-radius:12px;padding:14px;margin-bottom:18px">
+      <div style="text-align:center;margin-bottom:12px">
+        <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold)">Referencia · Cápsulas Nespresso</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:64px;gap:8px">
+
+        <div style="background:#1a1000;border:1px solid #4a3000;border-radius:10px;padding:10px;display:flex;flex-direction:column;justify-content:space-between">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:#d4a017">Finezzo Suave</div>
+          <div style="font-size:9px;color:#888;line-height:1.3">Perfil delicado y equilibrado</div>
+        </div>
+
+        <div style="background:#1a1000;border:1px solid #4a3000;border-radius:10px;padding:10px;display:flex;flex-direction:column;justify-content:space-between">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:#d4a017">Forte</div>
+          <div style="font-size:9px;color:#888;line-height:1.3">Carácter fuerte y pronunciado</div>
+        </div>
+
+        <div style="background:#1a1000;border:1px solid #4a3000;border-radius:10px;padding:10px;display:flex;flex-direction:column;justify-content:space-between">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:#d4a017">Ristretto</div>
+          <div style="font-size:9px;color:#888;line-height:1.3">Cantidades cortas · concentrado e intenso</div>
+        </div>
+
+        <div style="background:#1a1000;border:1px solid #4a3000;border-radius:10px;padding:10px;display:flex;flex-direction:column;justify-content:space-between">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:#d4a017">Caramelo</div>
+          <div style="font-size:9px;color:#888;line-height:1.3">Notas dulces de caramelo</div>
+        </div>
+
+        <div style="background:#1a1000;border:1px solid #4a3000;border-radius:10px;padding:10px;display:flex;flex-direction:column;justify-content:space-between">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:#d4a017">Vainilla</div>
+          <div style="font-size:9px;color:#888;line-height:1.3">Notas suaves de vainilla</div>
+        </div>
+
+        <div style="background:#1a1000;border:1px solid #4a3000;border-radius:10px;padding:10px;display:flex;flex-direction:column;justify-content:space-between">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:#d4a017">Decaffeinato</div>
+          <div style="font-size:9px;color:#888;line-height:1.3">Sin cafeína · para quienes prefieren evitarla</div>
+        </div>
+
+      </div>
+      <div style="margin-top:10px;background:#110800;border-left:2px solid var(--gold);border-radius:0 8px 8px 0;padding:8px 10px;font-size:9px;color:#aaa;line-height:1.5">
+        ✦ Cafés especiales con receta fría se preparan con leche fría y hielo. Las proporciones son aproximadas y pueden ajustarse a gusto.
+      </div>
+    </div>
+
   </div>
 
   <!-- CAFES ESPECIALES -->
