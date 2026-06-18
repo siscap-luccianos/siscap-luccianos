@@ -226,6 +226,48 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 .seg-body{display:none}
 .seg-body.open{display:block}
 
+
+/* ── DASHBOARD ──────────────────────────────────────────── */
+.dash-body{padding:16px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding-bottom:80px}
+.dash-selector{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:14px}
+.dash-selector-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:4px}
+.kpi-value{font-family:'Montserrat',sans-serif;font-weight:900;font-size:36px;line-height:1}
+.kpi-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);margin-top:2px}
+.kpi-sub{font-size:10px;color:var(--gray)}
+.kpi-card.kpi-gold{border-color:var(--gold-dark)} .kpi-card.kpi-gold .kpi-value{color:var(--gold)}
+.kpi-card.kpi-red{border-color:var(--red-bg)}   .kpi-card.kpi-red .kpi-value{color:var(--red)}
+.kpi-card.kpi-green{border-color:#1a3d2b}        .kpi-card.kpi-green .kpi-value{color:var(--green)}
+.kpi-card.kpi-teal{border-color:#1a3d30}         .kpi-card.kpi-teal .kpi-value{color:var(--teal)}
+.mod-bar-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #222}
+.mod-bar-row:last-child{border-bottom:none}
+.mod-bar-name{font-size:12px;color:var(--white);width:130px;flex-shrink:0}
+.mod-bar-track{flex:1;background:#2a2a2a;border-radius:4px;height:8px;overflow:hidden}
+.mod-bar-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.mod-bar-pct{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;width:36px;text-align:right;flex-shrink:0}
+.mod-bar-badge{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:2px 7px;border-radius:10px;flex-shrink:0;width:68px;text-align:center}
+.badge-critico{background:#3d1010;color:var(--red);border:1px solid var(--red)}
+.badge-reforzar{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow)}
+.badge-aceptable{background:#1a2a1a;color:#7dcc7d;border:1px solid #7dcc7d}
+.badge-solido{background:var(--green-bg);color:var(--green);border:1px solid var(--green)}
+.accion-card{background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:12px 14px;display:flex;gap:10px;align-items:flex-start}
+.accion-badge{width:26px;height:26px;border-radius:50%;font-family:'Montserrat',sans-serif;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.accion-p1{background:#3d1010;color:var(--red);border:1.5px solid var(--red)}
+.accion-p2{background:var(--yellow-bg);color:var(--yellow);border:1.5px solid var(--yellow)}
+.accion-p3{background:#1a2a3a;color:#5b9bd5;border:1.5px solid #5b9bd5}
+.accion-title{font-size:13px;font-weight:700;color:var(--white);margin-bottom:3px}
+.accion-desc{font-size:11px;color:var(--gray);line-height:1.5}
+.colab-dash-row{background:var(--dark2);border-radius:var(--rs);padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.colab-dash-name{font-size:13px;font-weight:600;color:var(--white);flex:1}
+.colab-dash-bar{flex:1;background:#2a2a2a;border-radius:3px;height:6px;overflow:hidden;max-width:80px}
+.colab-dash-fill{height:100%;border-radius:3px}
+.colab-dash-pct{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;width:40px;text-align:right}
+.colab-dash-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;width:70px;text-align:center}
+.dash-section-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.dash-empty{text-align:center;padding:40px 20px;color:var(--gray)}
+.dash-empty-icon{font-size:36px;margin-bottom:12px}
+
 /* ── MÓDULOS SELECTOR ───────────────────────────────────── */
 .mod-selector{padding:12px 18px;background:var(--dark);border-bottom:1px solid #2a2a2a}
 .mod-selector-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:8px}
@@ -509,7 +551,44 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 
   <div class="bottom-nav">
     <button class="nav-btn active" id="nav-home" onclick="showTab('home');setActiveNav('nav-home')"><span class="nav-icon">🏠</span>Inicio</button>
+    <button class="nav-btn" id="nav-dash" onclick="showTab('dashboard');setActiveNav('nav-dash')" style="display:none"><span class="nav-icon">📊</span>Dashboard</button>
     <button class="nav-btn" id="nav-guia" onclick="showTab('guia');setActiveNav('nav-guia');switchGuiaTab('cafe')"><span class="nav-icon">📚</span>Guías</button>
+  </div>
+</div>
+
+
+<!-- DASHBOARD -->
+<div id="screen-dashboard" class="screen">
+  <div class="app-header">
+    <div style="display:flex;align-items:center;gap:10px">
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none" style="flex-shrink:0"><circle cx="16" cy="16" r="15" fill="#1A1A1A" stroke="#C9A84C" stroke-width="1.5"/><text x="14.5" y="22" font-family="Georgia,serif" font-size="18" font-weight="700" fill="#C9A84C" text-anchor="middle">S</text><path d="M20 8 L24 13 L30.5 5.5" fill="none" stroke="#C9A84C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div><div class="logo">SisCap</div><div class="badge-label">Dashboard</div></div>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="showTab('home');setActiveNav('nav-home')">← Volver</button>
+  </div>
+
+  <div class="dash-body" id="dash-body">
+    <!-- Selector de local -->
+    <div class="dash-selector">
+      <div class="dash-selector-label">Local / Sucursal</div>
+      <div class="autocomplete-wrap">
+        <input type="text" id="dash-local-input" placeholder="Escribí para buscar..." 
+          autocomplete="off" autocorrect="off"
+          oninput="filtrarLocalesDash()"
+          style="width:100%;padding:12px 14px;background:var(--dark2);border:1px solid #333;border-radius:var(--rs);color:var(--white);font-size:15px;font-family:'Inter',sans-serif;outline:none;-webkit-appearance:none"
+        />
+        <div class="autocomplete-list" id="dash-local-list"></div>
+      </div>
+    </div>
+
+    <!-- Resultado -->
+    <div id="dash-resultado">
+      <div class="dash-empty">
+        <div class="dash-empty-icon">📊</div>
+        <div style="font-family:Montserrat;font-weight:700;font-size:14px;color:var(--white);margin-bottom:6px">Seleccioná un local</div>
+        <div style="font-size:12px">El dashboard se genera automáticamente<br>con los datos del sistema</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1532,6 +1611,8 @@ function _loginExitoso(user, nombre, isAdmin) {
 
   // Mostrar/ocultar botón config
   document.getElementById('cfg-btn').style.display = isAdmin ? '' : 'none';
+  const navDash = document.getElementById('nav-dash');
+  if (navDash) navDash.style.display = isAdmin ? 'flex' : 'none';
   const filt = document.getElementById('filtro-evaluador-wrap');
   if (filt) filt.style.display = isAdmin ? 'block' : 'none';
 
@@ -3529,6 +3610,494 @@ function toggleSeg(header) {
   const open = body.classList.contains('open');
   body.classList.toggle('open', !open);
   if (chev) chev.classList.toggle('open', !open);
+}
+
+
+// ═══════════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════════
+
+function filtrarLocalesDash() {
+  const val = document.getElementById('dash-local-input').value.toLowerCase().trim();
+  const list = document.getElementById('dash-local-list');
+  if (val.length < 2) { list.classList.remove('open'); return; }
+  const items = LOCALES.filter(l => l.toLowerCase().includes(val));
+  if (!items.length) { list.classList.remove('open'); return; }
+  list.innerHTML = items.slice(0, 15).map(l =>
+    `<div class="autocomplete-item" onclick="seleccionarLocalDash(this)">${esc(l)}</div>`
+  ).join('');
+  list.classList.add('open');
+}
+
+function seleccionarLocalDash(el) {
+  document.getElementById('dash-local-input').value = el.textContent;
+  document.getElementById('dash-local-list').classList.remove('open');
+  generarDashboard(el.textContent);
+}
+
+function generarDashboard(local) {
+  // Tomar todas las evaluaciones de este local
+  const evals = datosResumen.filter(r => r.local === local);
+  if (!evals.length) {
+    document.getElementById('dash-resultado').innerHTML = `
+      <div class="dash-empty">
+        <div class="dash-empty-icon">🔍</div>
+        <div style="font-family:Montserrat;font-weight:700;font-size:14px;color:var(--white);margin-bottom:6px">Sin evaluaciones</div>
+        <div style="font-size:12px">No hay evaluaciones registradas<br>para <strong>${esc(local)}</strong></div>
+      </div>`;
+    return;
+  }
+
+  // Última eval por colaborador
+  const porColab = {};
+  evals.forEach(r => {
+    if (!porColab[r.evaluado] || r.fecha > porColab[r.evaluado].fecha) {
+      porColab[r.evaluado] = r;
+    }
+  });
+  const colabs = Object.values(porColab);
+
+  // KPIs
+  const pcts = colabs.map(c => c.porcentaje);
+  const promedio = Math.round(pcts.reduce((a, b) => a + b, 0) / pcts.length);
+  const enRiesgo = colabs.filter(c => c.porcentaje < 66).length;
+
+  // Promedios por módulo (desde evalCache)
+  const modScores = {}; // { modNombre: [pct, pct, ...] }
+  const MOD_NOMBRES = ['Equipamiento','Cafetería','Heladería','Icepops','Chocolatería','Sistema y Caja','Atención al Cliente'];
+  MOD_NOMBRES.forEach(n => modScores[n] = []);
+
+  colabs.forEach(c => {
+    const key = `${c.local}|${c.evaluado}|${c.fecha}`;
+    const cached = evalCache[key];
+    if (cached && cached.modulos && cached.modulos.length) {
+      cached.modulos.forEach(m => {
+        if (m.porcentaje !== null && m.porcentaje !== undefined && MOD_NOMBRES.includes(m.nombre)) {
+          modScores[m.nombre].push(m.porcentaje);
+        }
+      });
+    }
+  });
+
+  // Calcular promedio por módulo
+  const modPromedios = MOD_NOMBRES.map(nombre => {
+    const vals = modScores[nombre].filter(v => v !== null);
+    if (!vals.length) return null;
+    return { nombre, pct: Math.round(vals.reduce((a,b) => a+b,0) / vals.length) };
+  }).filter(Boolean);
+
+  // Módulo crítico y más sólido
+  const modOrdenados = [...modPromedios].sort((a,b) => a.pct - b.pct);
+  const modCritico = modOrdenados[0];
+  const modSolido  = modOrdenados[modOrdenados.length - 1];
+
+  // Generar acciones automáticas basadas en módulos críticos
+  const acciones = generarAcciones(modOrdenados, colabs);
+
+  // Estado de colores
+  function colorPct(pct) {
+    if (pct >= 80) return 'var(--green)';
+    if (pct >= 66) return 'var(--yellow)';
+    return 'var(--red)';
+  }
+  function badgeMod(pct) {
+    if (pct >= 80) return '<span class="mod-bar-badge badge-solido">Sólido</span>';
+    if (pct >= 70) return '<span class="mod-bar-badge badge-aceptable">Aceptable</span>';
+    if (pct >= 50) return '<span class="mod-bar-badge badge-reforzar">Reforzar</span>';
+    return '<span class="mod-bar-badge badge-critico">Crítico</span>';
+  }
+  function badgeColab(pct) {
+    if (pct >= 80) return `<span class="colab-dash-badge badge-solido">Sólido</span>`;
+    if (pct >= 66) return `<span class="colab-dash-badge badge-aceptable">Aceptable</span>`;
+    return `<span class="colab-dash-badge badge-critico">Riesgo</span>`;
+  }
+
+  const evaluador = colabs[0].evaluador || '—';
+  const fechaMax  = colabs.map(c => c.fecha).sort().reverse()[0];
+
+  // ── RENDER ──
+  const html = `
+    <!-- Meta info -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">
+      <div>
+        <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:15px;color:var(--white)">${esc(local)}</div>
+        <div style="font-size:11px;color:var(--gray);margin-top:2px">${colabs.length} colaborador${colabs.length!==1?'es':''} evaluado${colabs.length!==1?'s':''} · ${esc(evaluador)}</div>
+      </div>
+      <button onclick="exportarDashPDF('${esc(local)}')" style="background:var(--green-bg);color:var(--green);border:1px solid var(--green);padding:8px 14px;border-radius:var(--rs);font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;cursor:pointer">⬇ PDF</button>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-card kpi-gold">
+        <div class="kpi-value" style="color:${colorPct(promedio)}">${promedio}%</div>
+        <div class="kpi-label">Promedio del local</div>
+        <div class="kpi-sub">${colabs.length} colaborador${colabs.length!==1?'es':''}</div>
+      </div>
+      <div class="kpi-card kpi-red">
+        <div class="kpi-value" style="color:var(--red)">${enRiesgo}</div>
+        <div class="kpi-label">Con riesgo</div>
+        <div class="kpi-sub">≤ 66%</div>
+      </div>
+      ${modCritico ? `
+      <div class="kpi-card" style="border-color:#3d1010">
+        <div class="kpi-value" style="color:var(--red);font-size:28px">${modCritico.pct}%</div>
+        <div class="kpi-label">Módulo crítico</div>
+        <div class="kpi-sub">${esc(modCritico.nombre)}</div>
+      </div>` : ''}
+      ${modSolido ? `
+      <div class="kpi-card" style="border-color:#1a3d2b">
+        <div class="kpi-value" style="color:var(--green);font-size:28px">${modSolido.pct}%</div>
+        <div class="kpi-label">Módulo sólido</div>
+        <div class="kpi-sub">${esc(modSolido.nombre)}</div>
+      </div>` : ''}
+    </div>
+
+    <!-- Barras por módulo -->
+    ${modPromedios.length ? `
+    <div>
+      <div class="dash-section-title">Resultado por módulo</div>
+      <div style="background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);padding:12px 14px">
+        ${modOrdenados.map(m => `
+          <div class="mod-bar-row">
+            <div class="mod-bar-name">${esc(m.nombre)}</div>
+            <div class="mod-bar-track"><div class="mod-bar-fill" style="width:${m.pct}%;background:${colorPct(m.pct)}"></div></div>
+            <div class="mod-bar-pct" style="color:${colorPct(m.pct)}">${m.pct}%</div>
+            ${badgeMod(m.pct)}
+          </div>`).join('')}
+      </div>
+    </div>` : ''}
+
+    <!-- Acciones -->
+    ${acciones.length ? `
+    <div>
+      <div class="dash-section-title">Áreas a reforzar</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${acciones.map(a => `
+          <div class="accion-card">
+            <div class="accion-badge accion-${a.p.toLowerCase()}">${a.p}</div>
+            <div>
+              <div class="accion-title">${esc(a.titulo)}</div>
+              <div class="accion-desc">${esc(a.desc)}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>` : ''}
+
+    <!-- Colaboradores -->
+    <div>
+      <div class="dash-section-title">Equipo evaluado</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        ${colabs.sort((a,b) => b.porcentaje - a.porcentaje).map(c => `
+          <div class="colab-dash-row">
+            <div class="colab-dash-name">${esc(c.evaluado)}</div>
+            <div class="colab-dash-bar"><div class="colab-dash-fill" style="width:${c.porcentaje}%;background:${colorPct(c.porcentaje)}"></div></div>
+            <div class="colab-dash-pct" style="color:${colorPct(c.porcentaje)}">${c.porcentaje}%</div>
+            ${badgeColab(c.porcentaje)}
+          </div>`).join('')}
+      </div>
+    </div>
+  `;
+
+  document.getElementById('dash-resultado').innerHTML = html;
+
+  // Guardar datos para PDF
+  window._dashData = { local, colabs, promedio, enRiesgo, modPromedios, modOrdenados, modCritico, modSolido, acciones, evaluador };
+}
+
+function generarAcciones(modOrdenados, colabs) {
+  const acciones = [];
+  const criticos  = modOrdenados.filter(m => m.pct < 50);
+  const reforzar  = modOrdenados.filter(m => m.pct >= 50 && m.pct < 70);
+  const enRiesgo  = colabs.filter(c => c.porcentaje < 66);
+
+  // P1 — módulos críticos
+  criticos.forEach(m => {
+    acciones.push({
+      p: 'P1',
+      titulo: `Refuerzo urgente: ${m.nombre}`,
+      desc: `Promedio ${m.pct}% — requiere capacitación inmediata. Afecta a ${colabs.length} colaboradores.`
+    });
+  });
+
+  // P1 — colaboradores en riesgo
+  if (enRiesgo.length) {
+    const nombres = enRiesgo.map(c => c.evaluado).join(', ');
+    acciones.push({
+      p: 'P1',
+      titulo: `Seguimiento individual: ${enRiesgo.map(c=>c.evaluado.split(' ')[0]).join(' y ')}`,
+      desc: `${nombres} — bajo 66%. Acompañamiento específico hasta ≥ 75%.`
+    });
+  }
+
+  // P2 — módulos a reforzar
+  reforzar.slice(0, 2).forEach(m => {
+    acciones.push({
+      p: 'P2',
+      titulo: `Práctica en ${m.nombre}`,
+      desc: `Promedio ${m.pct}%. Trabajar casos prácticos y reforzar puntos débiles detectados.`
+    });
+  });
+
+  // P3 — si todo bien, sugerir profundización
+  if (!criticos.length && !reforzar.length) {
+    acciones.push({
+      p: 'P3',
+      titulo: 'Consolidar y profundizar',
+      desc: 'El equipo muestra buen desempeño. Avanzar en hospitalidad y venta sugestiva.'
+    });
+  }
+
+  return acciones.slice(0, 5);
+}
+
+// ── EXPORTAR PDF DEL DASHBOARD ──────────────────────────
+function exportarDashPDF(local) {
+  if (!window.jspdf) { showToast('⚠ jsPDF no disponible'); return; }
+  const d = window._dashData;
+  if (!d) { showToast('⚠ Generá el dashboard primero'); return; }
+
+  showToast('Generando PDF...', 5000);
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+  const W = 210, H = 297, ML = 14, MR = 14, IW = W - ML - MR;
+  let y = 0;
+
+  const C_BLACK  = [13, 13, 13];
+  const C_GOLD   = [180, 140, 50];
+  const C_WHITE  = [245, 240, 232];
+  const C_GRAY1  = [80, 80, 80];
+  const C_GRAY2  = [140, 140, 140];
+  const C_GRAY3  = [220, 220, 220];
+  const C_GRAY4  = [248, 248, 248];
+  const C_GREEN  = [39, 150, 89];
+  const C_YELLOW = [180, 120, 10];
+  const C_RED    = [190, 50, 40];
+  const C_TEAL   = [93, 202, 165];
+
+  function colorForPct(pct) {
+    return pct >= 80 ? C_GREEN : pct >= 66 ? C_YELLOW : C_RED;
+  }
+  function labelForPct(pct) {
+    return pct >= 80 ? 'Sólido' : pct >= 70 ? 'Aceptable' : pct >= 50 ? 'Reforzar' : 'Crítico';
+  }
+
+  // ── Header ──
+  doc.setFillColor(...C_BLACK);
+  doc.rect(0, 0, W, 24, 'F');
+  doc.setFillColor(...C_GOLD);
+  doc.rect(0, 0, 3, 24, 'F');
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(13);
+  doc.setTextColor(...C_GOLD);
+  doc.text('SisCap', ML, 10);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7);
+  doc.setTextColor(160, 160, 160);
+  doc.text("Dashboard · Sistema de Capacitación v2", ML, 16);
+  const fechaHoy = new Date().toLocaleDateString('es-AR');
+  doc.setFontSize(7.5);
+  doc.setTextColor(150, 150, 150);
+  doc.text(fechaHoy, W - MR, 16, { align: 'right' });
+  y = 30;
+
+  // ── Título local ──
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.setTextColor(...C_BLACK);
+  const localCorto = local.length > 50 ? local.substring(0,50)+'...' : local;
+  doc.text(localCorto, ML, y);
+  y += 6;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.setTextColor(...C_GRAY2);
+  doc.text(`${d.colabs.length} colaborador${d.colabs.length!==1?'es':''} evaluado${d.colabs.length!==1?'s':''} · Evaluador: ${d.evaluador}`, ML, y);
+  y += 8;
+
+  // Línea
+  doc.setDrawColor(...C_GRAY3);
+  doc.setLineWidth(0.3);
+  doc.line(ML, y, W - MR, y);
+  y += 6;
+
+  // ── KPIs (4 tarjetas) ──
+  const kpiW = IW / 4 - 2;
+  const kpis = [
+    { valor: d.promedio + '%', label: 'Promedio local', color: colorForPct(d.promedio) },
+    { valor: String(d.enRiesgo), label: 'En riesgo (≤66%)', color: C_RED },
+    d.modCritico ? { valor: d.modCritico.pct + '%', label: d.modCritico.nombre, sub: 'Módulo crítico', color: C_RED } : null,
+    d.modSolido  ? { valor: d.modSolido.pct + '%',  label: d.modSolido.nombre,  sub: 'Módulo sólido',  color: C_GREEN } : null,
+  ].filter(Boolean);
+
+  kpis.forEach((k, i) => {
+    const x = ML + i * (kpiW + 2.7);
+    doc.setFillColor(...C_GRAY4);
+    doc.rect(x, y, kpiW, 18, 'F');
+    doc.setDrawColor(...C_GRAY3);
+    doc.setLineWidth(0.2);
+    doc.rect(x, y, kpiW, 18, 'D');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.setTextColor(...k.color);
+    doc.text(k.valor, x + kpiW/2, y + 9, { align: 'center' });
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(...C_GRAY2);
+    const labelCorto = k.label.length > 18 ? k.label.substring(0,18)+'...' : k.label;
+    doc.text(labelCorto, x + kpiW/2, y + 15, { align: 'center' });
+  });
+  y += 24;
+
+  // ── Módulos ──
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.setTextColor(...C_GRAY2);
+  doc.text('RESULTADO POR MÓDULO', ML, y);
+  y += 4;
+
+  // Header tabla
+  doc.setFillColor(...C_BLACK);
+  doc.rect(ML, y, IW, 7, 'F');
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7);
+  doc.setTextColor(255,255,255);
+  doc.text('Módulo', ML + 3, y + 4.5);
+  doc.text('%', W - MR - 3, y + 4.5, { align: 'right' });
+  y += 7;
+
+  d.modOrdenados.forEach((m, mi) => {
+    const bg = mi % 2 === 0 ? [255,255,255] : C_GRAY4;
+    doc.setFillColor(...bg);
+    doc.rect(ML, y, IW, 9, 'F');
+    doc.setDrawColor(...C_GRAY3);
+    doc.setLineWidth(0.1);
+    doc.line(ML, y + 9, ML + IW, y + 9);
+
+    // Nombre
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...C_BLACK);
+    doc.text(m.nombre, ML + 3, y + 6);
+
+    // Barra
+    const barX = ML + 75;
+    const barW = IW - 75 - 22;
+    doc.setFillColor(220, 220, 220);
+    doc.rect(barX, y + 3, barW, 3.5, 'F');
+    doc.setFillColor(...colorForPct(m.pct));
+    doc.rect(barX, y + 3, barW * m.pct / 100, 3.5, 'F');
+
+    // Porcentaje
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...colorForPct(m.pct));
+    doc.text(m.pct + '%', W - MR - 3, y + 6, { align: 'right' });
+    y += 9;
+  });
+  y += 8;
+
+  // ── Acciones ──
+  if (d.acciones.length) {
+    if (y > H - 60) { doc.addPage(); y = 16; }
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...C_GRAY2);
+    doc.text('ÁREAS A REFORZAR', ML, y);
+    y += 4;
+
+    d.acciones.forEach(a => {
+      if (y > H - 22) { doc.addPage(); y = 16; }
+      const pColor = a.p === 'P1' ? C_RED : a.p === 'P2' ? C_YELLOW : [60,120,180];
+      doc.setFillColor(248, 248, 248);
+      doc.rect(ML, y, IW, 14, 'F');
+      doc.setDrawColor(...C_GRAY3);
+      doc.setLineWidth(0.2);
+      doc.rect(ML, y, IW, 14, 'D');
+      // Badge
+      doc.setFillColor(...pColor);
+      doc.circle(ML + 5, y + 7, 3.5, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(7);
+      doc.setTextColor(255,255,255);
+      doc.text(a.p, ML + 5, y + 8.5, { align: 'center' });
+      // Texto
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor(...C_BLACK);
+      const tit = a.titulo.length > 70 ? a.titulo.substring(0,70)+'...' : a.titulo;
+      doc.text(tit, ML + 12, y + 6);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7);
+      doc.setTextColor(...C_GRAY1);
+      const desc = a.desc.length > 90 ? a.desc.substring(0,90)+'...' : a.desc;
+      doc.text(desc, ML + 12, y + 11);
+      y += 16;
+    });
+    y += 4;
+  }
+
+  // ── Colaboradores ──
+  if (y > H - 60) { doc.addPage(); y = 16; }
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.setTextColor(...C_GRAY2);
+  doc.text('EQUIPO EVALUADO', ML, y);
+  y += 4;
+
+  doc.setFillColor(...C_BLACK);
+  doc.rect(ML, y, IW, 7, 'F');
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7);
+  doc.setTextColor(255,255,255);
+  doc.text('Colaborador', ML + 3, y + 4.5);
+  doc.text('Resultado', W - MR - 3, y + 4.5, { align: 'right' });
+  y += 7;
+
+  [...d.colabs].sort((a,b) => b.porcentaje - a.porcentaje).forEach((c, ci) => {
+    if (y > H - 18) { doc.addPage(); y = 16; }
+    const bg = ci % 2 === 0 ? [255,255,255] : C_GRAY4;
+    doc.setFillColor(...bg);
+    doc.rect(ML, y, IW, 9, 'F');
+    doc.setDrawColor(...C_GRAY3);
+    doc.setLineWidth(0.1);
+    doc.line(ML, y + 9, ML + IW, y + 9);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...C_BLACK);
+    doc.text(c.evaluado, ML + 3, y + 6);
+
+    // Barra
+    const barX2 = ML + 80;
+    const barW2 = IW - 80 - 22;
+    doc.setFillColor(220,220,220);
+    doc.rect(barX2, y + 3, barW2, 3.5, 'F');
+    doc.setFillColor(...colorForPct(c.porcentaje));
+    doc.rect(barX2, y + 3, barW2 * c.porcentaje / 100, 3.5, 'F');
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...colorForPct(c.porcentaje));
+    doc.text(c.porcentaje + '%', W - MR - 3, y + 6, { align: 'right' });
+    y += 9;
+  });
+
+  // ── Footer ──
+  const totalPages = doc.internal.getNumberOfPages();
+  for (let p = 1; p <= totalPages; p++) {
+    doc.setPage(p);
+    doc.setDrawColor(...C_GRAY3);
+    doc.setLineWidth(0.3);
+    doc.line(ML, H - 10, W - MR, H - 10);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(6.5);
+    doc.setTextColor(...C_GRAY2);
+    doc.text("SisCap v2 · Lucciano's · Dashboard de Capacitación", ML, H - 6);
+    doc.text('Página ' + p + ' de ' + totalPages, W - MR, H - 6, { align: 'right' });
+  }
+
+  const nombre = 'Dashboard_' + local.replace(/[^a-zA-Z0-9]/g,'_').substring(0,30) + '_' + fechaHoy.replace(/\//g,'-') + '.pdf';
+  _descargarPDF(doc, nombre);
+  showToast('✓ PDF generado');
 }
 
 function setActiveNav(id) {
