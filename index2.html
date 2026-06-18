@@ -800,7 +800,7 @@ body::-webkit-scrollbar{display:none}
     <button class="guia-tab active" id="gtab-cafe" onclick="switchGuiaTab('cafe')">Cafetería</button>
     <button class="guia-tab" id="gtab-heladeria" onclick="switchGuiaTab('heladeria')">Heladería</button>
     <button class="guia-tab" id="gtab-pasteleria" onclick="switchGuiaTab('pasteleria')">Pastelería</button>
-    <button class="guia-tab" id="gtab-supervisores" onclick="switchGuiaTab('supervisores')" style="display:none">Supervisores</button>
+    <button class="guia-tab" id="gtab-supervisores" onclick="switchGuiaTab('supervisores')" style="display:none">Encargados y Responsables</button>
   </div>
 
 
@@ -1641,11 +1641,11 @@ body::-webkit-scrollbar{display:none}
     <div id="guia-supervisores" class="guia-section" style="display:none">
       <div style="background:linear-gradient(160deg,#0a0a1a,#0f0f28);padding:24px 18px 20px;text-align:center;border-bottom:1px solid #2a2a5a">
         <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#7a7add;margin-bottom:8px">Lucciano's · Uso Interno</div>
-        <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:26px;color:var(--white);line-height:1.15;margin-bottom:6px">Supervisores</div>
-        <div style="font-size:11px;color:#5a5aaa;letter-spacing:1px">Contenido exclusivo para supervisores de operaciones</div>
+        <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:26px;color:var(--white);line-height:1.15;margin-bottom:6px">Encargados y Responsables</div>
+        <div style="font-size:11px;color:#5a5aaa;letter-spacing:1px">Acceso exclusivo para encargados y responsables de local</div>
       </div>
       <div style="padding:24px 18px;text-align:center">
-        <div style="font-size:13px;color:var(--gray);line-height:1.7">Esta sección está reservada para supervisores.<br>El contenido se habilitará próximamente.</div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.7">Esta sección está reservada para encargados y responsables de local.<br>El contenido se habilitará próximamente.</div>
       </div>
     </div>
 
@@ -1677,7 +1677,7 @@ const USUARIOS = {
   'fabricio@luccianos.com.ar': { pass:'Renata2525', nombre:'Fabricio' },
   'operaciones.franquicias@luccianos.com.ar': { pass:'Luccianos2025', nombre:'Carlos Torres' },
   invitado:   { pass:'__local__',  nombre:'Invitado',   isGuest:true },
-  supervisor: { pass:'operaciones', nombre:'Supervisor',  isGuest:true },
+  // encargados: acceso via [clave_local]resp — manejado en _buscarLocalPorClave
 };
 
 
@@ -2025,16 +2025,18 @@ const CLAVES_LOCALES = {
 };
 
 function _buscarLocalPorClave(clave) {
-  // Normalizar: minúsculas, sin tildes, sin espacios
   function norm(s) {
-    return s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,'').replace(/[^a-z0-9]/g,'');
+    return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,'').replace(/[^a-z0-9]/g,'');
   }
   const claveNorm = norm(clave);
+  // Detectar si es encargado (sufijo "resp")
+  const esEncargado = claveNorm.endsWith('resp');
+  const claveBase   = esEncargado ? claveNorm.slice(0, -4) : claveNorm;
   // Búsqueda directa
-  if (CLAVES_LOCALES[claveNorm]) return CLAVES_LOCALES[claveNorm];
-  // Búsqueda flexible: la clave ingresada contiene o está contenida
+  if (CLAVES_LOCALES[claveBase]) return { local: CLAVES_LOCALES[claveBase], esEncargado };
+  // Búsqueda flexible
   for (const [k, local] of Object.entries(CLAVES_LOCALES)) {
-    if (norm(k) === claveNorm) return local;
+    if (norm(k) === claveBase) return { local, esEncargado };
   }
   return null;
 }
@@ -2048,13 +2050,16 @@ async function doLogin() {
   err.textContent = '';
   if (!user || !pass) { err.textContent = 'Completá usuario y contraseña.'; return; }
 
-  // 1. Login de invitado por local — usuario 'invitado' + clave del local
+  // 1. Login de invitado por local — clave del local (o [local]resp para encargados)
   if (user === 'invitado') {
-    const localMatch = _buscarLocalPorClave(pass.trim().toLowerCase());
-    if (localMatch) {
-      // Registrar acceso en Sheets (sin esperar)
-      apiPostBg({ action: 'logAccesoGuia', local: localMatch, fecha: new Date().toISOString() });
-      _loginExitoso('invitado', 'Invitado · ' + localMatch.replace("Lucciano's ", ""), false, true, localMatch);
+    const match = _buscarLocalPorClave(pass.trim().toLowerCase());
+    if (match) {
+      const { local, esEncargado } = match;
+      const nombreMostrar = esEncargado
+        ? 'Encargado · ' + local.replace("Lucciano's ", "")
+        : 'Invitado · '  + local.replace("Lucciano's ", "");
+      apiPostBg({ action: 'logAccesoGuia', local, fecha: new Date().toISOString(), tipo: esEncargado ? 'encargado' : 'invitado' });
+      _loginExitoso('invitado', nombreMostrar, false, true, local, esEncargado);
     } else {
       err.textContent = 'Contraseña incorrecta. Verificá la clave de tu local.';
     }
@@ -2108,10 +2113,10 @@ async function doLogin() {
 }
 
 
-function _loginExitoso(user, nombre, isAdmin, isGuest, localInvitado) {
+function _loginExitoso(user, nombre, isAdmin, isGuest, localInvitado, esEncargado) {
   // Invitado: SOLO puede ver guías — bloqueo total
   if (isGuest) {
-    currentUser = { username: user, nombre, isAdmin: false, isGuest: true, localInvitado: localInvitado || '', isSupervisor: user === 'supervisor' };
+    currentUser = { username: user, nombre, isAdmin: false, isGuest: true, localInvitado: localInvitado || '', esEncargado: !!esEncargado };
     document.getElementById('nav-home').style.display = 'none';
     const nd = document.getElementById('nav-dash');
     if (nd) nd.style.display = 'none';
@@ -2119,9 +2124,9 @@ function _loginExitoso(user, nombre, isAdmin, isGuest, localInvitado) {
     if (gvb) gvb.style.display = 'none';
     const cfg = document.getElementById('cfg-btn');
     if (cfg) cfg.style.display = 'none';
-    // Mostrar tab supervisores solo si es supervisor
-    const tabSup = document.getElementById('gtab-supervisores');
-    if (tabSup) tabSup.style.display = user === 'supervisor' ? 'flex' : 'none';
+    // Tab encargados visible solo para encargados
+    const tabEnc = document.getElementById('gtab-supervisores');
+    if (tabEnc) tabEnc.style.display = esEncargado ? 'flex' : 'none';
     showTab('guia');
     setActiveNav('nav-guia');
     switchGuiaTab('cafe');
@@ -4121,6 +4126,11 @@ async function cargarUsuarios() {
   }
 }
 
+// Mapa inverso: local → clave
+const _LOCAL_A_CLAVE = Object.fromEntries(
+  Object.entries(CLAVES_LOCALES).map(([k, v]) => [v, k])
+);
+
 function renderAccesosLocales(accesosMap) {
   const el = document.getElementById('accesos-locales-lista');
   if (!el) return;
@@ -4128,34 +4138,76 @@ function renderAccesosLocales(accesosMap) {
   const totalLocales = Object.keys(CLAVES_LOCALES).length;
   const conAcceso    = Object.keys(accesosMap).length;
 
-  // Actualizar contador en el header colapsable
   const counter = document.getElementById('accesos-counter');
-  if (counter) counter.textContent = conAcceso + ' / ' + totalLocales + ' accedieron';
+  if (counter) counter.textContent = conAcceso + ' / ' + totalLocales + ' conectados';
 
-  let html = '<div style="display:flex;flex-direction:column;gap:4px">';
+  // Buscador
+  const buscadorId = 'buscador-locales-acceso';
+  el.innerHTML = `
+    <div style="position:relative;margin-bottom:10px">
+      <input id="${buscadorId}" type="text" placeholder="Buscar local..."
+        oninput="_filtrarLocalesAcceso()"
+        style="width:100%;padding:9px 12px 9px 32px;background:var(--dark2);border:1px solid #333;border-radius:var(--rs);color:var(--white);font-size:13px;font-family:Inter,sans-serif;outline:none"/>
+      <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--gray);font-size:13px;pointer-events:none">🔍</span>
+    </div>
+    <div id="locales-acceso-lista" style="display:flex;flex-direction:column;gap:4px;max-height:400px;overflow-y:auto"></div>`;
+
+  _renderListaLocales(accesosMap, '');
+}
+
+window._accesosMapCache = {};
+
+function _renderListaLocales(accesosMap, filtro) {
+  window._accesosMapCache = accesosMap;
+  const lista = document.getElementById('locales-acceso-lista');
+  if (!lista) return;
+
   const todos  = Object.values(CLAVES_LOCALES);
   const conAcc = todos.filter(l => accesosMap[l]);
   const sinAcc = todos.filter(l => !accesosMap[l]);
+  const ordenados = [...conAcc, ...sinAcc];
 
-  conAcc.forEach(local => {
-    const fecha  = accesosMap[local] ? new Date(accesosMap[local]).toLocaleDateString('es-AR') : '—';
-    const nombre = local.replace("Lucciano's ", "");
-    html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 10px;background:var(--green-bg);border:1px solid var(--green);border-radius:var(--rs)">
-      <div style="font-size:12px;font-weight:600;color:var(--green)">✓ ${esc(nombre)}</div>
-      <div style="font-size:10px;color:var(--gray)">${fecha}</div>
-    </div>`;
+  const filtroNorm = filtro.toLowerCase().trim();
+  const filtrados  = filtroNorm
+    ? ordenados.filter(l => l.toLowerCase().includes(filtroNorm))
+    : ordenados;
+
+  let html = '';
+  filtrados.forEach(local => {
+    const nombre    = local.replace("Lucciano's ", "");
+    const clave     = _LOCAL_A_CLAVE[local] || '—';
+    const claveEnc  = clave + 'resp';
+    const tieneAcc  = !!accesosMap[local];
+    const fecha     = tieneAcc ? new Date(accesosMap[local]).toLocaleDateString('es-AR') : null;
+
+    if (tieneAcc) {
+      html += `<div style="background:var(--dark2);border:1px solid var(--green);border-radius:var(--rs);padding:8px 10px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+          <div style="font-size:12px;font-weight:700;color:var(--green)">✓ ${esc(nombre)}</div>
+          <div style="font-size:10px;color:var(--gray)">${fecha}</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <div style="background:#0a1a0a;border:1px solid #2a4a2a;border-radius:6px;padding:3px 8px;font-size:10px;color:var(--green);font-family:monospace">${esc(clave)}</div>
+          <div style="background:#1a1a0a;border:1px solid #3a3a20;border-radius:6px;padding:3px 8px;font-size:10px;color:var(--gold);font-family:monospace">${esc(claveEnc)}</div>
+        </div>
+      </div>`;
+    } else {
+      html += `<div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:var(--rs);padding:8px 10px">
+        <div style="font-size:12px;color:#555;margin-bottom:5px">○ ${esc(nombre)}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <div style="background:#111;border:1px solid #222;border-radius:6px;padding:3px 8px;font-size:10px;color:#444;font-family:monospace">${esc(clave)}</div>
+          <div style="background:#111;border:1px solid #222;border-radius:6px;padding:3px 8px;font-size:10px;color:#444;font-family:monospace">${esc(claveEnc)}</div>
+        </div>
+      </div>`;
+    }
   });
 
-  sinAcc.forEach(local => {
-    const nombre = local.replace("Lucciano's ", "");
-    html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 10px;background:var(--dark2);border:1px solid #2a2a2a;border-radius:var(--rs)">
-      <div style="font-size:12px;color:#555">○ ${esc(nombre)}</div>
-      <div style="font-size:10px;color:#333">Sin acceso</div>
-    </div>`;
-  });
+  lista.innerHTML = html || '<div style="color:var(--gray);font-size:12px;padding:8px">Sin resultados</div>';
+}
 
-  html += '</div>';
-  el.innerHTML = html;
+function _filtrarLocalesAcceso() {
+  const val = document.getElementById('buscador-locales-acceso')?.value || '';
+  _renderListaLocales(window._accesosMapCache, val);
 }
 
 function toggleAccesosLocales() {
