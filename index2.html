@@ -472,6 +472,7 @@ body::-webkit-scrollbar{display:none}
 <div id="screen-login" class="screen active">
   <div class="login-logo">SisCap</div>
   <div class="login-sub">Sistema de Capacitación v2</div>
+  <div style="font-size:10px;color:#555;margin-bottom:10px;letter-spacing:1px">Acceso a guías: usuario <strong style="color:#888">guia</strong></div>
   <div class="login-card">
     <h2>Iniciar sesión</h2>
     <div class="field"><label>Usuario</label><input type="text" id="login-user" placeholder="Tu usuario" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"/></div>
@@ -1505,6 +1506,7 @@ const USUARIOS = {
   barbarariccitelli: { pass:'Luccianos2026', nombre:'Barbara Riccitelli' },
   'fabricio@luccianos.com.ar': { pass:'Renata2525', nombre:'Fabricio' },
   'operaciones.franquicias@luccianos.com.ar': { pass:'Luccianos2025', nombre:'Carlos Torres' },
+  'guia': { pass:'guia2026', nombre:'Guia', isGuest:true },
 };
 
 
@@ -1761,7 +1763,7 @@ async function doLogin() {
   const uLocal = USUARIOS[user];
   if (uLocal) {
     if (uLocal.pass === pass) {
-      _loginExitoso(user, uLocal.nombre, uLocal.isAdmin || false);
+      _loginExitoso(user, uLocal.nombre, uLocal.isAdmin || false, uLocal.isGuest || false);
     } else {
       err.textContent = 'Contraseña incorrecta.';
     }
@@ -1804,7 +1806,19 @@ async function doLogin() {
 }
 
 
-function _loginExitoso(user, nombre, isAdmin) {
+function _loginExitoso(user, nombre, isAdmin, isGuest) {
+  // Invitado: solo puede ver guías
+  if (isGuest) {
+    currentUser = { username: user, nombre, isAdmin: false, isGuest: true };
+    showTab('guia');
+    setActiveNav('nav-guia');
+    switchGuiaTab('cafe');
+    // Ocultar nav home y dashboard
+    document.getElementById('nav-home').style.display = 'none';
+    const nd = document.getElementById('nav-dash');
+    if (nd) nd.style.display = 'none';
+    return;
+  }
   currentUser = { username: user, nombre, isAdmin, pass: '' };
   document.getElementById('home-avatar').textContent = nombre.charAt(0).toUpperCase();
   document.getElementById('home-name').textContent   = nombre.split(' ')[0];
