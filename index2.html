@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="theme-color" content="#0D0D0D"/>
@@ -780,11 +780,16 @@ body::-webkit-scrollbar{display:none}
       <!-- Recetario visual — imagen aprobada -->
       <div style="padding:14px 16px 8px">
         <div class="section-title">Recetario de Cafés</div>
-        <div style="border-radius:var(--r);overflow:hidden;margin-bottom:14px;background:#000">
-          <img src="recetario-cafeteria.png" alt="Recetario de Cafés Lucciano's" style="width:100%;border-radius:8px;margin-bottom:8px">
+        <div style="border-radius:var(--r);overflow:hidden;margin-bottom:8px;background:#000;cursor:zoom-in" onclick="abrirImagen('recetario-cafeteria.png')">
+          <img src="recetario-cafeteria.png" alt="Recetario de Cafés Lucciano's" style="width:100%;border-radius:8px;display:block"/>
         </div>
-        <div style="font-size:10px;color:var(--gray);text-align:center;margin-bottom:16px">
-          Tocá la imagen para ampliar · Las proporciones son aproximadas
+        <div style="font-size:10px;color:var(--gold);text-align:center;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:4px">
+          <span>🔍</span> Tocá para ampliar
+        </div>
+        <!-- Overlay fullscreen -->
+        <div id="img-overlay" onclick="cerrarImagen()" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.95);z-index:9999;overflow:auto;-webkit-overflow-scrolling:touch;align-items:center;justify-content:center">
+          <img id="img-overlay-src" src="" style="width:100%;max-width:none;display:block;touch-action:pinch-zoom"/>
+          <div style="position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;background:rgba(0,0,0,.6);color:white;border:1px solid #555;border-radius:20px;padding:6px 14px;font-size:12px;font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer" onclick="cerrarImagen()">✕ Cerrar</div>
         </div>
       </div>
 
@@ -4081,6 +4086,21 @@ function setOrdenEvals(orden) {
     }
   }
   if (window._sucData) renderSucursales(window._sucData);
+}
+
+
+function abrirImagen(src) {
+  const ov = document.getElementById('img-overlay');
+  const im = document.getElementById('img-overlay-src');
+  if (!ov || !im) return;
+  im.src = src;
+  ov.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function cerrarImagen() {
+  const ov = document.getElementById('img-overlay');
+  if (ov) ov.style.display = 'none';
+  document.body.style.overflow = '';
 }
 
 function setActiveNav(id) {
