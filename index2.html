@@ -215,6 +215,14 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 .form-cabecera{padding:0 18px 14px;background:var(--dark2);display:flex;flex-direction:column;gap:10px}
 
 
+/* ── SEGMENTOS GUÍA ─────────────────────────────────────── */
+.seg-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--dark2);border-radius:var(--rs);cursor:pointer;user-select:none;margin-bottom:6px;border:1px solid #333}
+.seg-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;color:var(--gold);letter-spacing:1px;text-transform:uppercase}
+.seg-chev{color:var(--gray);font-size:11px;transition:transform .2s}
+.seg-chev.open{transform:rotate(180deg)}
+.seg-body{display:none}
+.seg-body.open{display:block}
+
 /* ── MÓDULOS SELECTOR ───────────────────────────────────── */
 .mod-selector{padding:12px 18px;background:var(--dark);border-bottom:1px solid #2a2a2a}
 .mod-selector-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:8px}
@@ -663,9 +671,9 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 
   <!-- Tabs de sección -->
   <div style="display:flex;background:var(--dark);border-bottom:1px solid #2a2a2a;position:sticky;top:56px;z-index:100">
-    <button class="guia-tab active" id="gtab-cafe" onclick="switchGuiaTab('cafe')">☕ Cafetería</button>
-    <button class="guia-tab" id="gtab-heladeria" onclick="switchGuiaTab('heladeria')">🍦 Heladería</button>
-    <button class="guia-tab" id="gtab-pasteleria" onclick="switchGuiaTab('pasteleria')">🥐 Pastelería</button>
+    <button class="guia-tab active" id="gtab-cafe" onclick="switchGuiaTab('cafe')">☕ Guía de Servicio Cafetería</button>
+    <button class="guia-tab" id="gtab-heladeria" onclick="switchGuiaTab('heladeria')">🍦 Guía de Servicio Heladería</button>
+    <button class="guia-tab" id="gtab-pasteleria" onclick="switchGuiaTab('pasteleria')">🥐 Guía de Servicio Pastelería y Chocolatería</button>
   </div>
 
 
@@ -931,6 +939,12 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
         </div>
 
 
+
+        <div class="section-title">Menú Kosher</div>
+        <div class="cafe-card" style="margin-bottom:16px">
+          <div style="font-size:12px;color:var(--white);margin-bottom:6px">Parve = vegano · sin lácteos</div>
+          <div style="font-size:12px;color:var(--white)">Dairy = con lácteos</div>
+        </div>
       </div>
     </div><!-- /guia-heladeria -->
 
@@ -939,6 +953,12 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
     <div id="guia-pasteleria" class="guia-section" style="display:none">
       <div style="padding:14px 16px">
 
+        <!-- Segmento 1: Pastelería -->
+        <div class="seg-header" onclick="toggleSeg(this)">
+          <span class="seg-title">🥐 Pastelería</span>
+          <span class="seg-chev open">▼</span>
+        </div>
+        <div class="seg-body open">
 
         <div class="section-title">Tortas · vencimiento 4 días</div>
         <div class="cafe-card" style="margin-bottom:14px">
@@ -950,10 +970,16 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
           <div class="cafe-esp">Crumble de Manzana <span class="cafe-tag">sableé, manzanas con canela, crumble crocante</span></div>
           <div class="cafe-esp">Chocotorta <span class="cafe-tag">DDL y queso crema, galletitas c/ almíbar de café</span></div>
           <div class="cafe-esp">Oreo Cake <span class="cafe-tag">galletitas, DDL y queso crema, ganache blanca</span></div>
-          <div class="cafe-esp">Lemon Pie <span class="cafe-tag">sableé, crema de limón, merengue flambeado + menta</span></div>
-          <div class="cafe-esp">Cheesecake <span class="cafe-tag">sableé, crema de queso, salsa frutos rojos + menta</span></div>
-          <div class="cafe-esp">Torta de Coco <span class="cafe-tag">sableé, DDL, crumble de coco + coco rallado</span></div>
-          <div style="font-size:11px;color:var(--gold);margin-top:8px">Decoración: Lemon Pie y Cheesecake → 2–3 hojas menta. Torta de Coco → coco rallado.</div>
+          <div class="cafe-esp">Lemon Pie <span class="cafe-tag">sableé, crema de limón, merengue flambeado + menta</span>
+            <span style="display:block;margin-top:3px;font-size:10px;color:var(--yellow);font-weight:600">⚠ Decorar: 2–3 hojas de menta</span>
+          </div>
+          <div class="cafe-esp">Cheesecake <span class="cafe-tag">sableé, crema de queso, salsa frutos rojos + menta</span>
+            <span style="display:block;margin-top:3px;font-size:10px;color:var(--yellow);font-weight:600">⚠ Decorar: 2–3 hojas de menta</span>
+          </div>
+          <div class="cafe-esp">Torta de Coco <span class="cafe-tag">sableé, DDL, crumble de coco</span>
+            <span style="display:block;margin-top:3px;font-size:10px;color:var(--yellow);font-weight:600">⚠ Decorar: coco rallado por encima</span>
+          </div>
+          
         </div>
 
 
@@ -967,12 +993,20 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 
         <div class="section-title">Panificados · vencimientos</div>
         <div style="background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r);overflow:hidden;margin-bottom:14px">
-          <div style="display:grid;grid-template-columns:1fr auto;padding:8px 12px;background:var(--dark2);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray)">
-            <span>Producto</span><span>Vence</span>
+          <div style="display:flex;flex-direction:column;gap:0">
+            <div style="display:flex;flex-direction:column;padding:10px 12px;border-bottom:1px solid #222">
+              <span style="font-size:13px;color:var(--white);font-weight:500">Medialunas y Croissant</span>
+              <span style="color:var(--red);font-weight:700;font-size:11px;margin-top:2px">Diario</span>
+            </div>
+            <div style="display:flex;flex-direction:column;padding:10px 12px;border-bottom:1px solid #222">
+              <span style="font-size:13px;color:var(--white);font-weight:500">Rolls y Pains</span>
+              <span style="color:var(--yellow);font-weight:700;font-size:11px;margin-top:2px">2 días</span>
+            </div>
+            <div style="display:flex;flex-direction:column;padding:10px 12px">
+              <span style="font-size:13px;color:var(--white);font-weight:500">Tortas</span>
+              <span style="color:var(--green);font-weight:700;font-size:11px;margin-top:2px">4 días</span>
+            </div>
           </div>
-          <div class="prop-row"><span>Medialunas y Croissant</span><span style="color:var(--red);font-weight:700;font-size:11px">Diario</span></div>
-          <div class="prop-row"><span>Rolls y Pains</span><span style="color:var(--yellow);font-weight:700;font-size:11px">2 días</span></div>
-          <div class="prop-row"><span>Tortas</span><span style="color:var(--green);font-weight:700;font-size:11px">4 días</span></div>
         </div>
 
 
@@ -989,34 +1023,122 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
         </div>
 
 
+        </div><!-- /seg-body pasteleria -->
+
+        <!-- Segmento 2: Chocolatería -->
+        <div class="seg-header" onclick="toggleSeg(this)" style="margin-top:10px">
+          <span class="seg-title">🍫 Chocolatería · Alfajores · Conitos · Frascos</span>
+          <span class="seg-chev open">▼</span>
+        </div>
+        <div class="seg-body open">
+
         <div class="section-title">Alfajores · 80g · 6 variedades</div>
         <div class="cafe-card" style="margin-bottom:14px">
-          <div style="font-size:12px;color:var(--white);margin-bottom:8px">Semiamargo · Blanco · Dark · Blanco y Nuez · Pistacho · Frutos Rojos</div>
-          <div style="font-size:11px;color:var(--gray);margin-bottom:6px">Caja x6 mixta: 2 semi · 2 blancos · 1 dark · 1 nuez</div>
-          <div style="font-size:11px;color:var(--gray);margin-bottom:6px">Caja x10 mixta: 3 semi · 3 blancos · 2 dark · 2 nuez</div>
-          <div style="font-size:11px;color:var(--gold)">Vencimiento clásicos: 70 días · Pistacho/Frutos Rojos: 60 días</div>
-        </div>
-
-
-        <div class="section-title">Tabletas · 16 variedades</div>
-        <div class="cafe-card" style="margin-bottom:14px">
-          <div style="font-size:11px;color:var(--gray);line-height:1.8">
-            <span style="color:var(--gold);font-weight:700">Con leche:</span> Chocolate con Leche · c/ DDL · c/ Almendras · c/ Avellanas · s/ Azúcar · Dubai<br>
-            <span style="color:var(--gold);font-weight:700">Dark:</span> Dark 70% · 54% c/ Avellanas · Dubai Semiamargo · Frutos del Bosque<br>
-            <span style="color:var(--gold);font-weight:700">Blanco:</span> Chocolate Blanco · s/ Azúcar · c/ Caramelo y Avellanas · c/ Avella Latte Crock<br>
-            <span style="color:var(--gold);font-weight:700">Pistacho:</span> c/ granella · c/ Avella Pistacho
+          <div style="font-size:12px;color:var(--white);margin-bottom:6px">Semiamargo · Blanco · Dark · Blanco y Nuez · Pistacho · Frutos Rojos</div>
+          <div style="font-size:11px;color:var(--gray);margin-bottom:10px">Presentación x unidad · x6 · x10 · Lata x5 · Mini x12</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray);margin-bottom:5px">Contenido cajas mixtas</div>
+          <div style="font-size:11px;color:var(--gray);margin-bottom:4px">Caja x6: 2 semi · 2 blancos · 1 dark · 1 nuez</div>
+          <div style="font-size:11px;color:var(--gray);margin-bottom:4px">Caja x10: 3 semi · 3 blancos · 2 dark · 2 nuez</div>
+          <div style="font-size:11px;color:var(--gray);margin-bottom:10px">Lata x5: 1 semi · 1 dark · 1 blanco · 1 nuez · 1 frutos rojos</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:10px;margin-bottom:4px">
+            <div style="background:var(--dark2);padding:6px 8px;border-radius:var(--rs)"><div style="color:var(--gray);margin-bottom:2px">Clásicos</div><div style="color:var(--gold);font-weight:700">70 días</div></div>
+            <div style="background:var(--dark2);padding:6px 8px;border-radius:var(--rs)"><div style="color:var(--gray);margin-bottom:2px">Pistacho / Frutos Rojos</div><div style="color:var(--gold);font-weight:700">60 días</div></div>
           </div>
         </div>
 
 
-        <div class="section-title">Latas Carrusel</div>
-        <div class="cafe-card" style="margin-bottom:16px">
-          <div class="cafe-esp">Lata Verde (Pistacho) <span class="cafe-tag">4 mini Alf. Pistacho · 3 Conitos Pistacho · 3 Viennesi Pistacho · 2+2 Squares Pistacho</span></div>
-          <div class="cafe-esp">Lata Bordo (Clásica) <span class="cafe-tag">2 mini Alf. Semi · 2 Blanco · 2 Nuez · 2 Conitos Blanco · 1 Conito Semi · 2+2 Squares</span></div>
-          <div class="cafe-esp">Lata Negra (Dark) <span class="cafe-tag">4 mini Alf. Dark · 3 Conitos Semi · 3 Viennesi Fondente · 2+2 Squares Dark</span></div>
-          <div style="font-size:11px;color:var(--red);margin-top:8px">⚠ La unidad exhibida NO se vende — entregar del stock disponible.</div>
+        <div class="section-title">Conitos · 4 variedades</div>
+        <div class="cafe-card" style="margin-bottom:14px">
+          <div style="font-size:12px;color:var(--white);margin-bottom:6px">Semiamargo · Blanco · Pistacho · Frutos Rojos</div>
+          <div style="font-size:11px;color:var(--gray);margin-bottom:10px">Presentación x unidad · caja x6</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:10px">
+            <div style="background:var(--dark2);padding:6px 8px;border-radius:var(--rs)"><div style="color:var(--gray);margin-bottom:2px">Clásicos</div><div style="color:var(--gold);font-weight:700">60 días</div></div>
+            <div style="background:var(--dark2);padding:6px 8px;border-radius:var(--rs)"><div style="color:var(--gray);margin-bottom:2px">Pistacho / Frutos Rojos</div><div style="color:var(--gold);font-weight:700">45 días</div></div>
+          </div>
         </div>
 
+
+        <div class="section-title">Viennesi</div>
+        <div class="cafe-card" style="margin-bottom:14px">
+          <div style="font-size:12px;color:var(--white);margin-bottom:8px">Son obleas rellenas de crema, cubiertas en chocolate.</div>
+          <div style="font-size:11px;color:var(--gray);margin-bottom:6px">Fondente · Clásica (vainilla) · Pistacho</div>
+          <div style="font-size:11px;color:var(--gray)">Unidad · Caja x4 (mismo sabor) · Surtido x9 (3 de cada)</div>
+        </div>
+
+        <!-- Sub-segmento: Tabletas + Packs -->
+        <div class="seg-header" onclick="toggleSeg(this)" style="margin-top:10px">
+          <span class="seg-title">🍫 Tabletas & Packs · 16 variedades</span>
+          <span class="seg-chev open">▼</span>
+        </div>
+        <div class="seg-body open">
+          <div class="cafe-card" style="margin-bottom:14px;margin-top:10px">
+            <div style="font-size:11px;color:var(--gray);line-height:1.8">
+              <span style="color:var(--gold);font-weight:700">Con leche:</span> Chocolate con Leche · c/ DDL · c/ Almendras · c/ Avellanas · s/ Azúcar · Dubai<br>
+              <span style="color:var(--gold);font-weight:700">Chocolate negro:</span> Dark 70% · 54% c/ Avellanas · Dubai Semiamargo<br>
+              <span style="color:var(--gold);font-weight:700">Blanco:</span> Chocolate Blanco · s/ Azúcar · c/ Caramelo y Avellanas · c/ Avella Latte Crock · Frutos del Bosque<br>
+              <span style="color:var(--gold);font-weight:700">Pistacho:</span> c/ granella · c/ Avella Pistacho
+            </div>
+          </div>
+          <div class="section-title">Packs sugeridos x6</div>
+          <div class="cafe-card" style="margin-bottom:4px">
+            <div style="font-size:11px;font-weight:700;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Pack Negro</div>
+            <div style="font-size:12px;color:var(--white);line-height:1.8">Chocolate con Leche con DDL · Chocolate con Leche · Pistacho con granella · Pistacho con Avella Pistacho · Chocolate Dark · Chocolate Frutos del Bosque</div>
+          </div>
+          <div class="cafe-card" style="margin-bottom:14px">
+            <div style="font-size:11px;font-weight:700;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Pack Blanco</div>
+            <div style="font-size:12px;color:var(--white);line-height:1.8">Chocolate con Leche con DDL · Chocolate Blanco · Pistacho con granella · Pistacho con Avella Pistacho · Chocolate Blanco con Caramelo y Avellanas · Chocolate Blanco con Avella Latte Crock</div>
+          </div>
+          <div style="background:var(--teal-bg);border:1px solid var(--teal);border-radius:var(--rs);padding:10px 12px;margin-bottom:14px;font-size:12px;color:#9dd;line-height:1.6">
+            💡 Cuando el cliente muestra interés: ofrecer <strong>Pack Negro o Pack Blanco</strong> (precio fijo), o armar 6 tabletas a elección — la caja es de cortesía (cobrar por SKU individual).
+          </div>
+        </div><!-- /seg-body tabletas-packs -->
+
+        <!-- Sub-segmento: Avellas & Frascos -->
+        <div class="seg-header" onclick="toggleSeg(this)" style="margin-top:10px">
+          <span class="seg-title">🫙 Avellas & Frascos</span>
+          <span class="seg-chev open">▼</span>
+        </div>
+        <div class="seg-body open">
+          <div class="section-title" style="margin-top:10px">Avellas · 6 variedades</div>
+          <div class="cafe-card" style="margin-bottom:14px">
+            <div style="font-size:12px;color:var(--white);margin-bottom:8px">Pistacho · Pistacho Crock · Gianduia · Gianduia Crock · Dubai · Coco Rock</div>
+            <div style="font-size:11px;color:var(--gray)">Dulce de leche premium — frasco 450 gr · libre de gluten</div>
+          </div>
+          <div class="section-title">Avella Collection</div>
+          <div class="cafe-card" style="margin-bottom:14px">
+            <div class="cafe-esp">Avella Collection Clásico <span class="cafe-tag">1 Avella Pistacho + 1 Avella Pistacho Crock + 1 Avella Gianduia</span></div>
+            <div class="cafe-esp">Avella Collection Pistacho <span class="cafe-tag">1 Avella Pistacho + 1 Avella Pistacho Crock + 1 Avella Dubai</span></div>
+            <div class="cafe-esp">Avella Collection Dubai <span class="cafe-tag">3 Avella Dubai</span></div>
+          </div>
+        </div>
+
+
+        <!-- Sub-segmento: Latas -->
+        <div class="seg-header" onclick="toggleSeg(this)" style="margin-top:10px">
+          <span class="seg-title">🎀 Latas Carrusel & Corazón</span>
+          <span class="seg-chev open">▼</span>
+        </div>
+        <div class="seg-body open">
+          <div class="section-title" style="margin-top:10px">Latas Carrusel</div>
+          <div class="cafe-card" style="margin-bottom:14px">
+            <div class="cafe-esp">Lata Verde · Pistacho
+              <span class="cafe-tag">4 mini Alf. Pistacho · 3 Conitos Pistacho · 3 Viennesi Pistacho · 2 Squares Choco Pistacho · 2 Squares Choco Pistacho c/ Avella Pistacho</span>
+            </div>
+            <div class="cafe-esp">Lata Bordo · Clásica
+              <span class="cafe-tag">2 mini Alf. Semiamargo · 2 mini Alf. Blanco · 2 mini Alf. Nuez · 2 Conitos Blanco · 1 Conito Semiamargo · 2 Squares Choco Leche · 2 Squares Choco Blanco</span>
+            </div>
+            <div class="cafe-esp">Lata Negra · Dark
+              <span class="cafe-tag">4 mini Alf. Dark · 3 Conitos Semiamargo · 3 Viennesi Fondente · 2 Squares Choco Leche y Avellana · 2 Squares Choco Semiamargo</span>
+            </div>
+            <div style="background:var(--red-bg);border:1px solid var(--red);border-radius:var(--rs);padding:8px 10px;margin-top:8px;font-size:11px;color:var(--red);line-height:1.5">⚠ <strong>IMPORTANTE:</strong> La unidad exhibida NO debe venderse. Al momento de la venta entregar una unidad del stock disponible, o armarla en el momento. Aplica para todo el sector de merchandising.</div>
+          </div>
+          <div class="section-title">Lata Corazón</div>
+          <div class="cafe-card" style="margin-bottom:14px">
+            <div class="cafe-esp">Lata Corazón <span class="cafe-tag">12 bombones de chocolate con leche rellenos de DDL</span></div>
+          </div>
+        </div>
+
+        </div><!-- /seg-body chocolateria -->
 
       </div>
     </div><!-- /guia-pasteleria -->
@@ -3347,6 +3469,14 @@ function updateCabeceraStatus() {
   badge.textContent = ok ? '✓ Completo' : 'Incompleto';
   badge.className   = 'cabecera-status ' + (ok ? 'ok' : 'pending');
   updateFormMeta();
+}
+
+function toggleSeg(header) {
+  const body = header.nextElementSibling;
+  const chev = header.querySelector('.seg-chev');
+  const open = body.classList.contains('open');
+  body.classList.toggle('open', !open);
+  if (chev) chev.classList.toggle('open', !open);
 }
 
 function setActiveNav(id) {
