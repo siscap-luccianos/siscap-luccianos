@@ -3856,248 +3856,227 @@ function exportarDashPDF() {
   if (!local) { showToast("⚠ Generá el dashboard primero"); return; }
   if (!window.jspdf) { showToast('⚠ jsPDF no disponible'); return; }
   const d = window._dashData;
-  if (!d) { showToast('⚠ Generá el dashboard primero'); return; }
-
   showToast('Generando PDF...', 5000);
+
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
-  const W = 210, H = 297, ML = 14, MR = 14, IW = W - ML - MR;
-  let y = 0;
+  // LANDSCAPE A4: 297 x 210
+  const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'landscape' });
+  const W = 297, H = 210;
+  const ML = 14, MT = 14;
 
-  const C_BLACK  = [13, 13, 13];
-  const C_GOLD   = [180, 140, 50];
-  const C_WHITE  = [245, 240, 232];
-  const C_GRAY1  = [80, 80, 80];
-  const C_GRAY2  = [140, 140, 140];
-  const C_GRAY3  = [220, 220, 220];
-  const C_GRAY4  = [248, 248, 248];
-  const C_GREEN  = [39, 150, 89];
-  const C_YELLOW = [180, 120, 10];
-  const C_RED    = [190, 50, 40];
-  const C_TEAL   = [93, 202, 165];
+  // ── PALETA (igual al PPTX) ──
+  const NAVY    = [18, 26, 54];      // fondo principal
+  const NAVY2   = [28, 38, 68];      // cards
+  const NAVY3   = [38, 50, 85];      // cards más claras
+  const TEAL    = [0, 168, 150];     // acento teal
+  const GOLD    = [201, 165, 50];    // dorado
+  const WHITE   = [245, 240, 232];
+  const GRAY    = [140, 150, 170];
+  const GREEN   = [39, 180, 100];
+  const YELLOW  = [240, 160, 20];
+  const RED     = [220, 60, 50];
+  const ORANGE  = [220, 100, 30];
 
-  function colorForPct(pct) {
-    return pct >= 80 ? C_GREEN : pct >= 66 ? C_YELLOW : C_RED;
+  function cPct(pct) {
+    return pct >= 80 ? GREEN : pct >= 66 ? YELLOW : pct >= 50 ? ORANGE : RED;
   }
-  function labelForPct(pct) {
-    return pct >= 80 ? 'Sólido' : pct >= 70 ? 'Aceptable' : pct >= 50 ? 'Reforzar' : 'Crítico';
+  function lPct(pct) {
+    return pct >= 80 ? 'SÓLIDO' : pct >= 70 ? 'ACEPTABLE' : pct >= 50 ? 'REFORZAR' : 'CRÍTICO';
   }
+  function trunc(s, n) { return s && s.length > n ? s.substring(0,n)+'...' : (s||''); }
 
-  // ── Header ──
-  doc.setFillColor(...C_BLACK);
-  doc.rect(0, 0, W, 24, 'F');
-  doc.setFillColor(...C_GOLD);
-  doc.rect(0, 0, 3, 24, 'F');
+  // ── FONDO ──
+  doc.setFillColor(...NAVY);
+  doc.rect(0, 0, W, H, 'F');
+
+  // ── TÍTULO ──
+  const localNombre = local.replace("Lucciano's ", '');
+  const mes = new Date().toLocaleDateString('es-AR', { month:'long', year:'numeric' });
+  const mesCapit = mes.charAt(0).toUpperCase() + mes.slice(1);
+
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(13);
-  doc.setTextColor(...C_GOLD);
-  doc.text('SisCap', ML, 10);
+  doc.setFontSize(18);
+  doc.setTextColor(...WHITE);
+  doc.text(`${localNombre} — Resultado Evaluaciones · ${mesCapit}`, ML, MT + 8);
+
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(7);
-  doc.setTextColor(160, 160, 160);
-  doc.text("Dashboard · Sistema de Capacitación v2", ML, 16);
-  const fechaHoy = new Date().toLocaleDateString('es-AR');
-  doc.setFontSize(7.5);
-  doc.setTextColor(150, 150, 150);
-  doc.text(fechaHoy, W - MR, 16, { align: 'right' });
-  y = 30;
+  doc.setFontSize(9);
+  doc.setTextColor(...GRAY);
+  doc.text(`${d.colabs.length} colaborador${d.colabs.length!==1?'es':''} evaluado${d.colabs.length!==1?'s':''} · Evaluador: ${d.evaluador}`, ML, MT + 15);
 
-  // ── Título local ──
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(16);
-  doc.setTextColor(...C_BLACK);
-  const localCorto = local.length > 50 ? local.substring(0,50)+'...' : local;
-  doc.text(localCorto, ML, y);
-  y += 6;
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
-  doc.setTextColor(...C_GRAY2);
-  doc.text(`${d.colabs.length} colaborador${d.colabs.length!==1?'es':''} evaluado${d.colabs.length!==1?'s':''} · Evaluador: ${d.evaluador}`, ML, y);
-  y += 8;
+  // Línea teal
+  doc.setDrawColor(...TEAL);
+  doc.setLineWidth(0.8);
+  doc.line(ML, MT + 19, W - ML, MT + 19);
 
-  // Línea
-  doc.setDrawColor(...C_GRAY3);
-  doc.setLineWidth(0.3);
-  doc.line(ML, y, W - MR, y);
-  y += 6;
+  let y = MT + 24;
 
-  // ── KPIs (4 tarjetas) ──
-  const kpiW = IW / 4 - 2;
+  // ── KPIs (4 cards en fila) ──
+  const kpiW = 58, kpiH = 26, kpiGap = 4;
   const kpis = [
-    { valor: d.promedio + '%', label: 'Promedio local', color: colorForPct(d.promedio) },
-    { valor: String(d.enRiesgo), label: 'En riesgo (≤66%)', color: C_RED },
-    d.modCritico ? { valor: d.modCritico.pct + '%', label: d.modCritico.nombre, sub: 'Módulo crítico', color: C_RED } : null,
-    d.modSolido  ? { valor: d.modSolido.pct + '%',  label: d.modSolido.nombre,  sub: 'Módulo sólido',  color: C_GREEN } : null,
-  ].filter(Boolean);
+    { val: d.promedio + '%',  label: 'Promedio',    sub: 'del local',       color: cPct(d.promedio) },
+    { val: d.modCritico ? d.modCritico.pct + '%' : '—', label: d.modCritico ? trunc(d.modCritico.nombre,12) : '—', sub: '(módulo crítico)', color: RED },
+    { val: d.modSolido  ? d.modSolido.pct  + '%' : '—', label: d.modSolido  ? trunc(d.modSolido.nombre,12)  : '—', sub: '(más sólido)',      color: GREEN },
+    { val: String(d.enRiesgo), label: 'Con riesgo alto', sub: '(≤ 66%)', color: RED },
+  ];
 
   kpis.forEach((k, i) => {
-    const x = ML + i * (kpiW + 2.7);
-    doc.setFillColor(...C_GRAY4);
-    doc.rect(x, y, kpiW, 18, 'F');
-    doc.setDrawColor(...C_GRAY3);
-    doc.setLineWidth(0.2);
-    doc.rect(x, y, kpiW, 18, 'D');
+    const x = ML + i * (kpiW + kpiGap);
+    doc.setFillColor(...NAVY2);
+    doc.roundedRect(x, y, kpiW, kpiH, 2, 2, 'F');
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(18);
+    doc.setFontSize(22);
     doc.setTextColor(...k.color);
-    doc.text(k.valor, x + kpiW/2, y + 9, { align: 'center' });
+    doc.text(k.val, x + kpiW/2, y + 12, { align: 'center' });
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7);
-    doc.setTextColor(...C_GRAY2);
-    const labelCorto = k.label.length > 18 ? k.label.substring(0,18)+'...' : k.label;
-    doc.text(labelCorto, x + kpiW/2, y + 15, { align: 'center' });
+    doc.setFontSize(8);
+    doc.setTextColor(...GRAY);
+    doc.text(k.label, x + kpiW/2, y + 19, { align: 'center' });
+    doc.text(k.sub,   x + kpiW/2, y + 24, { align: 'center' });
   });
-  y += 24;
 
-  // ── Módulos ──
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
-  doc.setTextColor(...C_GRAY2);
-  doc.text('RESULTADO POR MÓDULO', ML, y);
-  y += 4;
+  y += kpiH + 8;
 
-  // Header tabla
-  doc.setFillColor(...C_BLACK);
-  doc.rect(ML, y, IW, 7, 'F');
+  // ── DOS COLUMNAS ──
+  const colLeft  = ML;
+  const colRight = W / 2 + 4;
+  const colW     = W / 2 - ML - 4;
+
+  // — Columna izquierda: RESULTADO DEL EQUIPO —
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
-  doc.setTextColor(255,255,255);
-  doc.text('Módulo', ML + 3, y + 4.5);
-  doc.text('%', W - MR - 3, y + 4.5, { align: 'right' });
-  y += 7;
+  doc.setTextColor(...TEAL);
+  doc.setCharSpace(3);
+  doc.text('RESULTADO DEL EQUIPO', colLeft, y);
+  doc.setCharSpace(0);
+  y += 5;
 
-  d.modOrdenados.forEach((m, mi) => {
-    const bg = mi % 2 === 0 ? [255,255,255] : C_GRAY4;
-    doc.setFillColor(...bg);
-    doc.rect(ML, y, IW, 9, 'F');
-    doc.setDrawColor(...C_GRAY3);
-    doc.setLineWidth(0.1);
-    doc.line(ML, y + 9, ML + IW, y + 9);
+  const mods = d.modOrdenados || [];
+  const modRowH = 7.5;
+
+  mods.forEach(m => {
+    const c = cPct(m.pct);
+    const barMaxW = colW - 75;
 
     // Nombre
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(...C_BLACK);
-    doc.text(m.nombre, ML + 3, y + 6);
+    doc.setFontSize(9);
+    doc.setTextColor(...WHITE);
+    doc.text(m.nombre, colLeft, y + 5);
 
-    // Barra
-    const barX = ML + 75;
-    const barW = IW - 75 - 22;
-    doc.setFillColor(220, 220, 220);
-    doc.rect(barX, y + 3, barW, 3.5, 'F');
-    doc.setFillColor(...colorForPct(m.pct));
-    doc.rect(barX, y + 3, barW * m.pct / 100, 3.5, 'F');
+    // Barra (fondo)
+    const barX = colLeft + 48;
+    doc.setFillColor(...NAVY3);
+    doc.roundedRect(barX, y + 1.5, barMaxW, 4, 1, 1, 'F');
+
+    // Barra (relleno)
+    doc.setFillColor(...c);
+    const fillW = Math.max(2, barMaxW * m.pct / 100);
+    doc.roundedRect(barX, y + 1.5, fillW, 4, 1, 1, 'F');
 
     // Porcentaje
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(8);
-    doc.setTextColor(...colorForPct(m.pct));
-    doc.text(m.pct + '%', W - MR - 3, y + 6, { align: 'right' });
-    y += 9;
-  });
-  y += 8;
+    doc.setFontSize(9);
+    doc.setTextColor(...c);
+    doc.text(m.pct + '%', barX + barMaxW + 4, y + 5.5);
 
-  // ── Acciones ──
-  if (d.acciones.length) {
-    if (y > H - 60) { doc.addPage(); y = 16; }
+    // Badge
+    const label = lPct(m.pct);
+    const badgeX = barX + barMaxW + 16;
+    doc.setFillColor(...NAVY3);
+    doc.roundedRect(badgeX, y + 0.5, 22, 5.5, 1, 1, 'F');
+    doc.setDrawColor(...c);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(badgeX, y + 0.5, 22, 5.5, 1, 1, 'D');
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(8);
-    doc.setTextColor(...C_GRAY2);
-    doc.text('ÁREAS A REFORZAR', ML, y);
-    y += 4;
+    doc.setFontSize(5.5);
+    doc.setTextColor(...c);
+    doc.text(label, badgeX + 11, y + 4.5, { align: 'center' });
 
-    d.acciones.forEach(a => {
-      if (y > H - 22) { doc.addPage(); y = 16; }
-      const pColor = a.p === 'P1' ? C_RED : a.p === 'P2' ? C_YELLOW : [60,120,180];
-      doc.setFillColor(248, 248, 248);
-      doc.rect(ML, y, IW, 14, 'F');
-      doc.setDrawColor(...C_GRAY3);
-      doc.setLineWidth(0.2);
-      doc.rect(ML, y, IW, 14, 'D');
-      // Badge
-      doc.setFillColor(...pColor);
-      doc.circle(ML + 5, y + 7, 3.5, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(7);
-      doc.setTextColor(255,255,255);
-      doc.text(a.p, ML + 5, y + 8.5, { align: 'center' });
-      // Texto
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(8);
-      doc.setTextColor(...C_BLACK);
-      const tit = a.titulo.length > 70 ? a.titulo.substring(0,70)+'...' : a.titulo;
-      doc.text(tit, ML + 12, y + 6);
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(7);
-      doc.setTextColor(...C_GRAY1);
-      const desc = a.desc.length > 90 ? a.desc.substring(0,90)+'...' : a.desc;
-      doc.text(desc, ML + 12, y + 11);
-      y += 16;
-    });
-    y += 4;
-  }
+    y += modRowH;
+  });
 
-  // ── Colaboradores ──
-  if (y > H - 60) { doc.addPage(); y = 16; }
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
-  doc.setTextColor(...C_GRAY2);
-  doc.text('EQUIPO EVALUADO', ML, y);
-  y += 4;
+  // — Columna derecha: ÁREA A REFORZAR —
+  let yr = MT + 24 + kpiH + 8 + 5;
 
-  doc.setFillColor(...C_BLACK);
-  doc.rect(ML, y, IW, 7, 'F');
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
-  doc.setTextColor(255,255,255);
-  doc.text('Colaborador', ML + 3, y + 4.5);
-  doc.text('Resultado', W - MR - 3, y + 4.5, { align: 'right' });
-  y += 7;
+  doc.setTextColor(...TEAL);
+  doc.setCharSpace(3);
+  doc.text('ÁREA A REFORZAR', colRight, yr);
+  doc.setCharSpace(0);
+  yr += 5;
 
-  [...d.colabs].sort((a,b) => b.porcentaje - a.porcentaje).forEach((c, ci) => {
-    if (y > H - 18) { doc.addPage(); y = 16; }
-    const bg = ci % 2 === 0 ? [255,255,255] : C_GRAY4;
-    doc.setFillColor(...bg);
-    doc.rect(ML, y, IW, 9, 'F');
-    doc.setDrawColor(...C_GRAY3);
-    doc.setLineWidth(0.1);
-    doc.line(ML, y + 9, ML + IW, y + 9);
+  const acciones = d.acciones || [];
+  acciones.forEach(a => {
+    const acH = 16;
+    // Card
+    doc.setFillColor(...NAVY2);
+    doc.roundedRect(colRight, yr, colW, acH, 2, 2, 'F');
 
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(...C_BLACK);
-    doc.text(c.evaluado, ML + 3, y + 6);
+    // Badge P1/P2/P3
+    const pColor = a.p === 'P1' ? RED : a.p === 'P2' ? YELLOW : [60,120,180];
+    doc.setFillColor(...pColor);
+    doc.roundedRect(colRight + 2, yr + 3.5, 7, 7, 1, 1, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(6);
+    doc.setTextColor(255,255,255);
+    doc.text(a.p, colRight + 5.5, yr + 8.5, { align: 'center' });
 
-    // Barra
-    const barX2 = ML + 80;
-    const barW2 = IW - 80 - 22;
-    doc.setFillColor(220,220,220);
-    doc.rect(barX2, y + 3, barW2, 3.5, 'F');
-    doc.setFillColor(...colorForPct(c.porcentaje));
-    doc.rect(barX2, y + 3, barW2 * c.porcentaje / 100, 3.5, 'F');
-
+    // Título
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(8);
-    doc.setTextColor(...colorForPct(c.porcentaje));
-    doc.text(c.porcentaje + '%', W - MR - 3, y + 6, { align: 'right' });
-    y += 9;
-  });
+    doc.setTextColor(...WHITE);
+    doc.text(trunc(a.titulo, 52), colRight + 12, yr + 7);
 
-  // ── Footer ──
-  const totalPages = doc.internal.getNumberOfPages();
-  for (let p = 1; p <= totalPages; p++) {
-    doc.setPage(p);
-    doc.setDrawColor(...C_GRAY3);
-    doc.setLineWidth(0.3);
-    doc.line(ML, H - 10, W - MR, H - 10);
+    // Descripción
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(6.5);
-    doc.setTextColor(...C_GRAY2);
-    doc.text("SisCap v2 · Lucciano's · Dashboard de Capacitación", ML, H - 6);
-    doc.text('Página ' + p + ' de ' + totalPages, W - MR, H - 6, { align: 'right' });
-  }
+    doc.setTextColor(...GRAY);
+    doc.text(trunc(a.desc, 72), colRight + 12, yr + 12.5);
 
-  const nombre = 'Dashboard_' + local.replace(/[^a-zA-Z0-9]/g,'_').substring(0,30) + '_' + fechaHoy.replace(/\//g,'-') + '.pdf';
+    yr += acH + 2;
+  });
+
+  // ── FOOTER: COLABORADORES ──
+  const footerY = H - 22;
+  doc.setDrawColor(...TEAL);
+  doc.setLineWidth(0.5);
+  doc.line(ML, footerY, W - ML, footerY);
+
+  const colabs = [...d.colabs].sort((a,b) => b.porcentaje - a.porcentaje);
+  const colabW = (W - ML*2) / Math.min(colabs.length, 8);
+
+  colabs.slice(0, 8).forEach((c, i) => {
+    const cx = ML + i * colabW + colabW / 2;
+    const col = cPct(c.porcentaje);
+
+    // Barra de color arriba del nombre
+    doc.setFillColor(...col);
+    doc.rect(ML + i * colabW, footerY + 1, colabW - 2, 2.5, 'F');
+
+    // Nombre
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    doc.setTextColor(...WHITE);
+    const nombreCorto = c.evaluado.split(' ').slice(0,2).join(' ');
+    doc.text(nombreCorto, cx, footerY + 8, { align: 'center' });
+
+    // Pct + label
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(...col);
+    doc.text(`${c.porcentaje}%  ${lPct(c.porcentaje)}`, cx, footerY + 14, { align: 'center' });
+  });
+
+  // Footer texto
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(6);
+  doc.setTextColor(...GRAY);
+  doc.text("SisCap v2 · Lucciano's · Sistema de Capacitación", ML, H - 4);
+  doc.text(new Date().toLocaleDateString('es-AR'), W - ML, H - 4, { align: 'right' });
+
+  const nombre = 'Dashboard_' + localNombre.replace(/[^a-zA-Z0-9]/g,'_').substring(0,25) + '.pdf';
   _descargarPDF(doc, nombre);
   showToast('✓ PDF generado');
 }
