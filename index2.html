@@ -472,7 +472,7 @@ body::-webkit-scrollbar{display:none}
 <div id="screen-login" class="screen active">
   <div class="login-logo">SisCap</div>
   <div class="login-sub">Sistema de Capacitación v2</div>
-  <div style="font-size:10px;color:#555;margin-bottom:10px;letter-spacing:1px">Acceso a guías: usuario <strong style="color:#888">guia</strong></div>
+  <div style="font-size:10px;color:#555;margin-bottom:10px;letter-spacing:1px">Acceso a guías: usuario <strong style="color:#888">invitado</strong> · contraseña: clave de tu local</div>
   <div class="login-card">
     <h2>Iniciar sesión</h2>
     <div class="field"><label>Usuario</label><input type="text" id="login-user" placeholder="Tu usuario" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"/></div>
@@ -741,6 +741,10 @@ body::-webkit-scrollbar{display:none}
       </div>
       <div class="config-section-body" id="usuarios-lista"><div class="spinner-wrap"><div class="spinner"></div></div></div>
       </div><!-- /usuarios-collapsible -->
+      <div style="padding:10px 14px;border-top:1px solid #2a2a2a">
+        <div class="section-title" style="margin-bottom:8px">🏪 Acceso de locales a guías</div>
+        <div id="accesos-locales-lista"><div class="spinner-wrap"><div class="spinner"></div></div></div>
+      </div>
       <div style="padding:10px 14px;border-top:1px solid #2a2a2a">
         <div class="section-title" style="margin-bottom:8px">👤 Entrar como otro usuario</div>
         <select id="impersonar-sel" class="filter-eval" style="width:100%;margin-bottom:8px">
@@ -1506,8 +1510,7 @@ const USUARIOS = {
   barbarariccitelli: { pass:'Luccianos2026', nombre:'Barbara Riccitelli' },
   'fabricio@luccianos.com.ar': { pass:'Renata2525', nombre:'Fabricio' },
   'operaciones.franquicias@luccianos.com.ar': { pass:'Luccianos2025', nombre:'Carlos Torres' },
-  guia: { pass:'guia2026', nombre:'Guía', isGuest:true },
-  'guia': { pass:'guia2026', nombre:'Guia', isGuest:true },
+  invitado: { pass:'__local__', nombre:'Invitado', isGuest:true },
 };
 
 
@@ -1749,18 +1752,149 @@ function calcLabel(v) {
 // ═══════════════════════════════════════════════════════════
 // AUTH / LOGIN
 // ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// MAPA DE CLAVES POR LOCAL — acceso invitado
+// ═══════════════════════════════════════════════════════════
+const CLAVES_LOCALES = {
+  "martinez":           "Lucciano's Martinez GBA",
+  "olivos":             "Lucciano's Olivos GBA",
+  "parqueavellaneda":   "Lucciano's Parque Avellaneda Shopping GBA",
+  "ituzaingo":          "Lucciano's Ituzaingo GBA",
+  "distritot":          "Lucciano's Distrito T GBA",
+  "adrogue":            "Lucciano's Adrogué GBA",
+  "sanmiguel":          "Lucciano's San Miguel GBA",
+  "parqueleloir":       "Lucciano's Parque Leloir GBA",
+  "quilmes":            "Lucciano's Quilmes GBA",
+  "caseros":            "Lucciano's Caseros GBA",
+  "ramosmejia":         "Lucciano's Ramos Mejia GBA",
+  "abasto":             "Lucciano's Shopping Abasto CABA",
+  "laimprentagranhotel":"Lucciano's La Imprenta Gran Hotel CABA",
+  "distritoarecos":     "Lucciano's Distrito Arcos CABA",
+  "rosedal":            "Lucciano's Arcos del Rosedal CABA",
+  "villadelparque":     "Lucciano's Villa del Parque CABA",
+  "honduras":           "Lucciano's Honduras CABA",
+  "cidcampeador":       "Lucciano's Cid Campeador CABA",
+  "devoto":             "Lucciano's Devoto CABA",
+  "recoleta":           "Lucciano's Recoleta CABA",
+  "dot":                "Lucciano's Dot CABA",
+  "dique":              "Lucciano's Puerto Madero Dique CABA",
+  "puertomadero":       "Lucciano's Puerto Madero CABA",
+  "caballito":          "Lucciano's Caballito CABA",
+  "parquerivadavia":    "Lucciano's Parque Rivadavia CABA",
+  "libertador":         "Lucciano's Libertador CABA",
+  "villaurquiza":       "Lucciano's Villa Urquiza CABA",
+  "villaurquiza2":      "Lucciano's Villa Urquiza II CABA",
+  "villaluro":          "Lucciano's Villa Luro CABA",
+  "coghlan":            "Lucciano's Coghlan CABA",
+  "lascanitas":         "Lucciano's Las Cañitas CABA",
+  "colegiales":         "Lucciano's Colegiales CABA",
+  "aguero":             "Lucciano's Agüero CABA",
+  "nunez":              "Lucciano's Nuñez CABA",
+  "belgranoc":          "Lucciano's Belgrano C CABA",
+  "bajobelbrano":       "Lucciano's Bajo Belgrano CABA",
+  "pacifico":           "Lucciano's Galerias Pacifico CABA",
+  "santelmo":           "Lucciano's San Telmo CABA",
+  "paseodelangel":      "Lucciano's Paseo del Angel CABA",
+  "plazahoussay":       "Lucciano's Plaza Houssay CABA",
+  "palermochico":       "Lucciano's Palermo Chico CABA",
+  "patiobullrich":      "Lucciano's Patio Bullrich CABA",
+  "obelisco":           "Lucciano's Obelisco CABA",
+  "almagro":            "Lucciano's Almagro CABA",
+  "callecorrientes":    "Lucciano's Calle Corrientes CABA",
+  "santafeyparana":     "Lucciano's Santa Fe y Parana CABA",
+  "nordelta":           "Lucciano's Nordelta Buenos Aires",
+  "baxarmercado":       "Lucciano's Baxar Mercado Buenos Aires",
+  "laplata":            "Lucciano's La Plata Buenos Aires",
+  "pilar":              "Lucciano's Pilar Buenos Aires",
+  "pilar2":             "Lucciano's Pilar II Buenos Aires",
+  "citybell":           "Lucciano's City Bell Buenos Aires",
+  "laslomitas":         "Lucciano's Las Lomitas Buenos Aires",
+  "lanus":              "Lucciano's Lanus Buenos Aires",
+  "sanfernando":        "Lucciano's San Fernando Buenos Aires",
+  "campana":            "Lucciano's Campana Buenos Aires",
+  "sannicolas":         "Lucciano's San Nicolas Buenos Aires",
+  "tandil":             "Lucciano's Tandil Buenos Aires",
+  "carilo":             "Lucciano's Carilo Buenos Aires",
+  "pinamar":            "Lucciano's Pinamar Buenos Aires",
+  "bahiablanca":        "Lucciano's Bahia Blanca Buenos Aires",
+  "villamistre":        "Lucciano's Bahia Blanca Villa Mitre Buenos Aires",
+  "cerrodelasrosas":    "Lucciano's Cerro De Las Rosas Córdoba",
+  "nuevocentro":        "Lucciano's Nuevocentro Córdoba",
+  "ribera":             "Lucciano's Ribera Shopping Santa Fe",
+  "altorosario":        "Lucciano's Alto Rosario Santa Fe",
+  "sarmiento":          "Lucciano's Peatonal Sarmiento Mendoza",
+  "palmares":           "Lucciano's Palmares Mendoza",
+  "chacrasdecoria":     "Lucciano's Chacras de Coria Mendoza",
+  "shoppingmendoza":    "Lucciano's Shopping Mendoza",
+  "resistencia":        "Lucciano's Resistencia Chaco",
+  "avargentina":        "Lucciano's Av Argentina Neuquén",
+  "paseocosta":         "Lucciano's Paseo de la Costa Neuquén",
+  "cipolletti":         "Lucciano's Cipolletti Rio Negro",
+  "gralroca":           "Lucciano's Gral Roca Rio Negro",
+  "barrionorte":        "Lucciano's Barrio Norte Tucuman",
+  "yerbabuena":         "Lucciano's Yerba Buena Tucuman",
+  "catamarca":          "Lucciano's Catamarca Catamarca",
+  "galeriassalta":      "Lucciano's Galerias Salta",
+  "altonoa":            "Lucciano's Alto NOA Salta",
+  "posadas":            "Lucciano's Posadas Misiones",
+  "madryn":             "Lucciano's Madryn Chubut",
+  "ushuaia":            "Lucciano's Ushuaia Tierra del Fuego",
+  "capitalcorrientes":  "Lucciano's Capital Corrientes",
+  "pocitos":            "Lucciano's Pocitos Uruguay",
+  "puntacarretas":      "Lucciano's Punta Carretas Uruguay",
+  "puntacarrasco":      "Lucciano's Punta Carrasco Uruguay",
+  "asuncion":           "Lucciano's Asuncion Paraguay",
+  "parquearauco":       "Lucciano's Parque Arauco Chile",
+  "alem":               "Lucciano's Alem Mar del Plata",
+  "aldrey":             "Lucciano's Aldrey Mar del Plata",
+  "central":            "Lucciano's Central Mar del Plata",
+  "constitucion":       "Lucciano's Constitucion Mar del Plata",
+  "gallegos":           "Lucciano's Gallegos Mar del Plata",
+  "guemes":             "Lucciano's Guemes Mar del Plata",
+  "paso":               "Lucciano's Paso Mar del Plata",
+  "peatonalmdp":        "Lucciano's Peatonal Mar del Plata",
+  "torreon":            "Lucciano's Torreon Mar del Plata",
+  "varese":             "Lucciano's Varese Mar del Plata",
+};
+
+function _buscarLocalPorClave(clave) {
+  // Normalizar: minúsculas, sin tildes, sin espacios
+  function norm(s) {
+    return s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,'').replace(/[^a-z0-9]/g,'');
+  }
+  const claveNorm = norm(clave);
+  // Búsqueda directa
+  if (CLAVES_LOCALES[claveNorm]) return CLAVES_LOCALES[claveNorm];
+  // Búsqueda flexible: la clave ingresada contiene o está contenida
+  for (const [k, local] of Object.entries(CLAVES_LOCALES)) {
+    if (norm(k) === claveNorm) return local;
+  }
+  return null;
+}
+
 async function doLogin() {
   const user = document.getElementById('login-user').value.trim().toLowerCase();
   const pass = document.getElementById('login-pass').value.trim();
   const err  = document.getElementById('login-error');
   const btn  = document.querySelector('#screen-login .btn-gold');
 
-
   err.textContent = '';
   if (!user || !pass) { err.textContent = 'Completá usuario y contraseña.'; return; }
 
+  // 1. Login de invitado por local — usuario 'invitado' + clave del local
+  if (user === 'invitado') {
+    const localMatch = _buscarLocalPorClave(pass.trim().toLowerCase());
+    if (localMatch) {
+      // Registrar acceso en Sheets (sin esperar)
+      apiPostBg({ action: 'logAccesoGuia', local: localMatch, fecha: new Date().toISOString() });
+      _loginExitoso('invitado', 'Invitado · ' + localMatch.replace("Lucciano's ", ""), false, true, localMatch);
+    } else {
+      err.textContent = 'Contraseña incorrecta. Verificá la clave de tu local.';
+    }
+    return;
+  }
 
-  // 1. Usuarios hardcodeados — siempre primero, sin red
+  // 2. Usuarios hardcodeados — siempre primero, sin red
   const uLocal = USUARIOS[user];
   if (uLocal) {
     if (uLocal.pass === pass) {
@@ -1807,10 +1941,10 @@ async function doLogin() {
 }
 
 
-function _loginExitoso(user, nombre, isAdmin, isGuest) {
+function _loginExitoso(user, nombre, isAdmin, isGuest, localInvitado) {
   // Invitado: SOLO puede ver guías — bloqueo total
   if (isGuest) {
-    currentUser = { username: user, nombre, isAdmin: false, isGuest: true };
+    currentUser = { username: user, nombre, isAdmin: false, isGuest: true, localInvitado: localInvitado || '' };
     document.getElementById('nav-home').style.display = 'none';
     const nd = document.getElementById('nav-dash');
     if (nd) nd.style.display = 'none';
@@ -3775,7 +3909,6 @@ async function cargarUsuarios() {
             <button class="toggle-user-btn" onclick="toggleUsuario('${esc(u.usuario)}','${esc(u.estado)}')">${u.estado==='activo'?'Desactivar':'Activar'}</button>
           </div>
         </div>`).join('');
-      // Agregar al select los usuarios de Sheets que no están en USUARIOS local
       if (impSel) {
         data.usuarios.forEach(u => {
           if (!USUARIOS[u.usuario] && u.estado === 'activo') {
@@ -3792,6 +3925,59 @@ async function cargarUsuarios() {
   } catch(e) {
     lista.innerHTML = '<div style="color:var(--gray);font-size:13px;padding:10px">Error al cargar usuarios.</div>';
   }
+
+  // ── Accesos de locales a guías ──
+  try {
+    const accData = await apiGet({ action:'getAccesosGuia' });
+    const accesosMap = {};
+    if (accData.accesos) {
+      accData.accesos.forEach(a => { accesosMap[a.local] = a.fecha; });
+    }
+    renderAccesosLocales(accesosMap);
+  } catch(e) {
+    renderAccesosLocales({});
+  }
+}
+
+function renderAccesosLocales(accesosMap) {
+  const el = document.getElementById('accesos-locales-lista');
+  if (!el) return;
+
+  const totalLocales = Object.keys(CLAVES_LOCALES).length;
+  const conAcceso    = Object.keys(accesosMap).length;
+
+  let html = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <div style="font-size:11px;color:var(--gray)">Locales con acceso registrado</div>
+    <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px">
+      <span style="color:var(--green)">${conAcceso}</span>
+      <span style="color:var(--gray)"> / ${totalLocales}</span>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:4px;max-height:300px;overflow-y:auto">`;
+
+  const todos   = Object.values(CLAVES_LOCALES);
+  const conAcc  = todos.filter(l => accesosMap[l]);
+  const sinAcc  = todos.filter(l => !accesosMap[l]);
+
+  conAcc.forEach(local => {
+    const fecha  = accesosMap[local] ? new Date(accesosMap[local]).toLocaleDateString('es-AR') : '—';
+    const nombre = local.replace("Lucciano's ", "");
+    html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 10px;background:var(--green-bg);border:1px solid var(--green);border-radius:var(--rs)">
+      <div style="font-size:12px;font-weight:600;color:var(--green)">✓ ${esc(nombre)}</div>
+      <div style="font-size:10px;color:var(--gray)">${fecha}</div>
+    </div>`;
+  });
+
+  sinAcc.forEach(local => {
+    const nombre = local.replace("Lucciano's ", "");
+    html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 10px;background:var(--dark2);border:1px solid #2a2a2a;border-radius:var(--rs)">
+      <div style="font-size:12px;color:#555">○ ${esc(nombre)}</div>
+      <div style="font-size:10px;color:#333">Sin acceso</div>
+    </div>`;
+  });
+
+  html += '</div>';
+  el.innerHTML = html;
 }
 
 
