@@ -866,9 +866,15 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
 
         <div class="section-title">Batidos</div>
         <div class="cafe-card" style="margin-bottom:14px">
-          <div class="cafe-esp">Smoothie <span class="cafe-tag">2 bochas frutales + 200ml soda</span></div>
-          <div class="cafe-esp">Milk Shake <span class="cafe-tag">2 bochas + 200ml leche + salsa + crema</span></div>
-          <div class="cafe-esp">Gelato Shake <span class="cafe-tag">helado + 100ml leche + 1 espresso ristretto</span></div>
+          <div class="cafe-esp">Smoothie
+            <span class="cafe-tag">2 bochas frutales a elección + 200ml soda</span>
+          </div>
+          <div class="cafe-esp">Milk Shake
+            <span class="cafe-tag">2 bochas a elección · leche · salsa · crema — 200ml leche</span>
+          </div>
+          <div class="cafe-esp">Gelato Shake
+            <span class="cafe-tag">Batido con helado, leche, café y crema · sabores: DDL · Tiramisú · Cookies and Cream · 100ml leche + 1 espresso con cápsula Ristretto</span>
+          </div>
         </div>
 
 
@@ -876,8 +882,51 @@ body{min-height:100%;background:var(--black);color:var(--white);font-family:'Int
         <div class="cafe-card" style="margin-bottom:14px">
           <div class="cafe-esp">Stracciatella <span class="cafe-tag">calentar 10–20 seg · usar en DDL granizado, banana split, menta granizada, peanut caramel</span></div>
           <div class="cafe-esp">DDL Repostero <span class="cafe-tag">manga en heladera · aplicar en gota grande sobre los picos · usar en dulce c/ leche, peanut caramel, tramontana, banana split</span></div>
+          <div class="cafe-esp">Mascarpone <span class="cafe-tag">agregar variegato de frutos rojos</span></div>
+          <div class="cafe-esp">Maracuyá <span class="cafe-tag">agregar variegato de maracuyá con semillas</span></div>
+          <div class="cafe-esp">Tramontana <span class="cafe-tag">salsa de caramelo + microgalletitas por encima</span></div>
+          <div class="cafe-esp">Cheesecake al Pistacchio <span class="cafe-tag">200g de crumble de pistacho bien distribuido por toda la superficie</span></div>
+          <div class="cafe-esp">Tiramisú <span class="cafe-tag">cacao amargo en polvo por encima</span></div>
+          <div class="cafe-esp">Tiramisú al Pistacho <span class="cafe-tag">cacao amargo en polvo solo en los laterales · granella de pistacho en el centro · 2 vainillas adelante de decoración</span></div>
+          <div class="cafe-esp">Sabores frutales <span class="cafe-tag">llevan fruta cortada del mismo sabor como decoración</span></div>
         </div>
 
+
+        <!-- BLOQUE PASE DE HELADO -->
+        <div style="background:linear-gradient(135deg,#0d1a2e,#0a1520);border:1px solid #2a4a6a;border-radius:var(--r);padding:18px;margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <div style="width:36px;height:36px;border-radius:50%;background:#1a3a5a;border:2px solid #5b9bd5;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🍦</div>
+            <div>
+              <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:14px;color:#5b9bd5;letter-spacing:1px;text-transform:uppercase">Pase de Helado</div>
+              <div style="font-size:10px;color:#4a7aaa;letter-spacing:1px;text-transform:uppercase;margin-top:1px">Proceso de traspaso</div>
+            </div>
+          </div>
+
+          <!-- Dos estados del armario -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+            <div style="background:#0a2a1a;border:1.5px solid #27ae60;border-radius:var(--rs);padding:11px;text-align:center">
+              <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:13px;color:#27ae60;letter-spacing:1px;margin-bottom:4px">✓ COMPLETO</div>
+              <div style="font-size:11px;color:#aaa;line-height:1.5">Vaqueta llena · lista para servir</div>
+            </div>
+            <div style="background:#2a1a0a;border:1.5px solid var(--yellow);border-radius:var(--rs);padding:11px;text-align:center">
+              <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:13px;color:var(--yellow);letter-spacing:1px;margin-bottom:4px">⚠ INCOMPLETO</div>
+              <div style="font-size:11px;color:#aaa;line-height:1.5">Vaqueta en uso · necesita traspaso</div>
+            </div>
+          </div>
+
+          <!-- Línea divisoria -->
+          <div style="border-top:1px solid #1a3a5a;margin-bottom:12px"></div>
+
+          <!-- Qué es el pase -->
+          <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
+            <div style="width:22px;height:22px;border-radius:50%;background:#1a3a5a;border:1.5px solid #5b9bd5;font-family:'Montserrat',sans-serif;font-weight:800;font-size:10px;color:#5b9bd5;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">i</div>
+            <div style="font-size:12px;color:var(--white);line-height:1.6">Cuando se hace el traspaso del helado de una vaqueta a otra se llama <span style="font-family:'Montserrat',sans-serif;font-weight:800;color:#5b9bd5;letter-spacing:.5px">PASE</span>.</div>
+          </div>
+
+          <div style="background:#0a1520;border-left:3px solid #5b9bd5;border-radius:0 var(--rs) var(--rs) 0;padding:10px 12px;font-size:11px;color:#8ab4d4;line-height:1.6">
+            En el armario los helados se identifican como <strong style="color:#5b9bd5">COMPLETOS</strong> e <strong style="color:var(--yellow)">INCOMPLETOS</strong>. Al momento del pase, el objetivo es siempre dejar el armario con vaquetas completas listas para el servicio.
+          </div>
+        </div>
 
         <div class="section-title">Chocolatera · Baño</div>
         <div class="cafe-card" style="margin-bottom:14px">
