@@ -3980,16 +3980,18 @@ function exportarDashPDF() {
     doc.text(lP(m.pct), bx+bw/2, yy-0.8, {align:'center'});
   });
 
-  // ── COLUMNA DERECHA: label + acciones ──
-  // Las acciones se distribuyen en TODA la columna derecha (no al lado de módulos)
+  // ── COLUMNA DERECHA: acciones centradas verticalmente ──
+  // Calcular altura total de acciones
+  const acH = Math.min((bodyH - 8) / Math.max(acciones.length, 1), 22);
+  const acTotalH = acciones.length * (acH + 2);
+  // Centrar verticalmente en el espacio disponible
+  const acTop = bodyTop + (bodyH - acTotalH) / 2;
+
+  // Label encima del bloque centrado
   doc.setFont('helvetica','bold'); doc.setFontSize(6.5);
   doc.setTextColor(...TEAL); doc.setCharSpace(2.5);
-  doc.text('AREA A REFORZAR', colRX, bodyTop);
+  doc.text('AREA A REFORZAR', colRX, acTop - 4);
   doc.setCharSpace(0);
-
-  const acTop = bodyTop + 5;
-  const acAvail = bodyH - 5;  // espacio disponible para acciones
-  const acH = Math.min(acAvail / Math.max(acciones.length,1), 22); // máx 22mm por acción
 
   acciones.forEach((a,i)=>{
     const pC = a.p==='P1'?RED:a.p==='P2'?YELL:[60,120,200];
@@ -3997,18 +3999,15 @@ function exportarDashPDF() {
 
     doc.setFillColor(...NAVY2); doc.roundedRect(colRX, yy, colRW, acH, 2,2,'F');
 
-    // Badge P
     const badgeSize=8;
     doc.setFillColor(...pC);
     doc.roundedRect(colRX+2.5, yy+acH/2-badgeSize/2, badgeSize, badgeSize, 1,1,'F');
     doc.setFont('helvetica','bold'); doc.setFontSize(6.5); doc.setTextColor(255,255,255);
     doc.text(a.p, colRX+2.5+badgeSize/2, yy+acH/2+1.5, {align:'center'});
 
-    // Título
     doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...WHITE);
     doc.text(tr(a.titulo, 50), colRX+14, yy+acH/2-1.5);
 
-    // Descripción
     doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...GRAY);
     doc.text(tr(a.desc, 65), colRX+14, yy+acH/2+5);
   });
