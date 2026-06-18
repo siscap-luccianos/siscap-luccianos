@@ -473,12 +473,32 @@ body::-webkit-scrollbar{display:none}
   <div class="login-logo">SisCap</div>
   <div class="login-sub">Sistema de Capacitación v2</div>
 
-  <div class="login-card">
+  <!-- Panel login -->
+  <div class="login-card" id="panel-login">
     <h2>Iniciar sesión</h2>
     <div class="field"><label>Usuario</label><input type="text" id="login-user" placeholder="Tu usuario" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"/></div>
     <div class="field"><label>Contraseña</label><input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"/></div>
     <button class="btn btn-gold" onclick="doLogin()">Ingresar</button>
     <div class="error-msg" id="login-error"></div>
+    <div style="text-align:center;margin-top:16px;font-size:12px;color:var(--gray)">
+      ¿No tenés cuenta?
+      <span onclick="toggleRegistro(true)" style="color:var(--gold);cursor:pointer;font-weight:600;margin-left:4px">Solicitá acceso</span>
+    </div>
+  </div>
+
+  <!-- Panel registro -->
+  <div class="login-card" id="panel-registro" style="display:none">
+    <h2>Solicitar acceso</h2>
+    <div style="font-size:12px;color:var(--gray);margin-bottom:16px;line-height:1.6">Tu solicitud será revisada por el administrador. Te avisarán cuando tu cuenta esté habilitada.</div>
+    <div class="field"><label>Nombre completo</label><input type="text" id="reg-nombre" placeholder="Ej: Juan Pérez" autocorrect="off"/></div>
+    <div class="field"><label>Usuario deseado</label><input type="text" id="reg-user" placeholder="Ej: juan" autocapitalize="none" autocorrect="off" spellcheck="false"/></div>
+    <div class="field"><label>Contraseña</label><input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres"/></div>
+    <button class="btn btn-gold" onclick="enviarSolicitud()">Enviar solicitud</button>
+    <div class="error-msg" id="reg-error"></div>
+    <div style="text-align:center;margin-top:16px;font-size:12px;color:var(--gray)">
+      ¿Ya tenés cuenta?
+      <span onclick="toggleRegistro(false)" style="color:var(--gold);cursor:pointer;font-weight:600;margin-left:4px">Iniciá sesión</span>
+    </div>
   </div>
 </div>
 
@@ -741,9 +761,17 @@ body::-webkit-scrollbar{display:none}
       </div>
       <div class="config-section-body" id="usuarios-lista"><div class="spinner-wrap"><div class="spinner"></div></div></div>
       </div><!-- /usuarios-collapsible -->
-      <div style="padding:10px 14px;border-top:1px solid #2a2a2a">
-        <div class="section-title" style="margin-bottom:8px">🏪 Acceso de locales a guías</div>
-        <div id="accesos-locales-lista"><div class="spinner-wrap"><div class="spinner"></div></div></div>
+      <div style="border-top:1px solid #2a2a2a">
+        <div onclick="toggleAccesosLocales()" style="padding:13px 15px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;background:var(--dark2)">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="config-section-title">🏪 Acceso de locales a guías</span>
+            <span id="accesos-chev" style="color:var(--gray);font-size:11px;transition:transform .2s">▼</span>
+          </div>
+          <span id="accesos-counter" style="font-size:11px;color:var(--gray)"></span>
+        </div>
+        <div id="accesos-locales-collapsible" style="display:none;padding:10px 14px">
+          <div id="accesos-locales-lista"><div class="spinner-wrap"><div class="spinner"></div></div></div>
+        </div>
       </div>
       <div style="padding:10px 14px;border-top:1px solid #2a2a2a">
         <div class="section-title" style="margin-bottom:8px">👤 Entrar como otro usuario</div>
@@ -3946,18 +3974,14 @@ function renderAccesosLocales(accesosMap) {
   const totalLocales = Object.keys(CLAVES_LOCALES).length;
   const conAcceso    = Object.keys(accesosMap).length;
 
-  let html = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-    <div style="font-size:11px;color:var(--gray)">Locales con acceso registrado</div>
-    <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px">
-      <span style="color:var(--green)">${conAcceso}</span>
-      <span style="color:var(--gray)"> / ${totalLocales}</span>
-    </div>
-  </div>
-  <div style="display:flex;flex-direction:column;gap:4px;max-height:300px;overflow-y:auto">`;
+  // Actualizar contador en el header colapsable
+  const counter = document.getElementById('accesos-counter');
+  if (counter) counter.textContent = conAcceso + ' / ' + totalLocales + ' accedieron';
 
-  const todos   = Object.values(CLAVES_LOCALES);
-  const conAcc  = todos.filter(l => accesosMap[l]);
-  const sinAcc  = todos.filter(l => !accesosMap[l]);
+  let html = '<div style="display:flex;flex-direction:column;gap:4px">';
+  const todos  = Object.values(CLAVES_LOCALES);
+  const conAcc = todos.filter(l => accesosMap[l]);
+  const sinAcc = todos.filter(l => !accesosMap[l]);
 
   conAcc.forEach(local => {
     const fecha  = accesosMap[local] ? new Date(accesosMap[local]).toLocaleDateString('es-AR') : '—';
@@ -3978,6 +4002,55 @@ function renderAccesosLocales(accesosMap) {
 
   html += '</div>';
   el.innerHTML = html;
+}
+
+function toggleAccesosLocales() {
+  const body = document.getElementById('accesos-locales-collapsible');
+  const chev = document.getElementById('accesos-chev');
+  const open = body.style.display === 'none' || body.style.display === '';
+  body.style.display = open ? 'block' : 'none';
+  if (chev) chev.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+function toggleRegistro(mostrar) {
+  document.getElementById('panel-login').style.display    = mostrar ? 'none'  : 'block';
+  document.getElementById('panel-registro').style.display = mostrar ? 'block' : 'none';
+  document.getElementById('login-error').textContent  = '';
+  document.getElementById('reg-error').textContent    = '';
+}
+
+async function enviarSolicitud() {
+  const nombre = document.getElementById('reg-nombre').value.trim();
+  const user   = document.getElementById('reg-user').value.trim().toLowerCase();
+  const pass   = document.getElementById('reg-pass').value.trim();
+  const err    = document.getElementById('reg-error');
+  const btn    = document.querySelector('#panel-registro .btn-gold');
+
+  err.textContent = '';
+  if (!nombre || !user || !pass) { err.textContent = 'Completá todos los campos.'; return; }
+  if (pass.length < 6)           { err.textContent = 'La contraseña debe tener al menos 6 caracteres.'; return; }
+  if (USUARIOS[user])            { err.textContent = 'Ese usuario ya existe. Probá con otro.'; return; }
+
+  btn.textContent = 'Enviando...'; btn.disabled = true;
+
+  try {
+    const data = await apiPost({ action:'createUser', nombre, user, pass, estado:'pendiente' });
+    btn.textContent = 'Enviar solicitud'; btn.disabled = false;
+    if (data.status === 'ok') {
+      document.getElementById('panel-registro').innerHTML = `
+        <div style="text-align:center;padding:20px 0">
+          <div style="font-size:36px;margin-bottom:14px">✓</div>
+          <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:16px;color:var(--green);margin-bottom:10px">Solicitud enviada</div>
+          <div style="font-size:12px;color:var(--gray);line-height:1.7;margin-bottom:20px">El administrador revisará tu solicitud y te habilitará el acceso. Volvé a intentar en unas horas.</div>
+          <span onclick="toggleRegistro(false)" style="color:var(--gold);cursor:pointer;font-size:13px;font-weight:600">← Volver al login</span>
+        </div>`;
+    } else {
+      err.textContent = data.msg || 'Error al enviar. Intentá de nuevo.';
+    }
+  } catch(e) {
+    btn.textContent = 'Enviar solicitud'; btn.disabled = false;
+    err.textContent = 'Error de conexión. Verificá tu internet.';
+  }
 }
 
 
