@@ -4563,192 +4563,154 @@ function generarAcciones(modOrdenados, colabs) {
 // ── EXPORTAR PDF DEL DASHBOARD ──────────────────────────
 function exportarDashPDF() {
   const local = window._dashData ? window._dashData.local : '';
-  if (!local) { showToast("Genera el dashboard primero"); return; }
-  if (!window.jspdf) { showToast('jsPDF no disponible'); return; }
+  if (!local) { showToast("Generá el dashboard primero"); return; }
   const d = window._dashData;
-  showToast('Generando PDF...', 5000);
 
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit:'mm', format:'a4', orientation:'landscape' });
-  const W=297, H=210, ML=12, MR=12;
+  function cC(p) { return p>=80?'#27b870':p>=66?'#f0a020':p>=50?'#e07020':'#e03030'; }
+  function lP(p) { return p>=80?'SÓLIDO':p>=70?'ACEPTABLE':p>=50?'REFORZAR':'CRÍTICO'; }
+  function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function tr(s,n) { return s&&s.length>n?s.substring(0,n)+'…':s||''; }
 
-  const NAVY  = [18,26,54];
-  const NAVY2 = [28,38,72];
-  const NAVY3 = [40,52,90];
-  const TEAL  = [0,168,150];
-  const WHITE = [240,235,220];
-  const GRAY  = [130,145,170];
-  const GREEN = [39,180,100];
-  const YELL  = [235,155,20];
-  const RED   = [215,55,45];
-  const ORA   = [215,100,25];
+  const mes   = new Date().toLocaleDateString('es-AR',{month:'long',year:'numeric'});
+  const mesC  = mes.charAt(0).toUpperCase()+mes.slice(1);
+  const nl    = local.replace("Lucciano's ","");
+  const mods  = d.modOrdenados || [];
+  const colabs = [...d.colabs].sort((a,b)=>b.porcentaje-a.porcentaje);
+  const acciones = d.acciones || [];
 
-  function cP(p){ return p>=80?GREEN:p>=66?YELL:p>=50?ORA:RED; }
-  function lP(p){ return p>=80?'SOLIDO':p>=70?'ACEPTABLE':p>=50?'REFORZAR':'CRITICO'; }
-  function tr(s,n){ return s&&s.length>n?s.substring(0,n)+'...':s||''; }
+  // ── Módulos HTML ──
+  const modsHTML = mods.map(m => {
+    const c = cC(m.pct);
+    const w = Math.max(2, m.pct);
+    return `<tr>
+      <td style="padding:6px 10px;font-size:11px;color:#1a1a2e;font-weight:600;width:130px">${esc(m.nombre)}</td>
+      <td style="padding:6px 8px;width:120px">
+        <div style="background:#e8eaf0;border-radius:4px;height:8px;overflow:hidden">
+          <div style="width:${w}%;height:100%;background:${c};border-radius:4px"></div>
+        </div>
+      </td>
+      <td style="padding:6px 6px;font-weight:800;font-size:12px;color:${c};width:40px;text-align:right">${m.pct}%</td>
+      <td style="padding:6px 6px;width:72px">
+        <span style="background:${c}22;color:${c};border:1px solid ${c};border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700">${lP(m.pct)}</span>
+      </td>
+    </tr>`;
+  }).join('');
 
-  // Fondo
-  doc.setFillColor(...NAVY); doc.rect(0,0,W,H,'F');
+  // ── Acciones HTML ──
+  const accionesHTML = acciones.map(a => {
+    const pC = a.p==='P1'?'#e03030':a.p==='P2'?'#f0a020':'#4a90d9';
+    return `<div style="background:#fff;border:1px solid #e0e4f0;border-left:4px solid ${pC};border-radius:6px;padding:10px 12px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="background:${pC};color:white;border-radius:50%;width:20px;height:20px;font-size:10px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">${esc(a.p)}</span>
+        <span style="font-size:12px;font-weight:700;color:#1a1a2e">${esc(tr(a.titulo,48))}</span>
+      </div>
+      <div style="font-size:10px;color:#666;line-height:1.5;padding-left:28px">${esc(tr(a.desc,90))}</div>
+    </div>`;
+  }).join('');
 
-  // ── TÍTULO ──
-  const nl = local.replace("Lucciano's ","");
-  const mes = new Date().toLocaleDateString('es-AR',{month:'long',year:'numeric'});
-  const mesC = mes.charAt(0).toUpperCase()+mes.slice(1);
-  doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor(...WHITE);
-  doc.text(tr(nl+' - Resultado Evaluaciones - '+mesC,72), ML, 19);
-  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...GRAY);
-  doc.text(d.colabs.length+' colaborador'+(d.colabs.length!==1?'es':'')
-    +' evaluado'+(d.colabs.length!==1?'s':'')+' - Evaluador: '+d.evaluador, ML, 26);
-  doc.setDrawColor(...TEAL); doc.setLineWidth(0.7);
-  doc.line(ML, 30, W-MR, 30);
+  // ── Colaboradores HTML ──
+  const colabsHTML = colabs.map(c => {
+    const col = cC(c.porcentaje);
+    const n   = c.evaluado.split(' ').slice(0,2).join(' ');
+    return `<div style="text-align:center;min-width:70px;flex:1">
+      <div style="font-size:14px;font-weight:800;color:${col}">${c.porcentaje}%</div>
+      <div style="font-size:9px;color:#1a1a2e;font-weight:600;margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px">${esc(tr(n,12))}</div>
+      <div style="font-size:8px;color:#fff;background:${col};border-radius:10px;padding:1px 6px;font-weight:700">${lP(c.porcentaje)}</div>
+    </div>`;
+  }).join('');
 
-  // ── KPIs (4 cards) ──
-  const kY=34, kW=60, kH=22, kG=3;
-  const kpis=[
-    {val:d.promedio+'%',  l1:'Promedio', l2:'del local', c:cP(d.promedio)},
-    {val:d.modCritico?d.modCritico.pct+'%':'--', l1:tr(d.modCritico?d.modCritico.nombre:'--',14), l2:'modulo critico', c:RED},
-    {val:d.modSolido?d.modSolido.pct+'%':'--',   l1:tr(d.modSolido?d.modSolido.nombre:'--',14),   l2:'mas solido',    c:GREEN},
-    {val:String(d.enRiesgo), l1:'Con riesgo alto', l2:'(<= 66%)', c:RED},
+  // ── KPIs ──
+  const kpis = [
+    { val: d.promedio+'%',   label: 'Promedio del local',   sub: colabs.length+' colaboradores', c: cC(d.promedio) },
+    { val: d.modCritico ? d.modCritico.pct+'%' : '—', label: 'Módulo crítico', sub: d.modCritico ? tr(d.modCritico.nombre,16) : '—', c: '#e03030' },
+    { val: d.modSolido  ? d.modSolido.pct+'%'  : '—', label: 'Más sólido',     sub: d.modSolido  ? tr(d.modSolido.nombre,16)  : '—', c: '#27b870' },
+    { val: String(d.enRiesgo), label: 'Con riesgo',     sub: '≤ 66%',            c: d.enRiesgo>0?'#e03030':'#27b870' },
   ];
-  kpis.forEach((k,i)=>{
-    const x=ML+i*(kW+kG);
-    doc.setFillColor(...NAVY2); doc.roundedRect(x,kY,kW,kH,2,2,'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(18); doc.setTextColor(...k.c);
-    doc.text(k.val, x+kW/2, kY+10, {align:'center'});
-    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...GRAY);
-    doc.text(k.l1, x+kW/2, kY+15, {align:'center'});
-    doc.text(k.l2, x+kW/2, kY+19.5, {align:'center'});
-  });
+  const kpisHTML = kpis.map(k => `
+    <div style="flex:1;background:#fff;border:1px solid #e0e4f0;border-top:3px solid ${k.c};border-radius:8px;padding:12px 14px;text-align:center">
+      <div style="font-size:26px;font-weight:900;color:${k.c};line-height:1">${esc(k.val)}</div>
+      <div style="font-size:10px;font-weight:700;color:#1a1a2e;margin:4px 0 2px;text-transform:uppercase;letter-spacing:.5px">${esc(k.label)}</div>
+      <div style="font-size:10px;color:#888">${esc(k.sub)}</div>
+    </div>`).join('');
 
-  // ── CALCULAR ESPACIO DISPONIBLE ──
-  const mods    = d.modOrdenados || [];
-  const acciones= d.acciones || [];
-  const colabs  = [...d.colabs].sort((a,b)=>b.porcentaje-a.porcentaje);
-  const total   = colabs.length;
+  const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<title>${esc(nl)} · Dashboard SisCap</title>
+<style>
+  @page { size: A4 landscape; margin: 10mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #f4f6fb; color: #1a1a2e; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  @media print {
+    body { background: #f4f6fb; }
+    .no-print { display: none !important; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  }
+</style>
+</head>
+<body>
+<div style="max-width:277mm;margin:0 auto;padding:0">
 
-  // Footer
-  const dosFila = total > 8;
-  const footH   = dosFila ? 30 : 20;
-  const footY   = H - footH - 4;
+  <!-- HEADER -->
+  <div style="background:linear-gradient(135deg,#1a1a3e,#12122e);padding:14px 20px;border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <div>
+      <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#c9a84c;margin-bottom:3px">Lucciano's · SisCap</div>
+      <div style="font-size:18px;font-weight:900;color:#fff">${esc(nl)}</div>
+      <div style="font-size:10px;color:#8888aa;margin-top:2px">${colabs.length} colaborador${colabs.length!==1?'es':''} evaluados · ${esc(d.evaluador)}</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:10px;color:#8888aa;text-transform:uppercase;letter-spacing:1px">Resultado Evaluaciones</div>
+      <div style="font-size:13px;font-weight:700;color:#c9a84c;margin-top:2px">${esc(mesC)}</div>
+    </div>
+  </div>
 
-  // Área cuerpo
-  const bodyTop = kY + kH + 6;   // ~62
-  const bodyBot = footY - 4;
-  const bodyH   = bodyBot - bodyTop;
+  <!-- KPIs -->
+  <div style="display:flex;gap:8px;margin-bottom:10px">${kpisHTML}</div>
 
-  // ── LAYOUT: izquierda módulos | derecha módulos+acciones ──
-  // Columna izquierda: módulos (mitad izquierda)
-  // Columna derecha: módulos arriba + acciones abajo
-  const colLX = ML;
-  const colRX = W/2 + 2;
-  const colLW = W/2 - ML - 6;
-  const colRW = W/2 - MR - 2;
+  <!-- CUERPO: 2 columnas -->
+  <div style="display:flex;gap:10px;margin-bottom:10px">
 
-  // Altura por fila de módulo — se estira para llenar bodyH
-  const modRowH = bodyH / Math.max(mods.length, 1);
+    <!-- Izquierda: módulos -->
+    <div style="flex:1.1;background:#fff;border:1px solid #e0e4f0;border-radius:8px;overflow:hidden">
+      <div style="background:#1a1a3e;padding:8px 14px;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#c9a84c">Resultado del equipo por módulo</div>
+      <table style="width:100%;border-collapse:collapse">
+        <tbody>${modsHTML}</tbody>
+      </table>
+    </div>
 
-  // ── COLUMNA IZQUIERDA: label + módulos ──
-  doc.setFont('helvetica','bold'); doc.setFontSize(6.5);
-  doc.setTextColor(...TEAL); doc.setCharSpace(2.5);
-  doc.text('RESULTADO DEL EQUIPO', colLX, bodyTop);
-  doc.setCharSpace(0);
+    <!-- Derecha: acciones -->
+    <div style="flex:1;background:#f8f9fd;border:1px solid #e0e4f0;border-radius:8px;overflow:hidden">
+      <div style="background:#1a1a3e;padding:8px 14px;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#c9a84c">Áreas a reforzar</div>
+      <div style="padding:10px">${accionesHTML}</div>
+    </div>
 
-  const modTop = bodyTop + 5;
-  mods.forEach((m,i)=>{
-    const c   = cP(m.pct);
-    const yy  = modTop + i*modRowH + modRowH*0.55;
-    const barX= colLX+45, barW=colLW-72;
+  </div>
 
-    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(...WHITE);
-    doc.text(tr(m.nombre,17), colLX, yy);
+  <!-- FOOTER: colaboradores -->
+  <div style="background:#fff;border:1px solid #e0e4f0;border-radius:8px;overflow:hidden">
+    <div style="background:#1a1a3e;padding:6px 14px;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#c9a84c">Equipo evaluado</div>
+    <div style="padding:10px;display:flex;gap:6px;flex-wrap:wrap;justify-content:space-around">${colabsHTML}</div>
+  </div>
 
-    // Barra
-    doc.setFillColor(...NAVY3); doc.roundedRect(barX, yy-4, barW, 4.5, 1,1,'F');
-    doc.setFillColor(...c);
-    doc.roundedRect(barX, yy-4, Math.max(2,barW*m.pct/100), 4.5, 1,1,'F');
+  <!-- Botón imprimir -->
+  <div class="no-print" style="text-align:center;margin-top:14px">
+    <button onclick="window.print()" style="background:#1a1a3e;color:#c9a84c;border:2px solid #c9a84c;padding:10px 32px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:1px">Imprimir / Guardar PDF</button>
+    <div style="font-size:11px;color:#888;margin-top:6px">En el diálogo de impresión seleccioná "Guardar como PDF" · Orientación: Horizontal</div>
+  </div>
 
-    // Porcentaje
-    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...c);
-    doc.text(m.pct+'%', barX+barW+3, yy);
+</div>
+</body>
+</html>`;
 
-    // Badge
-    const bx=barX+barW+15, bw=22, bh=5.5;
-    doc.setFillColor(...NAVY3); doc.roundedRect(bx, yy-4.5, bw, bh, 1,1,'F');
-    doc.setDrawColor(...c); doc.setLineWidth(0.25);
-    doc.roundedRect(bx, yy-4.5, bw, bh, 1,1,'D');
-    doc.setFont('helvetica','bold'); doc.setFontSize(5); doc.setTextColor(...c);
-    doc.text(lP(m.pct), bx+bw/2, yy-0.8, {align:'center'});
-  });
-
-  // ── COLUMNA DERECHA: acciones centradas verticalmente ──
-  // Calcular altura total de acciones
-  const acH = Math.min((bodyH - 8) / Math.max(acciones.length, 1), 22);
-  const acTotalH = acciones.length * (acH + 2);
-  // Centrar verticalmente en el espacio disponible
-  const acTop = bodyTop + (bodyH - acTotalH) / 2;
-
-  // Label encima del bloque centrado
-  doc.setFont('helvetica','bold'); doc.setFontSize(6.5);
-  doc.setTextColor(...TEAL); doc.setCharSpace(2.5);
-  doc.text('AREA A REFORZAR', colRX, acTop - 4);
-  doc.setCharSpace(0);
-
-  acciones.forEach((a,i)=>{
-    const pC = a.p==='P1'?RED:a.p==='P2'?YELL:[60,120,200];
-    const yy = acTop + i*(acH+2);
-
-    doc.setFillColor(...NAVY2); doc.roundedRect(colRX, yy, colRW, acH, 2,2,'F');
-
-    const badgeSize=8;
-    doc.setFillColor(...pC);
-    doc.roundedRect(colRX+2.5, yy+acH/2-badgeSize/2, badgeSize, badgeSize, 1,1,'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(6.5); doc.setTextColor(255,255,255);
-    doc.text(a.p, colRX+2.5+badgeSize/2, yy+acH/2+1.5, {align:'center'});
-
-    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...WHITE);
-    doc.text(tr(a.titulo, 50), colRX+14, yy+acH/2-1.5);
-
-    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...GRAY);
-    doc.text(tr(a.desc, 65), colRX+14, yy+acH/2+5);
-  });
-
-  // ── FOOTER: colaboradores ──
-  doc.setDrawColor(...TEAL); doc.setLineWidth(0.5);
-  doc.line(ML, footY, W-MR, footY);
-
-  const porFila = dosFila ? Math.ceil(total/2) : total;
-  const cw = (W-ML-MR) / porFila;
-  const fSize = total<=6?8.5:total<=10?7.5:6.5;
-  const fRowH = dosFila ? footH/2 : footH;
-
-  colabs.forEach((c,i)=>{
-    const fila = dosFila ? Math.floor(i/porFila) : 0;
-    const ci   = i % porFila;
-    const cx   = ML + ci*cw + cw/2;
-    const fy   = footY + fila*fRowH;
-    const col  = cP(c.porcentaje);
-
-    doc.setFillColor(...col);
-    doc.rect(ML+ci*cw, fy+1, cw-1.5, 2, 'F');
-
-    const n = c.evaluado.split(' ').slice(0,2).join(' ');
-    doc.setFont('helvetica','bold'); doc.setFontSize(fSize); doc.setTextColor(...WHITE);
-    doc.text(tr(n, cw<30?9:cw<40?12:15), cx, fy+(dosFila?7:8), {align:'center'});
-
-    doc.setFont('helvetica','normal'); doc.setFontSize(fSize-1); doc.setTextColor(...col);
-    doc.text(c.porcentaje+'%  '+lP(c.porcentaje), cx, fy+(dosFila?12:14), {align:'center'});
-  });
-
-  // Pie
-  doc.setFont('helvetica','normal'); doc.setFontSize(6); doc.setTextColor(...GRAY);
-  doc.text("SisCap v2 - Lucciano's - Sistema de Capacitacion", ML, H-3);
-  doc.text(new Date().toLocaleDateString('es-AR'), W-MR, H-3, {align:'right'});
-
-  const fname='Dashboard_'+nl.replace(/[^a-zA-Z0-9]/g,'_').substring(0,25)+'.pdf';
-  _descargarPDF(doc, fname);
-  showToast('PDF generado');
+  const win = window.open('', '_blank');
+  if (win) {
+    win.document.write(html);
+    win.document.close();
+  } else {
+    showToast('Bloqueado por el navegador — permitir ventanas emergentes');
+  }
 }
-
 
 // ── ORDEN EVALUACIONES ───────────────────────────────────
 let _ordenEvals = 'recientes';
