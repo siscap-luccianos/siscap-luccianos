@@ -43,6 +43,7 @@ body::-webkit-scrollbar{display:none}
 .screen{display:none;flex-direction:column;height:100dvh;max-height:100dvh;overflow:hidden;animation:fadeIn .25s ease}
 .screen.active{display:flex}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
 
 
 /* ── TIPOGRAFÍA SHARED ──────────────────────────────────── */
@@ -477,7 +478,12 @@ body::-webkit-scrollbar{display:none}
   <div class="login-card" id="panel-login">
     <h2>Iniciar sesión</h2>
     <div class="field"><label>Usuario</label><input type="text" id="login-user" placeholder="Tu usuario" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"/></div>
-    <div class="field"><label>Contraseña</label><input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"/></div>
+    <div class="field"><label>Contraseña</label>
+      <div style="position:relative">
+        <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" style="width:100%;padding:12px 40px 12px 14px;background:var(--dark2);border:1px solid #333;border-radius:var(--rs);color:var(--white);font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;-webkit-appearance:none"/>
+        <button type="button" onclick="togglePass('login-pass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--gray);font-size:16px;padding:0;line-height:1">👁</button>
+      </div>
+    </div>
     <button class="btn btn-gold" onclick="doLogin()">Ingresar</button>
     <div class="error-msg" id="login-error"></div>
     <div id="link-registro" style="display:none;text-align:center;margin-top:16px;font-size:12px;color:var(--gray)">
@@ -492,7 +498,12 @@ body::-webkit-scrollbar{display:none}
     <div style="font-size:12px;color:var(--gray);margin-bottom:16px;line-height:1.6">Tu solicitud será revisada por el administrador. Te avisarán cuando tu cuenta esté habilitada.</div>
     <div class="field"><label>Nombre completo</label><input type="text" id="reg-nombre" placeholder="Ej: Juan Pérez" autocorrect="off"/></div>
     <div class="field"><label>Usuario deseado</label><input type="text" id="reg-user" placeholder="Ej: juan" autocapitalize="none" autocorrect="off" spellcheck="false"/></div>
-    <div class="field"><label>Contraseña</label><input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres"/></div>
+    <div class="field"><label>Contraseña</label>
+      <div style="position:relative">
+        <input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" style="width:100%;padding:12px 40px 12px 14px;background:var(--dark2);border:1px solid #333;border-radius:var(--rs);color:var(--white);font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;-webkit-appearance:none"/>
+        <button type="button" onclick="togglePass('reg-pass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--gray);font-size:16px;padding:0;line-height:1">👁</button>
+      </div>
+    </div>
     <button class="btn btn-gold" onclick="enviarSolicitud()">Enviar solicitud</button>
     <div class="error-msg" id="reg-error"></div>
     <div style="text-align:center;margin-top:16px;font-size:12px;color:var(--gray)">
@@ -1657,6 +1668,89 @@ body::-webkit-scrollbar{display:none}
 
 <div class="toast" id="toast"></div>
 
+<!-- BANNER INSTALACIÓN PWA -->
+<div id="pwa-banner" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);z-index:9998;align-items:flex-end;justify-content:center">
+  <div style="background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r) var(--r) 0 0;width:100%;max-width:480px;padding:24px 20px 32px;padding-bottom:calc(32px + env(safe-area-inset-bottom,0px));animation:slideUp .3s ease">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:44px;height:44px;border-radius:10px;background:var(--black);border:1px solid var(--gold-dark);display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:900;font-size:20px;color:var(--gold)">S</div>
+        <div>
+          <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;color:var(--white)">Instalar SisCap</div>
+          <div style="font-size:11px;color:var(--gray)">Agregá la app a tu pantalla de inicio</div>
+        </div>
+      </div>
+      <button onclick="cerrarBannerPWA()" style="background:none;border:none;color:var(--gray);font-size:22px;cursor:pointer;padding:4px;line-height:1">×</button>
+    </div>
+
+    <!-- Tabs iOS / Android -->
+    <div style="display:flex;gap:0;border-radius:var(--rs);overflow:hidden;border:1px solid #333;margin-bottom:18px">
+      <button id="pwa-tab-ios" onclick="switchPWATab('ios')" style="flex:1;padding:8px;background:var(--gold);color:var(--black);font-family:Montserrat,sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;border:none;cursor:pointer">iPhone / iPad</button>
+      <button id="pwa-tab-android" onclick="switchPWATab('android')" style="flex:1;padding:8px;background:var(--dark3);color:var(--gray);font-family:Montserrat,sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;border:none;cursor:pointer">Android</button>
+    </div>
+
+    <!-- iOS steps -->
+    <div id="pwa-ios" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:flex-start;gap:12px;background:var(--dark2);border-radius:var(--rs);padding:12px">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--black);font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px">Abrí Safari</div>
+          <div style="font-size:11px;color:var(--gray);line-height:1.5">Asegurate de estar en Safari — no funciona desde Chrome ni otros navegadores en iPhone.</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;background:var(--dark2);border-radius:var(--rs);padding:12px">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--black);font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px">Tocá el ícono Compartir</div>
+          <div style="font-size:11px;color:var(--gray);line-height:1.5">El ícono de cuadrado con flecha hacia arriba, en la barra inferior de Safari.</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;background:var(--dark2);border-radius:var(--rs);padding:12px">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--black);font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px">Seleccioná "Agregar a Inicio"</div>
+          <div style="font-size:11px;color:var(--gray);line-height:1.5">Scrolleá hacia abajo en el menú y tocá "Agregar a pantalla de inicio".</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;background:var(--dark2);border-radius:var(--rs);padding:12px">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--black);font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">4</div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px">Confirmá con "Agregar"</div>
+          <div style="font-size:11px;color:var(--gray);line-height:1.5">Podés cambiarle el nombre. Tocá Agregar y listo — SisCap aparece en tu pantalla de inicio.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Android steps -->
+    <div id="pwa-android" style="display:none;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:flex-start;gap:12px;background:var(--dark2);border-radius:var(--rs);padding:12px">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--black);font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px">Abrí Chrome</div>
+          <div style="font-size:11px;color:var(--gray);line-height:1.5">Ingresá a SisCap desde Chrome en tu Android.</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;background:var(--dark2);border-radius:var(--rs);padding:12px">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--black);font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px">Tocá los tres puntos</div>
+          <div style="font-size:11px;color:var(--gray);line-height:1.5">El menú ⋮ en la esquina superior derecha del navegador.</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;background:var(--dark2);border-radius:var(--rs);padding:12px">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--black);font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px">Tocá "Agregar a pantalla de inicio"</div>
+          <div style="font-size:11px;color:var(--gray);line-height:1.5">Confirmá y SisCap se instala como app en tu dispositivo.</div>
+        </div>
+      </div>
+    </div>
+
+    <button onclick="cerrarBannerPWA()" style="width:100%;margin-top:18px;padding:13px;background:var(--gold);color:var(--black);font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;border:none;border-radius:var(--rs);cursor:pointer">Entendido</button>
+    <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--gray);cursor:pointer" onclick="cerrarBannerPWA(true)">No mostrar de nuevo</div>
+  </div>
+</div>
+
 
 <script>
 // ═══════════════════════════════════════════════════════════
@@ -2168,7 +2262,45 @@ function _loginExitoso(user, nombre, isAdmin, isGuest, localInvitado, esEncargad
   showTab('home');
   cargarDatos();
   if (isAdmin) cargarPendientes();
+  // Mostrar banner instalación si no lo cerró antes
+  setTimeout(() => mostrarBannerPWA(), 1200);
 }
+// ── BANNER INSTALACIÓN PWA ──
+function mostrarBannerPWA() {
+  // No mostrar si ya está instalada como PWA
+  if (window.matchMedia('(display-mode: standalone)').matches) return;
+  // No mostrar si el usuario eligió "No mostrar de nuevo"
+  try { if (localStorage.getItem('pwa_dismissed') === '1') return; } catch(e) {}
+  const banner = document.getElementById('pwa-banner');
+  if (banner) { banner.style.display = 'flex'; }
+}
+
+function cerrarBannerPWA(noMostrar) {
+  const banner = document.getElementById('pwa-banner');
+  if (banner) banner.style.display = 'none';
+  if (noMostrar) {
+    try { localStorage.setItem('pwa_dismissed', '1'); } catch(e) {}
+  }
+}
+
+function switchPWATab(tab) {
+  const ios     = document.getElementById('pwa-ios');
+  const android = document.getElementById('pwa-android');
+  const tabIos  = document.getElementById('pwa-tab-ios');
+  const tabAnd  = document.getElementById('pwa-tab-android');
+  if (tab === 'ios') {
+    ios.style.display     = 'flex';
+    android.style.display = 'none';
+    tabIos.style.background = 'var(--gold)'; tabIos.style.color = 'var(--black)';
+    tabAnd.style.background = 'var(--dark3)'; tabAnd.style.color = 'var(--gray)';
+  } else {
+    ios.style.display     = 'none';
+    android.style.display = 'flex';
+    tabAnd.style.background = 'var(--gold)'; tabAnd.style.color = 'var(--black)';
+    tabIos.style.background = 'var(--dark3)'; tabIos.style.color = 'var(--gray)';
+  }
+}
+
 // ── ACTIVAR REGISTRO CON 3 TOQUES EN EL LOGO ──
 let _tapCount = 0, _tapTimer = null;
 function _tapLogo() {
@@ -2179,6 +2311,14 @@ function _tapLogo() {
     _tapCount = 0;
     document.getElementById('link-registro').style.display = 'block';
   }
+}
+
+function togglePass(id, btn) {
+  const inp = document.getElementById(id);
+  if (!inp) return;
+  const visible = inp.type === 'text';
+  inp.type = visible ? 'password' : 'text';
+  btn.style.opacity = visible ? '0.5' : '1';
 }
 
 document.getElementById('login-user').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('login-pass').focus(); });
