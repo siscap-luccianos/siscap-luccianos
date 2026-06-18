@@ -759,7 +759,7 @@ body::-webkit-scrollbar{display:none}
 <div id="screen-guia" class="screen">
   <div class="app-header">
     <div><div class="logo">SisCap</div><div class="badge-label">Guías</div></div>
-    <button class="btn btn-outline btn-sm" onclick="showTab('home');setActiveNav('nav-home')">← Volver</button>
+    <div id="guia-volver-btn"><button class="btn btn-outline btn-sm" onclick="showTab('home');setActiveNav('nav-home')">← Volver</button></div>
   </div>
 
 
@@ -1808,16 +1808,19 @@ async function doLogin() {
 
 
 function _loginExitoso(user, nombre, isAdmin, isGuest) {
-  // Invitado: solo puede ver guías
+  // Invitado: SOLO puede ver guías — bloqueo total
   if (isGuest) {
     currentUser = { username: user, nombre, isAdmin: false, isGuest: true };
-    showTab('guia');
-    setActiveNav('nav-guia');
-    switchGuiaTab('cafe');
-    // Ocultar nav home y dashboard
     document.getElementById('nav-home').style.display = 'none';
     const nd = document.getElementById('nav-dash');
     if (nd) nd.style.display = 'none';
+    const gvb = document.getElementById('guia-volver-btn');
+    if (gvb) gvb.style.display = 'none';
+    const cfg = document.getElementById('cfg-btn');
+    if (cfg) cfg.style.display = 'none';
+    showTab('guia');
+    setActiveNav('nav-guia');
+    switchGuiaTab('cafe');
     return;
   }
   currentUser = { username: user, nombre, isAdmin, isGuest: isGuest||false, pass: '' };
@@ -1844,18 +1847,7 @@ function _loginExitoso(user, nombre, isAdmin, isGuest) {
   if (filt) filt.style.display = isAdmin ? 'block' : 'none';
 
 
-  if (currentUser.isGuest) {
-    // Invitado: solo guías
-    document.getElementById('cfg-btn').style.display = 'none';
-    const navDash = document.getElementById('nav-dash');
-    if (navDash) navDash.style.display = 'none';
-    // Ocultar nav home
-    const navHome = document.getElementById('nav-home');
-    if (navHome) navHome.style.display = 'none';
-    showTab('guia');
-    setActiveNav('nav-guia');
-    return;
-  }
+  // (bloque isGuest manejado al inicio de la función)
   showTab('home');
   cargarDatos();
   if (isAdmin) cargarPendientes();
@@ -1868,6 +1860,10 @@ document.getElementById('login-pass').addEventListener('keydown', e => { if(e.ke
 // NAVEGACIÓN
 // ═══════════════════════════════════════════════════════════
 function showTab(tab) {
+  // Guardia: usuario guía solo puede ver la pantalla de guías
+  if (currentUser && currentUser.isGuest) {
+    if (tab !== 'guia') return;
+  }
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById('screen-' + tab);
   if (el) el.classList.add('active');
