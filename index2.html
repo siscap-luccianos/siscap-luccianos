@@ -850,12 +850,31 @@ body::-webkit-scrollbar{display:none}
   <!-- RECETARIO -->
   <div style="padding:18px 16px 0">
     <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:12px">Recetario de Cafés</div>
-    <div style="border-radius:var(--r);overflow:hidden;margin-bottom:8px;background:#000;cursor:zoom-in" onclick="abrirImagen('recetario_cafe_9.png')">
-      <img src="recetario_cafe_9.png" alt="Recetario de Cafés Lucciano's" style="width:100%;border-radius:8px;display:block"/>
+
+    <div style="font-size:11px;font-weight:700;color:var(--white);margin-bottom:6px">Espresso · Cód. 75</div>
+    <div style="border-radius:var(--r);overflow:hidden;margin-bottom:6px;background:#000;cursor:zoom-in" onclick="abrirImagen('espresso_75.png')">
+      <img src="espresso_75.png" alt="Espresso Cód. 75" style="width:100%;border-radius:8px;display:block"/>
     </div>
-    <div style="font-size:10px;color:var(--gold);text-align:center;margin-bottom:18px;display:flex;align-items:center;justify-content:center;gap:4px">
-      Tocá para ampliar
+    <div style="font-size:10px;color:var(--gold);text-align:center;margin-bottom:18px">Tocá para ampliar</div>
+
+    <div style="font-size:11px;font-weight:700;color:var(--white);margin-bottom:6px">Espresso Lungo · Cód. 76</div>
+    <div style="border-radius:var(--r);overflow:hidden;margin-bottom:6px;background:#000;cursor:zoom-in" onclick="abrirImagen('lungo_76.png')">
+      <img src="lungo_76.png" alt="Espresso Lungo Cód. 76" style="width:100%;border-radius:8px;display:block"/>
     </div>
+    <div style="font-size:10px;color:var(--gold);text-align:center;margin-bottom:18px">Tocá para ampliar</div>
+
+    <div style="font-size:11px;font-weight:700;color:var(--white);margin-bottom:6px">Café Latte / Doble · Cód. 79 · Cappuccino · Cód. 36</div>
+    <div style="border-radius:var(--r);overflow:hidden;margin-bottom:6px;background:#000;cursor:zoom-in" onclick="abrirImagen('latte_79.png')">
+      <img src="latte_79.png" alt="Café Latte Cód. 79" style="width:100%;border-radius:8px;display:block"/>
+    </div>
+    <div style="font-size:10px;color:var(--gold);text-align:center;margin-bottom:18px">Tocá para ampliar</div>
+
+    <div style="font-size:11px;font-weight:700;color:var(--white);margin-bottom:6px">Cafés Especiales</div>
+    <div style="border-radius:var(--r);overflow:hidden;margin-bottom:8px;background:#000;cursor:zoom-in" onclick="abrirImagen('especiales.png')">
+      <img src="especiales.png" alt="Cafés Especiales" style="width:100%;border-radius:8px;display:block"/>
+    </div>
+    <div style="font-size:10px;color:var(--gold);text-align:center;margin-bottom:18px">Tocá para ampliar</div>
+
     <div id="img-overlay" onclick="cerrarImagen()" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.95);z-index:9999;overflow:auto;-webkit-overflow-scrolling:touch;align-items:center;justify-content:center">
       <img id="img-overlay-src" src="" style="width:100%;max-width:none;display:block;touch-action:pinch-zoom"/>
       <div style="position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;background:rgba(0,0,0,.6);color:white;border:1px solid #555;border-radius:20px;padding:6px 14px;font-size:12px;font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer" onclick="cerrarImagen()">Cerrar</div>
