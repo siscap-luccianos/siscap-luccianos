@@ -477,7 +477,11 @@ body::-webkit-scrollbar{display:none}
   <!-- Panel login -->
   <div class="login-card" id="panel-login">
     <h2>Iniciar sesión</h2>
-    <div class="field"><label>Usuario</label><input type="text" id="login-user" placeholder="Tu usuario" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"/></div>
+    <div class="field"><label>Usuario</label><input type="text" id="login-user" placeholder="Tu usuario" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" oninput="_onLoginUserInput()"/></div>
+    <div id="campos-invitado" style="display:none">
+      <div class="field"><label>Nombre</label><input type="text" id="login-nombre" placeholder="Tu nombre" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false"/></div>
+      <div class="field"><label>Apellido</label><input type="text" id="login-apellido" placeholder="Tu apellido" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false"/></div>
+    </div>
     <div class="field"><label>Contraseña</label>
       <div style="position:relative">
         <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" style="width:100%;padding:12px 40px 12px 14px;background:var(--dark2);border:1px solid #333;border-radius:var(--rs);color:var(--white);font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;-webkit-appearance:none"/>
@@ -782,6 +786,18 @@ body::-webkit-scrollbar{display:none}
         </div>
         <div id="accesos-locales-collapsible" style="display:none;padding:10px 14px">
           <div id="accesos-locales-lista"><div class="spinner-wrap"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+      <div style="border-top:1px solid #2a2a2a">
+        <div onclick="toggleRegistrosGuia()" style="padding:13px 15px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;background:var(--dark2)">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="config-section-title">📋 Personas registradas en la guía</span>
+            <span id="registros-chev" style="color:var(--gray);font-size:11px;transition:transform .2s">▼</span>
+          </div>
+          <span id="registros-counter" style="font-size:11px;color:var(--gray)"></span>
+        </div>
+        <div id="registros-guia-collapsible" style="display:none;padding:10px 14px">
+          <div id="registros-guia-lista"><div class="spinner-wrap"><div class="spinner"></div></div></div>
         </div>
       </div>
       <div style="padding:10px 14px;border-top:1px solid #2a2a2a">
@@ -2139,6 +2155,13 @@ function _buscarLocalPorClave(clave) {
   return null;
 }
 
+function _onLoginUserInput() {
+  const user  = document.getElementById('login-user').value.trim().toLowerCase();
+  const campos = document.getElementById('campos-invitado');
+  if (!campos) return;
+  campos.style.display = (user === 'invitado') ? 'block' : 'none';
+}
+
 async function doLogin() {
   const user = document.getElementById('login-user').value.trim().toLowerCase();
   const pass = document.getElementById('login-pass').value.trim();
@@ -2150,16 +2173,50 @@ async function doLogin() {
 
   // 1. Login de invitado por local — clave del local (o [local]resp para encargados)
   if (user === 'invitado') {
+    const nombre   = (document.getElementById('login-nombre')   || {}).value?.trim() || '';
+    const apellido = (document.getElementById('login-apellido') || {}).value?.trim() || '';
+
+    if (!nombre || !apellido) {
+      err.textContent = 'Completá tu nombre y apellido para ingresar.';
+      return;
+    }
+
     const match = _buscarLocalPorClave(pass.trim().toLowerCase());
-    if (match) {
-      const { local, esEncargado } = match;
-      const nombreMostrar = esEncargado
-        ? 'Encargado · ' + local.replace("Lucciano's ", "")
-        : 'Invitado · '  + local.replace("Lucciano's ", "");
-      apiPostBg({ action: 'logAccesoGuia', local, fecha: new Date().toISOString(), tipo: esEncargado ? 'encargado' : 'invitado' });
-      _loginExitoso('invitado', nombreMostrar, false, true, local, esEncargado);
-    } else {
+    if (!match) {
       err.textContent = 'Contraseña incorrecta. Verificá la clave de tu local.';
+      return;
+    }
+
+    const { local, esEncargado } = match;
+    btn.textContent = 'Verificando...';
+    btn.disabled = true;
+
+    try {
+      const resp = await apiPost({
+        action: 'loginInvitado',
+        local, nombre, apellido,
+        tipo: esEncargado ? 'encargado' : 'invitado'
+      });
+
+      btn.textContent = 'Ingresar';
+      btn.disabled = false;
+
+      if (resp.status === 'bloqueado') {
+        err.textContent = resp.msg || 'Tu acceso fue bloqueado. Consultá con tu capacitador.';
+        return;
+      }
+      if (resp.status !== 'ok') {
+        err.textContent = resp.msg || 'No se pudo verificar el acceso. Probá de nuevo.';
+        return;
+      }
+
+      const nombreMostrar = (esEncargado ? 'Encargado · ' : 'Invitado · ') +
+        nombre + ' ' + apellido + ' (' + local.replace("Lucciano's ", "") + ')';
+      _loginExitoso('invitado', nombreMostrar, false, true, local, esEncargado);
+    } catch (e) {
+      btn.textContent = 'Ingresar';
+      btn.disabled = false;
+      err.textContent = 'Error de conexión. Probá de nuevo.';
     }
     return;
   }
@@ -4178,6 +4235,9 @@ function cerrarSesion() {
   // Limpiar campos login
   document.getElementById('login-user').value = '';
   document.getElementById('login-pass').value = '';
+  if (document.getElementById('login-nombre'))   document.getElementById('login-nombre').value = '';
+  if (document.getElementById('login-apellido')) document.getElementById('login-apellido').value = '';
+  if (document.getElementById('campos-invitado')) document.getElementById('campos-invitado').style.display = 'none';
   document.getElementById('login-error').textContent = '';
   // Volver al login
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -4364,6 +4424,137 @@ function toggleAccesosLocales() {
   const open = body.style.display === 'none' || body.style.display === '';
   body.style.display = open ? 'block' : 'none';
   if (chev) chev.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+// ═══════════════════════════════════════════════════════════
+// PERSONAS REGISTRADAS EN LA GUÍA (nombre + apellido + sucursal)
+// ═══════════════════════════════════════════════════════════
+
+function esc_(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+window._registrosGuiaCache = [];
+
+function toggleRegistrosGuia() {
+  const body = document.getElementById('registros-guia-collapsible');
+  const chev = document.getElementById('registros-chev');
+  const open = body.style.display === 'none' || body.style.display === '';
+  body.style.display = open ? 'block' : 'none';
+  if (chev) chev.style.transform = open ? 'rotate(180deg)' : '';
+  if (open && !window._registrosGuiaCargados) {
+    cargarRegistrosGuia();
+  }
+}
+
+async function cargarRegistrosGuia() {
+  const lista = document.getElementById('registros-guia-lista');
+  if (!lista) return;
+  lista.innerHTML = '<div class="spinner-wrap"><div class="spinner"></div></div>';
+  try {
+    const data = await apiGet({ action: 'getRegistrosGuia' });
+    window._registrosGuiaCache = (data.registros || []).sort((a, b) => {
+      // Más recientes primero por último acceso
+      return new Date(b.ultimoAcceso || b.fecha) - new Date(a.ultimoAcceso || a.fecha);
+    });
+    window._registrosGuiaCargados = true;
+    const counter = document.getElementById('registros-counter');
+    if (counter) counter.textContent = window._registrosGuiaCache.length + ' personas';
+    _renderRegistrosGuia('');
+  } catch (e) {
+    lista.innerHTML = '<div style="color:var(--gray);font-size:13px;padding:10px">Error al cargar registros.</div>';
+  }
+}
+
+function _filtrarRegistrosGuia() {
+  const val = document.getElementById('buscador-registros-guia')?.value || '';
+  _renderRegistrosGuia(val);
+}
+
+function _renderRegistrosGuia(filtro) {
+  const lista = document.getElementById('registros-guia-lista');
+  if (!lista) return;
+
+  const filtroNorm = filtro.toLowerCase().trim();
+  const registros = window._registrosGuiaCache.filter(r => {
+    if (!filtroNorm) return true;
+    const texto = (r.nombre + ' ' + r.apellido + ' ' + r.local).toLowerCase();
+    return texto.includes(filtroNorm);
+  });
+
+  let html = `
+    <div style="position:relative;margin-bottom:10px">
+      <input id="buscador-registros-guia" type="text" placeholder="Buscar por nombre o local..."
+        oninput="_filtrarRegistrosGuia()"
+        style="width:100%;padding:9px 12px 9px 32px;background:var(--dark2);border:1px solid #333;border-radius:var(--rs);color:var(--white);font-size:13px;font-family:Inter,sans-serif;outline:none"/>
+      <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--gray);font-size:13px;pointer-events:none">🔍</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;max-height:420px;overflow-y:auto">`;
+
+  if (!registros.length) {
+    html += '<div style="color:var(--gray);font-size:13px;padding:10px;text-align:center">Sin registros.</div>';
+  } else {
+    registros.forEach(r => {
+      const bloqueado = String(r.estado).toLowerCase() === 'bloqueado';
+      const fecha = r.ultimoAcceso ? new Date(r.ultimoAcceso).toLocaleDateString('es-AR') : '—';
+      const localCorto = String(r.local).replace("Lucciano's ", "");
+      const tipoLabel = r.tipo === 'encargado' ? 'Encargado' : 'Invitado';
+
+      html += `
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 11px;background:var(--dark2);border:1px solid ${bloqueado ? 'rgba(220,60,60,0.4)' : '#2a2a2a'};border-radius:var(--rs);${bloqueado ? 'opacity:0.6' : ''}">
+          <div style="min-width:0;flex:1">
+            <div style="font-size:13px;font-weight:600;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+              ${esc_(r.nombre)} ${esc_(r.apellido)} ${bloqueado ? '<span style="color:#e05a5a;font-size:11px;font-weight:600">· Bloqueado</span>' : ''}
+            </div>
+            <div style="font-size:11px;color:var(--gray);margin-top:2px">
+              ${esc_(localCorto)} · ${tipoLabel} · ${r.cantAccesos || 1}x · últ. ${fecha}
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0">
+            <button onclick="_toggleBloqueoRegistro('${_escAttr(r.local)}','${_escAttr(r.nombre)}','${_escAttr(r.apellido)}', ${bloqueado ? "'activo'" : "'bloqueado'"})"
+              style="padding:6px 9px;background:${bloqueado ? '#2a3a2a' : '#3a2a2a'};border:1px solid ${bloqueado ? '#3a5a3a' : '#5a3a3a'};border-radius:6px;color:${bloqueado ? '#7adc7a' : '#e0a0a0'};font-size:11px;cursor:pointer;white-space:nowrap">
+              ${bloqueado ? '✓ Reactivar' : '🚫 Bloquear'}
+            </button>
+            <button onclick="_eliminarRegistro('${_escAttr(r.local)}','${_escAttr(r.nombre)}','${_escAttr(r.apellido)}')"
+              style="padding:6px 9px;background:#2a2a2a;border:1px solid #444;border-radius:6px;color:var(--gray);font-size:11px;cursor:pointer">
+              🗑️
+            </button>
+          </div>
+        </div>`;
+    });
+  }
+
+  html += '</div>';
+  lista.innerHTML = html;
+
+  // Restaurar foco/valor del buscador si ya existía
+  const buscadorPrevio = document.getElementById('buscador-registros-guia');
+  if (buscadorPrevio) buscadorPrevio.value = filtro;
+}
+
+async function _toggleBloqueoRegistro(local, nombre, apellido, nuevoEstado) {
+  try {
+    await apiPost({ action: 'bloquearRegistro', local, nombre, apellido, estado: nuevoEstado });
+    showToast(nuevoEstado === 'bloqueado' ? 'Persona bloqueada' : 'Acceso reactivado');
+    cargarRegistrosGuia();
+  } catch (e) {
+    showToast('Error al actualizar');
+  }
+}
+
+async function _eliminarRegistro(local, nombre, apellido) {
+  if (!confirm('¿Eliminar este registro? No se podrá deshacer.')) return;
+  try {
+    await apiPost({ action: 'eliminarRegistro', local, nombre, apellido });
+    showToast('Registro eliminado');
+    cargarRegistrosGuia();
+  } catch (e) {
+    showToast('Error al eliminar');
+  }
+}
+
+function _escAttr(s) {
+  return String(s || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 }
 
 function toggleRegistro(mostrar) {
