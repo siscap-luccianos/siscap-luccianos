@@ -1916,112 +1916,6 @@ const USUARIOS = {
 };
 
 
-// Usuarios fijos por local — sin trazabilidad, solo lectura de guía.
-// Los usa el encargado/responsable del local desde la PC/tablet del local.
-const USUARIOS_LOCAL = {
-  martinez_gba_local: { pass:'MartinezGba2026!', nombre:'Local · Martinez GBA', isGuest:true, isLocalFijo:true },
-  olivos_gba_local: { pass:'OlivosGba2026!', nombre:'Local · Olivos GBA', isGuest:true, isLocalFijo:true },
-  parque_avellaneda_shopping_gba_local: { pass:'ParqueAvellanedaShoppingGba2026!', nombre:'Local · Parque Avellaneda Shopping GBA', isGuest:true, isLocalFijo:true },
-  ituzaingo_gba_local: { pass:'ItuzaingoGba2026!', nombre:'Local · Ituzaingo GBA', isGuest:true, isLocalFijo:true },
-  distrito_t_gba_local: { pass:'DistritoTGba2026!', nombre:'Local · Distrito T GBA', isGuest:true, isLocalFijo:true },
-  adrogue_gba_local: { pass:'AdrogueGba2026!', nombre:'Local · Adrogué GBA', isGuest:true, isLocalFijo:true },
-  san_miguel_gba_local: { pass:'SanMiguelGba2026!', nombre:'Local · San Miguel GBA', isGuest:true, isLocalFijo:true },
-  parque_leloir_gba_local: { pass:'ParqueLeloirGba2026!', nombre:'Local · Parque Leloir GBA', isGuest:true, isLocalFijo:true },
-  quilmes_gba_local: { pass:'QuilmesGba2026!', nombre:'Local · Quilmes GBA', isGuest:true, isLocalFijo:true },
-  caseros_gba_local: { pass:'CaserosGba2026!', nombre:'Local · Caseros GBA', isGuest:true, isLocalFijo:true },
-  ramos_mejia_gba_local: { pass:'RamosMejiaGba2026!', nombre:'Local · Ramos Mejia GBA', isGuest:true, isLocalFijo:true },
-  shopping_abasto_caba_local: { pass:'ShoppingAbastoCaba2026!', nombre:'Local · Shopping Abasto CABA', isGuest:true, isLocalFijo:true },
-  la_imprenta_gran_hotel_caba_local: { pass:'LaImprentaGranHotelCaba2026!', nombre:'Local · La Imprenta Gran Hotel CABA', isGuest:true, isLocalFijo:true },
-  distrito_arcos_caba_local: { pass:'DistritoArcosCaba2026!', nombre:'Local · Distrito Arcos CABA', isGuest:true, isLocalFijo:true },
-  arcos_del_rosedal_caba_local: { pass:'ArcosDelRosedalCaba2026!', nombre:'Local · Arcos del Rosedal CABA', isGuest:true, isLocalFijo:true },
-  villa_del_parque_caba_local: { pass:'VillaDelParqueCaba2026!', nombre:'Local · Villa del Parque CABA', isGuest:true, isLocalFijo:true },
-  honduras_caba_local: { pass:'HondurasCaba2026!', nombre:'Local · Honduras CABA', isGuest:true, isLocalFijo:true },
-  cid_campeador_caba_local: { pass:'CidCampeadorCaba2026!', nombre:'Local · Cid Campeador CABA', isGuest:true, isLocalFijo:true },
-  devoto_caba_local: { pass:'DevotoCaba2026!', nombre:'Local · Devoto CABA', isGuest:true, isLocalFijo:true },
-  recoleta_caba_local: { pass:'RecoletaCaba2026!', nombre:'Local · Recoleta CABA', isGuest:true, isLocalFijo:true },
-  dot_caba_local: { pass:'DotCaba2026!', nombre:'Local · Dot CABA', isGuest:true, isLocalFijo:true },
-  puerto_madero_dique_caba_local: { pass:'PuertoMaderoDiqueCaba2026!', nombre:'Local · Puerto Madero Dique CABA', isGuest:true, isLocalFijo:true },
-  puerto_madero_caba_local: { pass:'PuertoMaderoCaba2026!', nombre:'Local · Puerto Madero CABA', isGuest:true, isLocalFijo:true },
-  caballito_caba_local: { pass:'CaballitoCaba2026!', nombre:'Local · Caballito CABA', isGuest:true, isLocalFijo:true },
-  parque_rivadavia_caba_local: { pass:'ParqueRivadaviaCaba2026!', nombre:'Local · Parque Rivadavia CABA', isGuest:true, isLocalFijo:true },
-  libertador_caba_local: { pass:'LibertadorCaba2026!', nombre:'Local · Libertador CABA', isGuest:true, isLocalFijo:true },
-  villa_urquiza_caba_local: { pass:'VillaUrquizaCaba2026!', nombre:'Local · Villa Urquiza CABA', isGuest:true, isLocalFijo:true },
-  villa_urquiza_ii_caba_local: { pass:'VillaUrquizaIiCaba2026!', nombre:'Local · Villa Urquiza II CABA', isGuest:true, isLocalFijo:true },
-  villa_luro_caba_local: { pass:'VillaLuroCaba2026!', nombre:'Local · Villa Luro CABA', isGuest:true, isLocalFijo:true },
-  coghlan_caba_local: { pass:'CoghlanCaba2026!', nombre:'Local · Coghlan CABA', isGuest:true, isLocalFijo:true },
-  las_canitas_caba_local: { pass:'LasCanitasCaba2026!', nombre:'Local · Las Cañitas CABA', isGuest:true, isLocalFijo:true },
-  colegiales_caba_local: { pass:'ColegialesCaba2026!', nombre:'Local · Colegiales CABA', isGuest:true, isLocalFijo:true },
-  aguero_caba_local: { pass:'AgueroCaba2026!', nombre:'Local · Agüero CABA', isGuest:true, isLocalFijo:true },
-  nunez_caba_local: { pass:'NunezCaba2026!', nombre:'Local · Nuñez CABA', isGuest:true, isLocalFijo:true },
-  belgrano_c_caba_local: { pass:'BelgranoCCaba2026!', nombre:'Local · Belgrano C CABA', isGuest:true, isLocalFijo:true },
-  bajo_belgrano_caba_local: { pass:'BajoBelgranoCaba2026!', nombre:'Local · Bajo Belgrano CABA', isGuest:true, isLocalFijo:true },
-  galerias_pacifico_caba_local: { pass:'GaleriasPacificoCaba2026!', nombre:'Local · Galerias Pacifico CABA', isGuest:true, isLocalFijo:true },
-  san_telmo_caba_local: { pass:'SanTelmoCaba2026!', nombre:'Local · San Telmo CABA', isGuest:true, isLocalFijo:true },
-  paseo_del_angel_caba_local: { pass:'PaseoDelAngelCaba2026!', nombre:'Local · Paseo del Angel CABA', isGuest:true, isLocalFijo:true },
-  plaza_houssay_caba_local: { pass:'PlazaHoussayCaba2026!', nombre:'Local · Plaza Houssay CABA', isGuest:true, isLocalFijo:true },
-  palermo_chico_caba_local: { pass:'PalermoChicoCaba2026!', nombre:'Local · Palermo Chico CABA', isGuest:true, isLocalFijo:true },
-  patio_bullrich_caba_local: { pass:'PatioBullrichCaba2026!', nombre:'Local · Patio Bullrich CABA', isGuest:true, isLocalFijo:true },
-  obelisco_caba_local: { pass:'ObeliscoCaba2026!', nombre:'Local · Obelisco CABA', isGuest:true, isLocalFijo:true },
-  almagro_caba_local: { pass:'AlmagroCaba2026!', nombre:'Local · Almagro CABA', isGuest:true, isLocalFijo:true },
-  calle_corrientes_caba_local: { pass:'CalleCorrientesCaba2026!', nombre:'Local · Calle Corrientes CABA', isGuest:true, isLocalFijo:true },
-  santa_fe_y_parana_caba_local: { pass:'SantaFeYParanaCaba2026!', nombre:'Local · Santa Fe y Parana CABA', isGuest:true, isLocalFijo:true },
-  nordelta_buenos_aires_local: { pass:'NordeltaBuenosAires2026!', nombre:'Local · Nordelta Buenos Aires', isGuest:true, isLocalFijo:true },
-  baxar_mercado_buenos_aires_local: { pass:'BaxarMercadoBuenosAires2026!', nombre:'Local · Baxar Mercado Buenos Aires', isGuest:true, isLocalFijo:true },
-  la_plata_buenos_aires_local: { pass:'LaPlataBuenosAires2026!', nombre:'Local · La Plata Buenos Aires', isGuest:true, isLocalFijo:true },
-  pilar_buenos_aires_local: { pass:'PilarBuenosAires2026!', nombre:'Local · Pilar Buenos Aires', isGuest:true, isLocalFijo:true },
-  pilar_ii_buenos_aires_local: { pass:'PilarIiBuenosAires2026!', nombre:'Local · Pilar II Buenos Aires', isGuest:true, isLocalFijo:true },
-  city_bell_buenos_aires_local: { pass:'CityBellBuenosAires2026!', nombre:'Local · City Bell Buenos Aires', isGuest:true, isLocalFijo:true },
-  las_lomitas_buenos_aires_local: { pass:'LasLomitasBuenosAires2026!', nombre:'Local · Las Lomitas Buenos Aires', isGuest:true, isLocalFijo:true },
-  lanus_buenos_aires_local: { pass:'LanusBuenosAires2026!', nombre:'Local · Lanus Buenos Aires', isGuest:true, isLocalFijo:true },
-  san_fernando_buenos_aires_local: { pass:'SanFernandoBuenosAires2026!', nombre:'Local · San Fernando Buenos Aires', isGuest:true, isLocalFijo:true },
-  campana_buenos_aires_local: { pass:'CampanaBuenosAires2026!', nombre:'Local · Campana Buenos Aires', isGuest:true, isLocalFijo:true },
-  san_nicolas_buenos_aires_local: { pass:'SanNicolasBuenosAires2026!', nombre:'Local · San Nicolas Buenos Aires', isGuest:true, isLocalFijo:true },
-  tandil_buenos_aires_local: { pass:'TandilBuenosAires2026!', nombre:'Local · Tandil Buenos Aires', isGuest:true, isLocalFijo:true },
-  carilo_buenos_aires_local: { pass:'CariloBuenosAires2026!', nombre:'Local · Carilo Buenos Aires', isGuest:true, isLocalFijo:true },
-  pinamar_buenos_aires_local: { pass:'PinamarBuenosAires2026!', nombre:'Local · Pinamar Buenos Aires', isGuest:true, isLocalFijo:true },
-  bahia_blanca_buenos_aires_local: { pass:'BahiaBlancaBuenosAires2026!', nombre:'Local · Bahia Blanca Buenos Aires', isGuest:true, isLocalFijo:true },
-  bahia_blanca_villa_mitre_buenos_aires_local: { pass:'BahiaBlancaVillaMitreBuenosAires2026!', nombre:'Local · Bahia Blanca Villa Mitre Buenos Aires', isGuest:true, isLocalFijo:true },
-  cerro_de_las_rosas_cordoba_local: { pass:'CerroDeLasRosasCordoba2026!', nombre:'Local · Cerro De Las Rosas Córdoba', isGuest:true, isLocalFijo:true },
-  nuevocentro_cordoba_local: { pass:'NuevocentroCordoba2026!', nombre:'Local · Nuevocentro Córdoba', isGuest:true, isLocalFijo:true },
-  ribera_shopping_santa_fe_local: { pass:'RiberaShoppingSantaFe2026!', nombre:'Local · Ribera Shopping Santa Fe', isGuest:true, isLocalFijo:true },
-  alto_rosario_santa_fe_local: { pass:'AltoRosarioSantaFe2026!', nombre:'Local · Alto Rosario Santa Fe', isGuest:true, isLocalFijo:true },
-  peatonal_sarmiento_mendoza_local: { pass:'PeatonalSarmientoMendoza2026!', nombre:'Local · Peatonal Sarmiento Mendoza', isGuest:true, isLocalFijo:true },
-  palmares_mendoza_local: { pass:'PalmaresMendoza2026!', nombre:'Local · Palmares Mendoza', isGuest:true, isLocalFijo:true },
-  chacras_de_coria_mendoza_local: { pass:'ChacrasDeCoriaMendoza2026!', nombre:'Local · Chacras de Coria Mendoza', isGuest:true, isLocalFijo:true },
-  shopping_mendoza_local: { pass:'ShoppingMendoza2026!', nombre:'Local · Shopping Mendoza', isGuest:true, isLocalFijo:true },
-  resistencia_chaco_local: { pass:'ResistenciaChaco2026!', nombre:'Local · Resistencia Chaco', isGuest:true, isLocalFijo:true },
-  av_argentina_neuquen_local: { pass:'AvArgentinaNeuquen2026!', nombre:'Local · Av Argentina Neuquén', isGuest:true, isLocalFijo:true },
-  paseo_de_la_costa_neuquen_local: { pass:'PaseoDeLaCostaNeuquen2026!', nombre:'Local · Paseo de la Costa Neuquén', isGuest:true, isLocalFijo:true },
-  cipolletti_rio_negro_local: { pass:'CipollettiRioNegro2026!', nombre:'Local · Cipolletti Rio Negro', isGuest:true, isLocalFijo:true },
-  gral_roca_rio_negro_local: { pass:'GralRocaRioNegro2026!', nombre:'Local · Gral Roca Rio Negro', isGuest:true, isLocalFijo:true },
-  barrio_norte_tucuman_local: { pass:'BarrioNorteTucuman2026!', nombre:'Local · Barrio Norte Tucuman', isGuest:true, isLocalFijo:true },
-  yerba_buena_tucuman_local: { pass:'YerbaBuenaTucuman2026!', nombre:'Local · Yerba Buena Tucuman', isGuest:true, isLocalFijo:true },
-  catamarca_catamarca_local: { pass:'CatamarcaCatamarca2026!', nombre:'Local · Catamarca Catamarca', isGuest:true, isLocalFijo:true },
-  galerias_salta_local: { pass:'GaleriasSalta2026!', nombre:'Local · Galerias Salta', isGuest:true, isLocalFijo:true },
-  alto_noa_salta_local: { pass:'AltoNoaSalta2026!', nombre:'Local · Alto NOA Salta', isGuest:true, isLocalFijo:true },
-  posadas_misiones_local: { pass:'PosadasMisiones2026!', nombre:'Local · Posadas Misiones', isGuest:true, isLocalFijo:true },
-  madryn_chubut_local: { pass:'MadrynChubut2026!', nombre:'Local · Madryn Chubut', isGuest:true, isLocalFijo:true },
-  ushuaia_tierra_del_fuego_local: { pass:'UshuaiaTierraDelFuego2026!', nombre:'Local · Ushuaia Tierra del Fuego', isGuest:true, isLocalFijo:true },
-  capital_corrientes_local: { pass:'CapitalCorrientes2026!', nombre:'Local · Capital Corrientes', isGuest:true, isLocalFijo:true },
-  pocitos_uruguay_local: { pass:'PocitosUruguay2026!', nombre:'Local · Pocitos Uruguay', isGuest:true, isLocalFijo:true },
-  punta_carretas_uruguay_local: { pass:'PuntaCarretasUruguay2026!', nombre:'Local · Punta Carretas Uruguay', isGuest:true, isLocalFijo:true },
-  punta_carrasco_uruguay_local: { pass:'PuntaCarrascoUruguay2026!', nombre:'Local · Punta Carrasco Uruguay', isGuest:true, isLocalFijo:true },
-  asuncion_paraguay_local: { pass:'AsuncionParaguay2026!', nombre:'Local · Asuncion Paraguay', isGuest:true, isLocalFijo:true },
-  parque_arauco_chile_local: { pass:'ParqueAraucoChile2026!', nombre:'Local · Parque Arauco Chile', isGuest:true, isLocalFijo:true },
-  alem_mar_del_plata_local: { pass:'AlemMarDelPlata2026!', nombre:'Local · Alem Mar del Plata', isGuest:true, isLocalFijo:true },
-  aldrey_mar_del_plata_local: { pass:'AldreyMarDelPlata2026!', nombre:'Local · Aldrey Mar del Plata', isGuest:true, isLocalFijo:true },
-  central_mar_del_plata_local: { pass:'CentralMarDelPlata2026!', nombre:'Local · Central Mar del Plata', isGuest:true, isLocalFijo:true },
-  constitucion_mar_del_plata_local: { pass:'ConstitucionMarDelPlata2026!', nombre:'Local · Constitucion Mar del Plata', isGuest:true, isLocalFijo:true },
-  gallegos_mar_del_plata_local: { pass:'GallegosMarDelPlata2026!', nombre:'Local · Gallegos Mar del Plata', isGuest:true, isLocalFijo:true },
-  guemes_mar_del_plata_local: { pass:'GuemesMarDelPlata2026!', nombre:'Local · Guemes Mar del Plata', isGuest:true, isLocalFijo:true },
-  paso_mar_del_plata_local: { pass:'PasoMarDelPlata2026!', nombre:'Local · Paso Mar del Plata', isGuest:true, isLocalFijo:true },
-  peatonal_mar_del_plata_local: { pass:'PeatonalMarDelPlata2026!', nombre:'Local · Peatonal Mar del Plata', isGuest:true, isLocalFijo:true },
-  torreon_mar_del_plata_local: { pass:'TorreonMarDelPlata2026!', nombre:'Local · Torreon Mar del Plata', isGuest:true, isLocalFijo:true },
-  varese_mar_del_plata_local: { pass:'VareseMarDelPlata2026!', nombre:'Local · Varese Mar del Plata', isGuest:true, isLocalFijo:true },
-};
-
-// Fusionar usuarios de local dentro de USUARIOS para que el login los reconozca
-Object.assign(USUARIOS, USUARIOS_LOCAL);
 
 
 const LOCALES = [
@@ -2372,14 +2266,17 @@ function _buscarLocalPorClave(clave) {
     return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,'').replace(/[^a-z0-9]/g,'');
   }
   const claveNorm = norm(clave);
-  // Detectar si es encargado (sufijo "resp")
-  const esEncargado = claveNorm.endsWith('resp');
-  const claveBase   = esEncargado ? claveNorm.slice(0, -4) : claveNorm;
+  // Detectar sufijo "local" → acceso directo del encargado, sin pedir datos
+  const esLocalFijo = claveNorm.endsWith('local');
+  let claveSinSufijo = esLocalFijo ? claveNorm.slice(0, -5) : claveNorm;
+  // Detectar sufijo "resp" (encargado con trazabilidad) — se evalúa sobre lo que quede tras sacar "local"
+  const esEncargado = claveSinSufijo.endsWith('resp');
+  const claveBase    = esEncargado ? claveSinSufijo.slice(0, -4) : claveSinSufijo;
   // Búsqueda directa
-  if (CLAVES_LOCALES[claveBase]) return { local: CLAVES_LOCALES[claveBase], esEncargado };
+  if (CLAVES_LOCALES[claveBase]) return { local: CLAVES_LOCALES[claveBase], esEncargado, esLocalFijo };
   // Búsqueda flexible
   for (const [k, local] of Object.entries(CLAVES_LOCALES)) {
-    if (norm(k) === claveBase) return { local, esEncargado };
+    if (norm(k) === claveBase) return { local, esEncargado, esLocalFijo };
   }
   return null;
 }
@@ -2433,6 +2330,20 @@ async function doLogin() {
 
   // 1. Login de invitado por local — clave del local (o [local]resp para encargados)
   if (user === 'invitado') {
+    // Detectar primero si la clave es de "local fijo" (encargado, sin trazabilidad)
+    const matchPrevio = _buscarLocalPorClave(pass.trim().toLowerCase());
+    if (!matchPrevio) {
+      err.textContent = 'Contraseña incorrecta. Verificá la clave de tu local.';
+      return;
+    }
+
+    if (matchPrevio.esLocalFijo) {
+      // Acceso directo del encargado — sin nombre, sin apellido, sin DNI
+      const nombreMostrarFijo = 'Local · ' + matchPrevio.local.replace("Lucciano's ", "");
+      _loginExitoso('invitado', nombreMostrarFijo, false, true, matchPrevio.local, true);
+      return;
+    }
+
     const nombre   = (document.getElementById('login-nombre')   || {}).value?.trim() || '';
     const apellido = (document.getElementById('login-apellido') || {}).value?.trim() || '';
     const dni      = (document.getElementById('login-dni')      || {}).value?.trim().replace(/\D/g,'') || '';
@@ -2446,11 +2357,7 @@ async function doLogin() {
       return;
     }
 
-    const match = _buscarLocalPorClave(pass.trim().toLowerCase());
-    if (!match) {
-      err.textContent = 'Contraseña incorrecta. Verificá la clave de tu local.';
-      return;
-    }
+    const match = matchPrevio;
 
     const { local, esEncargado } = match;
     btn.textContent = 'Verificando...';
