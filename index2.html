@@ -2746,7 +2746,7 @@ async function apiPost(body) {
   return res.json();
 }
 function apiPostBg(body) {
-  fetch(SHEET_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(body) }).catch(()=>{});
+  return fetch(SHEET_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(body) }).catch(()=>null);
 }
 
 
@@ -3453,7 +3453,23 @@ function enviarFormulario() {
   const isEdicion = !!(window._editandoKey);
   const submitAction = isEdicion ? 'update' : 'submit';
   const submitExtra  = isEdicion ? { editKey: window._editandoKey } : {};
-  apiPostBg({ action: submitAction, ...payload, detalleCompleto, ...submitExtra });
+  const _peticion = apiPostBg({ action: submitAction, ...payload, detalleCompleto, ...submitExtra });
+  if (isEdicion) {
+    // En edición, verificamos la respuesta real del backend: si no encontró
+    // la fila original, NO se guardó nada (para evitar crear un duplicado),
+    // así que avisamos en vez de dejar el falso "✓ Enviada" puesto arriba.
+    _peticion.then(async (resp) => {
+      try {
+        if (!resp) return;
+        const data = await resp.json();
+        if (data && data.status === 'error') {
+          showToast('⚠ No se guardó la edición: ' + (data.msg || 'error desconocido'));
+          btn.textContent = '⚠ Error al guardar';
+          btn.style.cssText = 'background:#a33;color:white;border-color:#a33';
+        }
+      } catch (e) { /* respuesta no es JSON o falló el parseo, ignorar */ }
+    });
+  }
   // Limpiar modo edición
   window._editandoKey   = null;
   window._editandoFecha = null;
