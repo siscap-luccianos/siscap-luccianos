@@ -1805,6 +1805,20 @@ body::-webkit-scrollbar{display:none}
 
 <div class="toast" id="toast"></div>
 
+<!-- AVISO USO DE CELULAR EN JORNADA — solo invitados -->
+<div id="aviso-celular-banner" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--dark);border:1px solid var(--gold-dark);border-radius:var(--r);width:100%;max-width:420px;padding:28px 22px;animation:slideUp .3s ease">
+    <div style="display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:18px">
+      <div style="width:52px;height:52px;border-radius:50%;background:var(--black);border:1px solid var(--gold-dark);display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px">⚠️</div>
+      <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;color:var(--white);margin-bottom:10px">Atención</div>
+      <div style="font-size:13.5px;color:var(--gray);line-height:1.6">
+        El uso del celular durante la jornada laboral es un incumplimiento a las normas y políticas de la empresa.
+      </div>
+    </div>
+    <button onclick="cerrarAvisoUsoCelular()" style="width:100%;padding:13px;background:var(--gold);color:var(--black);font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;border:none;border-radius:var(--rs);cursor:pointer">ACEPTAR</button>
+  </div>
+</div>
+
 <!-- BANNER INSTALACIÓN PWA -->
 <div id="pwa-banner" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);z-index:9998;align-items:flex-end;justify-content:center">
   <div style="background:var(--dark);border:1px solid #2a2a2a;border-radius:var(--r) var(--r) 0 0;width:100%;max-width:480px;padding:24px 20px 32px;padding-bottom:calc(32px + env(safe-area-inset-bottom,0px));animation:slideUp .3s ease">
@@ -2266,12 +2280,13 @@ function _buscarLocalPorClave(clave) {
     return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,'').replace(/[^a-z0-9]/g,'');
   }
   const claveNorm = norm(clave);
-  // Detectar sufijo "local" → acceso directo del encargado, sin pedir datos
+  // Detectar si es encargado (sufijo "resp")
+  const esEncargado = claveNorm.endsWith('resp');
+  // Detectar sufijo "local" (usuario fijo "local", ej. olivoslocal)
   const esLocalFijo = claveNorm.endsWith('local');
-  let claveSinSufijo = esLocalFijo ? claveNorm.slice(0, -5) : claveNorm;
-  // Detectar sufijo "resp" (encargado con trazabilidad) — se evalúa sobre lo que quede tras sacar "local"
-  const esEncargado = claveSinSufijo.endsWith('resp');
-  const claveBase    = esEncargado ? claveSinSufijo.slice(0, -4) : claveSinSufijo;
+  const claveBase = esEncargado ? claveNorm.slice(0, -4)
+                   : esLocalFijo ? claveNorm.slice(0, -5)
+                   : claveNorm;
   // Búsqueda directa
   if (CLAVES_LOCALES[claveBase]) return { local: CLAVES_LOCALES[claveBase], esEncargado, esLocalFijo };
   // Búsqueda flexible
@@ -2285,8 +2300,29 @@ function _onLoginUserInput() {
   const user  = document.getElementById('login-user').value.trim().toLowerCase();
   const campos = document.getElementById('campos-invitado');
   if (!campos) return;
+  // Solo el usuario "invitado" muestra el formulario de datos.
+  // El usuario "local" nunca lo pide — acceso directo del encargado.
   campos.style.display = (user === 'invitado') ? 'block' : 'none';
   if (user === 'invitado') _precargarDatosInvitado();
+}
+
+// Se llama al cargar la pantalla de login. Si hay datos completos guardados
+// de una sesión de invitado anterior (nombre, apellido, dni y clave), intenta
+// el autologin total sin que el usuario toque nada.
+async function _intentarAutologinInvitado() {
+  try {
+    const guardado = JSON.parse(localStorage.getItem('siscap_invitado') || 'null');
+    if (!guardado || !guardado.nombre || !guardado.apellido || !guardado.dni || !guardado.pass) return false;
+
+    document.getElementById('login-user').value = 'invitado';
+    _onLoginUserInput();
+    document.getElementById('login-pass').value = guardado.pass;
+
+    await doLogin();
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 function _precargarDatosInvitado() {
@@ -2300,6 +2336,8 @@ function _precargarDatosInvitado() {
     inputNombre.value = guardado.nombre || '';
     inputApellido.value = guardado.apellido || '';
     if (inputDni) inputDni.value = guardado.dni || '';
+    const inputPass = document.getElementById('login-pass');
+    if (inputPass && guardado.pass) inputPass.value = guardado.pass;
 
     // Si ya hay un "soy-otra-persona" inyectado, no duplicar
     if (document.getElementById('cambiar-persona-invitado')) return;
@@ -2312,6 +2350,8 @@ function _precargarDatosInvitado() {
       inputNombre.value = '';
       inputApellido.value = '';
       if (inputDni) inputDni.value = '';
+      if (inputPass) inputPass.value = '';
+      try { localStorage.removeItem('siscap_invitado'); } catch (e) {}
       inputNombre.focus();
       aviso.remove();
     };
@@ -2328,19 +2368,25 @@ async function doLogin() {
   err.textContent = '';
   if (!user || !pass) { err.textContent = 'Completá usuario y contraseña.'; return; }
 
-  // 1. Login de invitado por local — clave del local (o [local]resp para encargados)
-  if (user === 'invitado') {
-    // Detectar primero si la clave es de "local fijo" (encargado, sin trazabilidad)
-    const matchPrevio = _buscarLocalPorClave(pass.trim().toLowerCase());
-    if (!matchPrevio) {
+  // 1. Usuario "local" — acceso directo del encargado, SIN pedir datos.
+  // Usuario fijo "local", la contraseña identifica la sucursal (ej. olivoslocal).
+  if (user === 'local') {
+    const matchLocal = _buscarLocalPorClave(pass.trim().toLowerCase());
+    if (!matchLocal) {
       err.textContent = 'Contraseña incorrecta. Verificá la clave de tu local.';
       return;
     }
+    const nombreMostrarFijo = 'Local · ' + matchLocal.local.replace("Lucciano's ", "");
+    _loginExitoso('local', nombreMostrarFijo, false, true, matchLocal.local, true);
+    return;
+  }
 
-    if (matchPrevio.esLocalFijo) {
-      // Acceso directo del encargado — sin nombre, sin apellido, sin DNI
-      const nombreMostrarFijo = 'Local · ' + matchPrevio.local.replace("Lucciano's ", "");
-      _loginExitoso('invitado', nombreMostrarFijo, false, true, matchPrevio.local, true);
+  // 2. Login de invitado — siempre pide nombre, apellido y DNI (o autologuea
+  // si ya hay datos guardados de una visita anterior en este dispositivo).
+  if (user === 'invitado') {
+    const matchPrevio = _buscarLocalPorClave(pass.trim().toLowerCase());
+    if (!matchPrevio) {
+      err.textContent = 'Contraseña incorrecta. Verificá la clave de tu local.';
       return;
     }
 
@@ -2386,7 +2432,7 @@ async function doLogin() {
         nombre + ' ' + apellido + ' (' + local.replace("Lucciano's ", "") + ')';
 
       try {
-        localStorage.setItem('siscap_invitado', JSON.stringify({ nombre, apellido, dni }));
+        localStorage.setItem('siscap_invitado', JSON.stringify({ nombre, apellido, dni, pass: pass.trim() }));
       } catch (e) { /* localStorage no disponible */ }
 
       if (resp.aviso) {
@@ -2470,6 +2516,9 @@ function _loginExitoso(user, nombre, isAdmin, isGuest, localInvitado, esEncargad
     showTab('guia');
     setActiveNav('nav-guia');
     switchGuiaTab('cafe');
+    // Aviso de uso de celular en jornada — solo para invitados reales
+    // (empleados con celu propio), no para el usuario "local" (PC fija del local).
+    if (user === 'invitado') mostrarAvisoUsoCelular();
     return;
   }
   currentUser = { username: user, nombre, isAdmin, isGuest: isGuest||false, pass: '' };
@@ -2503,6 +2552,17 @@ function _loginExitoso(user, nombre, isAdmin, isGuest, localInvitado, esEncargad
   // Mostrar banner instalación si no lo cerró antes
   setTimeout(() => mostrarBannerPWA(), 1200);
 }
+// ── AVISO USO DE CELULAR EN JORNADA (solo invitados) ──
+function mostrarAvisoUsoCelular() {
+  const banner = document.getElementById('aviso-celular-banner');
+  if (banner) banner.style.display = 'flex';
+}
+
+function cerrarAvisoUsoCelular() {
+  const banner = document.getElementById('aviso-celular-banner');
+  if (banner) banner.style.display = 'none';
+}
+
 // ── BANNER INSTALACIÓN PWA ──
 function mostrarBannerPWA() {
   // No mostrar si ya está instalada como PWA
@@ -4807,6 +4867,12 @@ async function toggleUsuario(usuario, estadoActual) {
     showToast('✓ Usuario '+nuevoEstado); cargarUsuarios();
   } catch(e) { showToast('⚠ Error'); }
 }
+
+// Autologin de invitado: si hay datos completos guardados de una visita
+// anterior (nombre, apellido, dni, clave), entra directo sin que la
+// persona tenga que tocar nada.
+_intentarAutologinInvitado();
+
 </script>
 <script>
 // ═══════════════════════════════════════════════════════════
