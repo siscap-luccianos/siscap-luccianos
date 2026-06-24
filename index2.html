@@ -823,6 +823,7 @@ body::-webkit-scrollbar{display:none}
     <button class="btn btn-gold" onclick="calcularHospitalidad()" style="margin-bottom:8px">Calcular resultado</button>
     <button class="btn btn-green-solid" id="hp-pdf-btn" onclick="generarPDFHospitalidad()" style="display:none;margin-bottom:8px">⬇ Descargar PDF</button>
     <button class="btn btn-outline" id="hp-guardar-btn" onclick="guardarHospitalidad()" style="display:none">Guardar evaluación</button>
+    <button class="btn btn-outline" style="color:var(--gray);border-color:#444;margin-top:8px" onclick="limpiarHospitalidad()">🧹 Limpiar y empezar otro checklist</button>
 
     <div style="margin-top:28px;border-top:1px solid #2a2a2a;padding-top:16px">
       <div class="section-title">Checklists anteriores</div>
@@ -4550,6 +4551,31 @@ function renderHospitalidad() {
   });
 }
 
+function limpiarHospitalidad() {
+  if (!confirm('¿Limpiar el formulario y empezar un checklist nuevo?')) return;
+  document.getElementById('hp-colaborador').value = '';
+  document.getElementById('hp-sucursal').value = '';
+  document.getElementById('hp-fecha').value = '';
+  document.getElementById('hp-fortalezas').value = '';
+  document.getElementById('hp-areas').value = '';
+  document.getElementById('hp-obs').value = '';
+  // Desmarcar todos los radios y devolverlos al estado visual apagado
+  document.querySelectorAll('#hp-secciones input[type="radio"]').forEach(i => i.checked = false);
+  document.querySelectorAll('#hp-secciones .hp-opt').forEach(l => {
+    l.style.opacity = '.55';
+    l.style.background = 'var(--dark3)';
+    l.style.borderColor = '#444';
+    l.style.color = 'var(--gray)';
+  });
+  document.getElementById('hp-resultado').style.display = 'none';
+  document.getElementById('hp-guardar-btn').style.display = 'none';
+  const btnPdf = document.getElementById('hp-pdf-btn');
+  if (btnPdf) btnPdf.style.display = 'none';
+  window._hospResultado = null;
+  window.scrollTo(0,0);
+  showToast('✓ Listo para un nuevo checklist');
+}
+
 function calcularHospitalidad() {
   let cumpleTot = 0, nocumpleTot = 0, naTot = 0;
   const fort = [], ref = [];
@@ -4983,12 +5009,27 @@ function generarPDFHospitalidad() {
   });
   y += 4;
   doc.setTextColor(...PDF_DARK); doc.setFontSize(10);
-  const fort = document.getElementById('hp-fortalezas').value.trim();
-  const areas= document.getElementById('hp-areas').value.trim();
-  const obs  = document.getElementById('hp-obs').value.trim();
-  if (fort) { doc.text('Fortalezas:', 14, y); y+=5; doc.text(doc.splitTextToSize(fort,180), 14, y); y+=10; }
-  if (areas){ doc.text('Áreas a reforzar:', 14, y); y+=5; doc.text(doc.splitTextToSize(areas,180), 14, y); y+=10; }
-  if (obs)  { doc.text('Observaciones:', 14, y); y+=5; doc.text(doc.splitTextToSize(obs,180), 14, y); y+=10; }
+  const LH = 5; // alto de línea en mm
+  function bloqueTexto(titulo, texto) {
+    if (!texto) return;
+    if (y > 270) { doc.addPage(); y = 20; }
+    doc.setFont(undefined,'bold'); doc.setTextColor(...PDF_DARK);
+    doc.text(titulo, 14, y); y += LH;
+    doc.setFont(undefined,'normal');
+    const items = texto.split('\n').filter(l => l.trim());
+    items.forEach(linea => {
+      const wrapped = doc.splitTextToSize(linea, 180);
+      wrapped.forEach(w => {
+        if (y > 280) { doc.addPage(); y = 20; }
+        doc.text(w, 14, y);
+        y += LH;
+      });
+    });
+    y += 4; // espacio entre bloques
+  }
+  bloqueTexto('Fortalezas:', document.getElementById('hp-fortalezas').value.trim());
+  bloqueTexto('Áreas a reforzar:', document.getElementById('hp-areas').value.trim());
+  bloqueTexto('Observaciones:', document.getElementById('hp-obs').value.trim());
   doc.save(`Hospitalidad_${sucursal}_${colaborador}_${fecha}.pdf`.replace(/\s+/g,'_'));
 }
 
