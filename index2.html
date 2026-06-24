@@ -1200,6 +1200,12 @@ function formatFecha(s) {
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+// Para interpolar texto dentro de comillas simples de un atributo onclick="..."
+// (esc() no alcanza: un apóstrofo como el de "Lucciano's" corta la cadena JS y
+// el botón queda con un onclick roto que no hace nada al tocarlo).
+function escJS(s) {
+  return String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+}
 let _toastTimer = null;
 function showToast(msg, dur=2800) {
   const t = document.getElementById('toast');
@@ -2673,7 +2679,7 @@ function verEval(local, evaluado, fecha) {
           <div style="font-family:Montserrat;font-weight:700;font-size:11px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">📁 Evaluación registrada en SisCap 1</div>
           <div style="font-size:12px;color:var(--gray);line-height:1.6">El detalle ítem por ítem no está disponible en esta versión. Solo se conserva el resumen por módulo.</div>
         </div>
-        <button class="btn btn-green-solid" style="margin-top:12px" onclick="reimprimirPDF('${esc(local)}','${esc(evaluado)}','${fecha}',${reg.porcentaje||0})">📄 Descargar PDF</button>`;
+        <button class="btn btn-green-solid" style="margin-top:12px" onclick="reimprimirPDF('${escJS(local)}','${escJS(evaluado)}','${fecha}',${reg.porcentaje||0})">📄 Descargar PDF</button>`;
     }
     showTab('ver'); return;
   }
@@ -2714,7 +2720,7 @@ function verEval(local, evaluado, fecha) {
   // Agregar botones al pie
   html += `
     <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
-      <button class="btn btn-green-solid" onclick="reimprimirPDF('${esc(cached.local)}','${esc(cached.evaluado)}','${cached.fecha}',${cached.total||0})">📄 Descargar PDF</button>
+      <button class="btn btn-green-solid" onclick="reimprimirPDF('${escJS(cached.local)}','${escJS(cached.evaluado)}','${cached.fecha}',${cached.total||0})">📄 Descargar PDF</button>
       <button class="btn btn-outline" onclick="editarEvalActual()" style="color:var(--gold);border-color:var(--gold-dark)">✏ Editar evaluación</button>
     </div>`;
   body.innerHTML = html;
@@ -4768,20 +4774,38 @@ function renderHistorialHospitalidad() {
     cont.innerHTML = `<div style="font-size:12px;color:var(--gray)">Todavía no guardaste ningún checklist.</div>`;
     return;
   }
-  cont.innerHTML = propios.map(r => {
+  cont.innerHTML = '';
+  const frag = document.createDocumentFragment();
+  propios.forEach(r => {
     const { cls } = getEstado(r.porcentaje);
-    return `<div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:var(--rs);padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+    const row = document.createElement('div');
+    row.style.cssText = 'background:var(--dark2);border:1px solid #2a2a2a;border-radius:var(--rs);padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px';
+    row.innerHTML = `
       <div>
         <div style="font-size:13px;font-weight:600;color:var(--white)">${esc(r.evaluado)}</div>
         <div style="font-size:11px;color:var(--gray)">${esc(r.local)} · ${formatFecha(r.fecha)}</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <span class="${cls}" style="font-family:Montserrat,sans-serif;font-weight:800;font-size:14px">${r.porcentaje}%</span>
-        <button class="btn btn-outline btn-sm" onclick="generarPDFHospitalidadDesdeCache('${esc(r.local)}','${esc(r.evaluado)}','${r.fecha}',${r.porcentaje},'${esc(r.evaluador||'')}')">⬇ PDF</button>
-        <button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="eliminarHospitalidad('${esc(r.local)}','${esc(r.evaluado)}','${r.fecha}')">🗑</button>
-      </div>
-    </div>`;
-  }).join('');
+      </div>`;
+    const actsDiv = row.querySelector('div[style*="gap:8px"]');
+
+    const btnPdf = document.createElement('button');
+    btnPdf.className = 'btn btn-outline btn-sm';
+    btnPdf.textContent = '⬇ PDF';
+    btnPdf.addEventListener('click', () => generarPDFHospitalidadDesdeCache(r.local, r.evaluado, r.fecha, r.porcentaje, r.evaluador || ''));
+
+    const btnDel = document.createElement('button');
+    btnDel.className = 'btn btn-outline btn-sm';
+    btnDel.style.cssText = 'color:var(--red);border-color:var(--red)';
+    btnDel.textContent = '🗑';
+    btnDel.addEventListener('click', () => eliminarHospitalidad(r.local, r.evaluado, r.fecha));
+
+    actsDiv.appendChild(btnPdf);
+    actsDiv.appendChild(btnDel);
+    frag.appendChild(row);
+  });
+  cont.appendChild(frag);
 }
 
 async function eliminarHospitalidad(local, evaluado, fecha) {
