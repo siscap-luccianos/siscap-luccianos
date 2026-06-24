@@ -811,6 +811,10 @@ body::-webkit-scrollbar{display:none}
       </div>
     </div>
     <div class="field"><label>Fecha</label><input type="date" id="hp-fecha"/></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <div class="progress-outer" style="flex:1"><div class="progress-bar" id="hp-prog-bar" style="background:var(--teal)"></div></div>
+      <span class="progress-text" id="hp-prog-text">0 / 37</span>
+    </div>
     <div id="hp-secciones"></div>
     <div id="hp-resultado" style="display:none;margin:18px 0;padding:16px;border-radius:var(--r);text-align:center">
       <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:6px">Resultado general</div>
@@ -4511,25 +4515,51 @@ const HOSP_DATA = [
   ]},
 ];
 
+const HOSP_TOTAL_ITEMS = HOSP_DATA.reduce((s,sec)=>s+sec.items.length, 0);
+
+function _hospSeccionEstado(si) {
+  // Cuenta cuántos ítems de la sección ya tienen una opción marcada
+  const sec = HOSP_DATA[si];
+  let respondidos = 0;
+  sec.items.forEach((it, ii) => {
+    if (document.querySelector(`input[name="hp-${si}-${ii}"]:checked`)) respondidos++;
+  });
+  return { respondidos, total: sec.items.length, completa: respondidos === sec.items.length };
+}
+
 function renderHospitalidad() {
   const cont = document.getElementById('hp-secciones');
   if (!cont || cont.dataset.rendered) return;
   cont.dataset.rendered = '1';
   cont.innerHTML = HOSP_DATA.map((s, si) => `
-    <div style="margin-bottom:18px">
-      <div class="section-title">${s.sec}</div>
-      ${s.items.map((it, ii) => `
-        <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:var(--rs);padding:11px 13px;margin-bottom:8px">
-          <div style="font-size:12.5px;color:var(--white);line-height:1.4;margin-bottom:8px">${it}</div>
-          <div style="display:flex;gap:6px">
-            <label class="hp-opt" data-name="hp-${si}-${ii}" data-val="cumple" style="flex:1;text-align:center;padding:6px;border-radius:6px;background:var(--dark3);border:1px solid #444;color:var(--gray);font-size:11px;font-weight:700;cursor:pointer;opacity:.55;transition:all .15s"><input type="radio" name="hp-${si}-${ii}" value="cumple" style="display:none">✓ Cumple</label>
-            <label class="hp-opt" data-name="hp-${si}-${ii}" data-val="nocumple" style="flex:1;text-align:center;padding:6px;border-radius:6px;background:var(--dark3);border:1px solid #444;color:var(--gray);font-size:11px;font-weight:700;cursor:pointer;opacity:.55;transition:all .15s"><input type="radio" name="hp-${si}-${ii}" value="nocumple" style="display:none">✗ No cumple</label>
-            <label class="hp-opt" data-name="hp-${si}-${ii}" data-val="na" style="flex:1;text-align:center;padding:6px;border-radius:6px;background:var(--dark3);border:1px solid #444;color:var(--gray);font-size:11px;font-weight:700;cursor:pointer;opacity:.55;transition:all .15s"><input type="radio" name="hp-${si}-${ii}" value="na" style="display:none">— N/A</label>
-          </div>
+    <div class="hp-sec-block" data-si="${si}" style="margin-bottom:10px;border:1px solid #2a2a2a;border-radius:var(--r);overflow:hidden">
+      <div class="hp-sec-head" onclick="toggleHospSeccion(${si})" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;background:var(--dark2)">
+        <div style="display:flex;align-items:center;gap:8px;min-width:0">
+          <span class="hp-sec-check" id="hp-sec-check-${si}" style="font-size:13px">○</span>
+          <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:var(--white);letter-spacing:.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.sec}</span>
         </div>
-      `).join('')}
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <span id="hp-sec-count-${si}" style="font-size:11px;color:var(--gray);font-weight:700">0/${s.items.length}</span>
+          <span class="hp-sec-chev" id="hp-sec-chev-${si}" style="color:var(--gray);font-size:11px;transition:transform .2s">▼</span>
+        </div>
+      </div>
+      <div class="hp-sec-body" id="hp-sec-body-${si}" style="display:none;padding:12px 14px;background:var(--black)">
+        ${s.items.map((it, ii) => `
+          <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:var(--rs);padding:11px 13px;margin-bottom:8px">
+            <div style="font-size:12.5px;color:var(--white);line-height:1.4;margin-bottom:8px">${it}</div>
+            <div style="display:flex;gap:6px">
+              <label class="hp-opt" data-name="hp-${si}-${ii}" data-val="cumple" style="flex:1;text-align:center;padding:6px;border-radius:6px;background:var(--dark3);border:1px solid #444;color:var(--gray);font-size:11px;font-weight:700;cursor:pointer;opacity:.55;transition:all .15s"><input type="radio" name="hp-${si}-${ii}" value="cumple" style="display:none">✓ Cumple</label>
+              <label class="hp-opt" data-name="hp-${si}-${ii}" data-val="nocumple" style="flex:1;text-align:center;padding:6px;border-radius:6px;background:var(--dark3);border:1px solid #444;color:var(--gray);font-size:11px;font-weight:700;cursor:pointer;opacity:.55;transition:all .15s"><input type="radio" name="hp-${si}-${ii}" value="nocumple" style="display:none">✗ No cumple</label>
+              <label class="hp-opt" data-name="hp-${si}-${ii}" data-val="na" style="flex:1;text-align:center;padding:6px;border-radius:6px;background:var(--dark3);border:1px solid #444;color:var(--gray);font-size:11px;font-weight:700;cursor:pointer;opacity:.55;transition:all .15s"><input type="radio" name="hp-${si}-${ii}" value="na" style="display:none">— N/A</label>
+            </div>
+          </div>
+        `).join('')}
+      </div>
     </div>
   `).join('');
+
+  // Abrir la primera sección por defecto
+  toggleHospSeccion(0, true);
 
   cont.addEventListener('click', e => {
     const lbl = e.target.closest('.hp-opt');
@@ -4547,7 +4577,52 @@ function renderHospitalidad() {
     if (val === 'cumple')      { lbl.style.background = 'var(--green-bg)'; lbl.style.borderColor = 'var(--green)'; lbl.style.color = 'var(--green)'; }
     else if (val === 'nocumple'){ lbl.style.background = 'var(--red-bg)';   lbl.style.borderColor = 'var(--red)';   lbl.style.color = 'var(--red)'; }
     else                        { lbl.style.background = 'var(--dark3)';    lbl.style.borderColor = '#888';         lbl.style.color = 'var(--white)'; }
+
+    const si = parseInt(lbl.closest('.hp-sec-block').dataset.si);
+    updateHospSeccionBadge(si);
+    updateHospProgresoGlobal();
   });
+}
+
+function toggleHospSeccion(si, forceOpen) {
+  const body = document.getElementById('hp-sec-body-' + si);
+  const chev = document.getElementById('hp-sec-chev-' + si);
+  if (!body) return;
+  const abrir = forceOpen || body.style.display === 'none';
+  // Cerrar las demás secciones (acordeón)
+  document.querySelectorAll('.hp-sec-body').forEach(b => { if (b !== body) b.style.display = 'none'; });
+  document.querySelectorAll('.hp-sec-chev').forEach(c => { if (c !== chev) c.style.transform = ''; });
+  body.style.display = abrir ? 'block' : 'none';
+  if (chev) chev.style.transform = abrir ? 'rotate(180deg)' : '';
+}
+
+function updateHospSeccionBadge(si) {
+  const { respondidos, total, completa } = _hospSeccionEstado(si);
+  const countEl = document.getElementById('hp-sec-count-' + si);
+  const checkEl = document.getElementById('hp-sec-check-' + si);
+  if (countEl) {
+    countEl.textContent = respondidos + '/' + total;
+    countEl.style.color = completa ? 'var(--green)' : (respondidos > 0 ? 'var(--yellow)' : 'var(--gray)');
+  }
+  if (checkEl) {
+    checkEl.textContent = completa ? '✓' : '○';
+    checkEl.style.color = completa ? 'var(--green)' : 'var(--gray)';
+  }
+  // Si terminó la sección, pasar automáticamente a la siguiente sin completar
+  if (completa) {
+    const siguiente = HOSP_DATA.findIndex((s, i) => i > si && !_hospSeccionEstado(i).completa);
+    if (siguiente !== -1) setTimeout(() => toggleHospSeccion(siguiente, true), 250);
+  }
+}
+
+function updateHospProgresoGlobal() {
+  let respondidos = 0;
+  HOSP_DATA.forEach((s, si) => { respondidos += _hospSeccionEstado(si).respondidos; });
+  const pct = Math.round((respondidos / HOSP_TOTAL_ITEMS) * 100);
+  const bar = document.getElementById('hp-prog-bar');
+  const txt = document.getElementById('hp-prog-text');
+  if (bar) bar.style.width = pct + '%';
+  if (txt) txt.textContent = respondidos + ' / ' + HOSP_TOTAL_ITEMS;
 }
 
 function limpiarHospitalidad() {
@@ -4566,6 +4641,10 @@ function limpiarHospitalidad() {
     l.style.borderColor = '#444';
     l.style.color = 'var(--gray)';
   });
+  HOSP_DATA.forEach((s, si) => updateHospSeccionBadge(si));
+  updateHospProgresoGlobal();
+  document.querySelectorAll('.hp-sec-body').forEach((b,i) => b.style.display = i===0 ? 'block' : 'none');
+  document.querySelectorAll('.hp-sec-chev').forEach((c,i) => c.style.transform = i===0 ? 'rotate(180deg)' : '');
   document.getElementById('hp-resultado').style.display = 'none';
   const btnPdf = document.getElementById('hp-pdf-btn');
   if (btnPdf) btnPdf.style.display = 'none';
@@ -4576,19 +4655,23 @@ function limpiarHospitalidad() {
 
 function calcularHospitalidad() {
   let cumpleTot = 0, nocumpleTot = 0, naTot = 0;
-  const fort = [], ref = [];
+  const seccionesConRef = []; // { nombre, items:[...] } solo para áreas a reforzar
+  const seccionesSolidas = []; // nombres con 100% cumplimiento (para el resumen de fortalezas)
   const secciones = HOSP_DATA.map((s, si) => {
     let cumple = 0, nocumple = 0, na = 0;
+    const itemsNoCumple = [];
     s.items.forEach((it, ii) => {
       const sel = document.querySelector(`input[name="hp-${si}-${ii}"]:checked`);
       if (!sel) return;
-      if (sel.value === 'cumple') { cumple++; fort.push(`[${s.sec}] ${it}`); }
-      else if (sel.value === 'nocumple') { nocumple++; ref.push(`[${s.sec}] ${it}`); }
+      if (sel.value === 'cumple') cumple++;
+      else if (sel.value === 'nocumple') { nocumple++; itemsNoCumple.push(it); }
       else na++;
     });
     cumpleTot += cumple; nocumpleTot += nocumple; naTot += na;
     const ev = cumple + nocumple;
     const pct = ev ? Math.round((cumple/ev)*100) : null;
+    if (itemsNoCumple.length) seccionesConRef.push({ nombre:s.sec, items:itemsNoCumple });
+    if (ev > 0 && nocumple === 0) seccionesSolidas.push(s.sec);
     return { nombre:s.sec, cumple, nocumple, na, pct };
   });
   const evaluables = cumpleTot + nocumpleTot;
@@ -4600,17 +4683,36 @@ function calcularHospitalidad() {
   else { nivel = '● ROJO — Crítico (intervención inmediata)'; color = 'var(--red)'; estado='Crítico'; }
   const wrap = document.getElementById('hp-resultado');
   wrap.style.display = 'block';
-  document.getElementById('hp-total-pct').textContent = pct + '%';
+  document.getElementById('hp-total-pct').textContent = cumpleTot + '/' + evaluables + ' · ' + pct + '%';
   document.getElementById('hp-total-pct').style.color = color;
   document.getElementById('hp-nivel').textContent = nivel;
   document.getElementById('hp-nivel').style.color = color;
   const btnPdf = document.getElementById('hp-pdf-btn');
   if (btnPdf) btnPdf.style.display = 'block';
-  // Fortalezas y áreas a reforzar se completan solas según lo marcado —
-  // quedan editables por si el supervisor quiere ajustar el texto.
-  document.getElementById('hp-fortalezas').value = fort.join('\n') || 'Sin fortalezas destacadas en esta evaluación.';
-  document.getElementById('hp-areas').value      = ref.join('\n')  || 'Sin áreas a reforzar — todos los criterios cumplidos.';
-  window._hospResultado = { cumple:cumpleTot, nocumple:nocumpleTot, na:naTot, pct, nivel, estado, secciones };
+
+  // ── Fortalezas: resumen, no listado ítem por ítem ──
+  let fortTexto;
+  if (nocumpleTot === 0) {
+    fortTexto = `Cumple el ${pct}% de los criterios evaluados (${cumpleTot}/${evaluables}) en las ${secciones.filter(s=>s.pct!==null).length} secciones del checklist.`;
+  } else if (seccionesSolidas.length) {
+    fortTexto = `Cumplimiento total en: ${seccionesSolidas.join(', ')}.`;
+  } else {
+    fortTexto = `Cumple ${cumpleTot}/${evaluables} criterios evaluados (${pct}%). Sin secciones con cumplimiento total.`;
+  }
+
+  // ── Áreas a reforzar: agrupadas por sección, una sola vez el título ──
+  let refTexto;
+  if (!seccionesConRef.length) {
+    refTexto = 'Sin áreas a reforzar — todos los criterios cumplidos.';
+  } else {
+    refTexto = seccionesConRef.map(s =>
+      s.nombre + '\n' + s.items.map(it => '• ' + it).join('\n')
+    ).join('\n\n');
+  }
+
+  document.getElementById('hp-fortalezas').value = fortTexto;
+  document.getElementById('hp-areas').value      = refTexto;
+  window._hospResultado = { cumple:cumpleTot, nocumple:nocumpleTot, na:naTot, total:evaluables, pct, nivel, estado, secciones };
 }
 
 async function guardarHospitalidad() {
@@ -4698,6 +4800,11 @@ function generarPDFHospitalidadDesdeCache(local, evaluado, fecha, porcentajeFall
   const tieneDetalle = !!(cached && cached.tipo === 'Hospitalidad' && cached.modulos && cached.modulos.length);
   const pct = tieneDetalle ? cached.total : (porcentajeFallback != null ? porcentajeFallback : 0);
   const evaluador = tieneDetalle ? (cached.evaluador || '—') : (evaluadorFallback || '—');
+  let totalCumple = null, totalEv = null;
+  if (tieneDetalle) {
+    totalCumple = cached.modulos.reduce((s,m)=>s+(m.score||0),0);
+    totalEv     = cached.modulos.reduce((s,m)=>s+(m.max||0),0);
+  }
 
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit:'mm', format:'a4', orientation:'portrait' });
@@ -4709,7 +4816,7 @@ function generarPDFHospitalidadDesdeCache(local, evaluado, fecha, porcentajeFall
   doc.text(`Sucursal: ${local}    Fecha: ${formatFecha(fecha)}`, 14, y); y+=6;
   doc.text(`Supervisor: ${evaluador}`, 14, y); y+=10;
   doc.setFontSize(28); doc.setTextColor(..._pdfColorEstado(pct));
-  doc.text(`${pct}%`, 105, y, {align:'center'}); y+=8;
+  doc.text(totalEv ? `${totalCumple}/${totalEv} · ${pct}%` : `${pct}%`, 105, y, {align:'center'}); y+=8;
   doc.setFontSize(11); doc.text(_pdfLabelEstado(pct), 105, y, {align:'center'}); y+=12;
   doc.setTextColor(...PDF_DARK);
   if (tieneDetalle) {
@@ -4717,7 +4824,8 @@ function generarPDFHospitalidadDesdeCache(local, evaluado, fecha, porcentajeFall
       if (y > 265) { doc.addPage(); y = 20; }
       doc.setFontSize(10); doc.setTextColor(...PDF_DARK);
       doc.text(s.nombre, 14, y);
-      const pctTxt = s.porcentaje===null ? 'N/A' : s.porcentaje+'%';
+      const ev = (s.max!==undefined) ? s.max : null;
+      const pctTxt = s.porcentaje===null ? 'N/A' : (ev ? `${s.score}/${ev} · ${s.porcentaje}%` : s.porcentaje+'%');
       doc.setTextColor(...(s.porcentaje===null?PDF_GRAY:_pdfColorEstado(s.porcentaje)));
       doc.text(pctTxt, 196, y, {align:'right'});
       y += 6;
@@ -5001,14 +5109,15 @@ function generarPDFHospitalidad() {
   doc.text(`Supervisor: ${evaluador}`, 14, y); y+=10;
   const colorEst = _pdfColorEstado(r.pct);
   doc.setFontSize(28); doc.setTextColor(...colorEst);
-  doc.text(`${r.pct}%`, 105, y, {align:'center'}); y+=8;
+  doc.text(`${r.cumple}/${r.total} · ${r.pct}%`, 105, y, {align:'center'}); y+=8;
   doc.setFontSize(11); doc.text(r.nivel.replace('● ',''), 105, y, {align:'center'}); y+=12;
   doc.setTextColor(...PDF_DARK);
   r.secciones.forEach(s => {
     if (y > 265) { doc.addPage(); y = 20; }
     doc.setFontSize(10); doc.setTextColor(...PDF_DARK);
     doc.text(s.nombre, 14, y);
-    const pctTxt = s.pct===null ? 'N/A' : s.pct+'%';
+    const ev = s.cumple + s.nocumple;
+    const pctTxt = s.pct===null ? 'N/A' : `${s.cumple}/${ev} · ${s.pct}%`;
     doc.setTextColor(...(s.pct===null?PDF_GRAY:_pdfColorEstado(s.pct)));
     doc.text(pctTxt, 196, y, {align:'right'});
     y += 6;
@@ -5019,15 +5128,19 @@ function generarPDFHospitalidad() {
   function bloqueTexto(titulo, texto) {
     if (!texto) return;
     if (y > 270) { doc.addPage(); y = 20; }
-    doc.setFont(undefined,'bold'); doc.setTextColor(...PDF_DARK);
+    doc.setFont(undefined,'bold'); doc.setTextColor(...PDF_DARK); doc.setFontSize(10);
     doc.text(titulo, 14, y); y += LH;
     doc.setFont(undefined,'normal');
-    const items = texto.split('\n').filter(l => l.trim());
-    items.forEach(linea => {
-      const wrapped = doc.splitTextToSize(linea, 180);
-      wrapped.forEach(w => {
+    const lineas = texto.split('\n');
+    lineas.forEach(linea => {
+      if (!linea.trim()) { y += 2; return; }
+      const esBullet = linea.trim().startsWith('•');
+      if (!esBullet) { doc.setFont(undefined,'bold'); doc.setTextColor(...PDF_GOLD); doc.setFontSize(9); }
+      else           { doc.setFont(undefined,'normal'); doc.setTextColor(...PDF_DARK); doc.setFontSize(9.5); }
+      const wrapped = doc.splitTextToSize(linea, 178);
+      wrapped.forEach((w, wi) => {
         if (y > 280) { doc.addPage(); y = 20; }
-        doc.text(w, 14, y);
+        doc.text(w, esBullet ? 18 : 14, y);
         y += LH;
       });
     });
