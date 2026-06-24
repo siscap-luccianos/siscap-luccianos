@@ -820,9 +820,8 @@ body::-webkit-scrollbar{display:none}
     <div class="field"><label>Fortalezas observadas (se completa solo)</label><textarea id="hp-fortalezas" rows="3" placeholder="Se completa al calcular el resultado..."></textarea></div>
     <div class="field"><label>Áreas a reforzar (se completa solo)</label><textarea id="hp-areas" rows="3" placeholder="Se completa al calcular el resultado..."></textarea></div>
     <div class="field"><label>Observaciones generales</label><textarea id="hp-obs" rows="3" placeholder="..."></textarea></div>
-    <button class="btn btn-gold" onclick="calcularHospitalidad()" style="margin-bottom:8px">Calcular resultado</button>
+    <button class="btn btn-gold" onclick="calcularYGuardarHospitalidad()" style="margin-bottom:8px">💾 Calcular y guardar</button>
     <button class="btn btn-green-solid" id="hp-pdf-btn" onclick="generarPDFHospitalidad()" style="display:none;margin-bottom:8px">⬇ Descargar PDF</button>
-    <button class="btn btn-outline" id="hp-guardar-btn" onclick="guardarHospitalidad()" style="display:none">Guardar evaluación</button>
     <button class="btn btn-outline" style="color:var(--gray);border-color:#444;margin-top:8px" onclick="limpiarHospitalidad()">🧹 Limpiar y empezar otro checklist</button>
 
     <div style="margin-top:28px;border-top:1px solid #2a2a2a;padding-top:16px">
@@ -4568,7 +4567,6 @@ function limpiarHospitalidad() {
     l.style.color = 'var(--gray)';
   });
   document.getElementById('hp-resultado').style.display = 'none';
-  document.getElementById('hp-guardar-btn').style.display = 'none';
   const btnPdf = document.getElementById('hp-pdf-btn');
   if (btnPdf) btnPdf.style.display = 'none';
   window._hospResultado = null;
@@ -4606,7 +4604,6 @@ function calcularHospitalidad() {
   document.getElementById('hp-total-pct').style.color = color;
   document.getElementById('hp-nivel').textContent = nivel;
   document.getElementById('hp-nivel').style.color = color;
-  document.getElementById('hp-guardar-btn').style.display = 'block';
   const btnPdf = document.getElementById('hp-pdf-btn');
   if (btnPdf) btnPdf.style.display = 'block';
   // Fortalezas y áreas a reforzar se completan solas según lo marcado —
@@ -4650,9 +4647,13 @@ async function guardarHospitalidad() {
     tieneDetalle:true
   };
   showToast('✓ Checklist guardado como evaluación');
-  showTab('home');
-  setActiveNav('nav-home');
   renderHistorialHospitalidad();
+}
+
+async function calcularYGuardarHospitalidad() {
+  calcularHospitalidad();
+  if (!window._hospResultado) return; // ya mostró el toast de "marcá al menos un criterio"
+  await guardarHospitalidad();
 }
 
 function renderHistorialHospitalidad() {
