@@ -1856,6 +1856,9 @@ async function cargarDatos() {
               antiguedad: r.antiguedad || '',
               total:      r.porcentaje,
               modulos:    (r.detalle && r.detalle.modulos) ? r.detalle.modulos : [],
+              fortalezas: r.fortalezas || '',
+              reforzar:   r.reforzar || '',
+              observaciones: r.observaciones || '',
               id:         r.id || '',
               tieneDetalle: !!(r.detalle && r.detalle.modulos && r.detalle.modulos.length)
             };
@@ -4752,6 +4755,7 @@ async function guardarHospitalidad() {
   evalCache[sucursal+'|'+colaborador+'|'+fecha] = {
     evaluado:colaborador, local:sucursal, fecha, evaluador, tipo:'Hospitalidad',
     total:r.pct, modulos:r.secciones.map((s,i)=>({ nombre:s.nombre, num:i+1, porcentaje:s.pct, score:s.cumple, max:s.cumple+s.nocumple })),
+    fortalezas, reforzar:areasReforzar, observaciones,
     tieneDetalle:true
   };
   showToast('✓ Checklist guardado como evaluación');
@@ -4857,7 +4861,35 @@ function generarPDFHospitalidadDesdeCache(local, evaluado, fecha, porcentajeFall
   } else {
     doc.setFontSize(9); doc.setTextColor(...PDF_GRAY);
     doc.text('Detalle por sección no disponible para este registro — se muestra el resultado general.', 14, y, { maxWidth: 180 });
+    y += 12;
   }
+
+  y += 4;
+  const LH = 5;
+  function bloqueTexto(titulo, texto) {
+    if (!texto) return;
+    if (y > 270) { doc.addPage(); y = 20; }
+    doc.setFont(undefined,'bold'); doc.setTextColor(...PDF_DARK); doc.setFontSize(10);
+    doc.text(titulo, 14, y); y += LH;
+    const lineas = texto.split('\n');
+    lineas.forEach(linea => {
+      if (!linea.trim()) { y += 2; return; }
+      const esBullet = linea.trim().startsWith('•');
+      if (!esBullet) { doc.setFont(undefined,'bold'); doc.setTextColor(...PDF_GOLD); doc.setFontSize(9); }
+      else           { doc.setFont(undefined,'normal'); doc.setTextColor(...PDF_DARK); doc.setFontSize(9.5); }
+      const wrapped = doc.splitTextToSize(linea, 178);
+      wrapped.forEach(w => {
+        if (y > 280) { doc.addPage(); y = 20; }
+        doc.text(w, esBullet ? 18 : 14, y);
+        y += LH;
+      });
+    });
+    y += 4;
+  }
+  bloqueTexto('Fortalezas:', cached?.fortalezas || '');
+  bloqueTexto('Áreas a reforzar:', cached?.reforzar || '');
+  bloqueTexto('Observaciones:', cached?.observaciones || '');
+
   doc.save(`Hospitalidad_${local}_${evaluado}_${fecha}.pdf`.replace(/\s+/g,'_'));
 }
 
