@@ -4669,19 +4669,24 @@ function calcularHospitalidad() {
   const secciones = HOSP_DATA.map((s, si) => {
     let cumple = 0, nocumple = 0, na = 0;
     const itemsNoCumple = [];
+    const items_detalle = [];
     s.items.forEach((it, ii) => {
       const sel = document.querySelector(`input[name="hp-${si}-${ii}"]:checked`);
-      if (!sel) return;
+      if (!sel) { items_detalle.push({ texto: it, estado: null }); return; }
       if (sel.value === 'cumple') cumple++;
       else if (sel.value === 'nocumple') { nocumple++; itemsNoCumple.push(it); }
       else na++;
+      items_detalle.push({ texto: it, estado: sel.value });
     });
     cumpleTot += cumple; nocumpleTot += nocumple; naTot += na;
     const ev = cumple + nocumple;
     const pct = ev ? Math.round((cumple/ev)*100) : null;
     if (itemsNoCumple.length) seccionesConRef.push({ nombre:s.sec, items:itemsNoCumple });
     if (ev > 0 && nocumple === 0) seccionesSolidas.push(s.sec);
-    return { nombre:s.sec, cumple, nocumple, na, pct };
+    // items_detalle viaja igual que en las evaluaciones normales (columna Detalle, JSON),
+    // así el PDF de respaldo se reconstruye siempre desde la misma fuente confiable,
+    // sin depender de las columnas de texto Fortalezas/Reforzar/Observaciones por separado.
+    return { nombre:s.sec, cumple, nocumple, na, pct, items_detalle };
   });
   const evaluables = cumpleTot + nocumpleTot;
   if (evaluables === 0) { showToast('Marcá al menos un criterio'); return; }
@@ -4748,13 +4753,13 @@ async function guardarHospitalidad() {
     total:String(r.cumple), totalMax:String(r.cumple+r.nocumple),
     porcentaje:r.pct+'%', resultado:r.estado+' — '+r.pct+'%',
     fortalezas, reforzar:areasReforzar, observaciones,
-    detalleCompleto:{ modulos: r.secciones.map((s,i)=>({ nombre:s.nombre, num:i+1, porcentaje:s.pct, score:s.cumple, max:s.cumple+s.nocumple })) }
+    detalleCompleto:{ modulos: r.secciones.map((s,i)=>({ nombre:s.nombre, num:i+1, porcentaje:s.pct, score:s.cumple, max:s.cumple+s.nocumple, items_detalle:s.items_detalle||[] })) }
   };
   await apiPostBg(payload);
   datosResumen.push({ local:sucursal, evaluado:colaborador, fecha, evaluador, tipo:'Hospitalidad', porcentaje:normalizePct(r.pct) });
   evalCache[sucursal+'|'+colaborador+'|'+fecha] = {
     evaluado:colaborador, local:sucursal, fecha, evaluador, tipo:'Hospitalidad',
-    total:r.pct, modulos:r.secciones.map((s,i)=>({ nombre:s.nombre, num:i+1, porcentaje:s.pct, score:s.cumple, max:s.cumple+s.nocumple })),
+    total:r.pct, modulos:r.secciones.map((s,i)=>({ nombre:s.nombre, num:i+1, porcentaje:s.pct, score:s.cumple, max:s.cumple+s.nocumple, items_detalle:s.items_detalle||[] })),
     fortalezas, reforzar:areasReforzar, observaciones,
     tieneDetalle:true
   };
@@ -4864,6 +4869,46 @@ function generarPDFHospitalidadDesdeCache(local, evaluado, fecha, porcentajeFall
     y += 12;
   }
 
+  // ── Fortalezas / Áreas a reforzar: se reconstruyen desde items_detalle ──
+  // (la misma fuente confiable que usa reimprimirPDF para evaluaciones
+  // normales — el JSON de la columna Detalle, no columnas de texto sueltas).
+  // Solo se cae a los strings cacheados si el registro es viejo y no tiene
+  // items_detalle todavía.
+  let fortTexto = '', refTexto = '';
+  const tieneItemsDetalle = tieneDetalle && cached.modulos.some(m => m.items_detalle && m.items_detalle.length);
+  if (tieneItemsDetalle) {
+    let cumpleTot = 0, noCumpleTot = 0;
+    const seccionesSolidas = [];
+    const seccionesConRef = [];
+    cached.modulos.forEach(m => {
+      let cumple = 0, nocumple = 0;
+      const itemsNoCumple = [];
+      (m.items_detalle || []).forEach(it => {
+        if (it.estado === 'cumple') { cumple++; }
+        else if (it.estado === 'nocumple') { nocumple++; itemsNoCumple.push(it.texto); }
+      });
+      cumpleTot += cumple; noCumpleTot += nocumple;
+      if (itemsNoCumple.length) seccionesConRef.push({ nombre:m.nombre, items:itemsNoCumple });
+      if ((cumple+nocumple) > 0 && nocumple === 0) seccionesSolidas.push(m.nombre);
+    });
+    const evTot = cumpleTot + noCumpleTot;
+    const pctTot = evTot ? Math.round((cumpleTot/evTot)*100) : 0;
+    if (noCumpleTot === 0) {
+      fortTexto = `Cumple el ${pctTot}% de los criterios evaluados (${cumpleTot}/${evTot}).`;
+    } else if (seccionesSolidas.length) {
+      fortTexto = `Cumplimiento total en: ${seccionesSolidas.join(', ')}.`;
+    } else {
+      fortTexto = `Cumple ${cumpleTot}/${evTot} criterios evaluados (${pctTot}%). Sin secciones con cumplimiento total.`;
+    }
+    refTexto = seccionesConRef.length
+      ? seccionesConRef.map(s => s.nombre + '\n' + s.items.map(it => '• ' + it).join('\n')).join('\n\n')
+      : 'Sin áreas a reforzar — todos los criterios cumplidos.';
+  } else {
+    // Registro viejo sin items_detalle — usar lo que haya quedado cacheado
+    fortTexto = cached?.fortalezas || '';
+    refTexto  = cached?.reforzar || '';
+  }
+
   y += 4;
   const LH = 5;
   function bloqueTexto(titulo, texto) {
@@ -4886,8 +4931,8 @@ function generarPDFHospitalidadDesdeCache(local, evaluado, fecha, porcentajeFall
     });
     y += 4;
   }
-  bloqueTexto('Fortalezas:', cached?.fortalezas || '');
-  bloqueTexto('Áreas a reforzar:', cached?.reforzar || '');
+  bloqueTexto('Fortalezas:', fortTexto);
+  bloqueTexto('Áreas a reforzar:', refTexto);
   bloqueTexto('Observaciones:', cached?.observaciones || '');
 
   doc.save(`Hospitalidad_${local}_${evaluado}_${fecha}.pdf`.replace(/\s+/g,'_'));
