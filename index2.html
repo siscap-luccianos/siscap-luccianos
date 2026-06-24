@@ -4498,7 +4498,7 @@ const HOSP_DATA = [
     'Aplica conocimiento experto del producto para elevar la experiencia',
   ]},
   { sec:'Trabajo en Equipo', items:[
-    "Cubre a sus compañeros sin que se lo pidan ('todos somos Lucciano\\'s')",
+    "Cubre a sus compañeros sin que se lo pidan ('todos somos Lucciano's')",
     'Se coordina con el equipo de forma fluida, sin fricciones visibles',
     'Mantiene energía positiva que no afecta el ambiente del turno',
     'Da o recibe feedback constructivo entre pares con respeto',
@@ -4674,7 +4674,7 @@ function renderHistorialHospitalidad() {
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <span class="${cls}" style="font-family:Montserrat,sans-serif;font-weight:800;font-size:14px">${r.porcentaje}%</span>
-        <button class="btn btn-outline btn-sm" onclick="generarPDFHospitalidadDesdeCache('${esc(r.local)}','${esc(r.evaluado)}','${r.fecha}')">⬇ PDF</button>
+        <button class="btn btn-outline btn-sm" onclick="generarPDFHospitalidadDesdeCache('${esc(r.local)}','${esc(r.evaluado)}','${r.fecha}',${r.porcentaje},'${esc(r.evaluador||'')}')">⬇ PDF</button>
         <button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="eliminarHospitalidad('${esc(r.local)}','${esc(r.evaluado)}','${r.fecha}')">🗑</button>
       </div>
     </div>`;
@@ -4690,13 +4690,14 @@ async function eliminarHospitalidad(local, evaluado, fecha) {
   apiPostBg({ action:'delete', local, evaluado, fecha });
 }
 
-function generarPDFHospitalidadDesdeCache(local, evaluado, fecha) {
+function generarPDFHospitalidadDesdeCache(local, evaluado, fecha, porcentajeFallback, evaluadorFallback) {
+  if (!window.jspdf) { showToast('⚠ jsPDF no cargó. Verificá tu conexión.'); return; }
   const key = local + '|' + evaluado + '|' + fecha;
   const cached = evalCache[key];
-  if (!cached || cached.tipo !== 'Hospitalidad' || !cached.modulos || !cached.modulos.length) {
-    showToast('⚠ No se encontró el detalle de este checklist'); return;
-  }
-  if (!window.jspdf) { showToast('⚠ jsPDF no cargó. Verificá tu conexión.'); return; }
+  const tieneDetalle = !!(cached && cached.tipo === 'Hospitalidad' && cached.modulos && cached.modulos.length);
+  const pct = tieneDetalle ? cached.total : (porcentajeFallback != null ? porcentajeFallback : 0);
+  const evaluador = tieneDetalle ? (cached.evaluador || '—') : (evaluadorFallback || '—');
+
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit:'mm', format:'a4', orientation:'portrait' });
   let y = 20;
@@ -4705,21 +4706,25 @@ function generarPDFHospitalidadDesdeCache(local, evaluado, fecha) {
   doc.setFontSize(10); doc.setTextColor(...PDF_GRAY);
   doc.text(`Colaborador: ${evaluado}`, 14, y); y+=6;
   doc.text(`Sucursal: ${local}    Fecha: ${formatFecha(fecha)}`, 14, y); y+=6;
-  doc.text(`Supervisor: ${cached.evaluador||'—'}`, 14, y); y+=10;
-  const pct = cached.total;
+  doc.text(`Supervisor: ${evaluador}`, 14, y); y+=10;
   doc.setFontSize(28); doc.setTextColor(..._pdfColorEstado(pct));
   doc.text(`${pct}%`, 105, y, {align:'center'}); y+=8;
   doc.setFontSize(11); doc.text(_pdfLabelEstado(pct), 105, y, {align:'center'}); y+=12;
   doc.setTextColor(...PDF_DARK);
-  cached.modulos.forEach(s => {
-    if (y > 265) { doc.addPage(); y = 20; }
-    doc.setFontSize(10); doc.setTextColor(...PDF_DARK);
-    doc.text(s.nombre, 14, y);
-    const pctTxt = s.porcentaje===null ? 'N/A' : s.porcentaje+'%';
-    doc.setTextColor(...(s.porcentaje===null?PDF_GRAY:_pdfColorEstado(s.porcentaje)));
-    doc.text(pctTxt, 196, y, {align:'right'});
-    y += 6;
-  });
+  if (tieneDetalle) {
+    cached.modulos.forEach(s => {
+      if (y > 265) { doc.addPage(); y = 20; }
+      doc.setFontSize(10); doc.setTextColor(...PDF_DARK);
+      doc.text(s.nombre, 14, y);
+      const pctTxt = s.porcentaje===null ? 'N/A' : s.porcentaje+'%';
+      doc.setTextColor(...(s.porcentaje===null?PDF_GRAY:_pdfColorEstado(s.porcentaje)));
+      doc.text(pctTxt, 196, y, {align:'right'});
+      y += 6;
+    });
+  } else {
+    doc.setFontSize(9); doc.setTextColor(...PDF_GRAY);
+    doc.text('Detalle por sección no disponible para este registro — se muestra el resultado general.', 14, y, { maxWidth: 180 });
+  }
   doc.save(`Hospitalidad_${local}_${evaluado}_${fecha}.pdf`.replace(/\s+/g,'_'));
 }
 
