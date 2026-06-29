@@ -1855,12 +1855,12 @@ async function cargarDatos() {
               rol:        r.rol || '',
               antiguedad: r.antiguedad || '',
               total:      r.porcentaje,
-              modulos:    (r.detalleCompleto && r.detalleCompleto.modulos) ? r.detalleCompleto.modulos : (r.detalle && r.detalle.modulos) ? r.detalle.modulos : [],
+              modulos:    (r.detalle && r.detalle.modulos) ? r.detalle.modulos : (r.detalleCompleto && r.detalleCompleto.modulos) ? r.detalleCompleto.modulos : [],
               fortalezas: r.fortalezas || '',
               reforzar:   r.reforzar || '',
               observaciones: r.observaciones || '',
               id:         r.id || '',
-              tieneDetalle: !!((r.detalleCompleto && r.detalleCompleto.modulos && r.detalleCompleto.modulos.length) || (r.detalle && r.detalle.modulos && r.detalle.modulos.length))
+              tieneDetalle: !!(r.detalle && r.detalle.modulos && r.detalle.modulos.length)
             };
           }
         }
@@ -4315,12 +4315,19 @@ function exportarDashPDF() {
   }).join('');
 
   // ── KPIs ──
+  // Si no hay desglose por módulo (evaluaciones viejas, de antes de que
+  // existiera esta función), directamente NO se muestran esas tarjetas
+  // — igual que ya hace la pantalla en vivo. Nada de guiones feos.
   const kpis = [
     { val: d.promedio+'%',   label: 'Promedio del local',   sub: colabs.length+' colaboradores', c: cC(d.promedio) },
-    { val: d.modCritico ? d.modCritico.pct+'%' : '—', label: 'Módulo crítico', sub: d.modCritico ? tr(d.modCritico.nombre,16) : '—', c: '#e03030' },
-    { val: d.modSolido  ? d.modSolido.pct+'%'  : '—', label: 'Más sólido',     sub: d.modSolido  ? tr(d.modSolido.nombre,16)  : '—', c: '#27b870' },
-    { val: String(d.enRiesgo), label: 'Con riesgo',     sub: '≤ 66%',            c: d.enRiesgo>0?'#e03030':'#27b870' },
   ];
+  if (d.modCritico) {
+    kpis.push({ val: d.modCritico.pct+'%', label: 'Módulo crítico', sub: tr(d.modCritico.nombre,16), c: '#e03030' });
+  }
+  if (d.modSolido) {
+    kpis.push({ val: d.modSolido.pct+'%', label: 'Más sólido', sub: tr(d.modSolido.nombre,16), c: '#27b870' });
+  }
+  kpis.push({ val: String(d.enRiesgo), label: 'Con riesgo', sub: '≤ 66%', c: d.enRiesgo>0?'#e03030':'#27b870' });
   const kpisHTML = kpis.map(k => `
     <div style="flex:1;background:#fff;border:1px solid #e0e4f0;border-top:3px solid ${k.c};border-radius:8px;padding:12px 14px;text-align:center">
       <div style="font-size:26px;font-weight:900;color:${k.c};line-height:1">${esc(k.val)}</div>
@@ -4363,16 +4370,17 @@ function exportarDashPDF() {
   <!-- KPIs -->
   <div style="display:flex;gap:8px;margin-bottom:10px">${kpisHTML}</div>
 
-  <!-- CUERPO: 2 columnas -->
+  <!-- CUERPO: 2 columnas (o 1 sola si no hay desglose por módulo) -->
   <div style="display:flex;gap:10px;margin-bottom:10px">
 
-    <!-- Izquierda: módulos -->
+    <!-- Izquierda: módulos (solo si hay datos) -->
+    ${mods.length ? `
     <div style="flex:1.1;background:#fff;border:1px solid #e0e4f0;border-radius:8px;overflow:hidden">
       <div style="background:#1a1a3e;padding:8px 14px;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#c9a84c">Resultado del equipo por módulo</div>
       <table style="width:100%;border-collapse:collapse">
         <tbody>${modsHTML}</tbody>
       </table>
-    </div>
+    </div>` : ''}
 
     <!-- Derecha: acciones -->
     <div style="flex:1;background:#f8f9fd;border:1px solid #e0e4f0;border-radius:8px;overflow:hidden">
