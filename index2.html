@@ -1855,12 +1855,12 @@ async function cargarDatos() {
               rol:        r.rol || '',
               antiguedad: r.antiguedad || '',
               total:      r.porcentaje,
-              modulos:    (r.detalle && r.detalle.modulos) ? r.detalle.modulos : [],
+              modulos:    (r.detalleCompleto && r.detalleCompleto.modulos) ? r.detalleCompleto.modulos : (r.detalle && r.detalle.modulos) ? r.detalle.modulos : [],
               fortalezas: r.fortalezas || '',
               reforzar:   r.reforzar || '',
               observaciones: r.observaciones || '',
               id:         r.id || '',
-              tieneDetalle: !!(r.detalle && r.detalle.modulos && r.detalle.modulos.length)
+              tieneDetalle: !!((r.detalleCompleto && r.detalleCompleto.modulos && r.detalleCompleto.modulos.length) || (r.detalle && r.detalle.modulos && r.detalle.modulos.length))
             };
           }
         }
